@@ -74,16 +74,16 @@ class SiteController extends Controller
      */
     public function actionMntr()
     {
-        if(Yii::$app->user->can('mntr')){
-		
-			if( Yii::$app->user->can('administrator')){
-				$devices = Devices::find()->limit(10)->all();
-			}else{
-				$org = Org::get_org_name(Yii::$app->user->id);
-				$brand = $org['name_org'];
-				$devices = Devices::find()->limit(10)->where("`organization` = '".$org['name_org']."'")->all();
-			}
-			
+        if (Yii::$app->user->can('mntr')) {
+
+            if (Yii::$app->user->can('administrator')) {
+                $devices = Devices::find()->limit(10)->all();
+            } else {
+                $org = Org::get_org_name(Yii::$app->user->id);
+                $brand = $org['name_org'];
+                $devices = Devices::find()->limit(10)->where("`organization` = '" . $org['name_org'] . "'")->all();
+            }
+
             return $this->render('mntr', ['devices' => $devices]);
         }
     }
@@ -95,7 +95,7 @@ class SiteController extends Controller
      */
     public function actionDevices()
     {
-        if(Yii::$app->user->can('devices')) {
+        if (Yii::$app->user->can('devices')) {
             $devices = Devices::find()->all();
             return $this->render('devices', ['devices' => $devices]);
         }
@@ -108,7 +108,7 @@ class SiteController extends Controller
      */
     public function actionDevice_add()
     {
-        if(Yii::$app->user->can('device_add')) {
+        if (Yii::$app->user->can('device_add')) {
             return $this->render('adddevice');
         }
     }
@@ -220,7 +220,7 @@ class SiteController extends Controller
      */
     public function actionDev()
     {
-        if(Yii::$app->user->can('edit_dev')) {
+        if (Yii::$app->user->can('edit_dev')) {
             $id = $this->my_strip_text(Yii::$app->request->get('id', ''));
             if ($id != '') {
                 $device = Devices::find()->where(['id' => $id])->all();
@@ -238,7 +238,7 @@ class SiteController extends Controller
      */
     public function actionDeldev()
     {
-        if(Yii::$app->user->can('del_dev')) {
+        if (Yii::$app->user->can('del_dev')) {
             $id = Yii::$app->request->get('id', "");
 
             if ($id != '' and $id != '0') {
@@ -256,7 +256,7 @@ class SiteController extends Controller
      */
     public function actionZurnal()
     {
-        if(Yii::$app->user->can('zurnal')) {
+        if (Yii::$app->user->can('zurnal')) {
             $dateFrom = strtotime(date('Y-m-01'));
             $dateTo = strtotime(date('Y-m-t')) + 86399;
 
@@ -280,7 +280,7 @@ class SiteController extends Controller
      */
     public function actionDlogs()
     {
-        if(Yii::$app->user->can('dlogs')) {
+        if (Yii::$app->user->can('dlogs')) {
             $imei = Yii::$app->request->post('imei', "");
             $type = Yii::$app->request->post('type', "");
 
@@ -297,7 +297,7 @@ class SiteController extends Controller
      */
     public function actionAddcom()
     {
-        if(Yii::$app->user->can('add_com')) {
+        if (Yii::$app->user->can('add_com')) {
             $imei = Yii::$app->request->get('imei', "");
             $comand = Yii::$app->request->get('comand', "");
 
@@ -345,7 +345,7 @@ class SiteController extends Controller
 
     public function actionOrg()
     {
-        if(Yii::$app->user->can('org')) {
+        if (Yii::$app->user->can('org')) {
             $org = Org::find()->all();
 
             return $this->render('Allorg', ['org' => $org]);
@@ -360,22 +360,22 @@ class SiteController extends Controller
      */
     public function actionOrgadd()
     {
-        if(Yii::$app->user->can('add_org')) {
-			$org = new Org();
-			if(Yii::$app->request->post()){
-			
-						$post = Yii::$app->request->post();
-						if ($post['Org']['name_org'] != '') {
+        if (Yii::$app->user->can('add_org')) {
+            $org = new Org();
+            if (Yii::$app->request->post()) {
 
-							$org['name_org'] = $post['Org']['name_org'];
-							$org['desc'] = $post['Org']['desc'];
-							$org['logo_path'] = $post['Org']['logo_path'];
-							if($org->save()){
-								return $this->redirect(['/site/org']);
-							}
-					}
-				}
-            return $this->render('addorg',['org' => $org]);
+                $post = Yii::$app->request->post();
+                if ($post['Org']['name_org'] != '') {
+
+                    $org['name_org'] = $post['Org']['name_org'];
+                    $org['desc'] = $post['Org']['desc'];
+                    $org['logo_path'] = $post['Org']['logo_path'];
+                    if ($org->save()) {
+                        return $this->redirect(['/site/org']);
+                    }
+                }
+            }
+            return $this->render('addorg', ['org' => $org]);
         }
     }
 
@@ -405,7 +405,7 @@ class SiteController extends Controller
      */
     public function actionVieworg()
     {
-        if(Yii::$app->user->can('view_org')) {
+        if (Yii::$app->user->can('view_org')) {
             $id = $this->my_strip_text(Yii::$app->request->get('id', ''));
             $model = Org::findOne($id);
             $org_name = $model['name_org'];
@@ -427,33 +427,33 @@ class SiteController extends Controller
      */
     public function actionEditorg()
     {
-        if(Yii::$app->user->can('edit_org')) {
+        if (Yii::$app->user->can('edit_org')) {
             $id = $this->my_strip_text(Yii::$app->request->get('id', ''));
             if ($id != '') {
                 $org = Org::find()->where(['id' => $id])->all();
                 if (isset($org[0]['id'])) {
-				if(Yii::$app->request->post()){
-						$post = Yii::$app->request->post();
-						if ($id != '' AND $post['Org']['name_org'] != '') {
-		
-						$org = Org::find()->where(['id' => $id])->one();
-		
-						if (isset($org['id'])) {
-		
-							$org['name_org'] = $post['Org']['name_org'];
-							$org['desc'] = $post['Org']['desc'];
-							$org['logo_path'] = $post['Org']['logo_path'];
-							if($org->save()){
-								return $this->redirect(['/site/org']);
-							}
-								
-						} 
-					}
-					}
+                    if (Yii::$app->request->post()) {
+                        $post = Yii::$app->request->post();
+                        if ($id != '' AND $post['Org']['name_org'] != '') {
+
+                            $org = Org::find()->where(['id' => $id])->one();
+
+                            if (isset($org['id'])) {
+
+                                $org['name_org'] = $post['Org']['name_org'];
+                                $org['desc'] = $post['Org']['desc'];
+                                $org['logo_path'] = $post['Org']['logo_path'];
+                                if ($org->save()) {
+                                    return $this->redirect(['/site/org']);
+                                }
+
+                            }
+                        }
+                    }
                     return $this->render('edit_org', ['org' => $org]);
                 }
             }
-			
+
         }
     }
 
@@ -465,7 +465,7 @@ class SiteController extends Controller
      */
     public function actionDelorg()
     {
-        if(Yii::$app->user->can('del_org')) {
+        if (Yii::$app->user->can('del_org')) {
             $id = Yii::$app->request->get('id', "");
 
             if ($id != '' and $id != '0') {

@@ -35,15 +35,15 @@ class BaseController extends Controller
      */
     public function actionIndex()
     {
-		if(Yii::$app->user->can('in_pc')) {
-			$searchModel = new BaseSearch();
-			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-	
-			return $this->render('index', [
-				'searchModel' => $searchModel,
-				'dataProvider' => $dataProvider,
-			]);
-		}
+        if (Yii::$app->user->can('in_pc')) {
+            $searchModel = new BaseSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
     }
 
     /**

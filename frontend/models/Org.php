@@ -15,7 +15,7 @@ use common\models\User;
 class Org extends \yii\db\ActiveRecord
 {
 
-	/**
+    /**
      * @inheritdoc
      */
     public function behaviors()
@@ -33,7 +33,7 @@ class Org extends \yii\db\ActiveRecord
             ],
         ];
     }
-	
+
     /**
      * @inheritdoc
      */
@@ -49,10 +49,10 @@ class Org extends \yii\db\ActiveRecord
     {
         return [
             [['name_org'], 'string', 'max' => 100],
-			[['logo_path'], 'string', 'max' => 255],
-			[['desc'], 'string', 'max' => 200],
-			[['user_id'], 'string', 'max' => 200],
-			[['admin_id'], 'string', 'max' => 200],
+            [['logo_path'], 'string', 'max' => 255],
+            [['desc'], 'string', 'max' => 200],
+            [['user_id'], 'string', 'max' => 200],
+            [['admin_id'], 'string', 'max' => 200],
         ];
     }
 
@@ -64,31 +64,34 @@ class Org extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name_org' => 'Name Org',
-			'logo_path' => 'Logo Company',
-			'desc' => 'Description',
-			'user_id' => 'Description',
-			'admin_id' => 'Description',
+            'logo_path' => 'Logo Company',
+            'desc' => 'Description',
+            'user_id' => 'Description',
+            'admin_id' => 'Description',
         ];
     }
-	
-	public static function get_by_id($id){
-		$query = Org::find()->select('*')->where("id = '" . $id . "'")->one();
-		$query->delete();
+
+    public static function get_by_id($id)
+    {
+        $query = Org::find()->select('*')->where("id = '" . $id . "'")->one();
+        $query->delete();
         return $query;
     }
-	
-	public static function get_org_name($id){
-		$query = Org::find()->select('*');
-		$get = $query
-				->where("`user_id` = '".$id."'")
-				->one();
-		return $get;
-	
-	}
 
-	public static function get_org_user(){
-		$query_org = Org::find()->select('*')->all();
-		$get = User::find()->all($query_org->user_id);
-		return $get;
-	}
+    public static function get_org_name($id)
+    {
+        $query = Org::find()->select('*');
+        $get = $query
+            ->where("`user_id` = '" . $id . "'")
+            ->one();
+        return $get;
+
+    }
+
+    public static function get_org_user()
+    {
+        $query_org = Org::find()->select('*')->all();
+        $get = User::find()->all($query_org->user_id);
+        return $get;
+    }
 }

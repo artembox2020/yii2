@@ -29,16 +29,16 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php 
-	if( Yii::$app->user->can('administrator')){
-		$brand = Yii::$app->name;
-		$brand_url = Yii::$app->homeUrl;
-	}else{
-		$org = Org::get_org_name(Yii::$app->user->id);
-		$brand = $org['name_org'];
-		$brand_url = Yii::$app->homeUrl .'/site/vieworg?id='. $org['id'];
-	}
-	NavBar::begin([
+    <?php
+    if (Yii::$app->user->can('administrator')) {
+        $brand = Yii::$app->name;
+        $brand_url = Yii::$app->homeUrl;
+    } else {
+        $org = Org::get_org_name(Yii::$app->user->id);
+        $brand = $org['name_org'];
+        $brand_url = Yii::$app->homeUrl . '/site/vieworg?id=' . $org['id'];
+    }
+    NavBar::begin([
         'brandLabel' => $brand,
         'brandUrl' => $brand_url,
         'options' => [
@@ -51,47 +51,47 @@ AppAsset::register($this);
             'url' => ['/account/default/users'],
             'visible' => Yii::$app->user->can('administrator'),
         ],
-		[
+        [
             'label' => Yii::t('frontend', 'Monitoring'),
             'url' => ['/site/mntr'],
             'visible' => Yii::$app->user->can('mntr'),
         ],
-		[
+        [
             'label' => Yii::t('frontend', 'DevManager'),
             'url' => ['/site/devices'],
             'visible' => Yii::$app->user->can('devices'),
         ],
-		[
+        [
             'label' => Yii::t('frontend', 'Zurnal'),
             'url' => ['/site/zurnal'],
             'visible' => Yii::$app->user->can('zurnal'),
         ],
-		[
+        [
             'label' => Yii::t('frontend', 'Dlogs'),
             'url' => ['/site/dlogs'],
             'visible' => Yii::$app->user->can('dlogs'),
         ],
-		[
-			'label' => 'Ещё',
+        [
+            'label' => 'Ещё',
             'url' => '#',
-			'visible' => Yii::$app->user->can('administrator'),
+            'visible' => Yii::$app->user->can('administrator'),
             'items' => [
-						[
-							'label' => 'Менеджер организаций',
-							'url' => ['/site/org'],
-							'visible' => Yii::$app->user->can('administrator'),
-						],
-			],
-		],
-		
+                [
+                    'label' => 'Менеджер организаций',
+                    'url' => ['/site/org'],
+                    'visible' => Yii::$app->user->can('administrator'),
+                ],
+            ],
+        ],
+
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => Yii::t('frontend', 'Login'), 'url' => ['/account/sign-in/login']];
     } else {
-			$role = ArrayHelper::map(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'description', 'description');
-		foreach($role as $key=>$val){ 
-			$role_name =  $key;
-		}
+        $role = ArrayHelper::map(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'description', 'description');
+        foreach ($role as $key => $val) {
+            $role_name = $key;
+        }
         $menuItems[] = [
             'label' => $role_name,
             'url' => '#',
@@ -121,7 +121,7 @@ AppAsset::register($this);
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
-        <?php Wrapper::widget();?>
+        <?php Wrapper::widget(); ?>
         <?= $content ?>
     </div>
 </div>
