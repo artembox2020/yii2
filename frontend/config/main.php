@@ -1,5 +1,8 @@
 <?php
 
+defined('YII_DEBUG') or define('YII_DEBUG', true);
+defined('YII_ENV') or define('YII_ENV', 'dev');
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/params.php'
@@ -22,7 +25,7 @@ $config = [
         'request' => [
             'cookieValidationKey' => env('BACKEND_COOKIE_VALIDATION_KEY'),
             'csrfParam' => '_csrf-frontend',
-			'baseUrl' => '/frontend',
+			'baseUrl' => '',
         ],
         'user' => [
             'identityClass' => 'common\models\User',

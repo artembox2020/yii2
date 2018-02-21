@@ -19,5 +19,8 @@ RewriteCond %{REQUEST_URI} ^/storage
 RewriteRule ^storage/(.*)$ storage/$1 [L]
 
 # Frontend redirect
-RewriteCond %{REQUEST_URI} ^/frontend(.*)$
-RewriteRule ^frontend/(.*)$ frontend/web/$1
+#RewriteCond %{REQUEST_URI} ^/frontend
+#RewriteRule ^frontend/(.*)$ frontend/web/$1 [L]
+
+RewriteCond %{REQUEST_URI} ^(.*)$
+RewriteRule ^(.*)$ frontend/web/$1

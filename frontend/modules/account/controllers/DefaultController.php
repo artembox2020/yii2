@@ -5,6 +5,7 @@ namespace frontend\modules\account\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\User;
@@ -12,6 +13,7 @@ use common\models\UserProfile;
 use frontend\modules\account\models\MessageForm;
 use frontend\modules\account\models\PasswordForm;
 use frontend\modules\account\models\search\UserSearch;
+use backend\models\UserForm;
 
 /**
  * Default controller.
@@ -153,5 +155,26 @@ class DefaultController extends Controller
         } else {
             throw new NotFoundHttpException(Yii::t('frontend', 'Page not found.'));
         }
+    }
+
+    /**
+     * Creates a new User model.
+     * If creation is successful, the browser will be redirected to the 'index' page.
+     *
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = new UserForm();
+        $model->setScenario('create');
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+            'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+        ]);
     }
 }

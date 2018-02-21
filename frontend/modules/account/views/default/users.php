@@ -12,6 +12,14 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="account-default-users">
     <h1><?= Html::encode($this->title) ?></h1>
+
+    <p>
+        <?= Html::a(Yii::t('frontend', 'Create user'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('frontend', 'Roles'), ['/rbac/access/role'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('frontend', 'Permissions'), ['/rbac/access/permission'], ['class' => 'btn btn-success']) ?>
+    </p>
+
+
     <?= $this->render('_search', ['model' => $searchModel]) ?>
 
     <?= GridView::widget([

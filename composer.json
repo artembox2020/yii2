@@ -13,17 +13,30 @@
         "yiisoft/yii2": "~2.0.6",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
-        "yiisoft/yii2-queue": "^2.0",
         "paragonie/random_compat": "^2.0",
         "vlucas/phpdotenv": "^2.4",
         "vova07/yii2-fileapi-widget": "*",
         "fxp/composer-asset-plugin": "^1.4",
+        "loveorigami/yii2-notification-wrapper": "*",
         "bower-asset/open-sans-fontface": "*",
         "bower-asset/font-awesome": "*",
-        "loveorigami/yii2-notification-wrapper": "*",
         "bower-asset/noty": "^2.3",
         "bower-asset/jquery-growl": "^1.3",
-        "beaten-sect0r/yii2-flatpickr": "*"
+        "bower-asset/jquery-ui": "1.12.1",
+        "beaten-sect0r/yii2-flatpickr": "*",
+        "bower-asset/admin-lte": "v2.4.0-alpha1",
+        "bower-asset/jquery-slimscroll": "dev-master",
+        "bower-asset/html5shiv": "dev-master",
+        "bower-asset/timecircles": "*",
+        "bower-asset/highlightjs": "*",
+        "yiisoft/yii2-jui": "dev-master",
+        "mihaildev/yii2-elfinder": "dev-master",
+        "2amigos/yii2-selectize-widget": "dev-master",
+        "2amigos/yii2-tinymce-widget": "*",
+        "developeruz/yii2-db-rbac": "dev-master",
+        "beaten-sect0r/yii2-db-manager": "*",
+        "samdark/sitemap": "*",
+        "creocoder/yii2-taggable": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
@@ -33,7 +46,15 @@
     "codeception/verify": "~0.3.1"
   },
   "config": {
-    "process-timeout": 1800
+    "process-timeout": 1800,
+    "fxp-asset": {
+      "repositories": {
+        "bower-asset/eve": {
+          "type": "bower-vcs",
+          "url": "https://github.com/adobe-webplatform/eve.git"
+        }
+      }
+    }
   },
   "repositories": [
     {

@@ -128,7 +128,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-right">Sens Server</p>
     </div>
 </footer>
 
