@@ -1,2 +1,4 @@
 .idea
 vendor/
+error/access.log
+error/error.log
