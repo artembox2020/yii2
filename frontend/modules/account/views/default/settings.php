@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
         UserProfile::GENDER_FEMALE => Yii::t('frontend', 'Female'),
     ], ['prompt' => '']) ?>
 
-    <?= $form->field($model, 'website')->textInput(['maxlength' => true]) ?>
+<!--    --><?//= $form->field($model, 'website')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'other')->textarea(['rows' => 6]) ?>
 

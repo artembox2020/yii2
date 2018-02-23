@@ -59,7 +59,7 @@ class UserProfile extends ActiveRecord
             ['birthday', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['gender', 'in', 'range' => [null, self::GENDER_MALE, self::GENDER_FEMALE]],
             ['website', 'trim'],
-            ['website', 'url', 'defaultScheme' => 'http', 'validSchemes' => ['http', 'https']],
+//            ['website', 'url', 'defaultScheme' => 'http', 'validSchemes' => ['http', 'https']],
             ['other', 'string', 'max' => 1024],
             [['firstname', 'lastname', 'avatar_path', 'website'], 'string', 'max' => 255],
             ['firstname', 'match', 'pattern' => '/^[a-zа-яё]+$/iu'],
@@ -80,7 +80,7 @@ class UserProfile extends ActiveRecord
             'birthday' => Yii::t('common', 'Birthday'),
             'avatar_path' => Yii::t('common', 'Avatar'),
             'gender' => Yii::t('common', 'Gender'),
-            'website' => Yii::t('common', 'Website'),
+//            'website' => Yii::t('common', 'Website'),
             'other' => Yii::t('common', 'Other'),
         ];
     }

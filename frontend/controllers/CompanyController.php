@@ -3,17 +3,16 @@
 namespace frontend\controllers;
 
 use Yii;
-use frontend\models\Org;
-use frontend\models\OrgSearch;
+use frontend\models\Company;
+use frontend\models\CompanySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use frontend\models\Devices;
 
 /**
- * OrgController implements the CRUD actions for Org model.
+ * CompanyController implements the CRUD actions for Company model.
  */
-class OrgController extends Controller
+class CompanyController extends Controller
 {
     /**
      * @inheritdoc
@@ -31,51 +30,41 @@ class OrgController extends Controller
     }
 
     /**
-     * Lists all Org models.
+     * Lists all Company models.
      * @return mixed
      */
     public function actionIndex()
     {
-        if(Yii::$app->user->can('administrator')) {
-            $searchModel = new OrgSearch();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new CompanySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-            return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-        }
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
-     * Displays a single Org model.
+     * Displays a single Company model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        if(Yii::$app->user->can('view_org')) {
-            $id = Yii::$app->request->get('id', '');
-            $model = Org::findOne($id);
-            $org_name = $model['name_org'];
-
-            $devices = Devices::find()->where(['organization' => $org_name])->all();
-            return $this->render('view', [
-                'model' => $this->findModel($id),
-                'devices' => $devices,
-            ]);
-        }
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
     }
 
     /**
-     * Creates a new Org model.
+     * Creates a new Company model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Org();
+        $model = new Company();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -87,7 +76,7 @@ class OrgController extends Controller
     }
 
     /**
-     * Updates an existing Org model.
+     * Updates an existing Company model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -107,10 +96,11 @@ class OrgController extends Controller
     }
 
     /**
-     * @param $id
-     * @return \yii\web\Response
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * Deletes an existing Company model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
@@ -120,15 +110,15 @@ class OrgController extends Controller
     }
 
     /**
-     * Finds the Org model based on its primary key value.
+     * Finds the Company model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Org the loaded model
+     * @return Company the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Org::findOne($id)) !== null) {
+        if (($model = Company::findOne($id)) !== null) {
             return $model;
         }
 

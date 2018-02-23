@@ -1,6 +1,5 @@
 <?php
-defined('YII_DEBUG') or define('YII_DEBUG', true);
-defined('YII_ENV') or define('YII_ENV', 'dev');
+
 use yii\helpers\ArrayHelper;
 use yii\web\Application;
 
@@ -21,15 +20,13 @@ $config = ArrayHelper::merge(
     require __DIR__ . '/../../common/config/main.php',
     require __DIR__ . '/../config/main.php'
 );
-defined('YII_DEBUG') or define('YII_DEBUG', true);
-defined('YII_ENV') or define('YII_ENV', 'dev');
 
-//if (YII_ENV_DEV) {
-//    // показываем ошибки
-//    error_reporting(-1);
-//} else {
-//    // не показываем ошибки
-//    error_reporting(0);
-//}
+if (YII_ENV_DEV) {
+    // показываем ошибки
+    error_reporting(-1);
+} else {
+    // не показываем ошибки
+    error_reporting(0);
+}
 
 (new Application($config))->run();

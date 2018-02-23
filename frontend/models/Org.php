@@ -63,10 +63,10 @@ class Org extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name_org' => 'Name Org',
-            'logo_path' => 'Logo Company',
-            'desc' => 'Description',
-            'user_id' => 'Description',
+            'name_org' => 'Название Организации',
+            'logo_path' => 'Логотип',
+            'desc' => 'Описание',
+            'user_id' => 'Администратор Организации',
             'admin_id' => 'Description',
         ];
     }

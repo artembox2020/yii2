@@ -32,6 +32,10 @@ class AppController extends Controller
         '@root/.env',
     ];
 
+    /**
+     * @throws \yii\base\InvalidRouteException
+     * @throws \yii\console\Exception
+     */
     public function actionSetup()
     {
         $this->runAction('set-writable', ['interactive' => $this->interactive]);
