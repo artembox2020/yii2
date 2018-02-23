@@ -19,6 +19,7 @@ class m160101_000001_user extends Migration
             'password_hash' => $this->string(255)->notNull(),
             'email' => $this->string(255)->notNull(),
             'status' => $this->smallInteger()->notNull(),
+            'company_id' => $this->integer(11),
             'ip' => $this->string(128),
             'created_at' => $this->integer(),
             'updated_at' => $this->integer(),
@@ -32,16 +33,24 @@ class m160101_000001_user extends Migration
             'birthday' => $this->integer(),
             'avatar_path' => $this->string(255),
             'gender' => $this->smallInteger(1),
-            'website' => $this->string(255),
             'other' => $this->string(),
         ], $tableOptions);
 
-        $this->addForeignKey('fk_user', '{{%user_profile}}', 'user_id', '{{%user}}', 'id', 'cascade', 'cascade');
+        $this->addForeignKey(
+            'fk_user',
+            '{{%user_profile}}',
+            'user_id',
+            '{{%user}}',
+            'id',
+            'cascade',
+            'cascade');
     }
 
     public function down()
     {
-        $this->dropForeignKey('fk_user', '{{%user_profile}}');
+        $this->dropForeignKey(
+            'fk_user',
+            '{{%user_profile}}');
 
         $this->dropTable('{{%user_profile}}');
         $this->dropTable('{{%user}}');
