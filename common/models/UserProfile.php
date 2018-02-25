@@ -15,7 +15,6 @@ use vova07\fileapi\behaviors\UploadBehavior;
  * @property integer $birthday
  * @property string $avatar_path
  * @property integer $gender
- * @property string $website
  * @property string $other
  */
 class UserProfile extends ActiveRecord
@@ -58,14 +57,12 @@ class UserProfile extends ActiveRecord
         return [
             ['birthday', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['gender', 'in', 'range' => [null, self::GENDER_MALE, self::GENDER_FEMALE]],
-            ['website', 'trim'],
-//            ['website', 'url', 'defaultScheme' => 'http', 'validSchemes' => ['http', 'https']],
             ['other', 'string', 'max' => 1024],
-            [['firstname', 'lastname', 'avatar_path', 'website'], 'string', 'max' => 255],
+            [['firstname', 'lastname', 'avatar_path'], 'string', 'max' => 255],
             ['firstname', 'match', 'pattern' => '/^[a-zа-яё]+$/iu'],
             ['lastname', 'match', 'pattern' => '/^[a-zа-яё]+(-[a-zа-яё]+)?$/iu'],
             ['user_id', 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
-            [['firstname', 'lastname', 'birthday', 'gender', 'website', 'other'], 'default', 'value' => null],
+            [['firstname', 'lastname', 'birthday', 'gender', 'other'], 'default', 'value' => null],
         ];
     }
 

@@ -65,8 +65,6 @@ $this->params['breadcrumbs'][] = Yii::t('backend', 'Update');
         ['prompt' => '']
     ) ?>
 
-    <?= $form->field($profile, 'website')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($profile, 'other')->textarea(['rows' => 6, 'maxlength' => true]) ?>
 
     <div class="form-group">

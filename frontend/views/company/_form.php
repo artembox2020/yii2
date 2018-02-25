@@ -15,14 +15,16 @@ use vova07\fileapi\Widget as FileApi;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'img')->widget(FileApi::className(), [
-        'settings' => [
-            'url' => ['/site/fileapi-upload'],
-        ],
-        'crop' => true,
-        'cropResizeWidth' => 100,
-        'cropResizeHeight' => 100,
-    ]) ?>
+    <?= $form->field($model, 'img')->widget(
+            FileApi::className(),
+            [
+                    'settings' => [
+                            'url' => ['/company/fileapi-upload'],
+                        ],
+                'crop' => true,
+                'cropResizeWidth' => 100,
+                'cropResizeHeight' => 100,
+                ]) ?>
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 

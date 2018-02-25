@@ -78,7 +78,7 @@ AppAsset::register($this);
             'items' => [
                 [
                     'label' => 'Менеджер организаций',
-                    'url' => ['/site/org'],
+                    'url' => ['/company'],
                     'visible' => Yii::$app->user->can('administrator'),
                 ],
             ],

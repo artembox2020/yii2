@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('frontend', 'Create Company'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('frontend', 'Restore Company'), ['restore'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -27,7 +28,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'name',
-            'img',
+            [
+                'attribute' => 'img',
+                'format' => 'html',
+                'contentOptions' =>['style'=>'text-align: center;vertical-align: middle;'],
+                'value' => function ($data) {
+                    return Html::img(Yii::getAlias('@storageUrl/logos/'. $data['img']));
+                },
+            ],
             'description:ntext',
             'website',
 

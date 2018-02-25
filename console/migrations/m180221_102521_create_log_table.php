@@ -13,7 +13,7 @@ class m180221_102521_create_log_table extends Migration
     public function safeUp()
     {
         $this->createTable('log', [
-            'id' => $this->bigInteger(20)->notNull(),
+            'id' => $this->bigPrimaryKey(),
             'level' => $this->integer(11),
             'category' => $this->string(255),
             'log_time' => $this->double(),
