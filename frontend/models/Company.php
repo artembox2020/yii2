@@ -3,8 +3,8 @@
 namespace frontend\models;
 
 use common\models\User;
-use vova07\fileapi\behaviors\UploadBehavior;
 use Yii;
+use \yii\db\ActiveRecord;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
@@ -20,10 +20,11 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property integer $deleted_at
  * @property User[] $users
  */
-class Company extends \yii\db\ActiveRecord
+class Company extends ActiveRecord
 {
     /**
-     * @var integer
+     * Relations with User table
+     * @var integer $sub_admin
      */
     public $sub_admin;
 
@@ -78,7 +79,7 @@ class Company extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('frontend', 'ID'),
-            'name' => Yii::t('frontend', 'Name'),
+            'name' => Yii::t('frontend', 'Name Company'),
             'img' => Yii::t('frontend', 'Img'),
             'description' => Yii::t('frontend', 'Description'),
             'website' => Yii::t('frontend', 'Website'),

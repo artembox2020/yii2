@@ -59,7 +59,7 @@ use backend\models\Log;
                             <?php endif ?>
                             <p>
                                 <?= Yii::$app->user->identity->username ?>
-                                <small><?= Yii::t('backend', 'Member since {0}', Yii::$app->user->identity->created_at) ?></small>
+                                <small><?= Yii::t('backend', 'Member since '. date('d.m.Y h:i:s', Yii::$app->user->identity->created_at)) ?></small>
                             </p>
                         </li>
                         <li class="user-footer">

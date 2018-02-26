@@ -31,8 +31,6 @@ use backend\widgets\Menu;
                     'options' => ['class' => 'treeview'],
                     'items' => [
                         ['label' => Yii::t('backend', 'Static pages'), 'url' => ['/page/index'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                        ['label' => Yii::t('backend', 'Articles'), 'url' => ['/article/index'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                        ['label' => Yii::t('backend', 'Article categories'), 'url' => ['/article-category/index'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
                     ],
                 ],
                 [
@@ -44,11 +42,30 @@ use backend\widgets\Menu;
                     'url' => ['/user/index'],
                     'icon' => '<i class="fa fa-users"></i>',
                     'visible' => Yii::$app->user->can('administrator'),
-                ],                [
+                ],
+                [
                     'label' => Yii::t('backend', 'Companies'),
                     'url' => ['/company/index'],
-                    'icon' => '<i class="fa fa-users"></i>',
+                    'icon' => '<i class="fa fa-copyright"></i>',
                     'visible' => Yii::$app->user->can('administrator'),
+                ],
+                [
+                    'label' => Yii::t('backend', 'Other'),
+                    'options' => ['class' => 'header'],
+                ],
+                [
+                    'label' => Yii::t('backend', 'Basket'),
+                    'url' => ['/basket/index'],
+                    'icon' => '<i class="fa fa-trash"></i>',
+                    'visible' => Yii::$app->user->can('administrator'),
+                    'items' => [
+                        [
+                            'label' => Yii::t('backend', 'Companies'),
+                            'url' => ['/basket/company'],
+                            'icon' => '<i class="fa fa-angle-double-right"></i>',
+                            'visible' => Yii::$app->user->can('administrator'),
+                        ],
+                    ],
                 ],
                 [
                     'label' => Yii::t('backend', 'Other'),

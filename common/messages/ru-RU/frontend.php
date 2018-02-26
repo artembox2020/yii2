@@ -106,10 +106,13 @@ return [
 	'Zurnal' => 'Итоговый журнал',
 	'Dlogs' => 'Журнал событий',
 	'Add organization' => 'Добавить оргганизацию',
+    'Name Company' => 'Название компании',
     'Img' => 'Логотип',
     'Description' => 'Описание',
     'Create Company' => 'Создать компанию',
     'Sub Admin' => 'Администратор компании',
     'Companies' => 'Компании',
-    'Add Employee' => 'Добавить работника'
+    'Add Employee' => 'Добавить работника',
+    'Access denied' => 'Отказано в доступе',
+    'Update Company: {nameAttribute}' => 'Обновить компанию'
 ];

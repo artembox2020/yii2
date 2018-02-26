@@ -1,5 +1,6 @@
 <?php
 
+use common\models\User;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\helpers\ArrayHelper;
@@ -8,7 +9,6 @@ use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use frontend\models\NavItem;
 use lo\modules\noty\Wrapper;
-use frontend\models\Org;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -30,13 +30,17 @@ AppAsset::register($this);
 
 <div class="wrap">
     <?php
+    $brand = Yii::$app->name;
+    $brand_url = Yii::$app->homeUrl;
     if (Yii::$app->user->can('administrator')) {
-        $brand = Yii::$app->name;
-        $brand_url = Yii::$app->homeUrl;
     } else {
-        $org = Org::get_org_name(Yii::$app->user->id);
-        $brand = $org['name_org'];
-        $brand_url = Yii::$app->homeUrl . '/site/vieworg?id=' . $org['id'];
+        if (!empty($user = User::findOne(Yii::$app->user->id))) {
+            if (!empty($user->company)) {
+                $company = $user->company;
+                $brand = $company->name;
+            }
+            $brand_url = Yii::$app->homeUrl . '/company/view?id=' . $company->id;
+        }
     }
     NavBar::begin([
         'brandLabel' => $brand,

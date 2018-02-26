@@ -34,7 +34,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'description:ntext',
             'website',
             'is_deleted',
-            'deleted_at',
+            [
+                'attribute' => 'deleted_at',
+                'value' => date('d.m.Y h:i:s', $model->deleted_at)
+            ],
         ],
     ]) ?>
 

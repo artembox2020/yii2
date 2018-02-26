@@ -8,12 +8,26 @@ use backend\models\CompanySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use vova07\fileapi\actions\UploadAction as FileAPIUpload;
 
 /**
  * CompanyController implements the CRUD actions for Company model.
  */
 class CompanyController extends Controller
 {
+    /**
+     * @return array
+     */
+    public function actions()
+    {
+        return [
+            'fileapi-upload' => [
+                'class' => FileAPIUpload::className(),
+                'path' => '@storage/tmp',
+            ]
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -104,7 +118,7 @@ class CompanyController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($id)->softDelete();
 
         return $this->redirect(['index']);
     }
@@ -123,5 +137,25 @@ class CompanyController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('backend', 'The requested page does not exist.'));
+    }
+
+    /**
+     * @return \yii\web\Response
+     */
+    public function actionRestore($id)
+    {
+        $models = Company::find()->where([])->all();
+        foreach ($models as $model) {
+            $model->restore();
+        }
+
+        return $this->redirect(['index']);
+    }
+
+    public function actionViewDeleted()
+    {
+        return $this->render('view-deleted', [
+            'models' => Company::find()->where([])->all()
+        ]);
     }
 }

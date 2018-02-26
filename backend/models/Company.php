@@ -2,7 +2,9 @@
 
 namespace backend\models;
 
+use common\models\User;
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "company".
@@ -12,20 +14,48 @@ use Yii;
  * @property string $img
  * @property string $description
  * @property string $website
- * @property int $is_deleted
- * @property int $deleted_at
- *
+ * @property string $sub_admin
+ * @property bool $is_deleted
+ * @property integer $deleted_at
  * @property User[] $users
  */
 class Company extends \yii\db\ActiveRecord
 {
+    /**
+     * Relations with User table
+     * @var integer $sub_admin
+     */
     public $sub_admin;
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return 'company';
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'is_deleted' => true,
+                    'deleted_at' => time()
+                ],
+            ],
+            'uploadBehavior' => [
+                'class' => \frontend\services\company\UploadBehavior::className(),
+                'attributes' => [
+                    'img' => [
+                        'path' => '@storage/logos',
+                        'tempPath' => '@storage/tmp',
+                        'url' => Yii::getAlias('@storageUrl/logos'),
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -35,10 +65,9 @@ class Company extends \yii\db\ActiveRecord
     {
         return [
             [['description'], 'string'],
-            [['deleted_at'], 'integer'],
-            [['name'], 'string', 'max' => 100],
+            [['name', 'sub_admin'], 'string', 'max' => 100],
             [['img', 'website'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
+            ['website', 'url', 'defaultScheme' => 'http', 'validSchemes' => ['http', 'https']],
         ];
     }
 
@@ -53,8 +82,7 @@ class Company extends \yii\db\ActiveRecord
             'img' => Yii::t('backend', 'Img'),
             'description' => Yii::t('backend', 'Description'),
             'website' => Yii::t('backend', 'Website'),
-            'is_deleted' => Yii::t('backend', 'Is Deleted'),
-            'deleted_at' => Yii::t('backend', 'Deleted At'),
+            'sub_admin' => Yii::t('backend', 'Sub Admin'),
         ];
     }
 
@@ -64,5 +92,10 @@ class Company extends \yii\db\ActiveRecord
     public function getUsers()
     {
         return $this->hasMany(User::className(), ['company_id' => 'id']);
+    }
+
+    public static function find()
+    {
+        return parent::find()->where(['is_deleted' => false]);
     }
 }

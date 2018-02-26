@@ -16,6 +16,9 @@ use vova07\fileapi\actions\UploadAction as FileAPIUpload;
  */
 class CompanyController extends Controller
 {
+    /**
+     * @return array
+     */
     public function actions()
     {
         return [
@@ -47,12 +50,18 @@ class CompanyController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new CompanySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if (Yii::$app->user->can('view_companies')) {
+            $searchModel = new CompanySearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+
+        return $this->render('denied/access-denied', [
+            $this->accessDenied()
         ]);
     }
 
@@ -64,11 +73,17 @@ class CompanyController extends Controller
      */
     public function actionView($id)
     {
-        $users = User::find()->where(['company_id' => $id])->all();
+        if (Yii::$app->user->can('view_company')) {
 
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'users' => $users
+            $users = User::find()->where(['company_id' => $id])->all();
+
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+                'users' => $users
+            ]);
+        }
+        return $this->render ('denied/access-denied', [
+            $this->accessDenied()
         ]);
     }
 
@@ -79,42 +94,54 @@ class CompanyController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Company();
+        if (Yii::$app->user->can('create_company')) {
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->is_deleted = false;
-            $model->deleted_at = Time();
-            $user = User::findOne($model->sub_admin);
-            $user->company_id = $model->id;
-            $model->save();
-            return $this->redirect(['view', 'id' => $model->id]);
+            $model = new Company();
+
+            if ($model->load(Yii::$app->request->post())) {
+                $model->is_deleted = false;
+                $model->deleted_at = Time();
+                $user = User::findOne($model->sub_admin);
+                $user->company_id = $model->id;
+                $model->save();
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+            return $this->render('create', [
+                'model' => $model,
+            ]);
         }
 
-        return $this->render('create', [
-            'model' => $model,
+        return $this->render ('denied/access-denied', [
+            $this->accessDenied()
         ]);
     }
 
     /**
-     * Updates an existing Company model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string|\yii\web\Response
      */
     public function actionUpdate($id)
     {
-        $model = Company::findOne($id);
+        if (Yii::$app->user->can('update_company')) {
+            $model = Company::findOne($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $user = User::findOne($model->sub_admin);
-            $user->company_id = $model->id;
-            $user->save();
-            return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                $user = User::findOne($model->sub_admin);
+                $user->company_id = $model->id;
+                $user->save();
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+            return $this->render('update', [
+                'model' => $model,
+            ]);
         }
 
-        return $this->render('update', [
-            'model' => $model,
+        return $this->render ('denied/access-denied', [
+            $this->accessDenied()
         ]);
     }
 
@@ -127,19 +154,22 @@ class CompanyController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->softDelete();
+            $this->findModel($id)->softDelete();
 
-        return $this->redirect(['index']);
+            return $this->redirect(['index']);
     }
 
     /**
+     * @param $id
      * @return \yii\web\Response
      */
-    public function actionRestore()
+    public function actionRestore($id)
     {
         $models = Company::find()->where([])->all();
         foreach ($models as $model) {
-            $model->restore();
+            if ($model->getAttribute('id') == $id) {
+                $model->restore();
+            }
         }
 
         return $this->redirect(['index']);
@@ -159,5 +189,13 @@ class CompanyController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('frontend', 'The requested page does not exist.'));
+    }
+
+    private function accessDenied()
+    {
+        return Yii::$app->session->setFlash(
+            'error',
+            Yii::t('frontend', 'Access denied')
+        );
     }
 }
