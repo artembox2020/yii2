@@ -110,5 +110,6 @@ return [
     'Description' => 'Описание',
     'Create Company' => 'Создать компанию',
     'Sub Admin' => 'Администратор компании',
-    'Companies' => 'Компании'
+    'Companies' => 'Компании',
+    'Add Employee' => 'Добавить работника'
 ];

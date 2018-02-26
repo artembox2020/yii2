@@ -19,6 +19,7 @@ use common\models\query\UserQuery;
  * @property string $email
  * @property integer $status
  * @property string $ip
+ * @property integer $company_id
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $action_at

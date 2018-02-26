@@ -19,7 +19,7 @@
         "fxp/composer-asset-plugin": "^1.4",
         "loveorigami/yii2-notification-wrapper": "*",
         "bower-asset/open-sans-fontface": "*",
-        "bower-asset/font-awesome": "*",
+        "bower-asset/font-awesome": "^5.0",
         "bower-asset/noty": "^2.3",
         "bower-asset/jquery-growl": "^1.3",
         "bower-asset/jquery-ui": "1.12.1",
@@ -48,12 +48,10 @@
   },
   "config": {
     "process-timeout": 1800,
-    "fxp-asset": {
-      "repositories": {
-        "bower-asset/eve": {
-          "type": "bower-vcs",
-          "url": "https://github.com/adobe-webplatform/eve.git"
-        }
+    "fxp-asset":{
+      "installer-paths": {
+        "npm-asset-library": "vendor/npm",
+        "bower-asset-library": "vendor/bower"
       }
     }
   },

@@ -104,4 +104,12 @@ return [
     'View all' => 'Смотреть всё',
     'You can not remove your own account.' => 'Вы не можете удалить свою учетную запись.',
     'You have {num} log items' => 'У вас {num} записей в журнале',
+    'Companies' => 'Компании',
+    'Name Company' => 'Название компании',
+    'Img' => 'Логотип',
+    'Description' => 'Описание',
+    'Website' => 'Веб-сайт',
+    'Create Company' => 'Создать компанию',
+    'Sub Admin' => 'Администратор компании',
+    'Add Employee' => 'Добавить работника'
 ];

@@ -1,31 +1,19 @@
 <?php
 
-namespace frontend\controllers;
+namespace backend\controllers;
 
-use common\models\User;
 use Yii;
-use frontend\models\Company;
-use frontend\models\CompanySearch;
+use backend\models\Company;
+use backend\models\CompanySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use vova07\fileapi\actions\UploadAction as FileAPIUpload;
 
 /**
  * CompanyController implements the CRUD actions for Company model.
  */
 class CompanyController extends Controller
 {
-    public function actions()
-    {
-        return [
-            'fileapi-upload' => [
-                'class' => FileAPIUpload::className(),
-                'path' => '@storage/tmp',
-            ]
-        ];
-    }
-
     /**
      * @inheritdoc
      */
@@ -35,9 +23,9 @@ class CompanyController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST']
-                ]
-            ]
+                    'delete' => ['POST'],
+                ],
+            ],
         ];
     }
 
@@ -64,11 +52,8 @@ class CompanyController extends Controller
      */
     public function actionView($id)
     {
-        $users = User::find()->where(['company_id' => $id])->all();
-
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'users' => $users
         ]);
     }
 
@@ -81,12 +66,7 @@ class CompanyController extends Controller
     {
         $model = new Company();
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->is_deleted = false;
-            $model->deleted_at = Time();
-            $user = User::findOne($model->sub_admin);
-            $user->company_id = $model->id;
-            $model->save();
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -104,12 +84,9 @@ class CompanyController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = Company::findOne($id);
+        $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $user = User::findOne($model->sub_admin);
-            $user->company_id = $model->id;
-            $user->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -127,20 +104,7 @@ class CompanyController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->softDelete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * @return \yii\web\Response
-     */
-    public function actionRestore()
-    {
-        $models = Company::find()->where([])->all();
-        foreach ($models as $model) {
-            $model->restore();
-        }
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
@@ -158,6 +122,6 @@ class CompanyController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('frontend', 'The requested page does not exist.'));
+        throw new NotFoundHttpException(Yii::t('backend', 'The requested page does not exist.'));
     }
 }

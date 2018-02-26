@@ -12,7 +12,7 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'static/css/style.css',
+        'static/css/style.css'
     ];
     public $js = [
     ];
@@ -20,6 +20,6 @@ class AppAsset extends AssetBundle
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
         'common\assets\AdminLte',
-        'common\assets\Html5shiv',
+        'common\assets\Html5shiv'
     ];
 }

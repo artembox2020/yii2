@@ -44,6 +44,11 @@ use backend\widgets\Menu;
                     'url' => ['/user/index'],
                     'icon' => '<i class="fa fa-users"></i>',
                     'visible' => Yii::$app->user->can('administrator'),
+                ],                [
+                    'label' => Yii::t('backend', 'Companies'),
+                    'url' => ['/company/index'],
+                    'icon' => '<i class="fa fa-users"></i>',
+                    'visible' => Yii::$app->user->can('administrator'),
                 ],
                 [
                     'label' => Yii::t('backend', 'Other'),

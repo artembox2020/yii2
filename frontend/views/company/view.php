@@ -15,6 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('frontend', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('frontend', 'Add Employee'), ['add-employee', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('frontend', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -40,5 +41,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'website',
         ],
     ]) ?>
-
+    <b>Юзеры комании:</b>
+    <p>
+    <?php foreach ($users as $user) : ?>
+    <?= $user->username; ?> <br>
+    <?php endforeach; ?>
+    </p>
 </div>
