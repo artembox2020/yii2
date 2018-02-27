@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\User;
 use Yii;
 use backend\models\Company;
 use backend\models\CompanySearch;
@@ -15,6 +16,7 @@ use vova07\fileapi\actions\UploadAction as FileAPIUpload;
  */
 class CompanyController extends Controller
 {
+    const ZERO = 0;
     /**
      * @return array
      */
@@ -80,7 +82,14 @@ class CompanyController extends Controller
     {
         $model = new Company();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->is_deleted = false;
+            $model->deleted_at = time();
+            $model->save();
+            $user = User::findOne($model->sub_admin);
+            $user->company_id = $model->id;
+            $user->save();
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -90,17 +99,18 @@ class CompanyController extends Controller
     }
 
     /**
-     * Updates an existing Company model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string|\yii\web\Response
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = Company::findOne($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $user = User::findOne($model->sub_admin);
+            $user->company_id = $model->id;
+            $user->save();
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
