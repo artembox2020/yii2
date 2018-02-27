@@ -65,6 +65,12 @@ use backend\widgets\Menu;
                             'icon' => '<i class="fa fa-angle-double-right"></i>',
                             'visible' => Yii::$app->user->can('administrator'),
                         ],
+                        [
+                            'label' => Yii::t('backend', 'Users'),
+                            'url' => ['/basket/user'],
+                            'icon' => '<i class="fa fa-angle-double-right"></i>',
+                            'visible' => Yii::$app->user->can('administrator'),
+                        ],
                     ],
                 ],
                 [

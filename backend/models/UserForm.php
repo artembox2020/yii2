@@ -12,6 +12,8 @@ use common\models\User;
  */
 class UserForm extends Model
 {
+    const ZERO = 0;
+
     public $username;
     public $email;
     public $password;
@@ -116,6 +118,8 @@ class UserForm extends Model
             $model->username = $this->username;
             $model->email = $this->email;
             $model->status = $this->status;
+            $model->is_deleted = self::ZERO;
+            $model->deleted_at = self::ZERO;
             if ($this->password) {
                 $model->setPassword($this->password);
             }

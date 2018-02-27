@@ -120,6 +120,7 @@ class CompanyController extends Controller
     {
         $this->findModel($id)->softDelete();
 
+        Yii::$app->session->setFlash('success', Yii::t('backend', 'Company has been deleted.'));
         return $this->redirect(['index']);
     }
 

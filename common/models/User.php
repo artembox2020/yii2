@@ -8,6 +8,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use common\models\query\UserQuery;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "{{%user}}".
@@ -24,6 +25,8 @@ use common\models\query\UserQuery;
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $action_at
+ * @property boolean $is_deleted
+ * @property integer $deleted_at
  *
  * @property UserProfile $userProfile
  */
@@ -54,6 +57,13 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'is_deleted' => true,
+                    'deleted_at' => time()
+                ],
+            ],
             TimestampBehavior::className(),
         ];
     }
@@ -243,6 +253,6 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function find()
     {
-        return new UserQuery(get_called_class());
+        return parent::find()->where(['is_deleted' => false]);
     }
 }

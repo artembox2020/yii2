@@ -114,12 +114,12 @@ class UserController extends Controller
             Yii::$app->session->setFlash('error', Yii::t('backend', 'You can not remove your own account.'));
         } else {
             // remove avatar
-            $avatar = UserProfile::findOne($id)->avatar_path;
-            if ($avatar) {
-                unlink(Yii::getAlias('@storage/avatars/' . $avatar));
-            }
-            Yii::$app->authManager->revokeAll($id);
-            $this->findModel($id)->delete();
+//            $avatar = UserProfile::findOne($id)->avatar_path;
+//            if ($avatar) {
+//                unlink(Yii::getAlias('@storage/avatars/' . $avatar));
+//            }
+//            Yii::$app->authManager->revokeAll($id);
+            $this->findModel($id)->softDelete();
 
             Yii::$app->session->setFlash('success', Yii::t('backend', 'User has been deleted.'));
         }
