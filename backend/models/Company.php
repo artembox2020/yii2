@@ -15,6 +15,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property string $description
  * @property string $website
  * @property string $sub_admin
+ * @property integer $created_at
  * @property bool $is_deleted
  * @property integer $deleted_at
  * @property User[] $users
@@ -82,6 +83,7 @@ class Company extends \yii\db\ActiveRecord
             'img' => Yii::t('backend', 'Img'),
             'description' => Yii::t('backend', 'Description'),
             'website' => Yii::t('backend', 'Website'),
+            'created_at' => Yii::t('backend', 'Date'),
             'sub_admin' => Yii::t('backend', 'Sub Admin'),
         ];
     }

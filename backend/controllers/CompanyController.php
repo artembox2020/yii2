@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\services\mail\MailSender;
 use common\models\User;
 use Yii;
 use backend\models\Company;
@@ -83,13 +84,21 @@ class CompanyController extends Controller
         $model = new Company();
 
         if ($model->load(Yii::$app->request->post())) {
+            $model->created_at = Time();
             $model->is_deleted = false;
             $model->deleted_at = time();
-            $model->save();
+//            $model->save();
             $user = User::findOne($model->sub_admin);
             $user->company_id = $model->id;
-            $user->save();
-
+//            $user->save();
+            $password = $user->userProfile->other;
+            $sendMail = new MailSender();
+            $sendMail->sendInviteToCompany(
+                $user,
+                $model,
+                $password
+            );
+            die;
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

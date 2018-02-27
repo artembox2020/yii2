@@ -19,6 +19,8 @@ class m160101_000009_data extends Migration
             'status' => User::STATUS_ACTIVE,
             'created_at' => time(),
             'updated_at' => time(),
+            'is_deleted' => User::STATUS_INACTIVE,
+            'deleted_at' => time()
         ]);
 
         $this->insert('{{%user_profile}}', [

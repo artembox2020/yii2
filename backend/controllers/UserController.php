@@ -60,7 +60,15 @@ class UserController extends Controller
         $model = new UserForm();
         $model->setScenario('create');
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
+
+            //save password in user_profile.other
+            $user = User::findOne(['email' => $model->email]);
+            $profile = $user->userProfile;
+            $profile->other = $model->password;
+            $profile->save();
+
             return $this->redirect(['index']);
         }
 

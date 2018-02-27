@@ -18,6 +18,7 @@ class m180223_083615_create_company_table extends Migration
             'img' => $this->string(255),
             'description' => $this->text(),
             'website' => $this->string(255),
+            'created_at' => $this->integer(),
             'is_deleted' => $this->boolean(),
             'deleted_at' => $this->integer(),
         ]);

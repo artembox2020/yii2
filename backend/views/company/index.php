@@ -27,7 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'name',
-            'img',
+            [
+                'attribute' => 'img',
+                'format' => 'html',
+                'value' => function ($data) {
+                    return Html::img(Yii::getAlias('@storageUrl/logos/'. $data['img'],['max-width' => '80px']));
+                },
+            ],
             'description:ntext',
             'website',
             //'is_deleted',

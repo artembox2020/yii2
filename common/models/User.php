@@ -252,6 +252,9 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function find()
     {
-        return parent::find()->where(['is_deleted' => false]);
+//        return new UserQuery(get_called_class());
+        return parent::find()->where(['is_deleted' => false])
+            ->andWhere(['status' => User::STATUS_ACTIVE])
+            ->andWhere(['<', '{{%user}}.created_at', time()]);
     }
 }
