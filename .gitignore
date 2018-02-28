@@ -4,4 +4,4 @@ error/access.log
 error/error.log
 storage/logos/
 .env
-Database.php
+Database.php.dist
