@@ -7,10 +7,10 @@ class Database{
 	
 		//Настройки подключения
 		///////////////////////////////////////////////////////////
-		$host = 'mysql314.1gb.ua'; //Хост базы данных
-		$login = 'gbua_testserver'; // Пользователь MySqli
-		$password = 'a51efb9capsg'; // Пароль MySqli
-		$db_name = 'gbua_testserver'; // Имя базы данных
+		$host = 'localhost'; //Хост базы данных
+		$login = 'root'; // Пользователь MySqli
+		$password = 'qqq'; // Пароль MySqli
+		$db_name = 'sens'; // Имя базы данных
 		///////////////////////////////////////////////////////////
 
 		$this->mysqli = new mysqli($host, $login, $password, $db_name);
