@@ -3,3 +3,5 @@ vendor/
 error/access.log
 error/error.log
 storage/logos/
+.env
+Database.php
