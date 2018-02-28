@@ -5,3 +5,4 @@ error/error.log
 storage/logos/
 .env
 Database.php.dist
+Database.php
