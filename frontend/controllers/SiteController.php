@@ -69,10 +69,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        if ($user = User::findOne(Yii::$app->user->id)) {
-            $model = $user->company;
-            $users = $user->company->users;
-        } else {
+        $user = User::findOne(Yii::$app->user->id);
+            if (!empty($user->company)) {
+                $users = $user->company->users;
+                $model = $user->company;
+            } else {
             return $this->redirect('account/sign-in/login');
         }
         return $this->render('index', [
