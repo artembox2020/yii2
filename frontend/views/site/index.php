@@ -1,13 +1,50 @@
 <?php
 
+use yii\helpers\Html;
+use yii\widgets\DetailView;
 /* @var $this yii\web\View */
+/* @var $model frontend\models\Company */
 
-$this->title = Yii::$app->name;
+$this->title = $model->name;
+//$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Companies'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-index">
-    <div class="jumbotron">
-        <h1>Hi!</h1>
+<div class="company-view">
 
-        <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    </div>
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <p>
+        <?= Html::a(Yii::t('frontend', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('frontend', 'Add Employee'), ['add-employee', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+<!--         Html::a(Yii::t('frontend', 'Delete'), ['delete', 'id' => $model->id], [-->
+<!--            'class' => 'btn btn-danger',-->
+<!--            'data' => [-->
+<!--                'confirm' => Yii::t('frontend', 'Are you sure you want to delete this item?'),-->
+<!--                'method' => 'post',-->
+<!--            ],-->
+<!--        ]) -->
+    </p>
+
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'id',
+            'name',
+            [
+                'attribute' => 'img',
+                'format' => 'html',
+                'value' => function ($data) {
+                    return Html::img(Yii::getAlias('@storageUrl/logos/'. $data['img'],['max-width' => '80px']));
+                },
+            ],
+            'description:ntext',
+            'website',
+        ],
+    ]) ?>
+    <b>Юзеры комании:</b>
+    <p>
+        <?php foreach ($users as $user) : ?>
+            <?= $user->username; ?> <br>
+        <?php endforeach; ?>
+    </p>
 </div>

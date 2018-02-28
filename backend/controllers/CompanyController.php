@@ -87,18 +87,18 @@ class CompanyController extends Controller
             $model->created_at = Time();
             $model->is_deleted = false;
             $model->deleted_at = time();
-//            $model->save();
+            $model->save();
+
+            //save relation user with company
             $user = User::findOne($model->sub_admin);
             $user->company_id = $model->id;
-//            $user->save();
+            $user->save();
+
+            // send invite mail
             $password = $user->userProfile->other;
             $sendMail = new MailSender();
-            $sendMail->sendInviteToCompany(
-                $user,
-                $model,
-                $password
-            );
-            die;
+            $sendMail->sendInviteToCompany($user, $model, $password);
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

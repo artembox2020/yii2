@@ -2,7 +2,10 @@
 
 namespace frontend\controllers;
 
+use common\models\User;
 use Yii;
+use yii\filters\AccessControl;
+use yii\filters\auth\HttpBearerAuth;
 use yii\web\Controller;
 use frontend\models\ContactForm;
 use frontend\models\Base;
@@ -17,6 +20,29 @@ use vova07\fileapi\actions\UploadAction as FileAPIUpload;
  */
 class SiteController extends Controller
 {
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['login', 'logout', 'signup'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['login', 'signup'],
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['logout'],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -43,7 +69,16 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        if ($user = User::findOne(Yii::$app->user->id)) {
+            $model = $user->company;
+            $users = $user->company->users;
+        } else {
+            return $this->redirect('account/sign-in/login');
+        }
+        return $this->render('index', [
+            'model' => $model,
+            'users' => $users
+        ]);
     }
 
     /**
@@ -74,7 +109,7 @@ class SiteController extends Controller
      */
     public function actionMntr()
     {
-        if (Yii::$app->user->can('mntr')) {
+//        if (Yii::$app->user->can('mntr')) {
 
             if (Yii::$app->user->can('administrator')) {
                 $devices = Devices::find()->limit(10)->all();
@@ -85,7 +120,7 @@ class SiteController extends Controller
             }
 
             return $this->render('mntr', ['devices' => $devices]);
-        }
+//        }
     }
 
     /**
@@ -95,10 +130,10 @@ class SiteController extends Controller
      */
     public function actionDevices()
     {
-        if (Yii::$app->user->can('devices')) {
+//        if (Yii::$app->user->can('devices')) {
             $devices = Devices::find()->all();
             return $this->render('devices', ['devices' => $devices]);
-        }
+//        }
     }
 
     /**
@@ -108,9 +143,9 @@ class SiteController extends Controller
      */
     public function actionDevice_add()
     {
-        if (Yii::$app->user->can('device_add')) {
+//        if (Yii::$app->user->can('device_add')) {
             return $this->render('adddevice');
-        }
+//        }
     }
 
     /**
@@ -256,7 +291,7 @@ class SiteController extends Controller
      */
     public function actionZurnal()
     {
-        if (Yii::$app->user->can('zurnal')) {
+//        if (Yii::$app->user->can('zurnal')) {
             $dateFrom = strtotime(date('Y-m-01'));
             $dateTo = strtotime(date('Y-m-t')) + 86399;
 
@@ -270,7 +305,7 @@ class SiteController extends Controller
             }
 
             return $this->render('zurnal', ['dateFrom' => $dateFrom, 'dateTo' => $dateTo]);
-        }
+//        }
     }
 
     /**
@@ -280,14 +315,14 @@ class SiteController extends Controller
      */
     public function actionDlogs()
     {
-        if (Yii::$app->user->can('dlogs')) {
+//        if (Yii::$app->user->can('dlogs')) {
             $imei = Yii::$app->request->post('imei', "");
             $type = Yii::$app->request->post('type', "");
 
             $dataProvider = Zlog::get_for_log($imei, $type);
 
             return $this->render('dlogs', ['dataProvider' => $dataProvider]);
-        }
+//        }
     }
 
     /**

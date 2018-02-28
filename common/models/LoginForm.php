@@ -82,7 +82,7 @@ class LoginForm extends Model
     protected function getUser()
     {
         if ($this->user === null) {
-            $this->user = User::find()->andWhere(['and', ['or', ['username' => $this->identity], ['email' => $this->identity]]])->active()->one();
+            $this->user = User::find()->andWhere(['and', ['or', ['username' => $this->identity], ['email' => $this->identity]]])->one();
         }
 
         return $this->user;

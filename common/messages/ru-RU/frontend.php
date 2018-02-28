@@ -114,5 +114,6 @@ return [
     'Companies' => 'Компании',
     'Add Employee' => 'Добавить работника',
     'Access denied' => 'Отказано в доступе',
-    'Update Company: {nameAttribute}' => 'Обновить компанию'
+    'Update Company: {nameAttribute}' => 'Обновить компанию',
+    'Manager' => 'Менеджер'
 ];

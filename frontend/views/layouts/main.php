@@ -32,15 +32,15 @@ AppAsset::register($this);
     <?php
     $brand = Yii::$app->name;
     $brand_url = Yii::$app->homeUrl;
-    if (Yii::$app->user->can('administrator')) {
-    } else {
+//    if (Yii::$app->user->can('administrator')) {
+//    } else {
         if (!empty($user = User::findOne(Yii::$app->user->id))) {
             if (!empty($user->company)) {
                 $company = $user->company;
                 $brand = $company->name;
             }
-            $brand_url = Yii::$app->homeUrl . '/company/view?id=' . $company->id;
-        }
+//            $brand_url = Yii::$app->homeUrl . '/company/view?id=' . $company->id;
+//        }
     }
     NavBar::begin([
         'brandLabel' => $brand,
@@ -49,46 +49,46 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems = [
-        [
-            'label' => Yii::t('frontend', 'Users'),
-            'url' => ['/account/default/users'],
-            'visible' => Yii::$app->user->can('administrator'),
-        ],
-        [
-            'label' => Yii::t('frontend', 'Monitoring'),
-            'url' => ['/site/mntr'],
-            'visible' => Yii::$app->user->can('mntr'),
-        ],
-        [
-            'label' => Yii::t('frontend', 'DevManager'),
-            'url' => ['/site/devices'],
-            'visible' => Yii::$app->user->can('devices'),
-        ],
-        [
-            'label' => Yii::t('frontend', 'Zurnal'),
-            'url' => ['/site/zurnal'],
-            'visible' => Yii::$app->user->can('zurnal'),
-        ],
-        [
-            'label' => Yii::t('frontend', 'Dlogs'),
-            'url' => ['/site/dlogs'],
-            'visible' => Yii::$app->user->can('dlogs'),
-        ],
-        [
-            'label' => 'Ещё',
-            'url' => '#',
-            'visible' => Yii::$app->user->can('administrator'),
-            'items' => [
-                [
-                    'label' => 'Менеджер организаций',
-                    'url' => ['/company'],
-                    'visible' => Yii::$app->user->can('administrator'),
-                ],
-            ],
-        ],
-
-    ];
+//    $menuItems = [
+////        [
+////            'label' => Yii::t('frontend', 'Users'),
+////            'url' => ['/account/default/users'],
+//////            'visible' => Yii::$app->user->can('administrator'),
+////        ],
+//        [
+//            'label' => Yii::t('frontend', 'Monitoring'),
+//            'url' => ['/site/mntr'],
+////            'visible' => Yii::$app->user->can('mntr'),
+//        ],
+//        [
+//            'label' => Yii::t('frontend', 'DevManager'),
+//            'url' => ['/site/devices'],
+////            'visible' => Yii::$app->user->can('devices'),
+//        ],
+//        [
+//            'label' => Yii::t('frontend', 'Zurnal'),
+//            'url' => ['/site/zurnal'],
+////            'visible' => Yii::$app->user->can('zurnal'),
+//        ],
+//        [
+//            'label' => Yii::t('frontend', 'Dlogs'),
+//            'url' => ['/site/dlogs'],
+////            'visible' => Yii::$app->user->can('dlogs'),
+//        ],
+////        [
+////            'label' => 'Ещё',
+////            'url' => '#',
+//////            'visible' => Yii::$app->user->can('administrator'),
+////            'items' => [
+////                [
+////                    'label' => 'Менеджер организаций',
+////                    'url' => ['/company'],
+//////                    'visible' => Yii::$app->user->can('administrator'),
+////                ],
+////            ],
+////        ],
+//
+//    ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => Yii::t('frontend', 'Login'), 'url' => ['/account/sign-in/login']];
     } else {
@@ -96,17 +96,53 @@ AppAsset::register($this);
         foreach ($role as $key => $val) {
             $role_name = $key;
         }
+        $menuItems = [
+//        [
+//            'label' => Yii::t('frontend', 'Users'),
+//            'url' => ['/account/default/users'],
+////            'visible' => Yii::$app->user->can('administrator'),
+//        ],
+            [
+                'label' => Yii::t('frontend', 'Monitoring'),
+                'url' => ['/site/mntr'],
+//            'visible' => Yii::$app->user->can('mntr'),
+            ],
+            [
+                'label' => Yii::t('frontend', 'DevManager'),
+                'url' => ['/site/devices'],
+//            'visible' => Yii::$app->user->can('devices'),
+            ],
+            [
+                'label' => Yii::t('frontend', 'Zurnal'),
+                'url' => ['/site/zurnal'],
+//            'visible' => Yii::$app->user->can('zurnal'),
+            ],
+            [
+                'label' => Yii::t('frontend', 'Dlogs'),
+                'url' => ['/site/dlogs'],
+//            'visible' => Yii::$app->user->can('dlogs'),
+            ],
+];
+
         $menuItems[] = [
-            'label' => $role_name,
+            'label' => Yii::t('frontend', $role_name),
             'url' => '#',
             'items' => [
-                ['label' => Yii::t('frontend', 'Settings'), 'url' => ['/account/default/settings']],
                 [
-                    'label' => Yii::t('frontend', 'Backend'),
-                    'url' => env('BACKEND_URL'),
-                    'linkOptions' => ['target' => '_blank'],
-                    'visible' => Yii::$app->user->can('administrator'),
+                        'label' => Yii::t('frontend', 'Settings'),
+                    'url' => ['/account/default/settings']
                 ],
+                [
+                    'label' => Yii::t('frontend', 'Users'),
+                    'url' => ['/account/default/users'],
+//            'visible' => Yii::$app->user->can('administrator'),
+                ],
+//                [
+//                        'label' => Yii::t('frontend', 'Backend'),
+//                    'url' => env('BACKEND_URL'),
+//                    'linkOptions' => ['target' => '_blank'],
+////                    'visible' => Yii::$app->user->can('administrator'),
+//                ],
                 [
                     'label' => Yii::t('frontend', 'Logout'),
                     'url' => ['/account/sign-in/logout'],

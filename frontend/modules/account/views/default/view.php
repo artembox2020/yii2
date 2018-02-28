@@ -46,12 +46,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => $profile->gender == UserProfile::GENDER_MALE ? Yii::t('frontend', 'Male') : Yii::t('frontend', 'Female'),
                 'visible' => $profile->gender !== null,
             ],
-            [
-                'attribute' => Yii::t('frontend', 'Website'),
-                'format' => 'raw',
-                'value' => Html::a($profile->website, $profile->website, ['target'=>'_blank']),
-                'visible' => $profile->website !== null,
-            ],
+//            [
+//                'attribute' => Yii::t('frontend', 'Website'),
+//                'format' => 'raw',
+//                'value' => Html::a($profile->website, $profile->website, ['target'=>'_blank']),
+//                'visible' => $profile->website !== null,
+//            ],
             [
                 'attribute' => Yii::t('frontend', 'Other'),
                 'value' => $profile->other,
