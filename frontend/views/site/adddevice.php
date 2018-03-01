@@ -101,7 +101,7 @@
         if(im.length > 2){
             $.ajax({
                 type: 'GET',
-                url: '/frontend/site/savedevice',
+                url: '/site/savedevice',
                 cache: false,
                 data: data,
                 success: function (datar) {
@@ -110,7 +110,7 @@
                         $('#nw-add-f').show(90000);
                         $('#nw-add-dev-form').trigger('reset');
                         $('#nw-ress').prepend('<div class="alert alert-success">'+datar+'</div>');
-						location.href = '/frontend/site/devices';
+						location.href = '/site/devices';
                     }
                 }
             });            

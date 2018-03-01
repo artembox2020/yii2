@@ -26,7 +26,7 @@ use yii\helpers\Url;
 				</td> 
 				<td>
                 <?php if(Yii::$app->user->can('edit_dev')){ ?>
-                    <a href="/frontend/site/dev?id=<?=$device->id?>" ><i class="fa fa-cogs" aria-hidden="true"></i> </a>
+                    <a href="/site/dev?id=<?=$device->id?>" ><i class="fa fa-cogs" aria-hidden="true"></i> </a>
                 ....
 				<?php } ?>
                     <a href="/frontend/site/price&imei=<?=$device->id_dev?>" > <i class="fa fa-usd" aria-hidden="true"> </i> </a>

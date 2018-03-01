@@ -74,15 +74,15 @@ $config = [
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
 //            One more suggestion is to use port "465" and encryption as "ssl" instead of port "587", encryption "tls".
-//            'transport' => [
-//                'class' => 'Swift_SmtpTransport',
-//                'host' => 'smtp.gmail.com',
-//                'username' => 'sense.servers@gmail.com',
-//                'password' => 'senseserver010203',
-//                'port' => '587',
-//                'encryption' => 'tls',
-//            ],
-            'useFileTransport' => true,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.gmail.com',
+                'username' => 'sense.servers@gmail.com',
+                'password' => 'senseserver010203',
+                'port' => '587',
+                'encryption' => 'tls',
+            ],
+            'useFileTransport' => false,
         ],
         'cache' => [
             'class' => YII_ENV_DEV ? 'yii\caching\DummyCache' : 'yii\caching\FileCache',
