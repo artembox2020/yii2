@@ -4,8 +4,10 @@ namespace backend\models;
 
 use Yii;
 use yii\base\Model;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use common\models\User;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * Create user form.

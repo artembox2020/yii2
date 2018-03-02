@@ -74,8 +74,10 @@ class SiteController extends Controller
                 $users = $user->company->users;
                 $model = $user->company;
             } else {
+
             return $this->redirect('account/sign-in/login');
         }
+
         return $this->render('index', [
             'model' => $model,
             'users' => $users
@@ -108,7 +110,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionMntr()
+        public function actionMntr()
     {
 //        if (Yii::$app->user->can('mntr')) {
 
