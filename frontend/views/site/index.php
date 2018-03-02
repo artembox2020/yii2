@@ -45,7 +45,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <b>Юзеры комании:</b>
     <p>
         <?php foreach ($users as $user) : ?>
-            <?= $user->username; ?> <br>
+            <?= $user->username . ' ' .
+            Yii::t('frontend','Role') . ': ' .
+            Yii::t('frontend', $user->getUserRoleName()); ?> <br>
         <?php endforeach; ?>
     </p>
 </div>

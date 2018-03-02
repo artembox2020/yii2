@@ -115,5 +115,7 @@ return [
     'Add Employee' => 'Добавить работника',
     'Access denied' => 'Отказано в доступе',
     'Update Company: {nameAttribute}' => 'Обновить компанию',
-    'Manager' => 'Менеджер'
+    'Manager' => 'Менеджер',
+    'Role not defined' => 'Роль не определена',
+    'Role' => 'Роль',
 ];

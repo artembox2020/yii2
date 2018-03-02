@@ -257,4 +257,19 @@ class User extends ActiveRecord implements IdentityInterface
             ->andWhere(['status' => User::STATUS_ACTIVE])
             ->andWhere(['<', '{{%user}}.created_at', time()]);
     }
+
+    /**
+     * @param User $id
+     * @return string|\yii\rbac\Role
+     */
+    public function getUserRoleName(): string
+    {
+        if (!empty(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id))) {
+            foreach (Yii::$app->authManager->getRolesByUser(Yii::$app->user->id) as $role) {
+                return $role->description;
+            }
+        }
+
+        return $role = 'Role not defined';
+    }
 }

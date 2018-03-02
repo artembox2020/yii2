@@ -124,6 +124,10 @@ AppAsset::register($this);
             ],
 ];
 
+        if (empty($role_name)) {
+            $role_name = Yii::t('frontend', 'role not defined');
+        }
+
         $menuItems[] = [
             'label' => Yii::t('frontend', $role_name),
             'url' => '#',
