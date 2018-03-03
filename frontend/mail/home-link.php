@@ -9,6 +9,6 @@ use yii\helpers\Url;
 ?>
     <!--    <h2>This message allows you to visit our site home page by one click</h2>-->
 <?//= Html::a('Go to home page', Url::home('http')) ?>
-    Вы приглашены в компанию <br>
+
     Инвайт: <?= $textBody[1]; ?><br>
     Ваш пароль: <?= $textBody[0]; ?>

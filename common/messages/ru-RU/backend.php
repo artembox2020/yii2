@@ -57,6 +57,7 @@ return [
     'Fixed backend layout' => 'Фиксированный шаблон панели управления',
     'Flush' => 'Сбросить',
     'Frontend maintenance mode' => 'Сервисный режим фронтенд части',
+    'financier' => 'Финансы',
     'Invalidate tag' => 'Сбросить тег',
     'Key' => 'Ключ',
     'Key storage' => 'Хранилище ключей',
@@ -90,6 +91,7 @@ return [
     'Tag' => 'Тег',
     'TagDependency was invalidated.' => 'TagDependency был инвалидирован.',
     'Tags' => 'Теги',
+    'technician' => 'Техник',
     'Update' => 'Редактировать',
     'Update article category: {title}' => 'Редактировать категорию статей: {title}',
     'Update article: {title}' => 'Редактировать статью: {title}',
@@ -114,5 +116,5 @@ return [
     'Add Employee' => 'Добавить работника',
     'Basket' => 'Корзина',
     'Restore' => 'Восстановить',
-    'Date' => 'Дата',
+    'Date' => 'Дата'
 ];

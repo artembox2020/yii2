@@ -2,6 +2,9 @@
 
 namespace frontend\modules\account\controllers;
 
+use backend\services\mail\MailSender;
+use backend\models\Company;
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -168,13 +171,43 @@ class DefaultController extends Controller
         $model = new UserForm();
         $model->setScenario('create');
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
+            $manager = User::findOne(Yii::$app->user->id);
+            $user = User::findOne(['email' => $model->email]);
+            $user->company_id = $manager->company_id;
+            $user->save();
+            $profile = $user->userProfile;
+            $profile->other = $model->password;
+
+//            Debugger::dd($user->company_id);
+            $profile->save();
+
+            // send invite mail
+            $password = $user->userProfile->other;
+            $sendMail = new MailSender();
+            $company = Company::findOne(['id' => $manager->company_id]);
+            $sendMail->sendInviteToCompany($user, $company, $password);
+
+            Yii::$app->session->setFlash('success', Yii::t('backend', 'Send '. $model->username .' invite'));
+
+            return $this->redirect(['users']);
         }
 
+        $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
+
+        unset($roles[array_search('administrator', $roles)]);
+        unset($roles[array_search('manager', $roles)]);
+        unset($roles[array_search('user', $roles)]);
+
+        foreach ($roles as $key => $role) {
+            $roles[$key] = Yii::t('backend', $role);
+        }
+
+        $model->status = 1;
         return $this->render('create', [
             'model' => $model,
-            'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+            'roles' => $roles
         ]);
     }
 }

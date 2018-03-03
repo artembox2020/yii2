@@ -27,6 +27,7 @@ return [
     'Check your email for further instructions.' => 'Проверьте ваш email.',
     'Confirm password' => 'Подтвердите пароль',
     'Contact' => 'Контакты',
+    'Create user' => 'Создать пользователя',
     'Email' => '',
     'Error activate your account.' => 'Ошибка активации аккаунта.',
     'Female' => 'Женский',
@@ -118,4 +119,6 @@ return [
     'Manager' => 'Менеджер',
     'Role not defined' => 'Роль не определена',
     'Role' => 'Роль',
+    'Roles' => 'Роли',
+    'Permissions' => 'Правила'
 ];

@@ -10,7 +10,7 @@ use yii\bootstrap\Html;
 /* @var $permissions yii\rbac\Permission[] */
 
 $this->title = Yii::t('backend', 'Create user');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['users']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-create">
@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status')->checkbox(['label' => Yii::t('backend', 'Activate')]) ?>
+    <?= $form->field($model, 'status')->checkbox(['label' => Yii::t('backend', 'Activate'), 'checked' => true]) ?>
 
     <?= $form->field($model, 'roles')->checkboxList($roles) ?>
 

@@ -38,6 +38,8 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 3;
 
     const ROLE_USER = 'user';
+    const ROLE_FINANCIER = 'financier';
+    const ROLE_TECHNICIAN = 'technician';
     const ROLE_MANAGER = 'manager';
     const ROLE_ADMINISTRATOR = 'administrator';
 

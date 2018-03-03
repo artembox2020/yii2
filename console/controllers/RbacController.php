@@ -23,10 +23,21 @@ class RbacController extends Controller
         $ownModelRule = new OwnModelRule();
         $auth->add($ownModelRule);
 
+        $manager = $auth->createRole(User::ROLE_FINANCIER);
+        $manager->description = 'Financier';
+        $auth->add($manager);
+        $auth->addChild($manager, $user);
+
+        $manager = $auth->createRole(User::ROLE_TECHNICIAN);
+        $manager->description = 'Technician';
+        $auth->add($manager);
+        $auth->addChild($manager, $user);
+
         $manager = $auth->createRole(User::ROLE_MANAGER);
         $manager->description = 'Manager';
         $auth->add($manager);
         $auth->addChild($manager, $user);
+
 
         $loginToBackend = $auth->createPermission('loginToBackend');
         $loginToBackend->description = 'Login to backend';
