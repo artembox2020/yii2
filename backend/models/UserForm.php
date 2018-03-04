@@ -22,6 +22,7 @@ class UserForm extends Model
     public $status;
     public $roles;
     public $company_id;
+    public $other;
 
     private $model;
 
@@ -122,6 +123,7 @@ class UserForm extends Model
             $model->email = $this->email;
             $model->status = $this->status;
             $model->company_id =$this->company_id;
+            $model->other = $this->other;
             $model->is_deleted = self::ZERO;
             $model->deleted_at = self::ZERO;
             if ($this->password) {

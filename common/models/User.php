@@ -27,6 +27,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property integer $action_at
  * @property boolean $is_deleted
  * @property integer $deleted_at
+ * @property string $other
  *
  * @property UserProfile $userProfile
  */
@@ -256,18 +257,18 @@ class User extends ActiveRecord implements IdentityInterface
     {
 //        return new UserQuery(get_called_class());
         return parent::find()->where(['is_deleted' => false])
-            ->andWhere(['status' => User::STATUS_ACTIVE])
-            ->andWhere(['<', '{{%user}}.created_at', time()]);
+            ->andWhere(['status' => User::STATUS_ACTIVE]);
+//            ->andWhere(['<', '{{%user}}.created_at', time()]);
     }
 
     /**
      * @param User $id
      * @return string|\yii\rbac\Role
      */
-    public function getUserRoleName(): string
+    public function getUserRoleName($id): string
     {
-        if (!empty(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id))) {
-            foreach (Yii::$app->authManager->getRolesByUser(Yii::$app->user->id) as $role) {
+        if (!empty(Yii::$app->authManager->getRolesByUser($id))) {
+            foreach (Yii::$app->authManager->getRolesByUser($id) as $role) {
                 return $role->description;
             }
         }

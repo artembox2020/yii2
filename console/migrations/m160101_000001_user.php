@@ -25,7 +25,8 @@ class m160101_000001_user extends Migration
             'updated_at' => $this->integer(),
             'action_at' => $this->integer(),
             'deleted_at' => $this->integer(),
-            'is_deleted' => $this->boolean()
+            'is_deleted' => $this->boolean(),
+            'other' => $this->string(255)
         ], $tableOptions);
 
         $this->createTable('{{%user_profile}}', [

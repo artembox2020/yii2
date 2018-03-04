@@ -95,7 +95,7 @@ class CompanyController extends Controller
             $user->save();
 
             // send invite mail
-            $password = $user->userProfile->other;
+            $password = $user->other;
             $sendMail = new MailSender();
             $sendMail->sendInviteToCompany($user, $model, $password);
 

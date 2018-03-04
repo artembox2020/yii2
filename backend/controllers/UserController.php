@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -61,14 +62,9 @@ class UserController extends Controller
         $model->setScenario('create');
 
         if ($model->load(Yii::$app->request->post())) {
+//            $model->other = $model->password;
             $model->save();
-
-            //save password in user_profile.other
-            $user = User::findOne(['email' => $model->email]);
-            $profile = $user->userProfile;
-            $profile->other = $model->password;
-            $profile->save();
-
+//            $this->refresh();
             return $this->redirect(['index']);
         }
 

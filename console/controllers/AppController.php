@@ -93,4 +93,12 @@ class AppController extends Controller
             file_put_contents($file, $content);
         }
     }
+
+    public function actionReset()
+    {
+//        Yii::$app->runAction('migrate/down 17', ['interactive' => $this->interactive]);
+        Yii::$app->runAction('migrate/up', ['interactive' => $this->interactive]);
+        Yii::$app->runAction('rbac/init', ['interactive' => $this->interactive]);
+
+    }
 }

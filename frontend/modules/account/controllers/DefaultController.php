@@ -173,18 +173,22 @@ class DefaultController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->save();
+
             $manager = User::findOne(Yii::$app->user->id);
             $user = User::findOne(['email' => $model->email]);
+//            Debugger::dd($manager);
             $user->company_id = $manager->company_id;
+
             $user->save();
+
             $profile = $user->userProfile;
             $profile->other = $model->password;
 
-//            Debugger::dd($user->company_id);
+            $user->save();
             $profile->save();
 
             // send invite mail
-            $password = $user->userProfile->other;
+            $password = $user->other;
             $sendMail = new MailSender();
             $company = Company::findOne(['id' => $manager->company_id]);
             $sendMail->sendInviteToCompany($user, $company, $password);
