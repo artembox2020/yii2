@@ -62,9 +62,9 @@ class UserController extends Controller
         $model->setScenario('create');
 
         if ($model->load(Yii::$app->request->post())) {
-//            $model->other = $model->password;
+            $model->other = $model->password;
+//            Debugger::dd($model->other);
             $model->save();
-//            $this->refresh();
             return $this->redirect(['index']);
         }
 

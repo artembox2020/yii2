@@ -479,7 +479,7 @@ class Parser {
     //Разбоор и запись для мониторинга (пакет инициализации)
     function In1($data) {
         //Сначала записываем файлы логов
-        $murl = $data;
+            $murl = $data;
         
         file_put_contents('log/data.log', PHP_EOL . date("Y-m-d H:m:i:s"), FILE_APPEND);
         file_put_contents('log/data.log', PHP_EOL . $murl, FILE_APPEND);

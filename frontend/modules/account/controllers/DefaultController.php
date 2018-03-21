@@ -168,50 +168,60 @@ class DefaultController extends Controller
      */
     public function actionCreate()
     {
-        $model = new UserForm();
-        $model->setScenario('create');
+        if (Yii::$app->user->can('create_employee')) {
+            $model = new UserForm();
+            $model->setScenario('create');
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->save();
+            if ($model->load(Yii::$app->request->post())) {
+                $model->other = $model->password;
+                $model->save();
 
-            $manager = User::findOne(Yii::$app->user->id);
-            $user = User::findOne(['email' => $model->email]);
-//            Debugger::dd($manager);
-            $user->company_id = $manager->company_id;
+                $manager = User::findOne(Yii::$app->user->id);
+                $user = User::findOne(['email' => $model->email]);
 
-            $user->save();
+                $user->company_id = $manager->company_id;
+                $user->save();
 
-            $profile = $user->userProfile;
-            $profile->other = $model->password;
+                // send invite mail
+                $password = $model->other;
+                $sendMail = new MailSender();
+                $company = Company::findOne(['id' => $manager->company_id]);
+                $user = User::findOne(['email' => $model->email]);
+                $sendMail->sendInviteToCompany($user, $company, $password);
 
-            $user->save();
-            $profile->save();
+                Yii::$app->session->setFlash('success', Yii::t('backend', 'Send ' . $model->username . ' invite'));
 
-            // send invite mail
-            $password = $user->other;
-            $sendMail = new MailSender();
-            $company = Company::findOne(['id' => $manager->company_id]);
-            $sendMail->sendInviteToCompany($user, $company, $password);
+                return $this->redirect(['users']);
+            }
 
-            Yii::$app->session->setFlash('success', Yii::t('backend', 'Send '. $model->username .' invite'));
+            $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
 
-            return $this->redirect(['users']);
+            unset($roles[array_search('administrator', $roles)]);
+            unset($roles[array_search('manager', $roles)]);
+            unset($roles[array_search('user', $roles)]);
+
+            foreach ($roles as $key => $role) {
+                $roles[$key] = Yii::t('backend', $role);
+            }
+
+            $model->status = 1;
+            return $this->render('create', [
+                'model' => $model,
+                'roles' => $roles
+            ]);
+
         }
 
-        $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
-
-        unset($roles[array_search('administrator', $roles)]);
-        unset($roles[array_search('manager', $roles)]);
-        unset($roles[array_search('user', $roles)]);
-
-        foreach ($roles as $key => $role) {
-            $roles[$key] = Yii::t('backend', $role);
-        }
-
-        $model->status = 1;
-        return $this->render('create', [
-            'model' => $model,
-            'roles' => $roles
+        return $this->render ('/denied/access-denied', [
+            $this->accessDenied()
         ]);
+    }
+
+    private function accessDenied()
+    {
+        return Yii::$app->session->setFlash(
+            'error',
+            Yii::t('frontend', 'Access denied')
+        );
     }
 }

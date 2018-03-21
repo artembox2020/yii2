@@ -114,12 +114,15 @@ class SiteController extends Controller
     {
 //        if (Yii::$app->user->can('mntr')) {
 
-            if (Yii::$app->user->can('administrator')) {
+            if( Yii::$app->user->can('administrator')){
                 $devices = Devices::find()->limit(10)->all();
-            } else {
+            }else{
                 $org = Org::get_org_name(Yii::$app->user->id);
                 $brand = $org['name_org'];
-                $devices = Devices::find()->limit(10)->where("`organization` = '" . $org['name_org'] . "'")->all();
+                $devices = Devices::find()
+                    ->limit(10)
+                    ->where("`organization` = '".$org['name_org']."'")
+                    ->all();
             }
 
             return $this->render('mntr', ['devices' => $devices]);
@@ -493,6 +496,17 @@ class SiteController extends Controller
             }
 
         }
+    }
+
+    /**
+     * accessDenied
+     */
+    private function accessDenied()
+    {
+        return Yii::$app->session->setFlash(
+            'error',
+            Yii::t('frontend', 'Access denied')
+        );
     }
 
     /**

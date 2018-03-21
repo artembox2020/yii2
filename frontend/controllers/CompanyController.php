@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\User;
+use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\Company;
 use frontend\models\CompanySearch;
@@ -132,17 +133,17 @@ class CompanyController extends Controller
      * @param $id
      * @return string|\yii\web\Response
      */
-    public function actionUpdate($id)
+    public function actionUpdate()
     {
-        if (Yii::$app->user->can('update_company')) {
-            $model = Company::findOne($id);
+        if (Yii::$app->user->can('company_update')) {
+
+            $user = User::findOne(Yii::$app->user->id);
+            $model = Company::findOne(['id' => $user->company_id]);
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                $user = User::findOne($model->sub_admin);
-                $user->company_id = $model->id;
                 $user->save();
 
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['/']);
             }
 
             return $this->render('update', [

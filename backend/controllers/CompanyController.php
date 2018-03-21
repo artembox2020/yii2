@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\services\mail\MailSender;
 use common\models\User;
+use frontend\services\custom\Debugger;
 use Yii;
 use backend\models\Company;
 use backend\models\CompanySearch;
@@ -96,6 +97,7 @@ class CompanyController extends Controller
 
             // send invite mail
             $password = $user->other;
+//            Debugger::dd($user);
             $sendMail = new MailSender();
             $sendMail->sendInviteToCompany($user, $model, $password);
 
@@ -119,6 +121,11 @@ class CompanyController extends Controller
             $user = User::findOne($model->sub_admin);
             $user->company_id = $model->id;
             $user->save();
+
+            $password = $user->other;
+            $sendMail = new MailSender();
+            $sendMail->sendInviteToCompany($user, $model, $password);
+
 
             return $this->redirect(['view', 'id' => $model->id]);
         }

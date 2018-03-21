@@ -30,10 +30,6 @@ use vova07\fileapi\Widget as FileApi;
 
     <?= $form->field($model, 'website')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'sub_admin')->dropDownList(
-        \yii\helpers\ArrayHelper::map(\common\models\User::find()->all(), 'id', 'username')
-    ) ?>
-
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
