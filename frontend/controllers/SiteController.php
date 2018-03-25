@@ -73,6 +73,8 @@ class SiteController extends Controller
             if (!empty($user->company)) {
                 $users = $user->company->users;
                 $model = $user->company;
+                $balanceHolders = $model->balanceHolders;
+//                var_dump($balanceHolders);die;
             } else {
 
             return $this->redirect('account/sign-in/login');
@@ -80,7 +82,8 @@ class SiteController extends Controller
 
         return $this->render('index', [
             'model' => $model,
-            'users' => $users
+            'users' => $users,
+            'balanceHolders' => $balanceHolders,
         ]);
     }
 

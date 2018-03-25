@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a(Yii::t('frontend', 'Update'), ['/company/update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('frontend', 'Add Employee'), ['/account/default/create', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('frontend', 'Add Balance Holder'), ['/balance-holder', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
 <!--         Html::a(Yii::t('frontend', 'Delete'), ['delete', 'id' => $model->id], [-->
 <!--            'class' => 'btn btn-danger',-->
 <!--            'data' => [-->
@@ -42,12 +43,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'website',
         ],
     ]) ?>
-    <b>Юзеры комании:</b>
+    <b><?= Yii::t('frontend', 'Employees company') ?></b>
     <p>
         <?php foreach ($users as $user) : ?>
             <?= $user->username . ' ' .
             Yii::t('frontend','Role') . ': ' .
             Yii::t('frontend', $user->getUserRoleName($user->id)); ?> <br>
+        <?php endforeach; ?>
+    </p>
+    <b><?= Yii::t('frontend', 'BalanceHolders'); ?></b>
+    <p>
+        <?php foreach ($balanceHolders as $item) : ?>
+            <?= $item->name ?>
         <?php endforeach; ?>
     </p>
 </div>
