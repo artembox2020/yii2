@@ -6,6 +6,7 @@ use yii\widgets\DetailView;
 /* @var $model frontend\models\Company */
 /* @var $users common\models\User */
 
+
 $this->title = $model->name;
 //$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Companies'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -16,8 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('frontend', 'Update'), ['/company/update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('frontend', 'Add Employee'), ['/account/default/create', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('frontend', 'Add Balance Holder'), ['/balance-holder', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
 <!--         Html::a(Yii::t('frontend', 'Delete'), ['delete', 'id' => $model->id], [-->
 <!--            'class' => 'btn btn-danger',-->
 <!--            'data' => [-->
@@ -43,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'website',
         ],
     ]) ?>
-    <b><?= Yii::t('frontend', 'Employees company') ?></b>
+    <b><?= Yii::t('frontend', 'Employees company') ?></b> <?= Html::a(Yii::t('frontend', 'Add Employee'), ['/account/default/create', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
     <p>
         <?php foreach ($users as $user) : ?>
             <?= $user->username . ' ' .
@@ -51,10 +50,18 @@ $this->params['breadcrumbs'][] = $this->title;
             Yii::t('frontend', $user->getUserRoleName($user->id)); ?> <br>
         <?php endforeach; ?>
     </p>
-    <b><?= Yii::t('frontend', 'BalanceHolders'); ?></b>
+    <b><?= Yii::t('frontend', 'BalanceHolders'); ?></b> <?= Html::a(Yii::t('frontend', 'Add Balance Holder'), ['/balance-holder', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
     <p>
         <?php foreach ($balanceHolders as $item) : ?>
             <?= $item->name ?>
+            <?= $item->address ?>
+            tel.<?= $item->phone ?>
+            contact person.<?= $item->contact_person ?> <?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+            <p>
+            <?php foreach ($item->addressBalanceHolders as $address) : ?>
+                <?= $address->address ?>
+            <?php endforeach; ?> <b><?= Html::a(Yii::t('frontend', 'Add Imei'), ['/imei', 'id' => $model->id], ['class' => 'btn btn-success']) ?></b>
+            </p>
         <?php endforeach; ?>
     </p>
 </div>

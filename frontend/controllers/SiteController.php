@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\User;
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\auth\HttpBearerAuth;
@@ -70,11 +71,11 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $user = User::findOne(Yii::$app->user->id);
+
             if (!empty($user->company)) {
                 $users = $user->company->users;
                 $model = $user->company;
                 $balanceHolders = $model->balanceHolders;
-//                var_dump($balanceHolders);die;
             } else {
 
             return $this->redirect('account/sign-in/login');

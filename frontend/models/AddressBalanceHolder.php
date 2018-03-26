@@ -51,7 +51,7 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
             'id' => Yii::t('frontend', 'ID'),
             'name' => Yii::t('frontend', 'Name'),
             'address' => Yii::t('frontend', 'Address'),
-            'balance_holder_id' => Yii::t('frontend', 'Balance Holder ID'),
+            'balance_holder_id' => Yii::t('frontend', 'Balance Holder'),
             'created_at' => Yii::t('frontend', 'Created At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
