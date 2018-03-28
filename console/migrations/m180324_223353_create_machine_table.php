@@ -20,6 +20,7 @@ class m180324_223353_create_machine_table extends Migration
             'imei_id' => $this->integer()->notNull(),
             'num_dev' => $this->integer(),
             'created_at' => $this->integer(),
+            'updated_at' => $this->integer(),
             'is_deleted' => $this->boolean(),
             'deleted_at' => $this->integer()
         ]);

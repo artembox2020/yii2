@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "balance_holder".
@@ -31,6 +32,12 @@ class BalanceHolder extends \yii\db\ActiveRecord
         return 'balance_holder';
     }
 
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className()
+        ];
+    }
     /**
      * @inheritdoc
      */

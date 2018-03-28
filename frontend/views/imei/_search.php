@@ -19,11 +19,31 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'imei') ?>
 
-    <?= $form->field($model, 'floor_id') ?>
+    <?= $form->field($model, 'address_id') ?>
 
-    <?= $form->field($model, 'created_at') ?>
+    <?= $form->field($model, 'type_packet') ?>
 
-    <?= $form->field($model, 'is_deleted') ?>
+    <?= $form->field($model, 'imei_central_board') ?>
+
+    <?php // echo $form->field($model, 'firmware_version') ?>
+
+    <?php // echo $form->field($model, 'type_bill_acceptance') ?>
+
+    <?php // echo $form->field($model, 'serial_number_kp') ?>
+
+    <?php // echo $form->field($model, 'phone_module_number') ?>
+
+    <?php // echo $form->field($model, 'crash_event_sms') ?>
+
+    <?php // echo $form->field($model, 'critical_amount') ?>
+
+    <?php // echo $form->field($model, 'time_out') ?>
+
+    <?php // echo $form->field($model, 'created_at') ?>
+
+    <?php // echo $form->field($model, 'update_at') ?>
+
+    <?php // echo $form->field($model, 'is_deleted') ?>
 
     <?php // echo $form->field($model, 'deleted_at') ?>
 

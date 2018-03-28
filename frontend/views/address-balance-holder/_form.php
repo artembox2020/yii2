@@ -1,13 +1,12 @@
 <?php
 
-use common\models\User;
 use frontend\models\BalanceHolder;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AddressBalanceHolder */
-/* @var $balanceHolders frontend\models\BalanceHolder */
+/* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -19,8 +18,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'floor')->textInput() ?>
+
     <?= $form->field($model, 'balance_holder_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($balanceHolders, 'id', 'name')
+            \yii\helpers\ArrayHelper::map($balanceHolder, 'id', 'name')
     ) ?>
 
     <div class="form-group">

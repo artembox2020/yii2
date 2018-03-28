@@ -70,7 +70,7 @@ class AddressBalanceHolderController extends Controller
         $user = User::findOne(Yii::$app->user->id);
         $users = $user->company->users;
         $company = $user->company;
-        $balanceHolders = $company->balanceHolders;
+        $balanceHolder = $company->balanceHolders;
 
         if ($model->load(Yii::$app->request->post())  && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -78,7 +78,7 @@ class AddressBalanceHolderController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'balanceHolders' => $balanceHolders
+            'balanceHolder' => $balanceHolder
         ]);
     }
 

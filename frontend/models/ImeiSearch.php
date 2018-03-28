@@ -18,8 +18,8 @@ class ImeiSearch extends Imei
     public function rules()
     {
         return [
-            [['id', 'imei', 'floor_id', 'created_at', 'deleted_at'], 'integer'],
-            [['is_deleted'], 'safe'],
+            [['id', 'imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms', 'is_deleted'], 'safe'],
         ];
     }
 
@@ -61,12 +61,22 @@ class ImeiSearch extends Imei
         $query->andFilterWhere([
             'id' => $this->id,
             'imei' => $this->imei,
-            'floor_id' => $this->floor_id,
+            'address_id' => $this->address_id,
+            'imei_central_board' => $this->imei_central_board,
+            'critical_amount' => $this->critical_amount,
+            'time_out' => $this->time_out,
             'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
         ]);
 
-        $query->andFilterWhere(['like', 'is_deleted', $this->is_deleted]);
+        $query->andFilterWhere(['like', 'type_packet', $this->type_packet])
+            ->andFilterWhere(['like', 'firmware_version', $this->firmware_version])
+            ->andFilterWhere(['like', 'type_bill_acceptance', $this->type_bill_acceptance])
+            ->andFilterWhere(['like', 'serial_number_kp', $this->serial_number_kp])
+            ->andFilterWhere(['like', 'phone_module_number', $this->phone_module_number])
+            ->andFilterWhere(['like', 'crash_event_sms', $this->crash_event_sms])
+            ->andFilterWhere(['like', 'is_deleted', $this->is_deleted]);
 
         return $dataProvider;
     }

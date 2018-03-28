@@ -19,8 +19,10 @@ class m180324_203706_create_address_balance_holder_table extends Migration
             'id' => $this->primaryKey(),
             'name' => $this->string(255),
             'address' => $this->string(255),
+            'floor' => $this->integer(11),
             'balance_holder_id' => $this->integer()->notNull(),
             'created_at' => $this->integer(),
+            'updated_at' => $this->integer(),
             'is_deleted' => $this->boolean(),
             'deleted_at' => $this->integer()
         ]);

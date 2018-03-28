@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\Imei;
 use frontend\models\ImeiSearch;

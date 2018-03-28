@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "address_balance_holder".
@@ -10,13 +11,15 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string $address
+ * @property int $floor
  * @property int $balance_holder_id
  * @property int $created_at
+ * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
  *
  * @property BalanceHolder $balanceHolder
- * @property Floor[] $floors
+ * @property Imei[] $imeis
  */
 class AddressBalanceHolder extends \yii\db\ActiveRecord
 {
@@ -28,14 +31,21 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
         return 'address_balance_holder';
     }
 
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className()
+        ];
+    }
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
+            [['floor', 'balance_holder_id', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['balance_holder_id'], 'required'],
-            [['balance_holder_id', 'created_at', 'deleted_at'], 'integer'],
             [['name', 'address'], 'string', 'max' => 255],
             [['is_deleted'], 'string', 'max' => 1],
             [['balance_holder_id'], 'exist', 'skipOnError' => true, 'targetClass' => BalanceHolder::className(), 'targetAttribute' => ['balance_holder_id' => 'id']],
@@ -51,8 +61,10 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
             'id' => Yii::t('frontend', 'ID'),
             'name' => Yii::t('frontend', 'Name'),
             'address' => Yii::t('frontend', 'Address'),
-            'balance_holder_id' => Yii::t('frontend', 'Balance Holder'),
+            'floor' => Yii::t('frontend', 'Floor'),
+            'balance_holder_id' => Yii::t('frontend', 'Balance Holder ID'),
             'created_at' => Yii::t('frontend', 'Created At'),
+            'updated_at' => Yii::t('frontend', 'Updated At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
         ];
@@ -69,8 +81,8 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFloors()
+    public function getImeis()
     {
-        return $this->hasMany(Floor::className(), ['address_balance_holder_id' => 'id']);
+        return $this->hasMany(Imei::className(), ['address_id' => 'id']);
     }
 }

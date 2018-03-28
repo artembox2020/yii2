@@ -2,9 +2,11 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
 /* @var $users common\models\User */
+/* @var $balanceHolders  */
 
 
 $this->title = $model->name;
@@ -59,9 +61,24 @@ $this->params['breadcrumbs'][] = $this->title;
             contact person.<?= $item->contact_person ?> <?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
             <p>
             <?php foreach ($item->addressBalanceHolders as $address) : ?>
+                <?php $form =  ActiveForm::begin([
+                    'action' => '/imei/create'
+                ]) ?>
                 <?= $address->address ?>
-            <?php endforeach; ?> <b><?= Html::a(Yii::t('frontend', 'Add Imei'), ['/imei', 'id' => $model->id], ['class' => 'btn btn-success']) ?></b>
+                Этаж: <?= $address->floor ?>
+                <?=  Html::hiddenInput('address_id', $address->id); ?>
+                <?= Html::submitButton(Yii::t('frontend', 'Add IMEI'), ['class' => 'btn btn-success']) ?><br>
+                <?php ActiveForm::end(); ?>
+                <?php foreach ($address->imeis as $imei) : ?>
+                    IMEI: <?= $imei->imei ?>
+                    <?php if (!empty($imei->firmware_version)) : ?>
+                    <?php echo '<b>init: ok</b>'; ?>
+                    <?php endif; ?><br>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+
             </p>
         <?php endforeach; ?>
+
     </p>
 </div>

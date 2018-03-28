@@ -25,6 +25,7 @@ return [
     'Add Address' => 'Добавить Адрес',
     'AddressBalanceHolders' => 'Адрес балансодержателя',
     'address' => 'адрес',
+    'Add IMEI' => 'Добавить IMEI',
     'Create Address Balance Holder' => 'Создать адрес',
     'Backend' => 'Панель управления',
     'Birthday' => 'День рождения',

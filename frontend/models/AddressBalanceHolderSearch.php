@@ -18,7 +18,7 @@ class AddressBalanceHolderSearch extends AddressBalanceHolder
     public function rules()
     {
         return [
-            [['id', 'balance_holder_id', 'created_at', 'deleted_at'], 'integer'],
+            [['id', 'floor', 'balance_holder_id', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['name', 'address', 'is_deleted'], 'safe'],
         ];
     }
@@ -60,8 +60,10 @@ class AddressBalanceHolderSearch extends AddressBalanceHolder
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'floor' => $this->floor,
             'balance_holder_id' => $this->balance_holder_id,
             'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
         ]);
 

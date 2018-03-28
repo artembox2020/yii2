@@ -21,6 +21,7 @@ class m180324_201252_create_balance_holder_table extends Migration
             'contact_person' => $this->string(255),
             'company_id' => $this->integer(),
             'created_at' => $this->integer(),
+            'updated_at' => $this->integer(),
             'is_deleted' => $this->boolean(),
             'deleted_at' => $this->integer()
         ]);

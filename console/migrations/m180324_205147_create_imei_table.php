@@ -6,7 +6,7 @@ use yii\db\Migration;
  * Handles the creation of table `imei`.
  * Has foreign keys to the tables:
  *
- * - `floor`
+ * - `address_balance_holder`
  */
 class m180324_205147_create_imei_table extends Migration
 {
@@ -17,26 +17,36 @@ class m180324_205147_create_imei_table extends Migration
     {
         $this->createTable('imei', [
             'id' => $this->primaryKey(),
-            'imei' => $this->integer(255),
-            'floor_id' => $this->integer()->notNull(),
+            'imei' => $this->string(255),
+            'address_id' => $this->integer()->notNull(),
+            'type_packet' => $this->string(),
+            'imei_central_board' => $this->string(255),
+            'firmware_version' => $this->string(),
+            'type_bill_acceptance' => $this->string(),
+            'serial_number_kp' => $this->string(),
+            'phone_module_number' => $this->string(),
+            'crash_event_sms' => $this->string(),
+            'critical_amount' => $this->integer(),
+            'time_out' => $this->integer(),
             'created_at' => $this->integer(),
+            'updated_at' => $this->integer(),
             'is_deleted' => $this->boolean(),
             'deleted_at' => $this->integer()
         ]);
 
-        // creates index for column `floor_id`
+        // creates index for column `address_id`
         $this->createIndex(
-            'idx-imei-floor_id',
+            'idx-imei-address_id',
             'imei',
-            'floor_id'
+            'address_id'
         );
 
-        // add foreign key for table `floor`
+        // add foreign key for table `address_balance_holder`
         $this->addForeignKey(
-            'fk-imei-floor_id',
+            'fk-imei-address_id',
             'imei',
-            'floor_id',
-            'floor',
+            'address_id',
+            'address_balance_holder',
             'id',
             'CASCADE'
         );
@@ -47,15 +57,15 @@ class m180324_205147_create_imei_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `floor`
+        // drops foreign key for table `address_balance_holder`
         $this->dropForeignKey(
-            'fk-imei-floor_id',
+            'fk-imei-address_id',
             'imei'
         );
 
-        // drops index for column `floor_id`
+        // drops index for column `address_id`
         $this->dropIndex(
-            'idx-imei-floor_id',
+            'idx-imei-address_id',
             'imei'
         );
 

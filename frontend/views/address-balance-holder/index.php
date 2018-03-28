@@ -28,8 +28,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'address',
+            'floor',
             'balance_holder_id',
-            'created_at',
+            //'created_at',
+            //'updated_at',
             //'is_deleted',
             //'deleted_at',
 
