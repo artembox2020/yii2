@@ -13,6 +13,8 @@ class CController extends Controller
 
     public function actionI($p)
     {
+        $arrOut = array();
+
         $column = [
             'imei',
             'firmware_version',
@@ -23,11 +25,13 @@ class CController extends Controller
             'critical_amount',
             'time_out'
         ];
+
         $array = array_map("str_getcsv", explode('*', $p));
-        $arrOut = array();
+
         foreach ($array as $subArr) {
             $arrOut = array_merge($arrOut, $subArr);
         }
+
         $result = array_combine($column, $arrOut);
 
         $initDto = new ImeiInitDto($result);
@@ -43,6 +47,7 @@ class CController extends Controller
             $imei->crash_event_sms = $initDto->crash_event_sms;
             $imei->critical_amount = $initDto->critical_amount;
             $imei->time_out = $initDto->time_out;
+            $imei->updated_at = date('now');
             $imei->update();
             echo 'Success!';
         }
