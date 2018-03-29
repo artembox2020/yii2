@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\models\dto\ImeiInitDto;
 use frontend\models\Imei;
+use Yii;
 use yii\web\Controller;
 
 class CController extends Controller
@@ -42,7 +43,7 @@ class CController extends Controller
             $imei->crash_event_sms = $initDto->crash_event_sms;
             $imei->critical_amount = $initDto->critical_amount;
             $imei->time_out = $initDto->time_out;
-            $imei->save();
+            $imei->update();
             echo 'Success!';
         }
     }

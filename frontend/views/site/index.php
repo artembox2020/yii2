@@ -72,8 +72,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php foreach ($address->imeis as $imei) : ?>
                     IMEI: <?= $imei->imei ?>
                     <?php if (!empty($imei->firmware_version)) : ?>
-                    <?php echo '<b>init: ok</b>'; ?>
+                    <?php echo '<b>init: ok</b>'; ?> <?= date('d.m.Y h:i:s', $imei->updated_at); ?>
                     <?php endif; ?><br>
+                <hr>
                 <?php endforeach; ?>
             <?php endforeach; ?>
 
