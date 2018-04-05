@@ -4,7 +4,9 @@ namespace frontend\controllers;
 
 use yii\web\Controller;
 use frontend\models\Imei;
+use frontend\models\dto\DcDto;
 use frontend\models\dto\DmDto;
+use frontend\models\dto\GdDto;
 use frontend\models\dto\WmDto;
 use frontend\models\dto\ImeiDataDto;
 use frontend\models\dto\ImeiInitDto;
@@ -156,6 +158,22 @@ class CController extends Controller
                 Debugger::d($dm_mashine);
             }
         }
+
+        if (array_key_exists('GD', $data)) {
+            foreach ($data['GD'] as $key => $value) {
+                $gd_mashine = new GdDto($this->setGd($data['GD'][$key]));
+                // $mashine->save();
+                Debugger::d($gd_mashine);
+            }
+        }
+
+        if (array_key_exists('DC', $data)) {
+            foreach ($data['DC'] as $key => $value) {
+                $gd_mashine = new DcDto($this->setDC($data['DC'][$key]));
+                // $mashine->save();
+                Debugger::d($gd_mashine);
+            }
+        }
     }
 
     public function setWM($data)
@@ -183,6 +201,34 @@ class CController extends Controller
             'type_mashine',
             'number_device',
             'level_signal',
+            'bill_cash',
+            'status',
+        ];
+
+        return $result = array_combine($array_fields, $data);
+    }
+
+    public function setGd($data)
+    {
+        $array_fields = array();
+
+        $array_fields = [
+            'type_mashine',
+            'gel_in_tank',
+            'bill_cash',
+            'status',
+        ];
+
+        return $result = array_combine($array_fields, $data);
+    }
+
+    public function setDC($data)
+    {
+        $array_fields = array();
+
+        $array_fields = [
+            'type_mashine',
+            'sum_cards',
             'bill_cash',
             'status',
         ];
