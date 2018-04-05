@@ -4,10 +4,12 @@ namespace frontend\controllers;
 
 use yii\web\Controller;
 use frontend\models\Imei;
+use frontend\models\ImeiData;
 use frontend\models\dto\DcDto;
 use frontend\models\dto\DmDto;
 use frontend\models\dto\GdDto;
 use frontend\models\dto\WmDto;
+use frontend\models\WmMashine;
 use frontend\models\dto\ImeiDataDto;
 use frontend\models\dto\ImeiInitDto;
 use frontend\services\custom\Debugger;
@@ -16,6 +18,10 @@ use frontend\services\custom\Debugger;
 class CController extends Controller
 {
     const TYPE_PACKET = 'p';
+    const TYPE_WM = 'WM';
+    const TYPE_DM = 'DM';
+    const TYPE_DC = 'DC';
+    const TYPE_GD = 'GD';
 
     /**
      * Undocumented function
@@ -94,12 +100,26 @@ class CController extends Controller
         }
 
         $result = $this->setImeiData($imeiData);
+
+        $imeiDataDto = new ImeiDataDto($result);
+        $imeiData = new ImeiData();
+        $imei = Imei::findOne(['imei' => $imeiDataDto->imei]);
+        $imeiData->imei_id = $imei->id;
+        $imeiData->created_at = $imeiDataDto->date;
+        $imeiData->imei = $imeiDataDto->imei;
+        $imeiData->level_signal = $imeiDataDto->level_signal;
+        $imeiData->on_modem_account = $imeiDataDto->on_modem_account;
+        $imeiData->in_banknotes = $imeiDataDto->in_banknotes;
+        $imeiData->money_in_banknotes = $imeiDataDto->money_in_banknotes;
+        $imeiData->fireproof_residue = $imeiDataDto->fireproof_residue;
+        $imeiData->price_regim = $imeiDataDto->price_regim;
+        $imeiData->save();
+        // Debugger::dd($imeiData->imei_id);
+        $imeiDataId = ImeiData::findOne(['imei' => $imeiDataDto->imei]);
+
         // $result = $this->setImeiData($imeiData);
-        $mashine = $this->setTypeMashine($mashineData);
+        $mashine = $this->setTypeMashine($mashineData, $imeiData->id);
         // $mashineDto = new WmDto($mashine);
-
-        $imeiData = new ImeiDataDto($result);
-
         // Debugger::d($imeiData);
         // Debugger::d($mashine);
     }
@@ -117,7 +137,7 @@ class CController extends Controller
             'in_banknotes',
             'money_in_banknotes',
             'fireproof_residue',
-            'price_regime',
+            'price_regim',
             'time_out'
         ];
 
@@ -141,37 +161,49 @@ class CController extends Controller
         return $result = array_combine($array_fields, $data);
     }
 
-    public function setTypeMashine($data)
+    public function setTypeMashine($data, $id)
     {
-        if (array_key_exists('WM', $data)) {
-            foreach ($data['WM'] as $key => $value) {
-                $wm_mashine = new WmDto($this->setWM($data['WM'][$key]));
+        if (array_key_exists(self::TYPE_WM, $data)) {
+            foreach ($data[self::TYPE_WM] as $key => $value) {
+                $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
+                $wm_mashine = new WmMashine();
+                $wm_mashine->imei_id = $id;
+                $wm_mashine->type_mashine = $wm_mashine_dto->type_mashine;
+                $wm_mashine->number_device = $wm_mashine_dto->number_device;
+                $wm_mashine->level_signal = $wm_mashine_dto->level_signal;
+                $wm_mashine->bill_cash = $wm_mashine_dto->bill_cash;
+                $wm_mashine->door_position = $wm_mashine_dto->door_position;
+                $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
+                $wm_mashine->status = $wm_mashine_dto->status;
+                $wm_mashine->save();
+                // Debugger::dd($wm_mashine->save());
+                echo 'success!';
+                // Debugger::d($wm_mashine);
+            }
+
+        }
+
+        if (array_key_exists(self::TYPE_DM, $data)) {
+            foreach ($data[self::TYPE_DM] as $key => $value) {
+                $dm_mashine = new DmDto($this->setDM($data[self::TYPE_DM][$key]));
                 // $mashine->save();
-                Debugger::d($wm_mashine);
+                // Debugger::d($dm_mashine);
             }
         }
 
-        if (array_key_exists('DM', $data)) {
-            foreach ($data['DM'] as $key => $value) {
-                $dm_mashine = new DmDto($this->setDM($data['DM'][$key]));
+        if (array_key_exists(self::TYPE_GD, $data)) {
+            foreach ($data[self::TYPE_GD] as $key => $value) {
+                $gd_mashine = new GdDto($this->setGd($data[self::TYPE_GD][$key]));
                 // $mashine->save();
-                Debugger::d($dm_mashine);
+                // Debugger::d($gd_mashine);
             }
         }
 
-        if (array_key_exists('GD', $data)) {
-            foreach ($data['GD'] as $key => $value) {
-                $gd_mashine = new GdDto($this->setGd($data['GD'][$key]));
+        if (array_key_exists(self::TYPE_DC, $data)) {
+            foreach ($data[self::TYPE_DC] as $key => $value) {
+                $gd_mashine = new DcDto($this->setDC($data[self::TYPE_DC][$key]));
                 // $mashine->save();
-                Debugger::d($gd_mashine);
-            }
-        }
-
-        if (array_key_exists('DC', $data)) {
-            foreach ($data['DC'] as $key => $value) {
-                $gd_mashine = new DcDto($this->setDC($data['DC'][$key]));
-                // $mashine->save();
-                Debugger::d($gd_mashine);
+                // Debugger::d($gd_mashine);
             }
         }
     }
