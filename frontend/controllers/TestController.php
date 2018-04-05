@@ -11,7 +11,7 @@ use yii\web\Controller;
  * $machine = new Machine();
  * $machine->status = $machineDto->status;
  * $machine->save();
- * 
+ *
  * Class TestController
  * @package frontend\controllers
  */
@@ -48,9 +48,8 @@ class TestController extends Controller
             'type4',
             'colCart4',
             'billCash4',
-            'statusDev4'
+            'statusDev4',
         ];
-
 
         $array = array_map("str_getcsv", explode('*', $value));
 
@@ -67,7 +66,7 @@ class TestController extends Controller
 
     }
 
-    function request_url()
+    public function request_url()
     {
         $result = ''; // Пока результат пуст
         $default_port = 80; // Порт по-умолчанию
@@ -100,7 +99,7 @@ class TestController extends Controller
     public function actionIn($p)
     {
         $url = $this->request_url();
-
+  
 //        Debugger::dd($url);
 
         //Формируем урл
@@ -113,7 +112,7 @@ class TestController extends Controller
         //Определяем какой тип пакета
         $type_p = substr($type[0], strrpos($type[0], '?') + 1);
 
-//        Debugger::dd($new_url);
+        //    Debugger::dd($new_url);
 
 //        $this->In1($new_url);
         $this->Data1($new_url);
@@ -127,13 +126,13 @@ class TestController extends Controller
     public function In1($data)
     {
 //        file_put_contents('log/data.log', PHP_EOL . date("Y-m-d H:m:i:s"), FILE_APPEND);
-//        file_put_contents('log/data.log', PHP_EOL . $murl, FILE_APPEND);
+        //        file_put_contents('log/data.log', PHP_EOL . $murl, FILE_APPEND);
         foreach ($_GET as $key => $value) {
             if ($key != 'r') {
 //                file_put_contents('log/data.log', PHP_EOL . $key . ' : ' . $value, FILE_APPEND);
             } //$key != 'r'
         } //$_GET as $key => $value
-//        file_put_contents('log/data.log', PHP_EOL . '---------------------------------------------', FILE_APPEND);
+        //        file_put_contents('log/data.log', PHP_EOL . '---------------------------------------------', FILE_APPEND);
         ////////////////////////////////////////////////
         $murl = $data;
         $err = 0;
@@ -151,11 +150,11 @@ class TestController extends Controller
 
         $param = explode('_', $p);
 
-//        Debugger::dd($param);
+        //        Debugger::dd($param);
 
-        $param1 = explode('*', $param[0]);
+        // $param1 = explode('*', $param[0]);
 
-        Debugger::dd($param1);
+        // Debugger::dd($param1);
 
         $imei = $param1[0];
         $fvVer = $param1[1];
@@ -170,7 +169,7 @@ class TestController extends Controller
         $db = new Database();
         $sql = "INSERT INTO base (
                             date, imei, fvVer, kpVer, srVer, mTel, sTel, ksum, timeout
-                            )VALUES 
+                            )VALUES
 		('$date', '$imei', '$fvVer', '$kpVer', '$srVer', '$mTel', '$sTel', '$ksum', '$timeout')";
         $result = $db->query($sql);
 
@@ -208,17 +207,17 @@ class TestController extends Controller
     {
         $murl = $data;
 //        file_put_contents('log/data.log', PHP_EOL . date("Y-m-d H:m:i:s"), FILE_APPEND);
-//        file_put_contents('log/data.log', PHP_EOL . $murl, FILE_APPEND);
+        //        file_put_contents('log/data.log', PHP_EOL . $murl, FILE_APPEND);
         foreach ($_GET as $key => $value) {
             if ($key != 'r') {
 //                file_put_contents('log/data.log', PHP_EOL . $key . ' : ' . $value, FILE_APPEND);
             } //$key != 'r'
         } //$_GET as $key => $value
-//        file_put_contents('log/data.log', PHP_EOL . '---------------------------------------------', FILE_APPEND);
+        //        file_put_contents('log/data.log', PHP_EOL . '---------------------------------------------', FILE_APPEND);
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         $murl = $data;
-        $err  = 0;
+        $err = 0;
         //Разбор входящих данных в пакете
         parse_str(html_entity_decode($murl), $out);
 
@@ -234,51 +233,53 @@ class TestController extends Controller
 
         $param1 = explode('*', $param[0]);
 
-//        Debugger::d($param);
-//        Debugger::dd($param1);
+        // $temp = [-1 => 'adsf', 'dsf'];
+        // Debugger::d($temp);
 
-        $edate     = date("Y-m-d H:i:s");;
-        $imei      = $param1[1];
+        Debugger::dd($param);
+        //    Debugger::dd($param1);
+
+        $edate = date("Y-m-d H:i:s");
+        $imei = $param1[1];
         $gsmSignal = $param1[2];
         $billModem = $param1[3];
-        $numBills  = $param1[4];
-        $sumBills  = $param1[5];
-        $ost       = $param1[6];
-        $price     = $param1[7];
-        $timeout   = '';
-
+        $numBills = $param1[4];
+        $sumBills = $param1[5];
+        $ost = $param1[6];
+        $price = $param1[7];
+        $timeout = '';
 
         $i = 0;
         //////////////////////////////////////////////////////////////////////////////////////
         if (count($param) < 2) {
             //Назначаем переменные для подготовки к записи в базу
-            $date              = date("Y-m-d H:i:s");
-            $fvVer             = '';
+            $date = date("Y-m-d H:i:s");
+            $fvVer = '';
             $billAcceptorState = '';
-            $id_hard           = $imei . 'CB';
-            $collection        = '';
-            $ZigBeeSig         = '';
-            $billCash          = '';
-            $tarif             = '';
-            $event             = '';
-            $devSignal         = '';
-            $statusDev         = '';
-            $colGel            = '';
-            $colCart           = '';
+            $id_hard = $imei . 'CB';
+            $collection = '';
+            $ZigBeeSig = '';
+            $billCash = '';
+            $tarif = '';
+            $event = '';
+            $devSignal = '';
+            $statusDev = '';
+            $colGel = '';
+            $colCart = '';
 
             //Подготавливаем модель и данные с пакета и переменных для записи в основную таблицу с данными автоматов
             //Если имеи не пустой тогда данные сохраняемм и записываем в базу
-//            if ($imei != '') {
-//                $db     = new Database();
-//                $sql    = "INSERT INTO base
-//					(date, imei, gsmSignal, fvVer, numBills, billAcceptorState, id_hard, type, collection, ZigBeeSig,
-//					billCash, event, edate, billModem, sumBills, ost, numDev, devSignal, statusDev, colGel)VALUES
-//					('$date', '$imei', '$gsmSignal', '$fvVer', '$numBills', '$billAcceptorState', '$id_hard',
-//					'$type', '$collection', '$ZigBeeSig', '$billCash',
-//					 '$event', '$edate', '$billModem', '$sumBills', '$ost', '$numDev',
-//					'$devSignal', '$statusDev', '$colGel')";
-//                $result = $db->query($sql);
-//            } //$imei != ''
+            //            if ($imei != '') {
+            //                $db     = new Database();
+            //                $sql    = "INSERT INTO base
+            //                    (date, imei, gsmSignal, fvVer, numBills, billAcceptorState, id_hard, type, collection, ZigBeeSig,
+            //                    billCash, event, edate, billModem, sumBills, ost, numDev, devSignal, statusDev, colGel)VALUES
+            //                    ('$date', '$imei', '$gsmSignal', '$fvVer', '$numBills', '$billAcceptorState', '$id_hard',
+            //                    '$type', '$collection', '$ZigBeeSig', '$billCash',
+            //                     '$event', '$edate', '$billModem', '$sumBills', '$ost', '$numDev',
+            //                    '$devSignal', '$statusDev', '$colGel')";
+            //                $result = $db->query($sql);
+            //            } //$imei != ''
         } //count($param) < 2
 
         //Повторно разбираем и определяем для событий
@@ -286,67 +287,65 @@ class TestController extends Controller
 
             if ($i > 0) {
 
-                $param2            = explode('*', $element);
+                $param2 = explode('*', $element);
 
-                Debugger::dd($param2);
-                $type              = $param2[0];
-                $numDev            = $param2[1];
-                $date              = date("Y-m-d H:i:s");
-                $fvVer             = '';
+                // Debugger::dd($param2);
+                $type = $param2[0];
+                $numDev = $param2[1];
+                $date = date("Y-m-d H:i:s");
+                $fvVer = '';
                 $billAcceptorState = '';
-                $id_hard           = $imei . $type . $numDev;
-                $collection        = '';
-                $ZigBeeSig         = '';
-                $billCash          = '';
-                $tarif             = '';
-                $event             = '';
-                $devSignal         = '';
-                $statusDev         = '';
-                $colGel            = '';
-                $colCart           = '';
-                $doorpos           = '';
-                $doorled           = '';
-
-
+                $id_hard = $imei . $type . $numDev;
+                $collection = '';
+                $ZigBeeSig = '';
+                $billCash = '';
+                $tarif = '';
+                $event = '';
+                $devSignal = '';
+                $statusDev = '';
+                $colGel = '';
+                $colCart = '';
+                $doorpos = '';
+                $doorled = '';
 
                 //Определяеем события и данные к ним
                 switch ($type) {
                     case 'WM':
                         $devSignal = $param2[2];
-                        $billCash  = $param2[3];
-                        $doorpos   = $param2[4];
-                        $doorled   = $param2[5];
+                        $billCash = $param2[3];
+                        $doorpos = $param2[4];
+                        $doorled = $param2[5];
                         $statusDev = $param2[6];
                         break;
                     case 'DM':
                         $devSignal = $param2[2];
-                        $billCash  = $param2[3];
+                        $billCash = $param2[3];
                         $statusDev = $param2[4];
                         break;
                     case 'GD':
-                        $colGel    = $param2[1];
-                        $billCash  = $param2[2];
+                        $colGel = $param2[1];
+                        $billCash = $param2[2];
                         $statusDev = $param2[3];
-                        $numDev    = '';
+                        $numDev = '';
                         break;
                     case 'DC':
-                        $colCart   = $param2[1];
-                        $billCash  = $param2[2];
+                        $colCart = $param2[1];
+                        $billCash = $param2[2];
                         $statusDev = $param2[3];
-                        $numDev    = '';
+                        $numDev = '';
                 } //$type
                 //////////////////////////////////
                 //Подготавливаем к записи
                 //Сохраняем
                 if ($imei != '') {
-                    $db     = new Database();
-                    $sql    = "INSERT INTO base 
-					(date, imei, gsmSignal, fvVer, numBills, billAcceptorState, id_hard, type, collection, ZigBeeSig, 
-					billCash,  event, edate, billModem, sumBills, ost, numDev, devSignal, 
-					statusDev, colGel, colCart, price, timeout, doorpos, doorled)VALUES 
-					('$date', '$imei', '$gsmSignal', '$fvVer', '$numBills', '$billAcceptorState', '$id_hard', 
-					'$type', '$collection', '$ZigBeeSig', '$billCash', 
-					'$event', '$edate', '$billModem', '$sumBills', '$ost', '$numDev', 
+                    $db = new Database();
+                    $sql = "INSERT INTO base
+					(date, imei, gsmSignal, fvVer, numBills, billAcceptorState, id_hard, type, collection, ZigBeeSig,
+					billCash,  event, edate, billModem, sumBills, ost, numDev, devSignal,
+					statusDev, colGel, colCart, price, timeout, doorpos, doorled)VALUES
+					('$date', '$imei', '$gsmSignal', '$fvVer', '$numBills', '$billAcceptorState', '$id_hard',
+					'$type', '$collection', '$ZigBeeSig', '$billCash',
+					'$event', '$edate', '$billModem', '$sumBills', '$ost', '$numDev',
 					'$devSignal', '$statusDev', '$colGel', '$colCart', '$price', '$timeout', '$doorpos', '$doorled')";
                     $result = $db->query($sql);
                 } //$imei != ''
@@ -354,8 +353,8 @@ class TestController extends Controller
             $i++;
         } //$param as $element
         //Команды
-        $sql    = "SELECT `imei` FROM `com` WHERE `imei` = '$imei'";
-        $coms   = $db->query($sql);
+        $sql = "SELECT `imei` FROM `com` WHERE `imei` = '$imei'";
+        $coms = $db->query($sql);
         $return = '';
         foreach ($coms as $com) {
             if ($com->comand != '7') {

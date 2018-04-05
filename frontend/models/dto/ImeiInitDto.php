@@ -2,9 +2,14 @@
 
 namespace frontend\models\dto;
 
+/**
+ * Imei initialization Dto
+ */
 class ImeiInitDto
 {
+    public $date;
     public $imei;
+    public $level_signal;
     public $firmware_version;
     public $type_bill_acceptance;
     public $serial_number_kp;
@@ -13,10 +18,23 @@ class ImeiInitDto
     public $critical_amount;
     public $time_out;
 
+    /**
+     * map string to ImeiInitDto
+     *
+     * @param [type] $data
+     */
     public function __construct($data)
     {
+        if (array_key_exists('date', $data)) {
+            $this->date = (string)$data['date'];
+        }
+
         if (array_key_exists('imei', $data)) {
-            $this->imei = (string)$data['imei'];
+            $this->imei = (integer)$data['imei'];
+        }
+
+        if (array_key_exists('level_signal', $data)) {
+            $this->level_signal = (string)$data['level_signal'];
         }
 
         if (array_key_exists('firmware_version', $data)) {
