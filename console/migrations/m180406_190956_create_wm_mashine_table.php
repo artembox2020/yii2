@@ -8,7 +8,7 @@ use yii\db\Migration;
  *
  * - `imei_data`
  */
-class m180405_210459_create_wm_mashine_table extends Migration
+class m180406_190956_create_wm_mashine_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -28,7 +28,7 @@ class m180405_210459_create_wm_mashine_table extends Migration
             'created_at' => $this->integer(),
             'updated_at' => $this->integer(),
             'is_deleted' => $this->boolean(),
-            'deleted_at' => $this->integer()
+            'deleted_at' => $this->integer(),
         ]);
 
         // creates index for column `imei_id`
@@ -38,23 +38,23 @@ class m180405_210459_create_wm_mashine_table extends Migration
             'imei_id'
         );
 
-        // add foreign key for table `imei_data`
+        // add foreign key for table `imei`
         $this->addForeignKey(
             'fk-wm_mashine-imei_id',
             'wm_mashine',
             'imei_id',
-            'imei_data',
+            'imei',
             'id',
             'CASCADE'
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+/**
+ * {@inheritdoc}
+ */
     public function safeDown()
     {
-        // drops foreign key for table `imei_data`
+        // drops foreign key for table `imei`
         $this->dropForeignKey(
             'fk-wm_mashine-imei_id',
             'wm_mashine'

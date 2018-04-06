@@ -9,6 +9,7 @@ use frontend\models\dto\DcDto;
 use frontend\models\dto\DmDto;
 use frontend\models\dto\GdDto;
 use frontend\models\dto\WmDto;
+use frontend\models\GdMashine;
 use frontend\models\WmMashine;
 use frontend\models\dto\ImeiDataDto;
 use frontend\models\dto\ImeiInitDto;
@@ -114,14 +115,9 @@ class CController extends Controller
         $imeiData->fireproof_residue = $imeiDataDto->fireproof_residue;
         $imeiData->price_regim = $imeiDataDto->price_regim;
         $imeiData->save();
-        // Debugger::dd($imeiData->imei_id);
-        $imeiDataId = ImeiData::findOne(['imei' => $imeiDataDto->imei]);
 
-        // $result = $this->setImeiData($imeiData);
-        $mashine = $this->setTypeMashine($mashineData, $imeiData->id);
-        // $mashineDto = new WmDto($mashine);
-        // Debugger::d($imeiData);
-        // Debugger::d($mashine);
+        $imeiId = Imei::findOne(['imei' => $imeiDataDto->imei]);
+        $mashine = $this->setTypeMashine($mashineData, $imei->id);
     }
 
     public function setImeiData($data)
@@ -176,36 +172,42 @@ class CController extends Controller
                 $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
                 $wm_mashine->status = $wm_mashine_dto->status;
                 $wm_mashine->save();
-                // Debugger::dd($wm_mashine->save());
-                echo 'success!';
-                // Debugger::d($wm_mashine);
+                echo 'WM success!' . '<br>';
             }
 
-        }
-
-        if (array_key_exists(self::TYPE_DM, $data)) {
-            foreach ($data[self::TYPE_DM] as $key => $value) {
-                $dm_mashine = new DmDto($this->setDM($data[self::TYPE_DM][$key]));
-                // $mashine->save();
-                // Debugger::d($dm_mashine);
-            }
         }
 
         if (array_key_exists(self::TYPE_GD, $data)) {
             foreach ($data[self::TYPE_GD] as $key => $value) {
-                $gd_mashine = new GdDto($this->setGd($data[self::TYPE_GD][$key]));
-                // $mashine->save();
-                // Debugger::d($gd_mashine);
+                $gd_mashine_dto = new GdDto($this->setGd($data[self::TYPE_GD][$key]));
+                $gd_mashine = new GdMashine();
+                $gd_mashine->imei_id = $id;
+                $gd_mashine->type_mashine = $gd_mashine_dto->type_mashine;
+                $gd_mashine->gel_in_tank = $gd_mashine_dto->gel_in_tank;
+                $gd_mashine->bill_cash = $gd_mashine_dto->bill_cash;
+                $gd_mashine->status = $gd_mashine_dto->status;
+                $gd_mashine->save();
+                echo 'GD success!' . '<br>';
             }
         }
 
-        if (array_key_exists(self::TYPE_DC, $data)) {
-            foreach ($data[self::TYPE_DC] as $key => $value) {
-                $gd_mashine = new DcDto($this->setDC($data[self::TYPE_DC][$key]));
-                // $mashine->save();
-                // Debugger::d($gd_mashine);
-            }
-        }
+        /** does not work! */
+        // if (array_key_exists(self::TYPE_DC, $data)) {
+        //     foreach ($data[self::TYPE_DC] as $key => $value) {
+        //         $gd_mashine = new DcDto($this->setDC($data[self::TYPE_DC][$key]));
+        //         // $mashine->save();
+        //         // Debugger::d($gd_mashine);
+        //     }
+        // }
+
+        // if (array_key_exists(self::TYPE_DM, $data)) {
+        //     foreach ($data[self::TYPE_DM] as $key => $value) {
+        //         $dm_mashine = new DmDto($this->setDM($data[self::TYPE_DM][$key]));
+        //         // $mashine->save();
+        //         // Debugger::d($dm_mashine);
+        //     }
+        // }
+        /** does not work! */
     }
 
     public function setWM($data)
@@ -219,21 +221,6 @@ class CController extends Controller
             'bill_cash',
             'door_position',
             'door_block_led',
-            'status',
-        ];
-
-        return $result = array_combine($array_fields, $data);
-    }
-
-    public function setDM($data)
-    {
-        $array_fields = array();
-
-        $array_fields = [
-            'type_mashine',
-            'number_device',
-            'level_signal',
-            'bill_cash',
             'status',
         ];
 
@@ -254,6 +241,12 @@ class CController extends Controller
         return $result = array_combine($array_fields, $data);
     }
 
+    /**
+     * method setDC() does not work!
+     *
+     * @param [type] $data
+     * @return void
+     */
     public function setDC($data)
     {
         $array_fields = array();
@@ -261,6 +254,27 @@ class CController extends Controller
         $array_fields = [
             'type_mashine',
             'sum_cards',
+            'bill_cash',
+            'status',
+        ];
+
+        return $result = array_combine($array_fields, $data);
+    }
+
+    /**
+     *  method setDM() does not work!
+     * 
+     * @param [type] $data
+     * @return void
+     */
+    public function setDM($data)
+    {
+        $array_fields = array();
+
+        $array_fields = [
+            'type_mashine',
+            'number_device',
+            'level_signal',
             'bill_cash',
             'status',
         ];
