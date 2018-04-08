@@ -75,10 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php if (!empty($imei->firmware_version)) : ?>
                     <?php echo '<b>init: ok</b>'; ?> <?= date('d.m.Y', $imei->updated_at); ?><br>
                         <?php 
-                        $lastCount = $imei->getMachineStatus()
-                        ->orderBy('created_at DESC')
-                        ->where('created_at >= CURDATE()')
-                        ->count();
+                        $lastCount = $imei->getMachineStatus()->orderBy('created_at DESC')->where('created_at >= CURDATE()')->count();
                         $count = $imei->getMachineStatus()->select('number_device')->distinct()->limit($lastCount)->count();
                         $machines = $imei->getMachineStatus()->orderBy('created_at DESC')->addOrderBy('number_device')->limit($count)->all();?>
                         <?php foreach ($machines as $machine) : ?>
