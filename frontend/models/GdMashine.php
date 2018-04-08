@@ -17,6 +17,19 @@ use Yii;
  */
 class GdMashine extends \yii\db\ActiveRecord
 {
+
+    public $current_status = [
+        'dz no connect',
+        'dz connect',
+        'dz ready',
+        'dz vidacha',
+        'dz no cashe',
+        'dz change',
+        'dz no flow',
+        'dz error',
+        'dz error param'
+    ];
+
     /**
      * @inheritdoc
      */

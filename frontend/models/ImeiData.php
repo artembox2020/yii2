@@ -21,7 +21,7 @@ use Yii;
  * @property int $is_deleted
  * @property int $deleted_at
  *
- * @property Imei $imei0
+ * @property Imei $imei
  * @property WmMashine[] $wmMashines
  */
 class ImeiData extends \yii\db\ActiveRecord
@@ -72,7 +72,7 @@ class ImeiData extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getImei0()
+    public function getImei()
     {
         return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
     }

@@ -38,6 +38,7 @@ class BalanceHolder extends \yii\db\ActiveRecord
             TimestampBehavior::className()
         ];
     }
+    
     /**
      * @inheritdoc
      */

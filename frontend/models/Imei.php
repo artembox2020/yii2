@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use Yii;
 use frontend\models\ImeiData;
+use frontend\models\GdMashine;
 use frontend\models\WmMashine;
 use yii\behaviors\TimestampBehavior;
 
@@ -102,11 +103,21 @@ class Imei extends \yii\db\ActiveRecord
         return $this->hasMany(ImeiData::className(), ['imei_id' => 'id']);
     }
 
-        /**
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getWmMashine()
     {
         return $this->hasMany(WmMashine::className(), ['imei_id' => 'id']);
+    }
+
+    public function getMachineStatus()
+    {
+        return $this->hasMany(WmMashine::className(), ['imei_id' => 'id']);
+    }
+
+    public function getGdMashine()
+    {
+        return $this->hasMany(GdMashine::className(), ['imei_id' => 'id']);
     }
 }

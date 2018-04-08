@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "wm_mashine".
@@ -25,6 +26,50 @@ use Yii;
  */
 class WmMashine extends \yii\db\ActiveRecord
 {
+    public $current_status = [
+        '-2' => 'nulling',
+        '-1' => 'refill',
+        'disconnected',
+        'idle',
+        'power on',
+        'busy',
+        'washing',
+        'rising',
+        'extaction',
+        'waiting door',
+        'end cycle',
+        'freeze mode',
+        '1e water sensor',
+        '3e motor sensor',
+        '4e water supply',
+        '5e problem plum',
+        '8e motor',
+        '9e uc poser supply',
+        'ae communication',
+        'de switch',
+        'ce cooling',
+        'de unclosed door',
+        'fe ventilation',
+        'he heater',
+        'le water leak',
+        'oe of overflow',
+        'te temp sensor',
+        'ue loading cloth',
+        'max error'
+    ];
+
+    /**
+     * Behaviors TimeStamp
+     *
+     * @return void
+     */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className()
+        ];
+    }
+
     /**
      * @inheritdoc
      */
