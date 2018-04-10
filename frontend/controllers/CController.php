@@ -173,9 +173,7 @@ class CController extends Controller
                 $wm_mashine->door_position = $wm_mashine_dto->door_position;
                 $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
                 $wm_mashine->status = $wm_mashine_dto->status;
-                Debugger::dd($wm_mashine->save());
-//                var_dump($wm_mashine->save());die;
-                if ($wm_mashine->update()) {
+                if ($wm_mashine->save()) {
                     echo 'WM success!' . '<br>';
                 } else {
                     echo 'Wrong save' . '<br>';

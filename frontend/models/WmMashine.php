@@ -23,7 +23,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $is_deleted
  * @property int $deleted_at
  *
- * @property ImeiData $imei
+ * @property Imei $imei
  */
 class WmMashine extends \yii\db\ActiveRecord
 {
@@ -94,7 +94,7 @@ class WmMashine extends \yii\db\ActiveRecord
             [['imei_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine'], 'string', 'max' => 255],
             [['is_deleted'], 'string', 'max' => 1],
-            [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => ImeiData::className(), 'targetAttribute' => ['imei_id' => 'id']],
+            [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
         ];
     }
 
@@ -125,6 +125,6 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public function getImei()
     {
-        return $this->hasOne(ImeiData::className(), ['id' => 'imei_id']);
+        return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
     }
 }
