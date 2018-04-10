@@ -22,7 +22,11 @@ class m180406_200418_create_dm_mashine_table extends Migration
             'number_device' => $this->integer(),
             'level_signal' => $this->integer(),
             'bill_cash' => $this->integer(),
-            'status' => $this->integer()
+            'status' => $this->integer(),
+            'created_at' => $this->integer(),
+            'updated_at' => $this->integer(),
+            'is_deleted' => $this->boolean(),
+            'deleted_at' => $this->integer()
         ]);
 
         // creates index for column `imei_id`

@@ -3,6 +3,8 @@
 namespace frontend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "gd_mashine".
@@ -29,6 +31,23 @@ class GdMashine extends \yii\db\ActiveRecord
         'dz error',
         'dz error param'
     ];
+
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'is_deleted' => true,
+                    'deleted_at' => time()
+                ],
+            ],
+            TimestampBehavior::className()
+        ];
+    }
 
     /**
      * @inheritdoc

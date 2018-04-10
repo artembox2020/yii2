@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "wm_mashine".
@@ -35,7 +36,7 @@ class WmMashine extends \yii\db\ActiveRecord
         'busy',
         'washing',
         'rising',
-        'extaction',
+        'extraction',
         'waiting door',
         'end cycle',
         'freeze mode',
@@ -59,13 +60,18 @@ class WmMashine extends \yii\db\ActiveRecord
     ];
 
     /**
-     * Behaviors TimeStamp
-     *
-     * @return void
+     * @return array
      */
     public function behaviors()
     {
         return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'is_deleted' => true,
+                    'deleted_at' => time()
+                ],
+            ],
             TimestampBehavior::className()
         ];
     }

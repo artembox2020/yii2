@@ -7,6 +7,7 @@ use frontend\models\ImeiData;
 use frontend\models\GdMashine;
 use frontend\models\WmMashine;
 use yii\behaviors\TimestampBehavior;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "imei".
@@ -41,9 +42,19 @@ class Imei extends \yii\db\ActiveRecord
         return 'imei';
     }
 
+    /**
+     * @return array
+     */
     public function behaviors()
     {
         return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'is_deleted' => true,
+                    'deleted_at' => time()
+                ],
+            ],
             TimestampBehavior::className(),
         ];
     }

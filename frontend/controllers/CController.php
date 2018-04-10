@@ -75,7 +75,8 @@ class CController extends Controller
     /**
      * Undocumented function
      * sense.loc/c/?p=
-     * 1467707999*866104020101005*45*110*100*1500*25000*2*1_WM*1*86*15*1*1*22_DM*1*55*45*15_GD*3452*25*5_DC*25*15*-2
+     * 1467707999*866104020101005*45*110*100*1500*25000*2*1_WM*1*86*15*1*1*22_DM*1*55*45*15_GD*3452*25*5_DC*25*15*-2$
+     * $ - ignored
      * @param [type] $p
      * @return void
      */
@@ -118,6 +119,7 @@ class CController extends Controller
 
         $imeiId = Imei::findOne(['imei' => $imeiDataDto->imei]);
         $mashine = $this->setTypeMashine($mashineData, $imei->id);
+        var_dump($mashine);die;
     }
 
     public function setImeiData($data)
@@ -171,8 +173,13 @@ class CController extends Controller
                 $wm_mashine->door_position = $wm_mashine_dto->door_position;
                 $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
                 $wm_mashine->status = $wm_mashine_dto->status;
-                $wm_mashine->save();
-                echo 'WM success!' . '<br>';
+                Debugger::dd($wm_mashine->save());
+//                var_dump($wm_mashine->save());die;
+                if ($wm_mashine->update()) {
+                    echo 'WM success!' . '<br>';
+                } else {
+                    echo 'Wrong save' . '<br>';
+                }
             }
 
         }

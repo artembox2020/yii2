@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
             contact person.<?= $item->contact_person ?> <?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
             <p>
             <?php foreach ($item->addressBalanceHolders as $address) : ?>
-                <?php $form =  ActiveForm::begin([
+                <?php $form = ActiveForm::begin([
                     'action' => '/imei/create'
                 ]) ?>
                 <?= $address->address ?>
@@ -73,7 +73,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php foreach ($address->imeis as $imei) : ?>
                     IMEI: <?= $imei->imei ?>
                     <?php if (!empty($imei->firmware_version)) : ?>
-                    <?php echo '<b>init: ok</b>'; ?> <?= date('d.m.Y', $imei->updated_at); ?><br>
+                    <?php echo 'Init: <b style="color: forestgreen">Ok</b>'; ?> <?= date('d.m.Y', $imei->updated_at); ?>
+                        <?php $form = ActiveForm::begin([
+                                'action' => '/wm-machine/create'
+                            ]) ?>
+                        <?= Html::submitButton(Yii::t('frontend', 'Add WM Machine'), ['class' => 'btn btn-success']) ?>
+                    <?php ActiveForm::end(); ?>
+                        <br>
+                        <?php $form = ActiveForm::begin([
+                            'action' => '/gd-machine/create'
+                        ]) ?>
+                        <?= Html::submitButton(Yii::t('frontend', 'Add GD Machine'), ['class' => 'btn btn-success']) ?>
+                        <?php ActiveForm::end(); ?>
+                        <br>
                         <?php 
                         $lastCount = $imei->getMachineStatus()->orderBy('created_at DESC')->where('created_at >= CURDATE()')->count();
                         $count = $imei->getMachineStatus()->select('number_device')->distinct()->limit($lastCount)->count();
@@ -85,9 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= Yii::t('frontend', $machine->status) ?>
                             <?php endif; ?>)
                         <?php endforeach; ?><br>
-                        <?php $gd_machine = $imei->getGdMashine()
-                        ->orderBy('id DESC')
-                        ->one();?>
+                        <?php $gd_machine = $imei->getGdMashine()->orderBy('id DESC')->one();?>
                         TYPE: <?= $gd_machine->type_mashine ?>
                         GEL IN TANK: <?= $gd_machine->gel_in_tank ?>
                         BILL CASH: <?= $gd_machine->bill_cash ?>
