@@ -3,21 +3,21 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `gd_mashine`.
+ * Handles the creation of table `gd_mashine_data`.
  * Has foreign keys to the tables:
  *
- * - `imei`
+ * - `gd_mashine`
  */
-class m180406_204927_create_gd_mashine_table extends Migration
+class m180410_212805_create_gd_mashine_data_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('gd_mashine', [
+        $this->createTable('gd_mashine_data', [
             'id' => $this->primaryKey(),
-            'imei_id' => $this->integer()->notNull(),
+            'gd_mashine_id' => $this->integer()->notNull(),
             'type_mashine' => $this->string(),
             'serial_number' => $this->string(100),
             'gel_in_tank' => $this->integer(),
@@ -29,19 +29,19 @@ class m180406_204927_create_gd_mashine_table extends Migration
             'deleted_at' => $this->integer()
         ]);
 
-        // creates index for column `imei_id`
+        // creates index for column `gd_mashine_id`
         $this->createIndex(
-            'idx-gd_mashine-imei_id',
-            'gd_mashine',
-            'imei_id'
+            'idx-gd_mashine_data-gd_mashine_id',
+            'gd_mashine_data',
+            'gd_mashine_id'
         );
 
-        // add foreign key for table `imei`
+        // add foreign key for table `gd_mashine`
         $this->addForeignKey(
-            'fk-gd_mashine-imei_id',
+            'fk-gd_mashine_data-gd_mashine_id',
+            'gd_mashine_data',
+            'gd_mashine_id',
             'gd_mashine',
-            'imei_id',
-            'imei',
             'id',
             'CASCADE'
         );
@@ -52,18 +52,18 @@ class m180406_204927_create_gd_mashine_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `imei`
+        // drops foreign key for table `gd_mashine`
         $this->dropForeignKey(
-            'fk-gd_mashine-imei_id',
-            'gd_mashine'
+            'fk-gd_mashine_data-gd_mashine_id',
+            'gd_mashine_data'
         );
 
-        // drops index for column `imei_id`
+        // drops index for column `gd_mashine_id`
         $this->dropIndex(
-            'idx-gd_mashine-imei_id',
-            'gd_mashine'
+            'idx-gd_mashine_data-gd_mashine_id',
+            'gd_mashine_data'
         );
 
-        $this->dropTable('gd_mashine');
+        $this->dropTable('gd_mashine_data');
     }
 }

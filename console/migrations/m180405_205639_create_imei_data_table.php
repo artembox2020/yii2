@@ -18,8 +18,7 @@ class m180405_205639_create_imei_data_table extends Migration
         $this->createTable('imei_data', [
             'id' => $this->primaryKey(),
             'imei_id' => $this->integer()->notNull(),
-            'created_at' => $this->integer(),
-            'imei' => $this->string(255),
+            'imei' => $this->string(50),
             'level_signal' => $this->integer(),
             'on_modem_account' => $this->integer(),
             'in_banknotes' => $this->integer(),

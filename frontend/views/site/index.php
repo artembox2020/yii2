@@ -75,13 +75,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php if (!empty($imei->firmware_version)) : ?>
                     <?php echo 'Init: <b style="color: forestgreen">Ok</b>'; ?> <?= date('d.m.Y', $imei->updated_at); ?>
                         <?php $form = ActiveForm::begin([
-                                'action' => '/wm-machine/create'
+                                'action' => '/wm-mashine/create'
                             ]) ?>
+                        <?=  Html::hiddenInput('imei_id', $imei->id); ?>
                         <?= Html::submitButton(Yii::t('frontend', 'Add WM Machine'), ['class' => 'btn btn-success']) ?>
                     <?php ActiveForm::end(); ?>
                         <br>
                         <?php $form = ActiveForm::begin([
-                            'action' => '/gd-machine/create'
+                            'action' => '#'
                         ]) ?>
                         <?= Html::submitButton(Yii::t('frontend', 'Add GD Machine'), ['class' => 'btn btn-success']) ?>
                         <?php ActiveForm::end(); ?>
@@ -97,7 +98,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= Yii::t('frontend', $machine->status) ?>
                             <?php endif; ?>)
                         <?php endforeach; ?><br>
-                        <?php $gd_machine = $imei->getGdMashine()->orderBy('id DESC')->one();?>
+                        <?php if ($imei->getGdMashine()->orderBy('id DESC')->one()): ?>
                         TYPE: <?= $gd_machine->type_mashine ?>
                         GEL IN TANK: <?= $gd_machine->gel_in_tank ?>
                         BILL CASH: <?= $gd_machine->bill_cash ?>
@@ -105,6 +106,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php $gd_machine->status = $gd_machine->current_status[$gd_machine->status] ?>
                             <?= Yii::t('frontend', $gd_machine->status) ?>
                             <?php endif; ?><br>
+                        <?php endif; ?><br>
                     <?php endif; ?><br>
                 <hr>
                 <?php endforeach; ?>

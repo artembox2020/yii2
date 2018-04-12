@@ -13,6 +13,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $imei_id
  * @property string $type_mashine
  * @property int $number_device
+ * @property string $serial_number
  * @property int $level_signal
  * @property int $bill_cash
  * @property int $door_position
@@ -106,6 +107,7 @@ class WmMashine extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('frontend', 'ID'),
             'imei_id' => Yii::t('frontend', 'Imei ID'),
+            'serial_number' => Yii::t('frontend', 'Serial number'),
             'type_mashine' => Yii::t('frontend', 'Type Mashine'),
             'number_device' => Yii::t('frontend', 'Number Device'),
             'level_signal' => Yii::t('frontend', 'Level Signal'),

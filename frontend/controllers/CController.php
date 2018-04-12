@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\WmMashineData;
 use yii\web\Controller;
 use frontend\models\Imei;
 use frontend\models\ImeiData;
@@ -23,6 +24,8 @@ class CController extends Controller
     const TYPE_DM = 'DM';
     const TYPE_DC = 'DC';
     const TYPE_GD = 'GD';
+    const STAR = '*';
+    const STAR_DOLLAR = '*$';
 
     /**
      * Undocumented function
@@ -82,15 +85,19 @@ class CController extends Controller
      */
     public function actionD($p)
     {
+        $array = array();
 
         $mashineData = array();
 
         $param = explode('_', $p);
 
-        $imeiData = explode('*', $param[0]);
+        $imeiData = explode(self::STAR, $param[0]);
 
         foreach ($param as $item) {
-            $array[] = explode('*', $item);
+            if (strripos($item, self::STAR_DOLLAR)) {
+                $item = str_replace(self::STAR_DOLLAR, '', $item);
+            }
+            $array[] = explode(self::STAR, $item);
         }
 
         foreach ($array as $key => $value) {
@@ -119,7 +126,6 @@ class CController extends Controller
 
         $imeiId = Imei::findOne(['imei' => $imeiDataDto->imei]);
         $mashine = $this->setTypeMashine($mashineData, $imei->id);
-        var_dump($mashine);die;
     }
 
     public function setImeiData($data)
@@ -164,7 +170,42 @@ class CController extends Controller
         if (array_key_exists(self::TYPE_WM, $data)) {
             foreach ($data[self::TYPE_WM] as $key => $value) {
                 $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
-                $wm_mashine = new WmMashine();
+                $wm_mashine_data = new WmMashineData();
+                $wm_mashine_data->type_mashine = $wm_mashine_dto->type_mashine;
+                $wm_mashine_data->number_device = $wm_mashine_dto->number_device;
+                $wm_mashine_data->level_signal = $wm_mashine_dto->level_signal;
+                $wm_mashine_data->bill_cash = $wm_mashine_dto->bill_cash;
+                $wm_mashine_data->door_position = $wm_mashine_dto->door_position;
+                $wm_mashine_data->door_block_led = $wm_mashine_dto->door_block_led;
+                $wm_mashine_data->status = $wm_mashine_dto->status;
+                $wm_mashine_data->save();
+
+                $wm_mashine = WmMashine::findOne(['number_device' => $wm_mashine_dto->number_device]);
+                if (WmMashine::findOne(['number_device' => $wm_mashine_dto->number_device])) {
+                    $wm_mashine = WmMashine::findOne(['number_device' => $wm_mashine_dto->number_device]);
+                    $wm_mashine->type_mashine = $wm_mashine_dto->type_mashine;
+                    $wm_mashine->number_device = $wm_mashine_dto->number_device;
+                    $wm_mashine->level_signal = $wm_mashine_dto->level_signal;
+                    $wm_mashine->bill_cash = $wm_mashine_dto->bill_cash;
+                    $wm_mashine->door_position = $wm_mashine_dto->door_position;
+                    $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
+                    $wm_mashine->status = $wm_mashine_dto->status;
+                    $wm_mashine->update();
+                } else {
+                    $wm_mashine = new WmMashine();
+                    $wm_mashine->imei_id = $id;
+                    $wm_mashine->type_mashine = $wm_mashine_dto->type_mashine;
+                    $wm_mashine->number_device = $wm_mashine_dto->number_device;
+                    $wm_mashine->level_signal = $wm_mashine_dto->level_signal;
+                    $wm_mashine->bill_cash = $wm_mashine_dto->bill_cash;
+                    $wm_mashine->door_position = $wm_mashine_dto->door_position;
+                    $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
+                    $wm_mashine->status = $wm_mashine_dto->status;
+                    $wm_mashine->save();
+                }
+
+
+                $wm_mashine = WmMashine::findOne(['imei_id' => $id]);
                 $wm_mashine->imei_id = $id;
                 $wm_mashine->type_mashine = $wm_mashine_dto->type_mashine;
                 $wm_mashine->number_device = $wm_mashine_dto->number_device;
@@ -173,7 +214,7 @@ class CController extends Controller
                 $wm_mashine->door_position = $wm_mashine_dto->door_position;
                 $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
                 $wm_mashine->status = $wm_mashine_dto->status;
-                if ($wm_mashine->save()) {
+                if ($wm_mashine->update()) {
                     echo 'WM success!' . '<br>';
                 } else {
                     echo 'Wrong save' . '<br>';

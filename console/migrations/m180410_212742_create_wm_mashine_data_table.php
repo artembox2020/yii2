@@ -3,23 +3,22 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `wm_mashine`.
+ * Handles the creation of table `wm_mashine_data`.
  * Has foreign keys to the tables:
  *
- * - `imei_data`
+ * - `wm_mashine`
  */
-class m180406_190956_create_wm_mashine_table extends Migration
+class m180410_212742_create_wm_mashine_data_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('wm_mashine', [
+        $this->createTable('wm_mashine_data', [
             'id' => $this->primaryKey(),
-            'imei_id' => $this->integer()->notNull(),
+            'wm_mashine_id' => $this->integer()->notNull(),
             'type_mashine' => $this->string(),
-            'serial_number' => $this->string(100),
             'number_device' => $this->integer(),
             'level_signal' => $this->integer(),
             'bill_cash' => $this->integer(),
@@ -32,41 +31,41 @@ class m180406_190956_create_wm_mashine_table extends Migration
             'deleted_at' => $this->integer(),
         ]);
 
-        // creates index for column `imei_id`
+        // creates index for column `wm_mashine_id`
         $this->createIndex(
-            'idx-wm_mashine-imei_id',
-            'wm_mashine',
-            'imei_id'
+            'idx-wm_mashine_data-wm_mashine_id',
+            'wm_mashine_data',
+            'wm_mashine_id'
         );
 
-        // add foreign key for table `imei`
+        // add foreign key for table `wm_mashine`
         $this->addForeignKey(
-            'fk-wm_mashine-imei_id',
+            'fk-wm_mashine_data-wm_mashine_id',
+            'wm_mashine_data',
+            'wm_mashine_id',
             'wm_mashine',
-            'imei_id',
-            'imei',
             'id',
             'CASCADE'
         );
     }
 
-/**
- * {@inheritdoc}
- */
+    /**
+     * {@inheritdoc}
+     */
     public function safeDown()
     {
-        // drops foreign key for table `imei`
+        // drops foreign key for table `wm_mashine`
         $this->dropForeignKey(
-            'fk-wm_mashine-imei_id',
-            'wm_mashine'
+            'fk-wm_mashine_data-wm_mashine_id',
+            'wm_mashine_data'
         );
 
-        // drops index for column `imei_id`
+        // drops index for column `wm_mashine_id`
         $this->dropIndex(
-            'idx-wm_mashine-imei_id',
-            'wm_mashine'
+            'idx-wm_mashine_data-wm_mashine_id',
+            'wm_mashine_data'
         );
 
-        $this->dropTable('wm_mashine');
+        $this->dropTable('wm_mashine_data');
     }
 }

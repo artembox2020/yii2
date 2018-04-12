@@ -17,10 +17,10 @@ class m180324_205147_create_imei_table extends Migration
     {
         $this->createTable('imei', [
             'id' => $this->primaryKey(),
-            'imei' => $this->string(255),
+            'imei' => $this->string(50),
             'address_id' => $this->integer()->notNull(),
             'type_packet' => $this->string(),
-            'imei_central_board' => $this->string(255),
+            'imei_central_board' => $this->string(50),
             'firmware_version' => $this->string(),
             'type_bill_acceptance' => $this->string(),
             'serial_number_kp' => $this->string(),

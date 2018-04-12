@@ -12,29 +12,12 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'imei_id')->textInput() ?>
-
-    <?= $form->field($model, 'type_mashine')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'imei_id')->hiddenInput(['value'=> Yii::$app->request->post('imei_id')])->label(false); ?>
 
     <?= $form->field($model, 'number_device')->textInput() ?>
 
-    <?= $form->field($model, 'level_signal')->textInput() ?>
+    <?= $form->field($model, 'serial_number')->textInput() ?>
 
-    <?= $form->field($model, 'bill_cash')->textInput() ?>
-
-    <?= $form->field($model, 'door_position')->textInput() ?>
-
-    <?= $form->field($model, 'door_block_led')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'is_deleted')->textInput() ?>
-
-    <?= $form->field($model, 'deleted_at')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>
