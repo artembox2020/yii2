@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'imei_id')->hiddenInput(['value'=> Yii::$app->request->post('imei_id')])->label(false); ?>
+    <?= $form->field($model, 'imei_id')->hiddenInput(['value' => Yii::$app->request->post('imei_id')])->label(false); ?>
 
     <?= $form->field($model, 'number_device')->textInput() ?>
 

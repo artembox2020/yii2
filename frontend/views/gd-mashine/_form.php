@@ -12,13 +12,11 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'imei_id')->textInput() ?>
+    <?= $form->field($model, 'imei_id')->hiddenInput(['value' => Yii::$app->request->post('imei_id')])->label(false); ?>
+
+    <?= $form->field($model, 'type_mashine')->hiddenInput(['value' => 'GD'])->label(false); ?>
 
     <?= $form->field($model, 'serial_number')->textInput() ?>
-
-    <?= $form->field($model, 'gel_in_tank')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>

@@ -2,16 +2,15 @@
 
 namespace frontend\controllers;
 
-use frontend\models\WmMashineData;
 use yii\web\Controller;
 use frontend\models\Imei;
 use frontend\models\ImeiData;
-use frontend\models\dto\DcDto;
-use frontend\models\dto\DmDto;
 use frontend\models\dto\GdDto;
 use frontend\models\dto\WmDto;
 use frontend\models\GdMashine;
 use frontend\models\WmMashine;
+use frontend\models\GdMashineData;
+use frontend\models\WmMashineData;
 use frontend\models\dto\ImeiDataDto;
 use frontend\models\dto\ImeiInitDto;
 use frontend\services\custom\Debugger;
@@ -86,7 +85,6 @@ class CController extends Controller
     public function actionD($p)
     {
         $array = array();
-
         $mashineData = array();
 
         $param = explode('_', $p);
@@ -130,9 +128,6 @@ class CController extends Controller
 
     public function setImeiData($data)
     {
-        $array_fields = array();
-        $arrOut = array();
-
         $array_fields = [
             'date',
             'imei',
@@ -150,9 +145,6 @@ class CController extends Controller
 
     public function setMashine($data)
     {
-        $array_fields = array();
-        $arrOut = array();
-
         $array_fields = [
             'number_device',
             'level_signal',
@@ -171,6 +163,7 @@ class CController extends Controller
             foreach ($data[self::TYPE_WM] as $key => $value) {
                 $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
                 $wm_mashine_data = new WmMashineData();
+                $wm_mashine_data->imei_id = $id;
                 $wm_mashine_data->type_mashine = $wm_mashine_dto->type_mashine;
                 $wm_mashine_data->number_device = $wm_mashine_dto->number_device;
                 $wm_mashine_data->level_signal = $wm_mashine_dto->level_signal;
@@ -178,9 +171,12 @@ class CController extends Controller
                 $wm_mashine_data->door_position = $wm_mashine_dto->door_position;
                 $wm_mashine_data->door_block_led = $wm_mashine_dto->door_block_led;
                 $wm_mashine_data->status = $wm_mashine_dto->status;
-                $wm_mashine_data->save();
+                if ($wm_mashine_data->save(false)) {
+                    echo 'WM success data save!' . '<br>';
+                } else {
+                    echo 'Don\'t WM data save' . '<br>';
+                }
 
-                $wm_mashine = WmMashine::findOne(['number_device' => $wm_mashine_dto->number_device]);
                 if (WmMashine::findOne(['number_device' => $wm_mashine_dto->number_device])) {
                     $wm_mashine = WmMashine::findOne(['number_device' => $wm_mashine_dto->number_device]);
                     $wm_mashine->type_mashine = $wm_mashine_dto->type_mashine;
@@ -190,34 +186,26 @@ class CController extends Controller
                     $wm_mashine->door_position = $wm_mashine_dto->door_position;
                     $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
                     $wm_mashine->status = $wm_mashine_dto->status;
-                    $wm_mashine->update();
+                    if ($wm_mashine->update()) {
+                        echo 'WM success update!' . '<br>';
+                    } else {
+                        echo 'WM status has not changed' . '<br>';
+                    }
                 } else {
-                    $wm_mashine = new WmMashine();
-                    $wm_mashine->imei_id = $id;
-                    $wm_mashine->type_mashine = $wm_mashine_dto->type_mashine;
-                    $wm_mashine->number_device = $wm_mashine_dto->number_device;
-                    $wm_mashine->level_signal = $wm_mashine_dto->level_signal;
-                    $wm_mashine->bill_cash = $wm_mashine_dto->bill_cash;
-                    $wm_mashine->door_position = $wm_mashine_dto->door_position;
-                    $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
-                    $wm_mashine->status = $wm_mashine_dto->status;
-                    $wm_mashine->save();
-                }
-
-
-                $wm_mashine = WmMashine::findOne(['imei_id' => $id]);
-                $wm_mashine->imei_id = $id;
-                $wm_mashine->type_mashine = $wm_mashine_dto->type_mashine;
-                $wm_mashine->number_device = $wm_mashine_dto->number_device;
-                $wm_mashine->level_signal = $wm_mashine_dto->level_signal;
-                $wm_mashine->bill_cash = $wm_mashine_dto->bill_cash;
-                $wm_mashine->door_position = $wm_mashine_dto->door_position;
-                $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
-                $wm_mashine->status = $wm_mashine_dto->status;
-                if ($wm_mashine->update()) {
-                    echo 'WM success!' . '<br>';
-                } else {
-                    echo 'Wrong save' . '<br>';
+                    $wm_mashine_new = new WmMashine();
+                    $wm_mashine_new->imei_id = $id;
+                    $wm_mashine_new->type_mashine = $wm_mashine_dto->type_mashine;
+                    $wm_mashine_new->number_device = $wm_mashine_dto->number_device;
+                    $wm_mashine_new->level_signal = $wm_mashine_dto->level_signal;
+                    $wm_mashine_new->bill_cash = $wm_mashine_dto->bill_cash;
+                    $wm_mashine_new->door_position = $wm_mashine_dto->door_position;
+                    $wm_mashine_new->door_block_led = $wm_mashine_dto->door_block_led;
+                    $wm_mashine_new->status = $wm_mashine_dto->status;
+                    if ($wm_mashine_new->save()) {
+                        echo 'WM success save!' . '<br>';
+                    } else {
+                        echo 'Don\'t save' . '<br>';
+                    }
                 }
             }
 
@@ -226,14 +214,31 @@ class CController extends Controller
         if (array_key_exists(self::TYPE_GD, $data)) {
             foreach ($data[self::TYPE_GD] as $key => $value) {
                 $gd_mashine_dto = new GdDto($this->setGd($data[self::TYPE_GD][$key]));
-                $gd_mashine = new GdMashine();
-                $gd_mashine->imei_id = $id;
-                $gd_mashine->type_mashine = $gd_mashine_dto->type_mashine;
-                $gd_mashine->gel_in_tank = $gd_mashine_dto->gel_in_tank;
-                $gd_mashine->bill_cash = $gd_mashine_dto->bill_cash;
-                $gd_mashine->status = $gd_mashine_dto->status;
-                $gd_mashine->save();
-                echo 'GD success!' . '<br>';
+                $gd_mashine_data = new GdMashineData();
+                $gd_mashine_data->imei_id = $id;
+                $gd_mashine_data->type_mashine = $gd_mashine_dto->type_mashine;
+                $gd_mashine_data->gel_in_tank = $gd_mashine_dto->gel_in_tank;
+                $gd_mashine_data->bill_cash = $gd_mashine_dto->bill_cash;
+                $gd_mashine_data->status = $gd_mashine_dto->status;
+                if ($gd_mashine_data->save()) {
+                    echo 'GD data success save!' . '<br>';
+                } else {
+                    echo 'GD data Don\'t save' . '<br>';
+                }
+
+                if (GdMashine::findOne(['imei_id' => $id])) {
+                    $gd_mashine = GdMashine::findOne(['imei_id' => $id]);
+                    $gd_mashine->imei_id = $id;
+                    $gd_mashine->type_mashine = $gd_mashine_dto->type_mashine;
+                    $gd_mashine->gel_in_tank = $gd_mashine_dto->gel_in_tank;
+                    $gd_mashine->bill_cash = $gd_mashine_dto->bill_cash;
+                    $gd_mashine->status = $gd_mashine_dto->status;
+                    if ($gd_mashine->update()) {
+                        echo 'GD success update!' . '<br>';
+                    } else {
+                        echo 'GD status has not changed' . '<br>';
+                    }
+                }
             }
         }
 

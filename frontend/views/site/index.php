@@ -82,15 +82,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php ActiveForm::end(); ?>
                         <br>
                         <?php $form = ActiveForm::begin([
-                            'action' => '#'
+                            'action' => 'gd-mashine/create'
                         ]) ?>
+                        <?=  Html::hiddenInput('imei_id', $imei->id); ?>
                         <?= Html::submitButton(Yii::t('frontend', 'Add GD Machine'), ['class' => 'btn btn-success']) ?>
                         <?php ActiveForm::end(); ?>
                         <br>
                         <?php 
                         $lastCount = $imei->getMachineStatus()->orderBy('created_at DESC')->where('created_at >= CURDATE()')->count();
                         $count = $imei->getMachineStatus()->select('number_device')->distinct()->limit($lastCount)->count();
-                        $machines = $imei->getMachineStatus()->orderBy('created_at DESC')->addOrderBy('number_device')->limit($count)->all();?>
+                        $machines = $imei->getMachineStatus()->orderBy('number_device DESC')->addOrderBy('number_device')->limit($count)->all();?>
                         <?php foreach ($machines as $machine) : ?>
                             CM <?= $machine->number_device ?>
                             (status: <?php if (array_key_exists($machine->status, $machine->current_status)): ?> 
@@ -99,8 +100,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php endif; ?>)
                         <?php endforeach; ?><br>
                         <?php if ($imei->getGdMashine()->orderBy('id DESC')->one()): ?>
-                        TYPE: <?= $gd_machine->type_mashine ?>
-                        GEL IN TANK: <?= $gd_machine->gel_in_tank ?>
+                        <?php $gd_machine = $imei->getGdMashine()->orderBy('id DESC')->one(); ?>
+                        TYPE: <?= $gd_machine->type_mashine; ?>
+                        GEL IN TANK: <?= $gd_machine->gel_in_tank; ?>
                         BILL CASH: <?= $gd_machine->bill_cash ?>
                         STATUS: <?php if (array_key_exists($gd_machine->status, $gd_machine->current_status)): ?> 
                             <?php $gd_machine->status = $gd_machine->current_status[$gd_machine->status] ?>
