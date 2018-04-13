@@ -104,7 +104,7 @@ AppAsset::register($this);
 //        ],
             [
                 'label' => Yii::t('frontend', 'Monitoring'),
-                'url' => ['/site/mntr'],
+                'url' => ['/monitoring'],
 //            'visible' => Yii::$app->user->can('mntr'),
             ],
             [
