@@ -31,17 +31,26 @@ class BalanceHolderController extends Controller
     }
 
     /**
-     * Lists all BalanceHolder models.
+     * Displays homepage.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new BalanceHolderSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $user = User::findOne(Yii::$app->user->id);
+
+            if (!empty($user->company)) {
+                $users = $user->company->users;
+                $model = $user->company;
+                $balanceHolders = $model->balanceHolders;
+            } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'model' => $model,
+            'balanceHolders' => $balanceHolders,
         ]);
     }
 
@@ -74,8 +83,17 @@ class BalanceHolderController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $company = $user->company;
+            $balanceHolders = $company->balanceHolders;
+
+        }
         return $this->render('create', [
             'model' => $model,
+            'balanceHolders' => $balanceHolders,
         ]);
     }
 
@@ -94,8 +112,18 @@ class BalanceHolderController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $company = $user->company;
+            $balanceHolders = $company->balanceHolders;
+
+        }
+
         return $this->render('update', [
             'model' => $model,
+            'balanceHolders' => $balanceHolders,
         ]);
     }
 

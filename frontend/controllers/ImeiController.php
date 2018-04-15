@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\User;
 use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\Imei;
@@ -31,17 +32,27 @@ class ImeiController extends Controller
     }
 
     /**
-     * Lists all Imei models.
+     * Displays homepage.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ImeiSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $user = User::findOne(Yii::$app->user->id);
+
+            if (!empty($user->company)) {
+                $users = $user->company->users;
+                $model = $user->company;
+                $balanceHolders = $model->balanceHolders;
+            } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'model' => $model,
+            'users' => $users,
+            'balanceHolders' => $balanceHolders,
         ]);
     }
 
@@ -67,12 +78,25 @@ class ImeiController extends Controller
     {
         $model = new Imei();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $user = User::findOne(Yii::$app->user->id);
+        $company = $user->company;
+        $balanceHolder = $company->balanceHolders;
+        // $address = $balanceHolder->getAddressBalanceHolders();
+
+        foreach ($company->balanceHolders as $item) {
+            foreach ($item->addressBalanceHolders as $result) {
+                $address[] = $result;
+            }
+        }
+
+
+        if ($model->load(Yii::$app->request->post())  && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'address' => $address
         ]);
     }
 

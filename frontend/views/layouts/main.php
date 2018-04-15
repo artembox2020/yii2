@@ -108,8 +108,8 @@ AppAsset::register($this);
 //            'visible' => Yii::$app->user->can('mntr'),
             ],
             [
-                'label' => Yii::t('frontend', 'DevManager'),
-                'url' => ['/site/devices'],
+                'label' => Yii::t('frontend', 'Net Manager'),
+                'url' => ['/imei'],
 //            'visible' => Yii::$app->user->can('devices'),
             ],
             [

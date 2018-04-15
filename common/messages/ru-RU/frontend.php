@@ -151,6 +151,7 @@ return [
     'Devices Logs' => 'Логи автоматов',
     'Monitoring' => 'Мониторинг',
     'DevManager' => 'Менеджер автоматов',
+    'Net Manager' => 'Менеджер сети',
 	'Zurnal' => 'Итоговый журнал',
 	'Dlogs' => 'Журнал событий',
 	'Add organization' => 'Добавить оргганизацию',
