@@ -46,6 +46,31 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= Html::submitButton(Yii::t('frontend', 'Add IMEI'), ['class' => 'btn btn-success']) ?>
 <?php ActiveForm::end(); ?>
     </p>
+
+<?php foreach ($balanceHolders as $item) : ?>
+            <p>
+            <?php foreach ($item->addressBalanceHolders as $address) : ?>
+            <?= $item->name ?>
+            (<?= $item->address ?>)
+            <hr>
+                <?php foreach ($address->imeis as $imei) : ?>
+                    IMEI: <?= $imei->imei ?>
+                    <?php if (!empty($imei->firmware_version)) : ?>
+                    <?php echo 'Init: <b style="color: forestgreen">Ok</b>'; ?> <?= date('d.m.Y', $imei->updated_at); ?>
+                    <?= $address->address ?>
+                Этаж: <?= $address->floor ?> | view | edit | delete |
+                    <?php elseif (empty($imei->firmware_version)) : ?>
+                        <?php echo 'Init: <b style="color: brown">false</b>'; ?> <?= date('d.m.Y', $imei->updated_at); ?>.
+                        <?= $address->address ?>
+                Этаж: <?= $address->floor ?> | view | edit | delete |
+                    <?php endif; ?><br>
+                <?php endforeach; ?>
+                <hr>
+            <?php endforeach; ?>
+            </p>
+        <?php endforeach; ?>
+
+
 <!--
     // GridView::widget([
     //     'dataProvider' => $dataProvider,
