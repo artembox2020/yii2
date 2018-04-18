@@ -40,18 +40,19 @@ class ImeiController extends Controller
     {
         $user = User::findOne(Yii::$app->user->id);
 
-            if (!empty($user->company)) {
-                $users = $user->company->users;
-                $model = $user->company;
-                $balanceHolders = $model->balanceHolders;
-            } else {
-
+        if (!empty($user->company)) {
+            $balanceHolders = $user->company->balanceHolders;
+        } else {
+            //add flash нужно добавить компанию
             return $this->redirect('account/sign-in/login');
         }
 
+        $searchModel = new ImeiSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('index', [
-            'model' => $model,
-            'users' => $users,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
             'balanceHolders' => $balanceHolders,
         ]);
     }
@@ -89,8 +90,7 @@ class ImeiController extends Controller
             }
         }
 
-
-        if ($model->load(Yii::$app->request->post())  && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -111,35 +111,40 @@ class ImeiController extends Controller
     {
         $model = $this->findModel($id);
 
+        $user = User::findOne(Yii::$app->user->id);
+        $company = $user->company;
+        $balanceHolder = $company->balanceHolders;
+        // $address = $balanceHolder->getAddressBalanceHolders();
+
+        foreach ($company->balanceHolders as $item) {
+            foreach ($item->addressBalanceHolders as $result) {
+                $address[] = $result;
+            }
+        }
+
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'address' => $address
         ]);
     }
 
-    /**
-     * Deletes an existing Imei model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($id)->softDelete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Imei model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Imei the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return null|static
+     * @throws NotFoundHttpException
      */
     protected function findModel($id)
     {

@@ -12,6 +12,7 @@ use frontend\models\Imei;
  */
 class ImeiSearch extends Imei
 {
+
     /**
      * @inheritdoc
      */
@@ -41,13 +42,14 @@ class ImeiSearch extends Imei
      */
     public function search($params)
     {
-        $query = Imei::find();
+        $query = Imei::find()->where(['is_deleted' => false])->orWhere(['is_deleted' => null]);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
 
         $this->load($params);
 
@@ -57,6 +59,7 @@ class ImeiSearch extends Imei
             return $dataProvider;
         }
 
+
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
@@ -65,9 +68,6 @@ class ImeiSearch extends Imei
             'imei_central_board' => $this->imei_central_board,
             'critical_amount' => $this->critical_amount,
             'time_out' => $this->time_out,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at,
         ]);
 
         $query->andFilterWhere(['like', 'type_packet', $this->type_packet])
@@ -75,8 +75,7 @@ class ImeiSearch extends Imei
             ->andFilterWhere(['like', 'type_bill_acceptance', $this->type_bill_acceptance])
             ->andFilterWhere(['like', 'serial_number_kp', $this->serial_number_kp])
             ->andFilterWhere(['like', 'phone_module_number', $this->phone_module_number])
-            ->andFilterWhere(['like', 'crash_event_sms', $this->crash_event_sms])
-            ->andFilterWhere(['like', 'is_deleted', $this->is_deleted]);
+            ->andFilterWhere(['like', 'crash_event_sms', $this->crash_event_sms]);
 
         return $dataProvider;
     }

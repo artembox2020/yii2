@@ -81,6 +81,7 @@ class Imei extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('frontend', 'ID'),
             'imei' => Yii::t('frontend', 'Imei'),
+            'init' => Yii::t('frontend', 'Init'),
             'address_id' => Yii::t('frontend', 'Address'),
             'type_packet' => Yii::t('frontend', 'Type Packet'),
             'imei_central_board' => Yii::t('frontend', 'Imei Central Board'),
@@ -94,6 +95,7 @@ class Imei extends \yii\db\ActiveRecord
             'created_at' => Yii::t('frontend', 'Created At'),
             'updated_at' => Yii::t('frontend', 'Update At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
+            'addressName' => Yii::t('frontend', 'Address'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
         ];
     }
@@ -104,6 +106,23 @@ class Imei extends \yii\db\ActiveRecord
     public function getAddress()
     {
         return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);
+    }
+
+    public function getInit()
+    {
+       if (!empty($this->firmware_version)) {
+           return 'Ok';
+       }
+
+       return 'False';
+    }
+
+
+    public function getAddressName()
+    {
+        $address = $this->address;
+
+        return $address ? $address->name : '';
     }
 
     /**
