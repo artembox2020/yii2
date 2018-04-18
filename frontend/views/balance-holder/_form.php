@@ -28,7 +28,7 @@ foreach ($balanceHolders as $company) {
 
     <?= $form->field($model, 'contact_person')->textInput(['maxlength' => true]) ?>
 
-    <?=  Html::hiddenInput('company_id', $id); ?>
+    <?=  Html::hiddenInput('company_id', $company->id); ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>
