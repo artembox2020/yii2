@@ -15,8 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="imei-index">
 
     <h2><?= Yii::t('frontend', 'Net Manager');  ?></h2>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
 <?php $form = ActiveForm::begin([
                             'action' => '/balance-holder/create'
                         ]) ?>
@@ -105,5 +103,6 @@ $this->params['breadcrumbs'][] = $this->title;
              ['class' => 'yii\grid\ActionColumn'],
          ],
      ]);
+
 ?>
 </div>
