@@ -71,38 +71,39 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endforeach; ?>
 
 
-<!--
-    // GridView::widget([
-    //     'dataProvider' => $dataProvider,
-    //     'filterModel' => $searchModel,
-    //     'columns' => [
-    //         ['class' => 'yii\grid\SerialColumn'],
 
-    //         'id',
-    //         'imei',
-    //         [
-    //             'attribute' => 'address_id',
-    //             'format' => 'html',
-    //             'value' => function ($data) {
-    //                 return Html::img(Yii::getAlias('@storageUrl/logos/'. $data['address_id'],['max-width' => '80px']));
-    //             },
-    //         ],
-    //         'type_packet',
-    //         'imei_central_board',
-    //         'firmware_version',
-    //         'type_bill_acceptance',
-    //         'serial_number_kp',
-    //         'phone_module_number',
-    //         'crash_event_sms',
-    //         'critical_amount',
-    //         'time_out:datetime',
-    //         'created_at',
-    //         'updated_at',
-    //         'is_deleted',
-    //         'deleted_at',
+<?=
+ GridView::widget([
+         'dataProvider' => $dataProvider,
+         'filterModel' => $searchModel,
+         'columns' => [
+             ['class' => 'yii\grid\SerialColumn'],
 
-    //         ['class' => 'yii\grid\ActionColumn'],
-    //     ],
-    // ]); 
--->
+             'id',
+             'imei',
+             [
+                 'attribute' => 'address_id',
+                 'format' => 'html',
+                 'value' => function ($data) {
+                     return Html::img(Yii::getAlias('@storageUrl/logos/'. $data['address_id'],['max-width' => '80px']));
+                 },
+             ],
+             'type_packet',
+             'imei_central_board',
+             'firmware_version',
+             'type_bill_acceptance',
+             'serial_number_kp',
+             'phone_module_number',
+             'crash_event_sms',
+             'critical_amount',
+             'time_out:datetime',
+             'created_at',
+             'updated_at',
+             'is_deleted',
+             'deleted_at',
+
+             ['class' => 'yii\grid\ActionColumn'],
+         ],
+     ]);
+?>
 </div>
