@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
         }
     }
 ?>
-<?=  Html::hiddenInput('company_id', $company->id); ?>
+<?= Html::hiddenInput('company_id', $company->id); ?>
 <?= Html::submitButton(Yii::t('frontend', 'Add Balance Holder'), ['class' => 'btn btn-success']) ?>
 <?php ActiveForm::end(); ?>
 <?php $form = ActiveForm::begin([

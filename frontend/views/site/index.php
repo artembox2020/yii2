@@ -96,7 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             CM <?= $machine->number_device ?>
                             (status: <?php if (array_key_exists($machine->status, $machine->current_status)): ?> 
                             <?php $machine->status = $machine->current_status[$machine->status] ?>
-                            <?= Yii::t('frontend', $machine->status) ?>
+                            <b><?= Yii::t('frontend', $machine->status) ?></b>
                             <?php endif; ?>)
                         <?php endforeach; ?><br>
                         <?php if ($imei->getGdMashine()->orderBy('id DESC')->one()): ?>
