@@ -55,4 +55,5 @@ $gd_machine = array();
 </p>
 <p>
     <b><u>Фінансові дані</u></b>
+    <u>future</u>
 </p>
