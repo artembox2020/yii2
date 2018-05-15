@@ -4,3 +4,4 @@ error/access.log
 error/error.log
 storage/logos/
 .env
+.vscode

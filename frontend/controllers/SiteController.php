@@ -76,6 +76,8 @@ class SiteController extends Controller
                 $users = $user->company->users;
                 $model = $user->company;
                 $balanceHolders = $model->balanceHolders;
+                // $address = $balanceHolders->addressBalanceHolders;
+                // Debugger::dd($address);
             } else {
 
             return $this->redirect('account/sign-in/login');

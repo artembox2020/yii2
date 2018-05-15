@@ -118,6 +118,11 @@ class Imei extends \yii\db\ActiveRecord
     }
 
 
+    /**
+     * get Address Name
+     *
+     * @return void
+     */
     public function getAddressName()
     {
         $address = $this->address;
@@ -141,11 +146,21 @@ class Imei extends \yii\db\ActiveRecord
         return $this->hasMany(WmMashine::className(), ['imei_id' => 'id']);
     }
 
+    /**
+     * get Machine status
+     *
+     * @return void
+     */
     public function getMachineStatus()
     {
         return $this->hasMany(WmMashine::className(), ['imei_id' => 'id']);
     }
 
+    /**
+     * get Gd Machine
+     *
+     * @return void
+     */
     public function getGdMashine()
     {
         return $this->hasMany(GdMashine::className(), ['imei_id' => 'id']);

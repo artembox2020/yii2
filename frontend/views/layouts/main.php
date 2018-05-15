@@ -107,9 +107,14 @@ AppAsset::register($this);
                 'url' => ['/monitoring'],
 //            'visible' => Yii::$app->user->can('mntr'),
             ],
+//            [
+//                'label' => Yii::t('frontend', 'Net Manager'),
+//                'url' => ['/imei'],
+////            'visible' => Yii::$app->user->can('devices'),
+//            ],
             [
                 'label' => Yii::t('frontend', 'Net Manager'),
-                'url' => ['/imei'],
+                'url' => ['/net-manager'],
 //            'visible' => Yii::$app->user->can('devices'),
             ],
             [
