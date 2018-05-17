@@ -28,6 +28,9 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property boolean $is_deleted
  * @property integer $deleted_at
  * @property string $other
+ * @property string $position
+ * @property string $birthday
+ * @property array $roles
  *
  * @property UserProfile $userProfile
  */
@@ -37,6 +40,8 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 1;
     const STATUS_BANNED = 2;
     const STATUS_DELETED = 3;
+
+    public $roles;
 
     const ROLE_USER = 'user';
     const ROLE_FINANCIER = 'financier';
@@ -97,6 +102,7 @@ class User extends ActiveRecord implements IdentityInterface
             'created_at' => Yii::t('common', 'Created at'),
             'updated_at' => Yii::t('common', 'Updated at'),
             'action_at' => Yii::t('common', 'Last action at'),
+            'roles' => Yii::t('backend', 'Roles'),
         ];
     }
 

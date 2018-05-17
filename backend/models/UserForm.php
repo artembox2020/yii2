@@ -23,6 +23,8 @@ class UserForm extends Model
     public $roles;
     public $company_id;
     public $other;
+    public $position;
+    public $birthday;
 
     private $model;
 
@@ -32,18 +34,20 @@ class UserForm extends Model
     public function rules()
     {
         return [
-            ['username', 'trim'],
+            // ['username', 'trim'],
             ['username', 'required'],
-            ['username', 'match', 'pattern' => '#^[\w_-]+$#i'],
-            ['username', 'unique',
-                'targetClass' => User::className(),
-                'filter' => function ($query) {
-                    if (!$this->getModel()->isNewRecord) {
-                        $query->andWhere(['not', ['id' => $this->getModel()->id]]);
-                    }
-                }
-            ],
-            ['username', 'string', 'min' => 2, 'max' => 32],
+            // ['username', 'match', 'pattern' => '#^[\w_-]+$#i'],
+            // ['username', 'unique',
+            //     'targetClass' => User::className(),
+            //     'filter' => function ($query) {
+            //         if (!$this->getModel()->isNewRecord) {
+            //             $query->andWhere(['not', ['id' => $this->getModel()->id]]);
+            //         }
+            //     }
+            // ],
+            ['username', 'string', 'min' => 3, 'max' => 255],
+            ['position', 'string', 'min' => 3, 'max' => 255],
+            ['birthday', 'string'],
 
             ['email', 'trim'],
             ['email', 'required'],
@@ -76,6 +80,8 @@ class UserForm extends Model
     {
         return [
             'username' => Yii::t('backend', 'Username'),
+            'position' => Yii::t('backend', 'Position'),
+            'birthday' => Yii::t('backend', 'Birthday'),
             'email' => Yii::t('backend', 'Email'),
             'password' => Yii::t('backend', 'Password'),
             'status' => Yii::t('backend', 'Status'),
@@ -126,6 +132,8 @@ class UserForm extends Model
             $model->other = $this->other;
             $model->is_deleted = self::ZERO;
             $model->deleted_at = self::ZERO;
+            $model->position = $this->position;
+            $model->birthday = $this->birthday;
             if ($this->password) {
                 $model->setPassword($this->password);
             }

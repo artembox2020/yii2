@@ -1,6 +1,5 @@
 <?php
 /* @var $this yii\web\View */
-/* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
 /* @var $users common\models\User */
 /* @var $balanceHolders */
