@@ -3,4 +3,7 @@
 ?>
 <a href="/net-manager">[Компанія]</a>
 <a href="/net-manager/employees">[Співробітники]</a>
-<a href="/net-manager/balance-holders">[Балансотримачи]</a> [Адреси] [WASHPAY] [Пральні машини]
+<a href="/net-manager/balance-holders">[Балансотримачи]</a>
+<a href="/net-manager/addresses">[Адреси]</a>
+<a href="/net-manager/washpay">[WASHPAY]</a>
+<a href="/net-manager/wm-machine">[Пральні машини]</a>

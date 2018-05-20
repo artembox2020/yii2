@@ -212,4 +212,64 @@ class NetManagerController extends \yii\web\Controller
             'balanceHolders' => $balanceHolders,
         ]);
     }
+
+    public function actionAddresses()
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        return $this->render('addresses', [
+            'model' => $model,
+            'users' => $users,
+            'balanceHolders' => $balanceHolders,
+        ]);
+    }
+
+    public function actionWashpay()
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        return $this->render('washpay', [
+            'model' => $model,
+            'users' => $users,
+            'balanceHolders' => $balanceHolders,
+        ]);
+    }
+
+    public function actionWmMachine()
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        return $this->render('wm-machine', [
+            'model' => $model,
+            'users' => $users,
+            'balanceHolders' => $balanceHolders,
+        ]);
+    }
 }
