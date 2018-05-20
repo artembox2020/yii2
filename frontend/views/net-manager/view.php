@@ -6,7 +6,5 @@ use yii\widgets\ActiveForm;
 
 <div class="account-default-users">
     <?= $model->username . ' 
-    ' . $model->position . ' 
-    ' . Yii::t('frontend', $model->getUserRoleName($model->id)) . '
-    ' . $model->birthday; ?>
+    ' . Yii::t('frontend', $model->getUserRoleName($model->id)); ?>
 </div>

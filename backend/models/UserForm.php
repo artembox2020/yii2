@@ -23,8 +23,6 @@ class UserForm extends Model
     public $roles;
     public $company_id;
     public $other;
-    public $position;
-    public $birthday;
 
     private $model;
 
@@ -46,8 +44,6 @@ class UserForm extends Model
             //     }
             // ],
             ['username', 'string', 'min' => 3, 'max' => 255],
-            ['position', 'string', 'min' => 3, 'max' => 255],
-            ['birthday', 'string'],
 
             ['email', 'trim'],
             ['email', 'required'],
@@ -81,11 +77,9 @@ class UserForm extends Model
         return [
             'username' => Yii::t('backend', 'Username'),
             'position' => Yii::t('backend', 'Position'),
-            'birthday' => Yii::t('backend', 'Birthday'),
             'email' => Yii::t('backend', 'Email'),
             'password' => Yii::t('backend', 'Password'),
             'status' => Yii::t('backend', 'Status'),
-            'roles' => Yii::t('backend', 'Roles'),
         ];
     }
 
@@ -96,6 +90,7 @@ class UserForm extends Model
     {
         $this->username = $model->username;
         $this->email = $model->email;
+        $this->company_id = $model->company_id;
         $this->status = $model->status;
         $this->model = $model;
         $this->roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($model->getId()), 'name');
@@ -116,9 +111,8 @@ class UserForm extends Model
     }
 
     /**
-     * Signs user up.
-     *
-     * @return User|null the saved model or null if saving fails
+     * @return bool|void
+     * @throws \Exception
      */
     public function save()
     {
@@ -132,8 +126,6 @@ class UserForm extends Model
             $model->other = $this->other;
             $model->is_deleted = self::ZERO;
             $model->deleted_at = self::ZERO;
-            $model->position = $this->position;
-            $model->birthday = $this->birthday;
             if ($this->password) {
                 $model->setPassword($this->password);
             }

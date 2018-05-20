@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\UserProfile;
 use Yii;
 use common\models\User;
 use backend\models\UserForm;
@@ -9,6 +10,7 @@ use backend\models\Company;
 use yii\helpers\ArrayHelper;
 use backend\services\mail\MailSender;
 use frontend\services\custom\Debugger;
+use yii\web\NotFoundHttpException;
 
 /**
  * Class NetManagerController
@@ -49,6 +51,7 @@ class NetManagerController extends \yii\web\Controller
         // ];
 
         $user = User::findOne(Yii::$app->user->id);
+        $profile = UserProfile::findOne($user->id);
 
         if (!empty($user->company)) {
             $users = $user->company->users;
@@ -58,6 +61,7 @@ class NetManagerController extends \yii\web\Controller
 
         return $this->render('employees', [
             'users' => $users,
+            'profile' => $profile
         ]);
     }
 
@@ -134,26 +138,28 @@ class NetManagerController extends \yii\web\Controller
     /**
      *  edit employee
      */
-    public function actionEditEmployee()
+    public function actionEditEmployee($id)
     {
-        if (Yii::$app->request->post()) {
-            $model = User::findOne(['id' => Yii::$app->request->post('id')]);
+        $user = new UserForm();
+        $user->setModel($this->findModel($id));
+        $profile = UserProfile::findOne($id);
 
-            $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
+        if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
+            $isValid = $user->validate(false);
+            $isValid = $profile->validate(false) && $isValid;
+            if ($isValid) {
+                $user->save(false);
+                $profile->save(false);
 
-            unset($roles[array_search('administrator', $roles)]);
-            unset($roles[array_search('manager', $roles)]);
-            unset($roles[array_search('user', $roles)]);
-
-            foreach ($roles as $key => $role) {
-                $roles[$key] = Yii::t('backend', $role);
+                return $this->redirect(['/net-manager/employees']);
             }
-
-            return $this->render('edit', [
-                'model' => $model,
-                'roles' => $roles
-            ]);
         }
+
+        return $this->render('create', [
+            'user' => $user,
+            'profile' => $profile,
+            'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+        ]);
     }
 
     /**
@@ -165,5 +171,22 @@ class NetManagerController extends \yii\web\Controller
             'error',
             Yii::t('frontend', 'Access denied')
         );
+    }
+
+    /**
+     * Finds the User model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param integer $id
+     * @return User the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = User::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }

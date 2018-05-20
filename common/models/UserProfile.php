@@ -16,6 +16,7 @@ use vova07\fileapi\behaviors\UploadBehavior;
  * @property string $avatar_path
  * @property integer $gender
  * @property string $other
+ * @property string $position
  */
 class UserProfile extends ActiveRecord
 {
@@ -58,6 +59,7 @@ class UserProfile extends ActiveRecord
             ['birthday', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['gender', 'in', 'range' => [null, self::GENDER_MALE, self::GENDER_FEMALE]],
             ['other', 'string', 'max' => 1024],
+            ['position', 'string', 'max' => 255],
             [['firstname', 'lastname', 'avatar_path'], 'string', 'max' => 255],
             ['firstname', 'match', 'pattern' => '/^[a-zа-яё]+$/iu'],
             ['lastname', 'match', 'pattern' => '/^[a-zа-яё]+(-[a-zа-яё]+)?$/iu'],
@@ -79,6 +81,7 @@ class UserProfile extends ActiveRecord
             'gender' => Yii::t('common', 'Gender'),
 //            'website' => Yii::t('common', 'Website'),
             'other' => Yii::t('common', 'Other'),
+            'position' => Yii::t('common', 'Position'),
         ];
     }
 }

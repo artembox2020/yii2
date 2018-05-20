@@ -43,6 +43,7 @@ return [
     'Password' => 'Пароль',
     'Preview' => 'Анонс',
     'Published at' => 'Время публикации',
+    'Position' => 'Должность',
     'Remember me' => 'Запомнить меня',
     'Slug' => 'ЧПУ',
     'Sort index' => 'Индекс сортировки',

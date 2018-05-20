@@ -57,6 +57,8 @@ $this->params['breadcrumbs'][] = Yii::t('backend', 'Update');
         'cropResizeHeight' => 100,
     ]) ?>
 
+    <?= $form->field($profile, 'position')->textInput(['maxlaegth' => true]) ?>
+
     <?= $form->field($profile, 'gender')->dropDownlist(
         [
             UserProfile::GENDER_MALE => Yii::t('backend', 'Male'),
