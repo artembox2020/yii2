@@ -19,7 +19,6 @@ $machine = array();
 $gd_machine = array();
 
 ?>
-<h1>net-manager/index</h1>
 <?php $menu = []; ?>
 <b>
 <?= $this->render('_sub_menu', [

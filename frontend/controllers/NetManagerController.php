@@ -189,4 +189,27 @@ class NetManagerController extends \yii\web\Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    /**
+     * @return string|\yii\web\Response
+     */
+    public function actionBalanceHolders()
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        return $this->render('balance-holders', [
+            'model' => $model,
+            'users' => $users,
+            'balanceHolders' => $balanceHolders,
+        ]);
+    }
 }

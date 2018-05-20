@@ -10,7 +10,6 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 ?>
-<h1>net-manager/index</h1>
 <?php $menu = []; ?>
 <b>
 <?= $this->render('_sub_menu', [
