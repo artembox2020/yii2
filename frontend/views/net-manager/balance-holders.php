@@ -19,7 +19,7 @@ use frontend\services\custom\Debugger;
     <?= $item->name ?>
     <?= $item->address ?>
     tel.<?= $item->phone ?>
-    contact person.<?= $item->contact_person ?> <?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+    contact person.<?= $item->contact_person ?> <?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder/create', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('frontend', 'View')) ?>
     <br>
     <?php $address[] = $item->addressBalanceHolders ?>
