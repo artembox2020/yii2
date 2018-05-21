@@ -19,6 +19,9 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $created_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property string $position
+ * @property integer $date_start_cooperation
+ * @property integer $date_connection_monitoring
  *
  * @property AddressBalanceHolder[] $addressBalanceHolders
  * @property Company $company
@@ -56,8 +59,8 @@ class BalanceHolder extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'created_at', 'deleted_at'], 'integer'],
-            [['name', 'city', 'address', 'contact_person'], 'string', 'max' => 255],
+            [['company_id', 'created_at', 'deleted_at', 'date_start_cooperation', 'date_connection_monitoring'], 'integer'],
+            [['name', 'city', 'address', 'contact_person', 'position'], 'string', 'max' => 255],
             [['phone'], 'string', 'max' => 100],
             [['is_deleted'], 'string', 'max' => 1],
             [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::className(), 'targetAttribute' => ['company_id' => 'id']],
@@ -80,6 +83,9 @@ class BalanceHolder extends \yii\db\ActiveRecord
             'created_at' => Yii::t('frontend', 'Created At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
+            'position' => Yii::t('frontend', 'Position'),
+            'date_start_cooperation' => Yii::t('frontend', 'Date on start to cooperation'),
+            'date_connection_monitoring' => Yii::t('frontend', 'Date connection to monitoring'),
         ];
     }
 

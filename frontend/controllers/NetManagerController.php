@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\UserProfile;
+use frontend\models\BalanceHolder;
 use Yii;
 use common\models\User;
 use backend\models\UserForm;
@@ -129,7 +130,7 @@ class NetManagerController extends \yii\web\Controller
         if (Yii::$app->request->post()) {
             $model = User::findOne(['id' => Yii::$app->request->post('id')]);
 
-            return $this->render('view', [
+            return $this->render('view-employee', [
                 'model' => $model
             ]);
         }
@@ -213,6 +214,46 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return string|\yii\web\Response
+     */
+    public function actionViewBalanceHolder($id)
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+            $model = $this->findBalanceHolder($balanceHolders, $id);
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        return $this->render('view-balance-holder', [
+            'model' => $model
+        ]);
+    }
+
+    /**
+     * @param $array
+     * @param $id
+     * @return mixed
+     */
+    private function findBalanceHolder($array, $id)
+    {
+        foreach ($array as $value) {
+            if ($value->id == $id) {
+                return $value;
+            }
+        }
+    }
+
+    /**
+     * @return string|\yii\web\Response
+     */
     public function actionAddresses()
     {
         $user = User::findOne(Yii::$app->user->id);
