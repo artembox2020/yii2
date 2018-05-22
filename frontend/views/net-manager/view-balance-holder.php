@@ -24,3 +24,14 @@ use frontend\services\custom\Debugger;
 <div>Посада: <b><u><?= $model->position ?></u></b></div>
 <div>Телефон: <b><u><?= $model->phone ?></u></b></div>
 <div>Администрирование: <b><u>future</u></b></div>
+<br>
+<div><b><u>Iншi контактнi особи</u></b></div>
+<?php foreach ($model->otherContactPerson as $contact) : ?>
+    <?= $contact->name; ?>
+    <?= $contact->position; ?>
+    <?= $contact->phone; ?><br>
+<?php endforeach; ?>
+<br>
+<?php if (count($model->otherContactPerson) < 10) : ?>
+<div><a href="/other-contact-person/create">добавить контактну особу</a> (Лимит 10)</div>
+<?php endif; ?>

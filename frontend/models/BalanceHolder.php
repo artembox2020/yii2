@@ -104,4 +104,9 @@ class BalanceHolder extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
+
+    public function getOtherContactPerson()
+    {
+        return $this->hasMany(OtherContactPerson::className(), ['balance_holder_id' => 'id']);
+    }
 }

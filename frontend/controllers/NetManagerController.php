@@ -226,6 +226,7 @@ class NetManagerController extends \yii\web\Controller
             $users = $user->company->users;
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
+//            $otherContactPerson = $model->otherContactPerson;
             $model = $this->findBalanceHolder($balanceHolders, $id);
         } else {
 
@@ -233,7 +234,8 @@ class NetManagerController extends \yii\web\Controller
         }
 
         return $this->render('view-balance-holder', [
-            'model' => $model
+            'model' => $model,
+//            'otherContactPerson' => $otherContactPerson
         ]);
     }
 
