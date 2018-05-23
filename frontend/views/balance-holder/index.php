@@ -29,6 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'city',
             'address',
+            'contact_person',
+            'position',
             'phone',
             'date_start_cooperation',
             'date_connection_monitoring',
