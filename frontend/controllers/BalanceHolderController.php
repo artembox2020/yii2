@@ -39,10 +39,13 @@ class BalanceHolderController extends Controller
     {
         $user = User::findOne(Yii::$app->user->id);
 
+
             if (!empty($user->company)) {
                 $users = $user->company->users;
                 $model = $user->company;
                 $balanceHolders = $model->balanceHolders;
+                $searchModel = new BalanceHolderSearch();
+                $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             } else {
 
             return $this->redirect('account/sign-in/login');
@@ -51,6 +54,8 @@ class BalanceHolderController extends Controller
         return $this->render('index', [
             'model' => $model,
             'balanceHolders' => $balanceHolders,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
         ]);
     }
 

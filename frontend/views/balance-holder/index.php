@@ -30,6 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'city',
             'address',
             'phone',
+            'date_start_cooperation',
+            'date_connection_monitoring',
             //'contact_person',
             //'company_id',
             //'created_at',

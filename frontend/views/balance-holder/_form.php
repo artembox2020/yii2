@@ -28,6 +28,10 @@ foreach ($balanceHolders as $company) {
 
     <?= $form->field($model, 'contact_person')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'date_start_cooperation')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'date_connection_monitoring')->textInput(['maxlength' => true]) ?>
+
     <?=  Html::hiddenInput('company_id', $company->id); ?>
 
     <div class="form-group">
