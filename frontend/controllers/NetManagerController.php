@@ -269,7 +269,7 @@ class NetManagerController extends \yii\web\Controller
             return $this->redirect('account/sign-in/login');
         }
 
-        return $this->render('addresses', [
+        return $this->render('addresses/addresses', [
             'model' => $model,
             'users' => $users,
             'balanceHolders' => $balanceHolders,
