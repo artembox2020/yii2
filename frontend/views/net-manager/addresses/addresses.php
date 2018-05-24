@@ -17,24 +17,24 @@ use frontend\services\custom\Debugger;
 </b><br><br>
 <?php foreach ($balanceHolders as $item) : ?>
     <?php foreach ($item->addressBalanceHolders as $address) : ?>
-        <?= $item->name ?>
-            Адрес: <a href=""><b><?= $address->address; ?></b></a>
-            Этаж: <?= $address->floor ?><br>
+        <?= $item->name . ' ' . $item->address?>
+        Адрес: <a href=""><b><?= $address->address; ?></b></a>
+        Этаж: <?= $address->floor ?>
+    <?php if (!empty($address->imeis)) : ?>
         <?php foreach ($address->imeis as $imei) : ?>
-            <?= $item->name ?>
-            Адрес: <a href=""><b><?= $address->address; ?></b></a>
-            Этаж: <?= $address->floor ?>
             Imei:
-            <?php if (!isset($address->imeis) or !empty($imei->imei)) : ?>
+            <?php if (!empty($imei->imei)) : ?>
             <?= $imei->imei ?>
-            <?php elseif($imei->imei == "") : ?>
-                <a href="/imei/create"><b>додати IMEI</b></a>
             <?php else : ?>
-                <a href="/imei/create"><b>додати IMEI</b></a>
+            <a href="/imei/create"><b>додати IMEI</b></a>
             <?php endif; ?>
             <br>
         <?php endforeach;?><br>
+        <?php else : ?>
+            <a href="/imei/create"><b>додати IMEI</b></a><br>
+        <?php endif; ?>
+    <?php endforeach;?>
 <?php endforeach;?>
-<?php endforeach;?>
+<br>
 <b><a href="/address-balance-holder/create">[додати адресу]</a></b>
 
