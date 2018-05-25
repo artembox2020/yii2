@@ -18,7 +18,7 @@ use frontend\services\custom\Debugger;
 <?php foreach ($balanceHolders as $item) : ?>
     <?php foreach ($item->addressBalanceHolders as $address) : ?>
         <?= $item->name . ' ' . $item->address?>
-        Адрес: <a href=""><b><?= $address->address; ?></b></a>
+        Адрес: <a href="/address-balance-holder/view?id=<?= $address->id ?>"><b><?= $address->address; ?></b></a>
         Этаж: <?= $address->floor ?>
     <?php if (!empty($address->imeis)) : ?>
         <?php foreach ($address->imeis as $imei) : ?>

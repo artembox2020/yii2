@@ -93,12 +93,18 @@ class AddressBalanceHolderController extends Controller
     {
         $model = $this->findModel($id);
 
+        $user = User::findOne(Yii::$app->user->id);
+        $users = $user->company->users;
+        $company = $user->company;
+        $balanceHolder = $company->balanceHolders;
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'balanceHolder' => $balanceHolder
         ]);
     }
 

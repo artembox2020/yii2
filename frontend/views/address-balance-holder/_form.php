@@ -20,6 +20,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'floor')->textInput() ?>
 
+    <?= $form->field($model, 'number_of_floors')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'date_inserted')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'date_connection_monitoring')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'balance_holder_id')->dropDownList(
             \yii\helpers\ArrayHelper::map($balanceHolder, 'id', 'name')
     ) ?>

@@ -18,6 +18,9 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property int $number_of_floors
+ * @property string $date_inserted
+ * @property string $date_connection_monitoring
  *
  * @property BalanceHolder $balanceHolder
  * @property Imei[] $imeis
@@ -55,10 +58,11 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['floor', 'balance_holder_id', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['floor', 'balance_holder_id', 'number_of_floors', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['balance_holder_id'], 'required'],
             [['name', 'address'], 'string', 'max' => 255],
             [['is_deleted'], 'string', 'max' => 1],
+            [['date_inserted', 'date_connection_monitoring'], 'string', 'max' => 255],
             [['balance_holder_id'], 'exist', 'skipOnError' => true, 'targetClass' => BalanceHolder::className(), 'targetAttribute' => ['balance_holder_id' => 'id']],
         ];
     }
@@ -73,11 +77,15 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
             'name' => Yii::t('frontend', 'Name'),
             'address' => Yii::t('frontend', 'Address'),
             'floor' => Yii::t('frontend', 'Floor'),
+            'number_of_floors' => Yii::t('frontend', 'Number of Floors'),
             'balance_holder_id' => Yii::t('frontend', 'Balance Holder'),
+            'date_inserted' => Yii::t('frontend', 'Date Inserted'),
+            'date_connection_monitoring' => Yii::t('frontend', 'Date connection monitoring'),
             'created_at' => Yii::t('frontend', 'Created At'),
             'updated_at' => Yii::t('frontend', 'Updated At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
+            'imeis' => Yii::t('frontend', 'Imei'),
         ];
     }
 
