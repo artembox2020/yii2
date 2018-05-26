@@ -44,9 +44,15 @@ $bh = \frontend\models\BalanceHolder::findOne($model->balance_holder_id)
     <div>Дата підключення до моніторінгу <?= $model->date_connection_monitoring ?></div>
     <div>Создано <?= Yii::$app->formatter->asDate($model->created_at, 'dd.MM.yyyy');?></div>
     <?php foreach ($model->imeis as $imei) : ?>
-        <?php $countWmMashine[] = $imei->wmMashine ?>
+        <?php foreach ($imei->wmMashine as $wm_machine) : ?>
+        <?php $countWmMashine[] = $wm_machine ?>
+    <?php endforeach; ?>
+    <?php foreach ($imei->gdMashine as $gd_machine) : ?>
+        <?php $countGdMashine[] = $gd_machine ?>
+    <?php endforeach; ?>
     <?php endforeach; ?>
     <div>Кількість пральних машин <?= count($countWmMashine) ?></div>
+    <div>Кількість дозаторів геля <?= count($countGdMashine) ?></div>
 <br>
     <p>
         <b>Зведені технічні данні</b><br>
