@@ -3,7 +3,9 @@
 namespace frontend\controllers;
 
 use common\models\UserProfile;
+use frontend\models\AddressBalanceHolder;
 use frontend\models\BalanceHolder;
+use frontend\models\Imei;
 use Yii;
 use common\models\User;
 use backend\models\UserForm;
@@ -276,6 +278,9 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * @return string|\yii\web\Response
+     */
     public function actionWashpay()
     {
         $user = User::findOne(Yii::$app->user->id);
@@ -296,6 +301,39 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return string|\yii\web\Response
+     */
+    public function actionWashpayView($id)
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+            $imei = Imei::findOne($id);
+            $address = AddressBalanceHolder::findOne($imei->id);
+            $balanceHolder = BalanceHolder::findOne($address->balance_holder_id);
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        return $this->render('washpay/washpay-view', [
+            'model' => $model,
+            'users' => $users,
+            'balanceHolders' => $balanceHolders,
+            'imei' => $imei,
+            'address' => $address,
+            'balanceHolder' => $balanceHolder
+        ]);
+    }
+
+    /**
+     * @return string|\yii\web\Response
+     */
     public function actionWmMachine()
     {
         $user = User::findOne(Yii::$app->user->id);

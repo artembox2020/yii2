@@ -18,7 +18,10 @@ use frontend\services\custom\Debugger;
 <?php foreach ($balanceHolders as $item) : ?>
     <?php foreach ($item->addressBalanceHolders as $address) : ?>
         <?php foreach ($address->imeis as $imei) : ?>
-            IMEI: <?= $imei->imei ?><br>
+            IMEI: <a href="/net-manager/washpay-view?id=<?= $imei->id ?>"><b><?= $imei->imei ?></b></a>
+            Адреса: <?= $address->name ?>
+            Балансоутримувач: <?= $item->name ?>
+            Останній пінг: <?= Yii::$app->formatter->asDate($imei->updated_at, 'dd.MM.yyyy H:i:s');?><br>
         <?php endforeach; ?>
     <?php endforeach;?>
 <?php endforeach; ?>

@@ -12,13 +12,9 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance Holders'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-//$a = $model->getImeis()->count();
-//$b = $model->getImeis();
-//$c = $b->getWmMashine()->count();
-
-//var_dump($c);die;
-
-$bh = \frontend\models\BalanceHolder::findOne($model->balance_holder_id)
+$bh = \frontend\models\BalanceHolder::findOne($model->balance_holder_id);
+$countWmMashine = array();
+$countGdMashine = array();
 ?>
 <div class="address-balance-holder-view">
 
