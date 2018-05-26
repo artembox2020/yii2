@@ -6,6 +6,7 @@ use common\models\UserProfile;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\BalanceHolder;
 use frontend\models\Imei;
+use frontend\models\WmMashine;
 use Yii;
 use common\models\User;
 use backend\models\UserForm;
@@ -352,5 +353,31 @@ class NetManagerController extends \yii\web\Controller
             'users' => $users,
             'balanceHolders' => $balanceHolders,
         ]);
+    }
+
+    public function actionWmMachineView($number_device)
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+            $wm_machine = WmMashine::findOne($number_device);
+//            $imei = WmMashine::findOne($id);
+//            $address = AddressBalanceHolder::findOne($imei->id);
+//            $balanceHolder = BalanceHolder::findOne($address->balance_holder_id);
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        return $this->render('wm-machine-view', [
+            'wm_machine' => $wm_machine,
+//            'imei' => $imei,
+//            'address' => $address,
+//            'balanceHolder' => $balanceHolder
+        ]);
+
     }
 }

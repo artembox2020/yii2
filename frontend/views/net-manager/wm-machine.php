@@ -15,20 +15,28 @@ use frontend\services\custom\Debugger;
         'menu' => $menu,
     ]) ?>
 </b><br><br>
+<!--<div>-->
+<!--    Серийный номер:-->
+<!--    Адрес:-->
+<!--    Балансотримач:-->
+<!--    Останнiй пiнг:-->
+<!--</div>-->
 <?php foreach ($balanceHolders as $item) : ?>
     <?php foreach ($item->addressBalanceHolders as $address) : ?>
         <?php foreach ($address->imeis as $imei) : ?>
-            IMEI: <?= $imei->imei ?><br>
 <?php
 $lastCount = $imei->getMachineStatus()->orderBy('created_at DESC')->where('created_at >= CURDATE()')->count();
 $count = $imei->getMachineStatus()->select('number_device')->distinct()->limit($lastCount)->count();
 $machines = $imei->getMachineStatus()->orderBy('number_device DESC')->addOrderBy('number_device')->limit($count)->all();?>
 <?php foreach ($machines as $machine) : ?>
-    CM <?= $machine->number_device ?>
-    (status: <?php if (array_key_exists($machine->status, $machine->current_status)): ?>
-        <?php $machine->status = $machine->current_status[$machine->status] ?>
-        <?= Yii::t('frontend', $machine->status) ?>
-    <?php endif; ?>)
+    <a href="/net-manager/wm-machine-view?number_device=<?= $machine->number_device ?>">CM</a> <?= $machine->number_device ?>
+                <div>
+                    Серийный номер: <?= $machine->serial_number ?> | n/a<br>
+                    Адрес: <?= $address->name ?><br>
+                    Балансотримач: <?= $item->name ?><br>
+                    Останнiй пiнг: <?= Yii::$app->formatter->asDate($machine->updated_at, 'dd.MM.yyyy H:i:s');?>
+                </div>
+
 <?php endforeach; ?><br>
         <?php endforeach; ?>
     <?php endforeach;?>
