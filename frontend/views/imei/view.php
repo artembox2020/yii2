@@ -40,10 +40,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'crash_event_sms',
             'critical_amount',
             'time_out:datetime',
-            'created_at',
-            'updated_at',
-            'is_deleted',
-            'deleted_at',
+            'created_at:datetime',
+            'updated_at:datetime',
+//            'is_deleted',
+//            'deleted_at',
         ],
     ]) ?>
 

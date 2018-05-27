@@ -33,6 +33,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'serial_number',
             'gel_in_tank',
             'status',
+            'created_at:datetime',
+            'updated_at:datetime',
+//            'is_deleted',
+//            'deleted_at',
         ],
     ]) ?>
 

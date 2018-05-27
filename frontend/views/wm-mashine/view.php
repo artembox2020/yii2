@@ -37,10 +37,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'door_position',
             'door_block_led',
             'status',
-            'created_at',
-            'updated_at',
-            'is_deleted',
-            'deleted_at',
+            'created_at:datetime',
+            'updated_at:datetime',
+//            'is_deleted',
+//            'deleted_at',
         ],
     ]) ?>
 

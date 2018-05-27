@@ -8,7 +8,13 @@ use yii\widgets\ActiveForm;
 /* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-
+<?php if (Yii::$app->session->hasFlash('error')): ?>
+    <div class="alert alert-info alert-dismissable">
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+        <h4><i class="icon fa fa-check"></i><?= Yii::t('frontend','Info') ?></h4>
+        <?= Yii::$app->session->getFlash('error') ?>
+    </div>
+<?php endif; ?>
 <div class="other-contact-person-form">
 
     <?php $form = ActiveForm::begin(); ?>

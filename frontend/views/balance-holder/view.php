@@ -35,9 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'phone',
             'contact_person',
             'company_id',
-            'created_at',
-            'is_deleted',
-            'deleted_at',
+            'created_at:datetime',
+//            'is_deleted',
+//            'deleted_at',
         ],
     ]) ?>
 

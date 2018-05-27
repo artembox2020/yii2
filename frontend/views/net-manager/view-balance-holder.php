@@ -25,7 +25,7 @@ use frontend\services\custom\Debugger;
 <div>Телефон: <b><u><?= $model->phone ?></u></b></div>
 <div>Администрирование: <b><u>future</u></b></div>
 <br>
-<div><b><u>Iншi контактнi особи</u></b></div>
+<div><b><u>Iншi контактнi особи</u></b> <b><a href="/other-contact-person/"><?= Yii::t('frontend', 'Update') ?></a></b></div>
 <?php foreach ($model->otherContactPerson as $contact) : ?>
     <?= $contact->name; ?>
     <?= $contact->position; ?>

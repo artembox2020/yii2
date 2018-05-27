@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\User;
+use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\OtherContactPerson;
 use frontend\models\OtherContactPersonSearch;
@@ -15,6 +16,7 @@ use yii\filters\VerbFilter;
  */
 class OtherContactPersonController extends Controller
 {
+    const NINE_DIGIT = 9;
     /**
      * @inheritdoc
      */
@@ -72,7 +74,18 @@ class OtherContactPersonController extends Controller
         $company = $user->company;
         $balanceHolder = $company->balanceHolders;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $bol = OtherContactPerson::findAll(['balance_holder_id' => $model->balance_holder_id]);
+            $res = count($bol);
+            if ($res > self::NINE_DIGIT) {
+                Yii::$app->session->setFlash(
+                    'error',
+                    Yii::t('frontend', 'Limit reached! This Balance Holder reached the limit *10 of contact persons'));
+                return $this->redirect(['/other-contact-person/create']);
+            } else {
+                $model->save();
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
