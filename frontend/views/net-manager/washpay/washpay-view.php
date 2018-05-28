@@ -27,7 +27,7 @@ IMEI: <?= $imei->imei ?><br>
 Версія бутлоадера / дата: <?= $imei->type_bill_acceptance ?> | Дата - Откуда?<br>
 Версія основной прошивки / дата: <?= $imei->type_bill_acceptance ?> | Дата - Откуда?<br>
 Последний пинг: <?= Yii::$app->formatter->asDate($imei->updated_at, 'dd.MM.yyyy H:i:s'); ?><br>
-<div><b><a href="/net-manager/edit">edit</a></b></div>
+<div><b><a href="/net-manager/washpay-update?id=<?= $imei->id ?>"><?= Yii::t('frontend', 'Update') ?></a></b></div>
 <br>
 <div>
     <b><u>Історія</u></b><br>

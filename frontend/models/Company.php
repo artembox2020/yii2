@@ -102,6 +102,9 @@ class Company extends ActiveRecord
         return parent::find()->where(['is_deleted' => false]);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getBalanceHolders()
     {
         return $this->hasMany(BalanceHolder::className(), ['company_id' => 'id']);

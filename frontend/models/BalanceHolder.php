@@ -89,9 +89,6 @@ class BalanceHolder extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getAddressBalanceHolders()
     {
         return $this->hasMany(AddressBalanceHolder::className(), ['balance_holder_id' => 'id']);

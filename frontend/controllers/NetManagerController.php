@@ -120,7 +120,7 @@ class NetManagerController extends \yii\web\Controller
 
         }
 
-        return $this->render ('/denied/access-denied', [
+        return $this->render('/denied/access-denied', [
             $this->accessDenied()
         ]);
     }
@@ -229,7 +229,6 @@ class NetManagerController extends \yii\web\Controller
             $users = $user->company->users;
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
-//            $otherContactPerson = $model->otherContactPerson;
             $model = $this->findBalanceHolder($balanceHolders, $id);
         } else {
 
@@ -238,7 +237,6 @@ class NetManagerController extends \yii\web\Controller
 
         return $this->render('view-balance-holder', [
             'model' => $model,
-//            'otherContactPerson' => $otherContactPerson
         ]);
     }
 
@@ -315,8 +313,8 @@ class NetManagerController extends \yii\web\Controller
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
             $imei = Imei::findOne($id);
-            $address = AddressBalanceHolder::findOne($imei->id);
-            $balanceHolder = BalanceHolder::findOne($address->balance_holder_id);
+            $address = AddressBalanceHolder::findOne($imei->address_id);
+            $balanceHolder = $address->balanceHolder;
         } else {
 
             return $this->redirect('account/sign-in/login');
@@ -329,6 +327,48 @@ class NetManagerController extends \yii\web\Controller
             'imei' => $imei,
             'address' => $address,
             'balanceHolder' => $balanceHolder
+        ]);
+    }
+
+    public function actionWashpayUpdate($id)
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+            foreach ($model->balanceHolders as $balanceHolder) {
+                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
+                    $tempadd[] = $addresses;
+                    foreach ($addresses->imeis as $value) {
+                        if ($value->id == $id) {
+                            $imei = $value;
+                        }
+                    }
+                }
+            }
+                $address = AddressBalanceHolder::findOne($imei->address_id);
+                $balanceHolder = $address->balanceHolder;
+
+            if ($imei->load(Yii::$app->request->post())) {
+                $imei->save();
+                return $this->redirect('washpay');
+////                $balanceHolder->addressBalanceHolders = $address->balance_holder_id;
+//                $balanceHolder->save();
+////                Debugger::dd($balanceHolder->addressBalanceHolders);
+            }
+
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+//        Debugger::dd($addresses);
+        return $this->render('washpay/washpay-update' , [
+            'imei' => $imei,
+            'address' => $address,
+            'addresses' => $tempadd,
+            'balanceHolder' => $balanceHolder,
+            'balanceHolders' => $balanceHolders
         ]);
     }
 

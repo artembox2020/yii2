@@ -6,7 +6,7 @@ use frontend\services\custom\Debugger;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
 /* @var $users common\models\User */
-/* @var $balanceHolders  */
+/* @var $balanceHolders frontend\models\BalanceHolder */
 /* @var $addresses */
 ?>
 <?php $menu = []; ?>
@@ -15,12 +15,12 @@ use frontend\services\custom\Debugger;
         'menu' => $menu,
     ]) ?>
 </b><br><br>
-<?php foreach ($balanceHolders as $item) : ?>
-    <?php foreach ($item->addressBalanceHolders as $address) : ?>
+<?php foreach ($balanceHolders as $balanceHolder) : ?>
+    <?php foreach ($balanceHolder->addressBalanceHolders as $address) : ?>
         <?php foreach ($address->imeis as $imei) : ?>
             IMEI: <a href="/net-manager/washpay-view?id=<?= $imei->id ?>"><b><?= $imei->imei ?></b></a>
-            Адреса: <?= $address->name ?>
-            Балансоутримувач: <?= $item->name ?>
+            Адреса: <?= $address->address ?>
+            Балансоутримувач: <?= $balanceHolder->name ?>
             Останній пінг: <?= Yii::$app->formatter->asDate($imei->updated_at, 'dd.MM.yyyy H:i:s');?><br>
         <?php endforeach; ?>
     <?php endforeach;?>
