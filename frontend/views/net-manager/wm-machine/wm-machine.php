@@ -11,7 +11,7 @@ use frontend\services\custom\Debugger;
 ?>
 <?php $menu = []; ?>
 <b>
-    <?= $this->render('_sub_menu', [
+    <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
     ]) ?>
 </b><br><br>
@@ -41,3 +41,4 @@ $machines = $imei->getMachineStatus()->orderBy('number_device DESC')->addOrderBy
         <?php endforeach; ?>
     <?php endforeach;?>
 <?php endforeach; ?>
+[додати WM]

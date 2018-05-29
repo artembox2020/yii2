@@ -293,7 +293,7 @@ class NetManagerController extends \yii\web\Controller
             return $this->redirect('account/sign-in/login');
         }
 
-        return $this->render('washpay', [
+        return $this->render('washpay/washpay', [
             'model' => $model,
             'users' => $users,
             'balanceHolders' => $balanceHolders,
@@ -353,21 +353,49 @@ class NetManagerController extends \yii\web\Controller
             if ($imei->load(Yii::$app->request->post())) {
                 $imei->save();
                 return $this->redirect('washpay');
-////                $balanceHolder->addressBalanceHolders = $address->balance_holder_id;
-//                $balanceHolder->save();
-////                Debugger::dd($balanceHolder->addressBalanceHolders);
             }
 
         } else {
 
             return $this->redirect('account/sign-in/login');
         }
-//        Debugger::dd($addresses);
+
         return $this->render('washpay/washpay-update' , [
             'imei' => $imei,
             'address' => $address,
             'addresses' => $tempadd,
             'balanceHolder' => $balanceHolder,
+            'balanceHolders' => $balanceHolders
+        ]);
+    }
+
+    public function actionWashpayCreate()
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+            foreach ($model->balanceHolders as $balanceHolder) {
+                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
+                    $tempadd[] = $addresses;
+                    }
+                }
+            $imei = new Imei();
+            $address = new AddressBalanceHolder();
+
+            if ($imei->load(Yii::$app->request->post())) {
+                $imei->save();
+                return $this->redirect('washpay');
+            }
+
+//            Debugger::dd($tempadd);
+        }
+
+        return $this->render('washpay/washpay-create', [
+            'imei' => $imei,
+            'address' => $address,
+            'addresses' => $tempadd,
             'balanceHolders' => $balanceHolders
         ]);
     }
@@ -388,7 +416,7 @@ class NetManagerController extends \yii\web\Controller
             return $this->redirect('account/sign-in/login');
         }
 
-        return $this->render('wm-machine', [
+        return $this->render('wm-machine/wm-machine', [
             'model' => $model,
             'users' => $users,
             'balanceHolders' => $balanceHolders,
@@ -412,7 +440,7 @@ class NetManagerController extends \yii\web\Controller
             return $this->redirect('account/sign-in/login');
         }
 
-        return $this->render('wm-machine-view', [
+        return $this->render('wm-machine/wm-machine-view', [
             'wm_machine' => $wm_machine,
 //            'imei' => $imei,
 //            'address' => $address,
