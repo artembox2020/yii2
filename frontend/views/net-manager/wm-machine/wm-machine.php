@@ -14,13 +14,14 @@ use frontend\services\custom\Debugger;
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
     ]) ?>
-</b><br><br>
+</b>
 <!--<div>-->
 <!--    Серийный номер:-->
 <!--    Адрес:-->
 <!--    Балансотримач:-->
 <!--    Останнiй пiнг:-->
 <!--</div>-->
+<br><br>
 <?php foreach ($balanceHolders as $item) : ?>
     <?php foreach ($item->addressBalanceHolders as $address) : ?>
         <?php foreach ($address->imeis as $imei) : ?>
@@ -37,8 +38,8 @@ $machines = $imei->getMachineStatus()->orderBy('number_device DESC')->addOrderBy
                     Останнiй пiнг: <?= Yii::$app->formatter->asDate($machine->updated_at, 'dd.MM.yyyy H:i:s');?>
                 </div>
 
-<?php endforeach; ?><br>
+<?php endforeach; ?>
         <?php endforeach; ?>
     <?php endforeach;?>
-<?php endforeach; ?>
-[додати WM]
+<?php endforeach; ?><br>
+<b><a href="wm-machine-create">[додати WM]</a></b>

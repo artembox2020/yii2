@@ -26,12 +26,12 @@ use frontend\services\custom\Debugger;
             <?php if (!empty($imei->imei)) : ?>
             <?= $imei->imei ?>
             <?php else : ?>
-            <a href="/imei/create"><b>додати IMEI</b></a>
+            <a href="/net-manager/washpay-create"><b>додати IMEI</b></a>
             <?php endif; ?>
             <br>
         <?php endforeach;?><br>
         <?php else : ?>
-            <a href="/imei/create"><b>додати IMEI</b></a><br>
+            <a href="/net-manager/washpay-create"><b>додати IMEI</b></a><br>
         <?php endif; ?>
     <?php endforeach;?>
 <?php endforeach;?>

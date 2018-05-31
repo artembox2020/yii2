@@ -49,7 +49,7 @@ $gd_machine = array();
     <div>Кількість адрес: <b><?= count($address) ?></b></div>
     <div>Кількість IMEI <b><?= count($imei) ?></b></div>
     <div>Кількість ПМ <b><?= count($machine) ?></b></div>
-    <div>Кількість Дозаторів геля <b><?= count($wm->getGdMashine()) ?></b></div>
+    <div>Кількість Дозаторів геля <b><?= $wm_machine = isset($wm->getGdMashine) ? count($wm->getGdMashine()) : '0'; ?></b></div>
 </p>
 <p>
     <b><u>Фінансові дані</u></b>

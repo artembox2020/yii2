@@ -21,7 +21,12 @@ use frontend\services\custom\Debugger;
             IMEI: <a href="/net-manager/washpay-view?id=<?= $imei->id ?>"><b><?= $imei->imei ?></b></a>
             Адреса: <?= $address->address ?>
             Балансоутримувач: <?= $balanceHolder->name ?>
-            Останній пінг: <?= Yii::$app->formatter->asDate($imei->updated_at, 'dd.MM.yyyy H:i:s');?><br>
+            Останній пінг: <?php if ($imei->getInit() == 'Ok') : ?>
+                <?= Yii::$app->formatter->asDate($imei->updated_at, 'dd.MM.yyyy H:i:s'); ?>
+            <?php else : ?>
+                <?= $imei->getInit(); ?>
+            <?php endif; ?>
+            <br>
         <?php endforeach; ?>
     <?php endforeach;?>
 <?php endforeach; ?>

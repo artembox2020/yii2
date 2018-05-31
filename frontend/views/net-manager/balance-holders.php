@@ -37,7 +37,7 @@ use frontend\services\custom\Debugger;
 <p><u><b>Зведені технічні данні</b></u><p/>
 <div>Кількість адрес: <b><?= count($address) ?></b></div>
 <div>Кількість IMEI: <b><?= count($imei) ?></b></div>
-<div>Кількість пральних машин: <b><?= count($machine) ?></b></div>
-<div>Кількість Дозаторів геля: <b><?= count($address) ?></b></div>
+<div>Кількість пральних машин: <b><?= $machine = isset($machine) ? count($machine) : '0'; ?></b></div>
+<div>Кількість Дозаторів геля: <b><?= $gd_machine = isset($gd_machine) ? count($gd_machine) : '0'; ?></b></div>
 <div>Останні помилки: <b><u>future</u></b></div>
 <div>Oстанні ремонти: <b><u>future</u></b></div>

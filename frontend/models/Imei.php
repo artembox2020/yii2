@@ -28,12 +28,26 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property int $company_id
+ * @property int $status
  *
  * @property AddressBalanceHolder $address
  * @property Machine[] $machines
  */
 class Imei extends \yii\db\ActiveRecord
 {
+    const STATUS_OFF = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_UNDER_REPAIR = 2;
+    const STATUS_JUNK = 3;
+
+    public $current_status = [
+        'Off',
+        'On',
+        'Under repair',
+        'Junk'
+    ];
+
     /**
      * @inheritdoc
      */
@@ -66,8 +80,9 @@ class Imei extends \yii\db\ActiveRecord
     {
         return [
             [['imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
-            [['address_id'], 'required'],
+            [['imei', 'address_id', 'company_id', 'status'], 'required'],
             [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms'], 'string', 'max' => 255],
+            ['status', 'in', 'range' => array_keys(self::statuses())],
             [['is_deleted'], 'string', 'max' => 1],
             [['address_id'], 'exist', 'skipOnError' => true, 'targetClass' => AddressBalanceHolder::className(), 'targetAttribute' => ['address_id' => 'id']],
         ];
@@ -108,13 +123,17 @@ class Imei extends \yii\db\ActiveRecord
         return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);
     }
 
+    /**
+     *  get Initialisation status
+     * @return string
+     */
     public function getInit()
     {
        if (!empty($this->firmware_version)) {
            return 'Ok';
        }
 
-       return 'False';
+       return Yii::t('frontend', 'Not initialized');
     }
 
 
@@ -164,5 +183,47 @@ class Imei extends \yii\db\ActiveRecord
     public function getGdMashine()
     {
         return $this->hasMany(GdMashine::className(), ['imei_id' => 'id']);
+    }
+
+    /**
+     * Returns imei statuses list
+     *
+     * @param mixed $status
+     * @return array|mixed
+     */
+    public static function statuses($status = null)
+    {
+        $statuses = [
+            self::STATUS_OFF => Yii::t('frontend', 'Disabled'),
+            self::STATUS_ACTIVE => Yii::t('frontend', 'Active'),
+            self::STATUS_UNDER_REPAIR => Yii::t('frontend', 'Under repair'),
+            self::STATUS_JUNK => Yii::t('frontend', 'Junk'),
+        ];
+
+        if ($status === null) {
+            return $statuses;
+        }
+
+        return $statuses[$status];
+    }
+
+    /**
+     * @return $this|\yii\db\ActiveQuery
+     */
+    public static function find()
+    {
+        return parent::find()->where(['status' => Imei::STATUS_ACTIVE]);
+//        return new UserQuery(get_called_class());
+//        return parent::find()->where(['is_deleted' => 'false'])
+//            ->andWhere(['status' => Imei::STATUS_ACTIVE]);
+//            ->andWhere(['<', '{{%user}}.created_at', time()]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public static function getStatusOff()
+    {
+        return Imei::find()->where(['status' => Imei::STATUS_OFF])->all();
     }
 }

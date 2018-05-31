@@ -10,6 +10,8 @@ use frontend\services\custom\Debugger;
 /* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $balanceHolders frontend\models\BalanceHolder */
 /* @var $company frontend\models\Company */
+/* @var $assets frontend\models\Imei */
+
 
 ?>
 <?php $menu = []; ?>
@@ -22,11 +24,12 @@ use frontend\services\custom\Debugger;
         <h1><?= Html::encode($this->title) ?></h1>
 
         <?= $this->render('_form', [
-                'company' => $company,
+//            'assets' => $assets,
+            'company' => $company,
             'imei' => $imei,
             'address' => $address,
             'addresses' => $addresses,
-//            'balanceHolder' => $balanceHolder,
+            'balanceHolder' => $balanceHolder,
             'balanceHolders' => $balanceHolders
         ]) ?>
 

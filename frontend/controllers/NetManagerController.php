@@ -286,6 +286,7 @@ class NetManagerController extends \yii\web\Controller
 
         if (!empty($user->company)) {
             $users = $user->company->users;
+            $company = $user->company;
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
         } else {
@@ -294,6 +295,7 @@ class NetManagerController extends \yii\web\Controller
         }
 
         return $this->render('washpay/washpay', [
+            'company' => $company,
             'model' => $model,
             'users' => $users,
             'balanceHolders' => $balanceHolders,
@@ -335,9 +337,9 @@ class NetManagerController extends \yii\web\Controller
         $user = User::findOne(Yii::$app->user->id);
 
         if (!empty($user->company)) {
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
-            foreach ($model->balanceHolders as $balanceHolder) {
+            $company = $user->company;
+            $balanceHolders = $company->balanceHolders;
+            foreach ($company->balanceHolders as $balanceHolder) {
                 foreach ($balanceHolder->addressBalanceHolders as $addresses) {
                     $tempadd[] = $addresses;
                     foreach ($addresses->imeis as $value) {
@@ -361,6 +363,7 @@ class NetManagerController extends \yii\web\Controller
         }
 
         return $this->render('washpay/washpay-update' , [
+            'company' => $company,
             'imei' => $imei,
             'address' => $address,
             'addresses' => $tempadd,
@@ -374,9 +377,9 @@ class NetManagerController extends \yii\web\Controller
         $user = User::findOne(Yii::$app->user->id);
 
         if (!empty($user->company)) {
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
-            foreach ($model->balanceHolders as $balanceHolder) {
+            $company = $user->company;
+            $balanceHolders = $company->balanceHolders;
+            foreach ($company->balanceHolders as $balanceHolder) {
                 foreach ($balanceHolder->addressBalanceHolders as $addresses) {
                     $tempadd[] = $addresses;
                     }
@@ -385,14 +388,14 @@ class NetManagerController extends \yii\web\Controller
             $address = new AddressBalanceHolder();
 
             if ($imei->load(Yii::$app->request->post())) {
+                $imei->company_id = $company->id;
                 $imei->save();
                 return $this->redirect('washpay');
             }
-
-//            Debugger::dd($tempadd);
         }
 
         return $this->render('washpay/washpay-create', [
+            'company' => $company,
             'imei' => $imei,
             'address' => $address,
             'addresses' => $tempadd,
@@ -446,6 +449,61 @@ class NetManagerController extends \yii\web\Controller
 //            'address' => $address,
 //            'balanceHolder' => $balanceHolder
         ]);
+    }
 
+    public function actionFixedAssets()
+    {
+        $assets = Imei::getStatusOff();
+
+        return $this->render('fixed-assets/index', [
+            'assets' => $assets
+        ]);
+    }
+
+    public function actionFixedAssetsUpdate($id)
+    {
+        $imei = Imei::find()->where(['id' => $id])->andWhere(['status' => Imei::STATUS_OFF])->one();
+
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $company = $user->company;
+            $balanceHolders = $company->balanceHolders;
+            foreach ($company->balanceHolders as $balanceHolder) {
+                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
+                    $tempadd[] = $addresses;
+                }
+            }
+            $address = AddressBalanceHolder::find(['id' => $imei->address_id])->one();
+//            Debugger::dd($address);
+            $balanceHolder = $address->balanceHolder;
+
+            if ($imei->load(Yii::$app->request->post())) {
+                $imei->save();
+                return $this->redirect('washpay');
+            }
+
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        return $this->render('fixed-assets/update', [
+//            'assets' => $assets,
+            'company' => $company,
+            'imei' => $imei,
+            'address' => $address,
+            'addresses' => $tempadd,
+            'balanceHolders' => $balanceHolders,
+            'balanceHolder' => $balanceHolder
+        ]);
+    }
+
+    public function actionWmMachineCreate()
+    {
+
+        return $this->render('wm-machine/wm-machine-create', [
+
+    ]);
     }
 }

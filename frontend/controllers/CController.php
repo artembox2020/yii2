@@ -27,10 +27,11 @@ class CController extends Controller
     const STAR_DOLLAR = '*$';
 
     /**
-     * Undocumented function
+     * Initialisation method
      * sens.loc/c/i?p=866104020101005*0.1.33*MDB*7070000435*380937777777*380937777777*2*1
-     * @param [type] $p
-     * @return void
+     * @param $p
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionI($p)
     {
@@ -75,7 +76,7 @@ class CController extends Controller
     }
 
     /**
-     * Undocumented function
+     * Initialisation method
      * sense.loc/c/?p=
      * 1467707999*866104020101005*45*110*100*1500*25000*2*1_WM*1*86*15*1*1*22_DM*1*55*45*15_GD*3452*25*5_DC*25*15*-2$
      * $ - ignored

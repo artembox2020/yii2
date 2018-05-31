@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use frontend\models\Imei;
 
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
@@ -11,7 +10,6 @@ use frontend\models\Imei;
 /* @var $addresses frontend\models\AddressBalanceHolder */
 /* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $balanceHolders frontend\models\BalanceHolder */
-/* @var $company frontend\models\Company */
 ?>
 <?php if (Yii::$app->session->hasFlash('error')): ?>
     <div class="alert alert-info alert-dismissable">
@@ -43,10 +41,8 @@ use frontend\models\Imei;
     ) ?>
 
     <?= $form->field($address, 'balance_holder_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($balanceHolders, 'id', 'name')
+        \yii\helpers\ArrayHelper::map($balanceHolders, 'id', 'address', 'name')
     ) ?>
-
-    <?= $form->field($imei, 'status')->label(Yii::t('frontend', 'Status'))->radioList(Imei::statuses()) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>
