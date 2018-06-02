@@ -243,7 +243,7 @@ class NetManagerController extends \yii\web\Controller
     /**
      * @param $array
      * @param $id
-     * @return mixed
+     * @return null
      */
     private function findBalanceHolder($array, $id)
     {
@@ -252,6 +252,8 @@ class NetManagerController extends \yii\web\Controller
                 return $value;
             }
         }
+
+        return null;
     }
 
     /**
@@ -426,7 +428,7 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
-    public function actionWmMachineView($number_device)
+    public function actionWmMachineView($id)
     {
         $user = User::findOne(Yii::$app->user->id);
 
@@ -434,7 +436,7 @@ class NetManagerController extends \yii\web\Controller
             $users = $user->company->users;
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
-            $wm_machine = WmMashine::findOne($number_device);
+            $wm_machine = WmMashine::findOne($id);
 //            $imei = WmMashine::findOne($id);
 //            $address = AddressBalanceHolder::findOne($imei->id);
 //            $balanceHolder = BalanceHolder::findOne($address->balance_holder_id);
@@ -451,16 +453,95 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
-    public function actionFixedAssets()
+    /**
+     * @return string|\yii\web\Response
+     */
+    public function actionWmMachineAdd()
     {
-        $assets = Imei::getStatusOff();
+        $model = new WmMashine();
 
-        return $this->render('fixed-assets/index', [
-            'assets' => $assets
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $company = $user->company;
+            $balanceHolders = $company->balanceHolders;
+            foreach ($company->balanceHolders as $balanceHolder) {
+                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
+                    foreach ($addresses->imeis as $imei) {
+                        $imeis[] = $imei;
+                    }
+                }
+            }
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save(false);
+            return $this->redirect('wm-machine');
+        }
+
+        return $this->render('wm-machine/wm-machine-add', [
+            'model' => $model,
+            'company' => $company,
+            'balanceHolders' => $balanceHolders,
+            'imeis' => $imeis
         ]);
     }
 
-    public function actionFixedAssetsUpdate($id)
+    public function actionWmMachineUpdate($id)
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $company = $user->company;
+            $balanceHolders = $company->balanceHolders;
+            $model = WmMashine::findOne($id);
+            foreach ($company->balanceHolders as $balanceHolder) {
+                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
+                    foreach ($addresses->imeis as $imei) {
+                        $imeis[] = $imei;
+                    }
+                }
+            }
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save(false);
+            return $this->redirect('wm-machine');
+        }
+
+        return $this->render('wm-machine/wm-machine-update', [
+            'model' => $model,
+            'company' => $company,
+            'imeis' => $imeis,
+//            'address' => $address,
+//            'balanceHolder' => $balanceHolder
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function actionFixedAssets()
+    {
+        $imeis = Imei::getStatusOff();
+        $wm_machines = WmMashine::getStatusOff();
+
+        return $this->render('fixed-assets/index', [
+            'imeis' => $imeis,
+            'wm_machines' => $wm_machines
+
+        ]);
+    }
+
+    public function actionFixedAssetsUpdateImei($id)
     {
         $imei = Imei::find()->where(['id' => $id])->andWhere(['status' => Imei::STATUS_OFF])->one();
 
@@ -475,7 +556,6 @@ class NetManagerController extends \yii\web\Controller
                 }
             }
             $address = AddressBalanceHolder::find(['id' => $imei->address_id])->one();
-//            Debugger::dd($address);
             $balanceHolder = $address->balanceHolder;
 
             if ($imei->load(Yii::$app->request->post())) {
@@ -488,8 +568,7 @@ class NetManagerController extends \yii\web\Controller
             return $this->redirect('account/sign-in/login');
         }
 
-        return $this->render('fixed-assets/update', [
-//            'assets' => $assets,
+        return $this->render('fixed-assets/update-imei', [
             'company' => $company,
             'imei' => $imei,
             'address' => $address,
@@ -499,11 +578,43 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
-    public function actionWmMachineCreate()
+    public function actionFixedAssetsUpdateWmMachine($id)
     {
+        $wm_machine = WmMashine::find()->where(['id' => $id])->andWhere(['status' => Imei::STATUS_OFF])->one();
+        $user = User::findOne(Yii::$app->user->id);
+        $imei = $wm_machine->imei;
+//        Debugger::dd($imei);
+        if (!empty($user->company)) {
+            $company = $user->company;
+            $balanceHolders = $company->balanceHolders;
+            foreach ($company->balanceHolders as $balanceHolder) {
+                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
+                    $imeis = $addresses->imeis;
+                    $tempadd[] = $addresses->address;
+                }
+            }
+//            $address = AddressBalanceHolder::find(['id' => $imei->address_id])->one();
+//            $balanceHolder = $address->balanceHolder;
 
-        return $this->render('wm-machine/wm-machine-create', [
+            if ($wm_machine->load(Yii::$app->request->post())) {
+                $wm_machine->save();
+                return $this->redirect('wm-machine');
+            }
 
-    ]);
+        } else {
+
+            return $this->redirect('account/sign-in/login');
+        }
+
+        return $this->render('fixed-assets/update-wm-machine', [
+            'company' => $company,
+            'imeis' => $imeis,
+            'imei' => $imei,
+//            'address' => $address,
+            'addresses' => $tempadd,
+            'wm_machine' => $wm_machine,
+            'balanceHolders' => $balanceHolders,
+            'balanceHolder' => $balanceHolder
+        ]);
     }
 }

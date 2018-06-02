@@ -99,6 +99,7 @@ class BalanceHolderController extends Controller
         return $this->render('create', [
             'model' => $model,
             'balanceHolders' => $balanceHolders,
+            'company' => $company
         ]);
     }
 

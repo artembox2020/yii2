@@ -7,12 +7,13 @@ use frontend\models\WmMashine;
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $company frontend\models\Company */
-/* @var $model frontend\models\WmMashine */
+/* @var $wm_machine frontend\models\WmMashine */
 /* @var $address frontend\models\AddressBalanceHolder */
 /* @var $addresses frontend\models\AddressBalanceHolder */
 /* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $balanceHolders frontend\models\BalanceHolder */
 /* @var $imei frontend\models\Imei */
+/* @var $imeis */
 
 ?>
 <?php if (Yii::$app->session->hasFlash('error')): ?>
@@ -27,15 +28,15 @@ use frontend\models\WmMashine;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'serial_number')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($wm_machine, 'serial_number')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'number_device')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($wm_machine, 'number_device')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'company_id')->hiddenInput(['value'=> $company->id])->label(false); ?>
+    <?= $form->field($wm_machine, 'company_id')->hiddenInput(['value'=> $company->id])->label(false); ?>
 
-    <?= $form->field($model, 'status')->label(Yii::t('frontend', 'Status'))->radioList(WmMashine::statuses()) ?>
+    <?= $form->field($wm_machine, 'status')->label(Yii::t('frontend', 'Status'))->radioList(WmMashine::statuses()) ?>
 
-    <?= $form->field($model, 'imei_id')->dropDownList(
+    <?= $form->field($imei, 'imei')->dropDownList(
         \yii\helpers\ArrayHelper::map($imeis, 'id', 'imei')
     ) ?>
 

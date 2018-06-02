@@ -17,7 +17,7 @@ class m180410_212742_create_wm_mashine_data_table extends Migration
     {
         $this->createTable('wm_mashine_data', [
             'id' => $this->primaryKey(),
-            'imei_id' => $this->integer()->notNull(),
+            'mashine_id' => $this->integer()->notNull(),
             'type_mashine' => $this->string(),
             'number_device' => $this->integer(),
             'level_signal' => $this->integer(),
@@ -31,19 +31,19 @@ class m180410_212742_create_wm_mashine_data_table extends Migration
             'deleted_at' => $this->integer(),
         ]);
 
-        // creates index for column `imei_id`
+        // creates index for column `mashine_id`
         $this->createIndex(
-            'idx-wm_mashine_data-imei_id',
+            'idx-wm_mashine_data-mashine_id',
             'wm_mashine_data',
-            'imei_id'
+            'mashine_id'
         );
 
-        // add foreign key for table `imei`
+        // add foreign key for table `wm_mashine`
         $this->addForeignKey(
-            'fk-wm_mashine_data-imei_id',
+            'fk-wm_mashine_data-mashine_id',
             'wm_mashine_data',
-            'imei_id',
-            'imei',
+            'mashine_id',
+            'wm_mashine',
             'id',
             'CASCADE'
         );
@@ -54,15 +54,15 @@ class m180410_212742_create_wm_mashine_data_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `imei`
+        // drops foreign key for table `mashine`
         $this->dropForeignKey(
-            'fk-wm_mashine_data-imei_id',
+            'fk-wm_mashine_data-mashine_id',
             'wm_mashine_data'
         );
 
-        // drops index for column `imei_id`
+        // drops index for column `mashine_id`
         $this->dropIndex(
-            'idx-wm_mashine_data-imei_id',
+            'idx-wm_mashine_data-mashine_id',
             'wm_mashine_data'
         );
 

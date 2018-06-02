@@ -10,7 +10,8 @@ use frontend\services\custom\Debugger;
 /* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $balanceHolders frontend\models\BalanceHolder */
 /* @var $company frontend\models\Company */
-/* @var $assets frontend\models\Imei */
+/* @var $model frontend\models\WmMashine */
+/* @var $imes */
 
 
 ?>
@@ -24,13 +25,9 @@ use frontend\services\custom\Debugger;
         <h1><?= Html::encode($this->title) ?></h1>
 
         <?= $this->render('_form', [
-//            'assets' => $assets,
+            'model' => $model,
             'company' => $company,
-            'imei' => $imei,
-            'address' => $address,
-            'addresses' => $addresses,
-            'balanceHolder' => $balanceHolder,
-            'balanceHolders' => $balanceHolders
+            'imeis' => $imeis
         ]) ?>
 
     </div>

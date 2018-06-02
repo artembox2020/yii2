@@ -17,7 +17,7 @@ class m180410_212805_create_gd_mashine_data_table extends Migration
     {
         $this->createTable('gd_mashine_data', [
             'id' => $this->primaryKey(),
-            'imei_id' => $this->integer()->notNull(),
+            'mashine_id' => $this->integer()->notNull(),
             'type_mashine' => $this->string(),
             'gel_in_tank' => $this->integer(),
             'bill_cash' => $this->integer(),
@@ -28,19 +28,19 @@ class m180410_212805_create_gd_mashine_data_table extends Migration
             'deleted_at' => $this->integer()
         ]);
 
-        // creates index for column `imei_id`
+        // creates index for column `mashine_id`
         $this->createIndex(
-            'idx-gd_mashine_data-imei_id',
+            'idx-gd_mashine_data-mashine_id',
             'gd_mashine_data',
-            'imei_id'
+            'mashine_id'
         );
 
         // add foreign key for table `imei`
         $this->addForeignKey(
-            'fk-gd_mashine_data-imei_id',
+            'fk-gd_mashine_data-mashine_id',
             'gd_mashine_data',
-            'imei_id',
-            'imei',
+            'mashine_id',
+            'gd_mashine',
             'id',
             'CASCADE'
         );
@@ -51,15 +51,15 @@ class m180410_212805_create_gd_mashine_data_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `imei`
+        // drops foreign key for table `gd_mashine`
         $this->dropForeignKey(
-            'fk-gd_mashine_data-imei_id',
+            'fk-gd_mashine_data-mashine_id',
             'gd_mashine_data'
         );
 
-        // drops index for column `imei_id`
+        // drops index for column `mashine_id`
         $this->dropIndex(
-            'idx-gd_mashine_data-imei_id',
+            'idx-gd_mashine_data-mashine_id',
             'gd_mashine_data'
         );
 

@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use frontend\services\custom\Debugger;
+use bs\Flatpickr\FlatpickrWidget;
+use vova07\fileapi\Widget as FileApi;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\BalanceHolder */
@@ -30,11 +32,31 @@ foreach ($balanceHolders as $company) {
 
     <?= $form->field($model, 'position')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'date_start_cooperation')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'date_start_cooperation')->widget(FlatpickrWidget::className(), [
+        'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
+        'groupBtnShow' => true,
+        'options' => [
+            'class' => 'form-control',
+        ],
+        'clientOptions' => [
+            'allowInput' => true,
+            'defaultDate' => $model->date_start_cooperation ? date(DATE_ATOM, $model->date_start_cooperation) : null,
+        ],
+    ]) ?>
 
-    <?= $form->field($model, 'date_connection_monitoring')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'date_connection_monitoring')->widget(FlatpickrWidget::className(), [
+        'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
+        'groupBtnShow' => true,
+        'options' => [
+            'class' => 'form-control',
+        ],
+        'clientOptions' => [
+            'allowInput' => true,
+            'defaultDate' => $model->date_connection_monitoring ? date(DATE_ATOM, $model->date_connection_monitoring) : null,
+        ],
+    ]) ?>
 
-    <?=  Html::hiddenInput('company_id', $company->id); ?>
+    <?= Html::hiddenInput('company_id', $company->id); ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>

@@ -78,6 +78,17 @@ class m180324_205147_create_imei_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey(
+            'fk-imei-address_id',
+            'imei'
+        );
+
+        // drops index for column `address_id`
+        $this->dropIndex(
+            'idx-imei-address_id',
+            'imei'
+        );
+
         // drops foreign key for table `company`
         $this->dropForeignKey(
             'fk-imei-company_id',

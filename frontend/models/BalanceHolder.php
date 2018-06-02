@@ -20,8 +20,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $is_deleted
  * @property int $deleted_at
  * @property string $position
- * @property integer $date_start_cooperation
- * @property integer $date_connection_monitoring
+ * @property int $date_start_cooperation
+ * @property int $date_connection_monitoring
  *
  * @property AddressBalanceHolder[] $addressBalanceHolders
  * @property Company $company
@@ -59,7 +59,7 @@ class BalanceHolder extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'created_at', 'deleted_at', 'date_start_cooperation', 'date_connection_monitoring'], 'integer'],
+            [['company_id', 'created_at', 'deleted_at'], 'integer'],
             [['name', 'city', 'address', 'contact_person', 'position'], 'string', 'max' => 255],
             [['phone'], 'string', 'max' => 100],
             [['is_deleted'], 'string', 'max' => 1],

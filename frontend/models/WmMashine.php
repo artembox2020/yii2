@@ -11,6 +11,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  *
  * @property int $id
  * @property int $imei_id
+ * @property int $company_id
  * @property string $type_mashine
  * @property int $number_device
  * @property string $serial_number
@@ -23,11 +24,17 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property
  *
  * @property Imei $imei
  */
 class WmMashine extends \yii\db\ActiveRecord
 {
+    const STATUS_OFF = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_UNDER_REPAIR = 2;
+    const STATUS_JUNK = 3;
+
     public $current_status = [
         '-2' => 'nulling',
         '-1' => 'refill',
@@ -91,10 +98,11 @@ class WmMashine extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['imei_id'], 'required'],
+            [['imei_id', 'status', 'company_id'], 'required'],
             [['imei_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
-            [['type_mashine'], 'string', 'max' => 255],
+            [['type_mashine', 'serial_number'], 'string', 'max' => 255],
             [['is_deleted'], 'string', 'max' => 1],
+            ['status', 'in', 'range' => array_keys(self::statuses())],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
         ];
     }
@@ -108,6 +116,7 @@ class WmMashine extends \yii\db\ActiveRecord
             'id' => Yii::t('frontend', 'ID'),
             'imei_id' => Yii::t('frontend', 'Imei ID'),
             'serial_number' => Yii::t('frontend', 'Serial number'),
+            'company_id' => Yii::t('frontend', 'Company'),
             'type_mashine' => Yii::t('frontend', 'Type Mashine'),
             'number_device' => Yii::t('frontend', 'Number Device'),
             'level_signal' => Yii::t('frontend', 'Level Signal'),
@@ -128,5 +137,47 @@ class WmMashine extends \yii\db\ActiveRecord
     public function getImei()
     {
         return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
+    }
+
+    /**
+     * Returns imei statuses list
+     *
+     * @param mixed $status
+     * @return array|mixed
+     */
+    public static function statuses($status = null)
+    {
+        $statuses = [
+            self::STATUS_OFF => Yii::t('frontend', 'Disabled'),
+            self::STATUS_ACTIVE => Yii::t('frontend', 'Active'),
+            self::STATUS_UNDER_REPAIR => Yii::t('frontend', 'Under repair'),
+            self::STATUS_JUNK => Yii::t('frontend', 'Junk'),
+        ];
+
+        if ($status === null) {
+            return $statuses;
+        }
+
+        return $statuses[$status];
+    }
+
+    /**
+     * @return $this|\yii\db\ActiveQuery
+     */
+    public static function find()
+    {
+        return parent::find()->where(['status' => WmMashine::STATUS_ACTIVE]);
+//        return new UserQuery(get_called_class());
+//        return parent::find()->where(['is_deleted' => 'false'])
+//            ->andWhere(['status' => Imei::STATUS_ACTIVE]);
+//            ->andWhere(['<', '{{%user}}.created_at', time()]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public static function getStatusOff()
+    {
+        return WmMashine::find()->where(['status' => WmMashine::STATUS_OFF])->all();
     }
 }

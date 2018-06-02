@@ -19,8 +19,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $is_deleted
  * @property int $deleted_at
  * @property int $number_of_floors
- * @property string $date_inserted
- * @property string $date_connection_monitoring
+ * @property int $date_inserted
+ * @property int $date_connection_monitoring
  *
  * @property BalanceHolder $balanceHolder
  * @property Imei[] $imeis

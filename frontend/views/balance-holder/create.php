@@ -8,6 +8,7 @@ use yii\helpers\Html;
 /* @var $model frontend\models\Company */
 /* @var $users common\models\User */
 /* @var $balanceHolders */
+/* @var $company frontend\models\Company */
 
 $this->title = Yii::t('frontend', 'Create Balance Holder');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Balance Holders'), 'url' => ['index']];
@@ -20,6 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $this->render('_form', [
         'model' => $model,
         'balanceHolders' => $balanceHolders,
+        'company' => $company
     ]) ?>
 
 </div>

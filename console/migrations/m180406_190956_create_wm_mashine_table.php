@@ -20,6 +20,7 @@ class m180406_190956_create_wm_mashine_table extends Migration
             'imei_id' => $this->integer()->notNull(),
             'type_mashine' => $this->string(),
             'serial_number' => $this->string(100),
+            'company_id' => $this->integer()->notNull(),
             'number_device' => $this->integer(),
             'level_signal' => $this->integer(),
             'bill_cash' => $this->integer(),
@@ -45,6 +46,23 @@ class m180406_190956_create_wm_mashine_table extends Migration
             'wm_mashine',
             'imei_id',
             'imei',
+            'id',
+            'CASCADE'
+        );
+
+        // creates index for column `company_id`
+        $this->createIndex(
+            'idx-wm_mashine-company_id',
+            'wm_mashine',
+            'company_id'
+        );
+
+        // add foreign key for table `company`
+        $this->addForeignKey(
+            'fk-wm_mashine-company_id',
+            'wm_mashine',
+            'company_id',
+            'company',
             'id',
             'CASCADE'
         );

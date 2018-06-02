@@ -18,6 +18,7 @@ class m180406_204927_create_gd_mashine_table extends Migration
         $this->createTable('gd_mashine', [
             'id' => $this->primaryKey(),
             'imei_id' => $this->integer()->notNull(),
+            'company_id' => $this->integer()->notNull(),
             'type_mashine' => $this->string(),
             'serial_number' => $this->string(100),
             'gel_in_tank' => $this->integer(),
@@ -45,6 +46,23 @@ class m180406_204927_create_gd_mashine_table extends Migration
             'id',
             'CASCADE'
         );
+
+        // creates index for column `company_id`
+        $this->createIndex(
+            'idx-gd_mashine-company_id',
+            'gd_mashine',
+            'company_id'
+        );
+
+        // add foreign key for table `company`
+        $this->addForeignKey(
+            'fk-gd_mashine-company_id',
+            'gd_mashine',
+            'company_id',
+            'company',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**
@@ -61,6 +79,18 @@ class m180406_204927_create_gd_mashine_table extends Migration
         // drops index for column `imei_id`
         $this->dropIndex(
             'idx-gd_mashine-imei_id',
+            'gd_mashine'
+        );
+
+        // drops foreign key for table `company`
+        $this->dropForeignKey(
+            'fk-gd_mashine-company_id',
+            'gd_mashine'
+        );
+
+        // drops index for column `company_id`
+        $this->dropIndex(
+            'idx-gd_mashine-company_id',
             'gd_mashine'
         );
 

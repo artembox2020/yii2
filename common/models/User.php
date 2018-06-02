@@ -28,7 +28,6 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property boolean $is_deleted
  * @property integer $deleted_at
  * @property string $other
- * @property string $position
  * @property string $birthday
  * @property array $roles
  *
