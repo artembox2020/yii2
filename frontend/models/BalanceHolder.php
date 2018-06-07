@@ -74,9 +74,10 @@ class BalanceHolder extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('frontend', 'ID'),
-            'name' => Yii::t('frontend', 'Name'),
+            'name' => Yii::t('frontend', 'Balance Holder Name'),
             'city' => Yii::t('frontend', 'City'),
-            'address' => Yii::t('frontend', 'Address'),
+            'Count Addresses' => Yii::t('frontend', 'Count Addresses'),
+            'address' => Yii::t('frontend', 'Address amount'),
             'phone' => Yii::t('frontend', 'Phone'),
             'contact_person' => Yii::t('frontend', 'Contact Person'),
             'company_id' => Yii::t('frontend', 'Company ID'),
@@ -89,6 +90,9 @@ class BalanceHolder extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getAddressBalanceHolders()
     {
         return $this->hasMany(AddressBalanceHolder::className(), ['balance_holder_id' => 'id']);
@@ -102,8 +106,26 @@ class BalanceHolder extends \yii\db\ActiveRecord
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getOtherContactPerson()
     {
         return $this->hasMany(OtherContactPerson::className(), ['balance_holder_id' => 'id']);
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getCountAddresses()
+    {
+        return $this->getAddressBalanceHolders()->count();
+    }
+
+    public function getCountWashpay()
+    {
+        foreach ($this->getAddressBalanceHolders() as $addresses) {
+            $addresses[]
+        }
     }
 }

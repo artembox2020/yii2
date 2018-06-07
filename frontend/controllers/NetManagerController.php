@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\models\UserProfile;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\BalanceHolder;
+use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
 use Yii;
@@ -189,7 +190,7 @@ class NetManagerController extends \yii\web\Controller
     {
         if (($model = User::findOne($id)) !== null) {
             return $model;
-        } else {
+       } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
@@ -205,15 +206,19 @@ class NetManagerController extends \yii\web\Controller
             $users = $user->company->users;
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
+            $searchModel = new BalanceHolderSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         } else {
 
             return $this->redirect('account/sign-in/login');
         }
 
-        return $this->render('balance-holders', [
-            'model' => $model,
-            'users' => $users,
-            'balanceHolders' => $balanceHolders,
+        return $this->render('balance-holder/index', [
+//            'model' => $model,
+//            'users' => $users,
+//            'balanceHolders' => $balanceHolders,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
         ]);
     }
 
