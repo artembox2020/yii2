@@ -22,6 +22,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property int $status
  *
 // * @property Imei $imei
  * @property WmMashine[] $wmMashines
@@ -59,7 +60,7 @@ class ImeiData extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['imei_id', 'company_id', 'status'], 'required'],
+            [['imei_id'], 'required'],
             [['imei_id', 'created_at', 'imei', 'level_signal', 'on_modem_account', 'in_banknotes', 'money_in_banknotes', 'fireproof_residue', 'price_regim', 'updated_at', 'deleted_at'], 'integer'],
             [['is_deleted'], 'string', 'max' => 1],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
@@ -74,7 +75,7 @@ class ImeiData extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('frontend', 'ID'),
             'imei_id' => Yii::t('frontend', 'Imei ID'),
-            'company_id' => Yii::t('frontnd', 'Company'),
+//            'company_id' => Yii::t('frontnd', 'Company'),
             'status' => Yii::t('frontend', 'Status'),
             'created_at' => Yii::t('frontend', 'Created At'),
             'imei' => Yii::t('frontend', 'Imei'),

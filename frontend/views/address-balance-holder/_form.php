@@ -1,13 +1,14 @@
 <?php
 
-use frontend\models\BalanceHolder;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use bs\Flatpickr\FlatpickrWidget;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AddressBalanceHolder */
 /* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $company \frontend\models\Company */
 ?>
 
 <div class="address-balance-holder-form">
@@ -22,9 +23,31 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'number_of_floors')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'date_inserted')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'date_inserted')->widget(FlatpickrWidget::className(), [
+        'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
+        'groupBtnShow' => true,
+        'options' => [
+            'class' => 'form-control',
+        ],
+        'clientOptions' => [
+            'allowInput' => true,
+            'defaultDate' => $model->date_inserted ? date(DATE_ATOM, $model->date_inserted) : null,
+        ],
+    ]) ?>
 
-    <?= $form->field($model, 'date_connection_monitoring')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'date_connection_monitoring')->widget(FlatpickrWidget::className(), [
+        'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
+        'groupBtnShow' => true,
+        'options' => [
+            'class' => 'form-control',
+        ],
+        'clientOptions' => [
+            'allowInput' => true,
+            'defaultDate' => $model->date_connection_monitoring ? date(DATE_ATOM, $model->date_connection_monitoring) : null,
+        ],
+    ]) ?>
+
+    <?= $form->field($model, 'company_id')->hiddenInput(['value'=> $company->id])->label(false); ?>
 
     <?= $form->field($model, 'balance_holder_id')->dropDownList(
             \yii\helpers\ArrayHelper::map($balanceHolder, 'id', 'name')

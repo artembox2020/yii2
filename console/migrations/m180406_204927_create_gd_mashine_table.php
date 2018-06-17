@@ -19,6 +19,8 @@ class m180406_204927_create_gd_mashine_table extends Migration
             'id' => $this->primaryKey(),
             'imei_id' => $this->integer()->notNull(),
             'company_id' => $this->integer()->notNull(),
+            'balance_holder_id' => $this->integer()->notNull(),
+            'address_id' => $this->integer()->notNull(),
             'type_mashine' => $this->string(),
             'serial_number' => $this->string(100),
             'gel_in_tank' => $this->integer(),
@@ -60,6 +62,40 @@ class m180406_204927_create_gd_mashine_table extends Migration
             'gd_mashine',
             'company_id',
             'company',
+            'id',
+            'CASCADE'
+        );
+
+        // creates index for column `address_id`
+        $this->createIndex(
+            'idx-gd_mashine-address_id',
+            'gd_mashine',
+            'address_id'
+        );
+
+        // add foreign key for table `address_balance_holder`
+        $this->addForeignKey(
+            'fk-gd_mashine-address_id',
+            'gd_mashine',
+            'address_id',
+            'address_balance_holder',
+            'id',
+            'CASCADE'
+        );
+
+        // creates index for column `balance_holder_id`
+        $this->createIndex(
+            'idx-gd_mashine-balance_holder_id',
+            'gd_mashine',
+            'balance_holder_id'
+        );
+
+        // add foreign key for table `balance_holder`
+        $this->addForeignKey(
+            'fk-gd_mashine-balance_holder_id',
+            'gd_mashine',
+            'balance_holder_id',
+            'balance_holder',
             'id',
             'CASCADE'
         );

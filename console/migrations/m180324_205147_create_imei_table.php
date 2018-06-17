@@ -18,8 +18,9 @@ class m180324_205147_create_imei_table extends Migration
         $this->createTable('imei', [
             'id' => $this->primaryKey(),
             'imei' => $this->string(50),
-            'address_id' => $this->integer()->notNull(),
             'company_id' => $this->integer()->notNull(),
+            'balance_holder_id' => $this->integer()->notNull(),
+            'address_id' => $this->integer()->notNull(),
             'status' => $this->integer()->notNull(),
             'type_packet' => $this->string(),
             'imei_central_board' => $this->string(50),
@@ -69,6 +70,23 @@ class m180324_205147_create_imei_table extends Migration
             'id',
             'CASCADE'
         );
+
+        // creates index for column `balance_holder_id`
+        $this->createIndex(
+            'idx-imei-balance_holder_id',
+            'imei',
+            'balance_holder_id'
+        );
+
+        // add foreign key for table `balance_holder`
+        $this->addForeignKey(
+            'fk-imei-balance_holder_id',
+            'imei',
+            'balance_holder_id',
+            'balance_holder',
+            'id',
+            'CASCADE'
+        );
     }
 
 
@@ -98,6 +116,18 @@ class m180324_205147_create_imei_table extends Migration
         // drops index for column `company_id`
         $this->dropIndex(
             'idx-imei-company_id',
+            'imei'
+        );
+
+        // drops foreign key for table `balance_holder`
+        $this->dropForeignKey(
+            'fk-imei-balance_holder_id',
+            'imei'
+        );
+
+        // drops index for column `balance_holder_id`
+        $this->dropIndex(
+            'idx-imei-balance_holder_id',
             'imei'
         );
 

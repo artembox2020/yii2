@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
@@ -82,8 +83,14 @@ class BalanceHolderController extends Controller
         $model = new BalanceHolder();
 
         if ($model->load(Yii::$app->request->post())) {
+            $request = Yii::$app->request;
+//            Debugger::d($request->post('name'));
+//            Debugger::dd($model->date_start_cooperation);
             $user = User::findOne(Yii::$app->user->id);
             $model->company_id = $user->company_id;
+//            $model->created_at = Time();
+            $model->is_deleted = false;
+//            $model->deleted_at = time();
             $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -142,7 +149,7 @@ class BalanceHolderController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($id)->softDelete();
 
         return $this->redirect(['index']);
     }

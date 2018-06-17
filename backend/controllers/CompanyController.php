@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use backend\services\mail\MailSender;
 use common\models\User;
+use frontend\models\AddressBalanceHolder;
+use frontend\models\BalanceHolder;
 use frontend\services\custom\Debugger;
 use Yii;
 use backend\models\Company;
@@ -19,6 +21,8 @@ use vova07\fileapi\actions\UploadAction as FileAPIUpload;
 class CompanyController extends Controller
 {
     const ZERO = 0;
+    const DEFAULT_VALUE = 'Default';
+
     /**
      * @return array
      */
@@ -94,6 +98,18 @@ class CompanyController extends Controller
             $user = User::findOne($model->sub_admin);
             $user->company_id = $model->id;
             $user->save();
+
+            //create default balance holder item
+            $balance_holder_default = new BalanceHolder();
+            $balance_holder_default->company_id = $model->id;
+            $balance_holder_default->name = self::DEFAULT_VALUE;
+            $balance_holder_default->address = self::DEFAULT_VALUE;
+            $balance_holder_default->save();
+
+            $address = new AddressBalanceHolder();
+            $address->balance_holder_id = $balance_holder_default->id;
+            $address->name = self::DEFAULT_VALUE;
+            $address->address = self::DEFAULT_VALUE;
 
             // send invite mail
             $password = $user->other;

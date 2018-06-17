@@ -12,7 +12,7 @@ class m180525_112227_add_date_connection_monitoring_column_to_address_balance_ho
      */
     public function safeUp()
     {
-        $this->addColumn('address_balance_holder', 'date_connection_monitoring', $this->string());
+        $this->addColumn('address_balance_holder', 'date_connection_monitoring', $this->integer());
     }
 
     /**

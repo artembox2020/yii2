@@ -12,7 +12,7 @@ class m180525_111052_add_date_inserted_column_to_address_balance_holder_table ex
      */
     public function safeUp()
     {
-        $this->addColumn('address_balance_holder', 'date_inserted', $this->string());
+        $this->addColumn('address_balance_holder', 'date_inserted', $this->integer());
     }
 
     /**

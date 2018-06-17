@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\User;
+use frontend\models\AddressBalanceHolder;
 use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\Imei;
@@ -65,6 +66,11 @@ class ImeiController extends Controller
      */
     public function actionView($id)
     {
+//        $model = Imei::findOne($id);
+//        Debugger::dd($model);
+//        $res = $this->findModel($id);
+//        Debugger::dd($id);
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -81,8 +87,6 @@ class ImeiController extends Controller
 
         $user = User::findOne(Yii::$app->user->id);
         $company = $user->company;
-        $balanceHolder = $company->balanceHolders;
-        // $address = $balanceHolder->getAddressBalanceHolders();
 
         foreach ($company->balanceHolders as $item) {
             foreach ($item->addressBalanceHolders as $result) {
@@ -90,7 +94,15 @@ class ImeiController extends Controller
             }
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $address_balance_holder = AddressBalanceHolder::findOne($model->address_id);
+            $model->balance_holder_id = $address_balance_holder->id;
+            $model->company_id = $company->id;
+            $model->created_at = Time();
+            $model->is_deleted = false;
+            $model->deleted_at = time();
+            $model->save();
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -113,8 +125,6 @@ class ImeiController extends Controller
 
         $user = User::findOne(Yii::$app->user->id);
         $company = $user->company;
-        $balanceHolder = $company->balanceHolders;
-        // $address = $balanceHolder->getAddressBalanceHolders();
 
         foreach ($company->balanceHolders as $item) {
             foreach ($item->addressBalanceHolders as $result) {
@@ -143,7 +153,7 @@ class ImeiController extends Controller
 
     /**
      * @param $id
-     * @return null|static
+     * @return Imei|null
      * @throws NotFoundHttpException
      */
     protected function findModel($id)

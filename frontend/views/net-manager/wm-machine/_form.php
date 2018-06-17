@@ -13,6 +13,7 @@ use frontend\models\WmMashine;
 /* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $balanceHolders frontend\models\BalanceHolder */
 /* @var $imei frontend\models\Imei */
+/* @var $imeis frontend\models\Imei */
 
 ?>
 <?php if (Yii::$app->session->hasFlash('error')): ?>

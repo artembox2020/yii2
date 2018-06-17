@@ -4,11 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use frontend\models\BalanceHolder;
 use frontend\services\custom\Debugger;
+use frontend\models\Imei;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AddressBalanceHolder */
 /* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $imei frontend\models\Imei */
 
 
 
@@ -27,6 +29,8 @@ use frontend\services\custom\Debugger;
     <?= $form->field($model, 'address_id')->dropDownList(
         \yii\helpers\ArrayHelper::map($address, 'id', 'name')
     ) ?>
+
+    <?= $form->field($model, 'status')->label(Yii::t('frontend', 'Status'))->radioList(Imei::statuses()) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>

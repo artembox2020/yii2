@@ -14,12 +14,12 @@ class m180324_201252_create_balance_holder_table extends Migration
     {
         $this->createTable('balance_holder', [
             'id' => $this->primaryKey(),
+            'company_id' => $this->integer()->notNull(),
             'name' => $this->string(255),
             'city' => $this->string(255),
             'address' => $this->string(255),
             'phone' => $this->string(100),
             'contact_person' => $this->string(255),
-            'company_id' => $this->integer(),
             'created_at' => $this->integer(),
             'updated_at' => $this->integer(),
             'is_deleted' => $this->boolean(),

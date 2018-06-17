@@ -20,6 +20,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property integer $deleted_at
  * @property string $address
  * @property User[] $users
+ *
+ * @property BalanceHolder $balanceHolders
  */
 class Company extends ActiveRecord
 {
@@ -97,6 +99,9 @@ class Company extends ActiveRecord
         return $this->hasMany(User::className(), ['company_id' => 'id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public static function find()
     {
         return parent::find()->where(['is_deleted' => false]);
@@ -108,5 +113,13 @@ class Company extends ActiveRecord
     public function getBalanceHolders()
     {
         return $this->hasMany(BalanceHolder::className(), ['company_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAddresses()
+    {
+        return $this->hasMany(AddressBalanceHolder::className(), ['company_id' => 'id']);
     }
 }

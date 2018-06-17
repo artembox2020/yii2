@@ -10,10 +10,11 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * This is the model class for table "address_balance_holder".
  *
  * @property int $id
+ * @property int $company_id
+ * @property int $balance_holder_id
  * @property string $name
  * @property string $address
  * @property int $floor
- * @property int $balance_holder_id
  * @property int $created_at
  * @property int $updated_at
  * @property int $is_deleted
@@ -58,11 +59,12 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['floor', 'balance_holder_id', 'number_of_floors', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            ['date_inserted', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
+            ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
+            [['floor', 'company_id', 'balance_holder_id', 'number_of_floors', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['balance_holder_id'], 'required'],
             [['name', 'address'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
-            [['date_inserted', 'date_connection_monitoring'], 'string', 'max' => 255],
+//            [['is_deleted'], 'string', 'max' => 1],
             [['balance_holder_id'], 'exist', 'skipOnError' => true, 'targetClass' => BalanceHolder::className(), 'targetAttribute' => ['balance_holder_id' => 'id']],
         ];
     }
@@ -74,6 +76,7 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('frontend', 'ID'),
+            'company_id' => Yii::t('frontend', 'Company'),
             'name' => Yii::t('frontend', 'Name'),
             'address' => Yii::t('frontend', 'Address'),
             'floor' => Yii::t('frontend', 'Floor'),
@@ -100,8 +103,40 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getCompany()
+    {
+        return $this->hasOne(Company::className(), ['id' => 'company_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getImeis()
     {
         return $this->hasMany(Imei::className(), ['address_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getWashMachines()
+    {
+        return $this->hasMany(WmMashine::className(), ['address_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGelDispenser()
+    {
+        return $this->hasMany(GdMashine::className(), ['address_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public static function find()
+    {
+        return parent::find()->where(['is_deleted' => false]);
     }
 }

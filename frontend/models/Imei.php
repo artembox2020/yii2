@@ -2,11 +2,13 @@
 
 namespace frontend\models;
 
+use phpDocumentor\Reflection\Types\Integer;
 use Yii;
 use frontend\models\ImeiData;
 use frontend\models\GdMashine;
 use frontend\models\WmMashine;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
@@ -29,6 +31,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $is_deleted
  * @property int $deleted_at
  * @property int $company_id
+ * @property int $balance_holder_id
  * @property int $status
  *
  * @property AddressBalanceHolder $address
@@ -47,6 +50,9 @@ class Imei extends \yii\db\ActiveRecord
         'Under repair',
         'Junk'
     ];
+
+    /** @var $model */
+    private $model;
 
     /**
      * @inheritdoc
@@ -80,10 +86,18 @@ class Imei extends \yii\db\ActiveRecord
     {
         return [
             [['imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
-            [['imei', 'address_id', 'company_id', 'status'], 'required'],
+            [['imei', 'address_id', 'company_id', 'balance_holder_id', 'status'], 'required'],
             [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms'], 'string', 'max' => 255],
             ['status', 'in', 'range' => array_keys(self::statuses())],
-            [['is_deleted'], 'string', 'max' => 1],
+            ['imei', 'unique',
+                'targetClass' => Imei::className(),
+                'filter' => function ($query) {
+                    if (!$this->getModel()->isNewRecord) {
+                        $query->andWhere(['not', ['id' => $this->getModel()->id]]);
+                    }
+                }
+            ],
+//            [['is_deleted'], 'string', 'max' => 1],
             [['address_id'], 'exist', 'skipOnError' => true, 'targetClass' => AddressBalanceHolder::className(), 'targetAttribute' => ['address_id' => 'id']],
         ];
     }
@@ -115,6 +129,28 @@ class Imei extends \yii\db\ActiveRecord
         ];
     }
 
+//    /**
+//     * @inheritdoc
+//     */
+//    public function setModel($model)
+//    {
+//        $this->imei = $model->imei;
+//        $this->model = $model;
+//
+//        return $this->model;
+//    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getModel()
+    {
+        if (!$this->model) {
+            $this->model = new Imei();
+        }
+
+        return $this->model;
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -136,11 +172,8 @@ class Imei extends \yii\db\ActiveRecord
        return Yii::t('frontend', 'Not initialized');
     }
 
-
     /**
-     * get Address Name
-     *
-     * @return void
+     * @return string
      */
     public function getAddressName()
     {
@@ -166,9 +199,7 @@ class Imei extends \yii\db\ActiveRecord
     }
 
     /**
-     * get Machine status
-     *
-     * @return void
+     * @return \yii\db\ActiveQuery
      */
     public function getMachineStatus()
     {
@@ -176,9 +207,7 @@ class Imei extends \yii\db\ActiveRecord
     }
 
     /**
-     * get Gd Machine
-     *
-     * @return void
+     * @return \yii\db\ActiveQuery
      */
     public function getGdMashine()
     {
@@ -212,7 +241,7 @@ class Imei extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return parent::find()->where(['status' => Imei::STATUS_ACTIVE]);
+        return parent::find()->where(['is_deleted' => false]);
 //        return new UserQuery(get_called_class());
 //        return parent::find()->where(['is_deleted' => 'false'])
 //            ->andWhere(['status' => Imei::STATUS_ACTIVE]);
@@ -225,5 +254,23 @@ class Imei extends \yii\db\ActiveRecord
     public static function getStatusOff()
     {
         return Imei::find()->where(['status' => Imei::STATUS_OFF])->all();
+    }
+
+    /**
+     * @param Imei $imei
+     * @return int
+     */
+    public static function getStatus(Imei $imei)
+    {
+        return $imei->status;
+    }
+
+    /**
+     * @param $int
+     * @return array|mixed
+     */
+    public static function checkStatus($int)
+    {
+        return self::statuses($int);
     }
 }

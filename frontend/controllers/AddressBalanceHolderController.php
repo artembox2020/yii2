@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\User;
+use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\AddressBalanceHolderSearch;
@@ -68,16 +69,20 @@ class AddressBalanceHolderController extends Controller
         $model = new AddressBalanceHolder();
 
         $user = User::findOne(Yii::$app->user->id);
-        $users = $user->company->users;
         $company = $user->company;
         $balanceHolder = $company->balanceHolders;
 
-        if ($model->load(Yii::$app->request->post())  && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->created_at = Time();
+            $model->is_deleted = false;
+            $model->deleted_at = time();
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'company' => $company,
             'balanceHolder' => $balanceHolder
         ]);
     }
@@ -94,7 +99,6 @@ class AddressBalanceHolderController extends Controller
         $model = $this->findModel($id);
 
         $user = User::findOne(Yii::$app->user->id);
-        $users = $user->company->users;
         $company = $user->company;
         $balanceHolder = $company->balanceHolders;
 
@@ -104,20 +108,21 @@ class AddressBalanceHolderController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'company' => $company,
             'balanceHolder' => $balanceHolder
         ]);
     }
 
     /**
-     * Deletes an existing AddressBalanceHolder model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($id)->softDelete();
 
         return $this->redirect(['index']);
     }

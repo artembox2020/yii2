@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use frontend\services\custom\Debugger;
 use bs\Flatpickr\FlatpickrWidget;
-use vova07\fileapi\Widget as FileApi;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\BalanceHolder */
@@ -25,12 +24,6 @@ foreach ($balanceHolders as $company) {
     <?= $form->field($model, 'city')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'contact_person')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'position')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'date_start_cooperation')->widget(FlatpickrWidget::className(), [
         'locale' => strtolower(substr(Yii::$app->language, 0, 2)),

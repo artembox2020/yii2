@@ -24,6 +24,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property int $balance_holder_id
  * @property
  *
  * @property Imei $imei
@@ -98,7 +99,7 @@ class WmMashine extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['imei_id', 'status', 'company_id'], 'required'],
+            [['imei_id', 'status', 'company_id', 'balance_holder_id'], 'required'],
             [['imei_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine', 'serial_number'], 'string', 'max' => 255],
             [['is_deleted'], 'string', 'max' => 1],

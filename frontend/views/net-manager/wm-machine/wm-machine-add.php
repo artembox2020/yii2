@@ -11,7 +11,7 @@ use frontend\services\custom\Debugger;
 /* @var $balanceHolders frontend\models\BalanceHolder */
 /* @var $company frontend\models\Company */
 /* @var $model frontend\models\WmMashine */
-/* @var $imes */
+/* @var $imes frontend\models\Imei */
 
 
 ?>

@@ -240,7 +240,7 @@ class NetManagerController extends \yii\web\Controller
             return $this->redirect('account/sign-in/login');
         }
 
-        return $this->render('view-balance-holder', [
+        return $this->render('balance-holder/view-balance-holder', [
             'model' => $model,
         ]);
     }
@@ -484,10 +484,17 @@ class NetManagerController extends \yii\web\Controller
         }
 
         if ($model->load(Yii::$app->request->post())) {
+
+//            Debugger::dd($model->imei_id);
+            $im = Imei::findOne(['id' => $model->imei_id]);
+            $ad = AddressBalanceHolder::findOne(['id' => $im->address_id]);
+//            Debugger::dd($im);
+            $model->balance_holder_id = $ad->balance_holder_id;
             $model->save(false);
             return $this->redirect('wm-machine');
         }
 
+//        Debugger::dd($imeis);
         return $this->render('wm-machine/wm-machine-add', [
             'model' => $model,
             'company' => $company,

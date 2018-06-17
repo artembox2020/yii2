@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "wm_mashine_data".
  *
  * @property int $id
- * @property int $imei_id
+ * @property int $mashine_id
  * @property string $type_mashine
  * @property int $number_device
  * @property int $level_signal
@@ -39,11 +39,11 @@ class WmMashineData extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['imei_id'], 'required'],
-            [['imei_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['mashine_id'], 'required'],
+            [['mashine_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine'], 'string', 'max' => 255],
             [['is_deleted'], 'string', 'max' => 1],
-            [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => WmMashine::className(), 'targetAttribute' => ['imei_id' => 'id']],
+            [['mashine_id'], 'exist', 'skipOnError' => true, 'targetClass' => WmMashine::className(), 'targetAttribute' => ['mashine_id' => 'id']],
         ];
     }
 
@@ -54,7 +54,7 @@ class WmMashineData extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('frontend', 'ID'),
-            'imei_id' => Yii::t('frontend', 'Wm Mashine ID'),
+            'mashine_id' => Yii::t('frontend', 'Wm Mashine ID'),
             'type_mashine' => Yii::t('frontend', 'Type Mashine'),
             'number_device' => Yii::t('frontend', 'Number Device'),
             'level_signal' => Yii::t('frontend', 'Level Signal'),
@@ -74,6 +74,6 @@ class WmMashineData extends \yii\db\ActiveRecord
      */
     public function getWmMashine()
     {
-        return $this->hasOne(WmMashine::className(), ['id' => 'imei_id']);
+        return $this->hasOne(WmMashine::className(), ['id' => 'mashine_id']);
     }
 }

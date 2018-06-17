@@ -32,6 +32,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property array $roles
  *
  * @property UserProfile $userProfile
+ *
+ * @property Company $company
  */
 class User extends ActiveRecord implements IdentityInterface
 {

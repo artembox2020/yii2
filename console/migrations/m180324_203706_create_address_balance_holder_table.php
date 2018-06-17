@@ -17,15 +17,32 @@ class m180324_203706_create_address_balance_holder_table extends Migration
     {
         $this->createTable('address_balance_holder', [
             'id' => $this->primaryKey(),
+            'company_id' => $this->integer()->notNull(),
+            'balance_holder_id' => $this->integer()->notNull(),
             'name' => $this->string(255),
             'address' => $this->string(255),
             'floor' => $this->integer(11),
-            'balance_holder_id' => $this->integer()->notNull(),
             'created_at' => $this->integer(),
             'updated_at' => $this->integer(),
             'is_deleted' => $this->boolean(),
             'deleted_at' => $this->integer()
         ]);
+
+        $this->createIndex(
+            'idx-address_balance_holder-company_id',
+            'address_balance_holder',
+            'company_id'
+        );
+
+        // add foreign key for table `company`
+        $this->addForeignKey(
+            'fk-address_balance_holder-company_id',
+            'address_balance_holder',
+            'company_id',
+            'company',
+            'id',
+            'CASCADE'
+        );
 
         // creates index for column `balance_holder_id`
         $this->createIndex(

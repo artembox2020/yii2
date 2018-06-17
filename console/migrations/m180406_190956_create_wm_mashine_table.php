@@ -17,10 +17,12 @@ class m180406_190956_create_wm_mashine_table extends Migration
     {
         $this->createTable('wm_mashine', [
             'id' => $this->primaryKey(),
+            'company_id' => $this->integer()->notNull(),
+            'balance_holder_id' => $this->integer()->notNull(),
+            'address_id' => $this->integer()->notNull(),
             'imei_id' => $this->integer()->notNull(),
             'type_mashine' => $this->string(),
             'serial_number' => $this->string(100),
-            'company_id' => $this->integer()->notNull(),
             'number_device' => $this->integer(),
             'level_signal' => $this->integer(),
             'bill_cash' => $this->integer(),
@@ -66,6 +68,40 @@ class m180406_190956_create_wm_mashine_table extends Migration
             'id',
             'CASCADE'
         );
+
+        // creates index for column `address_id`
+        $this->createIndex(
+            'idx-wm_mashine-address_id',
+            'wm_mashine',
+            'address_id'
+        );
+
+        // add foreign key for table `wm_mashine`
+        $this->addForeignKey(
+            'fk-wm_mashine-address_id',
+            'wm_mashine',
+            'address_id',
+            'address_balance_holder',
+            'id',
+            'CASCADE'
+        );
+
+        // creates index for column `balance_holder_id`
+        $this->createIndex(
+            'idx-wm_mashine-balance_holder_id',
+            'wm_mashine',
+            'balance_holder_id'
+        );
+
+        // add foreign key for table `balance_holder`
+        $this->addForeignKey(
+            'fk-wm_mashine-balance_holder_id',
+            'wm_mashine',
+            'balance_holder_id',
+            'balance_holder',
+            'id',
+            'CASCADE'
+        );
     }
 
 /**
@@ -73,6 +109,17 @@ class m180406_190956_create_wm_mashine_table extends Migration
  */
     public function safeDown()
     {
+        $this->dropForeignKey(
+            'fk-wm_mashine-address_id',
+            'wm_mashine'
+        );
+
+        // drops index for column `address_id`
+        $this->dropIndex(
+            'idx-wm_mashine-address_id',
+            'wm_mashine'
+        );
+
         // drops foreign key for table `imei`
         $this->dropForeignKey(
             'fk-wm_mashine-imei_id',
@@ -82,6 +129,18 @@ class m180406_190956_create_wm_mashine_table extends Migration
         // drops index for column `imei_id`
         $this->dropIndex(
             'idx-wm_mashine-imei_id',
+            'wm_mashine'
+        );
+
+        // drops foreign key for table `balance_holder`
+        $this->dropForeignKey(
+            'fk-wm_mashine-balance_holder_id',
+            'wm_mashine'
+        );
+
+        // drops index for column `balance_holder_id`
+        $this->dropIndex(
+            'idx-wm_mashine-balance_holder_id',
             'wm_mashine'
         );
 

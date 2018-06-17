@@ -51,10 +51,8 @@ class UserController extends Controller
     }
 
     /**
-     * Creates a new User model.
-     * If creation is successful, the browser will be redirected to the 'index' page.
-     *
-     * @return mixed
+     * @return string|\yii\web\Response
+     * @throws \Exception
      */
     public function actionCreate()
     {
@@ -63,7 +61,6 @@ class UserController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->other = $model->password;
-//            Debugger::dd($model->other);
             $model->save();
             return $this->redirect(['index']);
         }
@@ -75,11 +72,9 @@ class UserController extends Controller
     }
 
     /**
-     * Updates an existing User model.
-     * If update is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param integer $id
-     * @return mixed
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -106,11 +101,9 @@ class UserController extends Controller
     }
 
     /**
-     * Deletes an existing User model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param integer $id
-     * @return mixed
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionDelete($id)
     {

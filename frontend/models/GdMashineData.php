@@ -10,7 +10,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * This is the model class for table "gd_mashine_data".
  *
  * @property int $id
- * @property int $imei_id
+ * @property int $mashine_id
  * @property string $type_mashine
  * @property int $gel_in_tank
  * @property int $bill_cash
@@ -55,11 +55,11 @@ class GdMashineData extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['imei_id'], 'required'],
-            [['imei_id', 'gel_in_tank', 'bill_cash', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['mashine_id'], 'required'],
+            [['mashine_id', 'gel_in_tank', 'bill_cash', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine'], 'string', 'max' => 255],
             [['is_deleted'], 'string', 'max' => 1],
-            [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
+            [['mashine_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['mashine_id' => 'id']],
         ];
     }
 
@@ -70,7 +70,7 @@ class GdMashineData extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('frontend', 'ID'),
-            'imei_id' => Yii::t('frontend', 'Imei ID'),
+            'mashine_id' => Yii::t('frontend', 'Imei ID'),
             'type_mashine' => Yii::t('frontend', 'Type Mashine'),
             'gel_in_tank' => Yii::t('frontend', 'Gel In Tank'),
             'bill_cash' => Yii::t('frontend', 'Bill Cash'),
@@ -87,6 +87,6 @@ class GdMashineData extends \yii\db\ActiveRecord
      */
     public function getImei()
     {
-        return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
+        return $this->hasOne(Imei::className(), ['id' => 'mashine_id']);
     }
 }

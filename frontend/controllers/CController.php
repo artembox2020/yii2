@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use frontend\services\imei\ImeiService;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use frontend\models\Imei;
 use frontend\models\ImeiData;
@@ -15,7 +17,11 @@ use frontend\models\dto\ImeiDataDto;
 use frontend\models\dto\ImeiInitDto;
 use frontend\services\custom\Debugger;
 
-
+/**
+ * data processing IMEI, Wash - Machine, Gel - Dispenser
+ * Class CController
+ * @package frontend\controllers
+ */
 class CController extends Controller
 {
     const TYPE_PACKET = 'p';
@@ -25,6 +31,7 @@ class CController extends Controller
     const TYPE_GD = 'GD';
     const STAR = '*';
     const STAR_DOLLAR = '*$';
+    const ONE_CONST = 1;
 
     /**
      * Initialisation method
@@ -58,20 +65,31 @@ class CController extends Controller
 
         $initDto = new ImeiInitDto($result);
 
-        if (!empty(Imei::findOne(['imei' => $initDto->imei]))) {
-        $imei = Imei::findOne(['imei' => $initDto->imei]);
-            $imei->imei_central_board = $initDto->imei;
-            $imei->firmware_version = $initDto->firmware_version;
-            $imei->type_packet = self::TYPE_PACKET;
-            $imei->type_bill_acceptance = $initDto->type_bill_acceptance;
-            $imei->serial_number_kp = $initDto->serial_number_kp;
-            $imei->phone_module_number = $initDto->phone_module_number;
-            $imei->crash_event_sms = $initDto->crash_event_sms;
-            $imei->critical_amount = $initDto->critical_amount;
-            $imei->time_out = $initDto->time_out;
-            $imei->updated_at = date('now');
-            $imei->update();
-            echo 'Success!';
+
+//        $imei = Imei::findOne(['imei' => $initDto->imei]);
+//                Debugger::dd(Imei::getStatus($imei));
+        if (Imei::findOne(['imei' => $initDto->imei])) {
+            $imei = Imei::findOne(['imei' => $initDto->imei]);
+
+            if (Imei::getStatus($imei) == self::ONE_CONST) {
+                $imei = Imei::findOne(['imei' => $initDto->imei]);
+                $imei->imei_central_board = $initDto->imei;
+                $imei->firmware_version = $initDto->firmware_version;
+                $imei->type_packet = self::TYPE_PACKET;
+                $imei->type_bill_acceptance = $initDto->type_bill_acceptance;
+                $imei->serial_number_kp = $initDto->serial_number_kp;
+                $imei->phone_module_number = $initDto->phone_module_number;
+                $imei->crash_event_sms = $initDto->crash_event_sms;
+                $imei->critical_amount = $initDto->critical_amount;
+                $imei->time_out = $initDto->time_out;
+                $imei->updated_at = date('now');
+                $imei->update();
+                echo 'Success!';
+            } else {
+                echo 'Imei not Active';exit;
+            }
+        } else {
+            echo 'Imei not exists';exit;
         }
     }
 
@@ -81,7 +99,8 @@ class CController extends Controller
      * 1467707999*866104020101005*45*110*100*1500*25000*2*1_WM*1*86*15*1*1*22_DM*1*55*45*15_GD*3452*25*5_DC*25*15*-2$
      * $ - ignored
      * @param [type] $p
-     * @return void
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionD($p)
     {
@@ -111,6 +130,9 @@ class CController extends Controller
 
         $imeiDataDto = new ImeiDataDto($result);
         $imeiData = new ImeiData();
+
+        if (ImeiService::getImei($imeiData->imei)) {
+
         $imei = Imei::findOne(['imei' => $imeiDataDto->imei]);
         $imeiData->imei_id = $imei->id;
         $imeiData->created_at = $imeiDataDto->date;
@@ -123,10 +145,17 @@ class CController extends Controller
         $imeiData->price_regim = $imeiDataDto->price_regim;
         $imeiData->save();
 
-        $imeiId = Imei::findOne(['imei' => $imeiDataDto->imei]);
         $mashine = $this->setTypeMashine($mashineData, $imei->id);
+
+        } else {
+            echo 'Imei not init or not exists'; exit;
+        }
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function setImeiData($data)
     {
         $array_fields = [
@@ -144,6 +173,10 @@ class CController extends Controller
         return $result = array_combine($array_fields, $data);
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function setMashine($data)
     {
         $array_fields = [
@@ -158,13 +191,19 @@ class CController extends Controller
         return $result = array_combine($array_fields, $data);
     }
 
+    /**
+     * @param $data
+     * @param $id
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
     public function setTypeMashine($data, $id)
     {
         if (array_key_exists(self::TYPE_WM, $data)) {
             foreach ($data[self::TYPE_WM] as $key => $value) {
                 $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
                 $wm_mashine_data = new WmMashineData();
-                $wm_mashine_data->imei_id = $id;
+                $wm_mashine_data->mashine_id = $id;
                 $wm_mashine_data->type_mashine = $wm_mashine_dto->type_mashine;
                 $wm_mashine_data->number_device = $wm_mashine_dto->number_device;
                 $wm_mashine_data->level_signal = $wm_mashine_dto->level_signal;
@@ -172,6 +211,13 @@ class CController extends Controller
                 $wm_mashine_data->door_position = $wm_mashine_dto->door_position;
                 $wm_mashine_data->door_block_led = $wm_mashine_dto->door_block_led;
                 $wm_mashine_data->status = $wm_mashine_dto->status;
+//                Debugger::dd($wm_mashine_data);
+                if (WmMashine::findOne(['imei_id' => $id])) {
+                    Debugger::dd(WmMashine::findOne(['imei_id' => $id]));
+                } else {
+                    $wm_machine = self::autoCreateWashMachine($wm_mashine_dto);
+                    Debugger::dd($wm_machine);
+                }
                 if ($wm_mashine_data->save(false)) {
                     echo 'WM success data save!' . '<br>';
                 } else {
@@ -216,7 +262,7 @@ class CController extends Controller
             foreach ($data[self::TYPE_GD] as $key => $value) {
                 $gd_mashine_dto = new GdDto($this->setGd($data[self::TYPE_GD][$key]));
                 $gd_mashine_data = new GdMashineData();
-                $gd_mashine_data->imei_id = $id;
+                $gd_mashine_data->mashine_id = $id;
                 $gd_mashine_data->type_mashine = $gd_mashine_dto->type_mashine;
                 $gd_mashine_data->gel_in_tank = $gd_mashine_dto->gel_in_tank;
                 $gd_mashine_data->bill_cash = $gd_mashine_dto->bill_cash;
@@ -262,6 +308,10 @@ class CController extends Controller
         /** does not work! */
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function setWM($data)
     {
         $array_fields = array();
@@ -279,6 +329,10 @@ class CController extends Controller
         return $result = array_combine($array_fields, $data);
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function setGd($data)
     {
         $array_fields = array();
@@ -297,7 +351,7 @@ class CController extends Controller
      * method setDC() does not work!
      *
      * @param [type] $data
-     * @return void
+     * @return array
      */
     public function setDC($data)
     {
@@ -317,7 +371,7 @@ class CController extends Controller
      *  method setDM() does not work!
      * 
      * @param [type] $data
-     * @return void
+     * @return array
      */
     public function setDM($data)
     {
@@ -332,5 +386,19 @@ class CController extends Controller
         ];
 
         return $result = array_combine($array_fields, $data);
+    }
+
+    /**
+     * @param $wm_machine_dto
+     * @return WmMashine
+     */
+    public function autoCreateWashMachine($wm_machine_dto)
+    {
+        Debugger::dd($wm_machine_dto->imei);
+        $wash_machine = new WmMashine();
+        $wash_machine->load($wm_machine_dto, '');
+        $wash_machine->save();
+
+        return $wash_machine;
     }
 }

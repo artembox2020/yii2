@@ -5,6 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AddressBalanceHolder */
 /* @var $balanceHolder frontend\models\BalanceHolder */
+/* @var $company frontend\models\Company */
 
 $this->title = Yii::t('frontend', 'Update Address Balance Holder: {nameAttribute}', [
     'nameAttribute' => $model->name,
@@ -19,7 +20,8 @@ $this->params['breadcrumbs'][] = Yii::t('frontend', 'Update');
 
     <?= $this->render('_form', [
         'model' => $model,
-        'balanceHolder' => $balanceHolder
+        'balanceHolder' => $balanceHolder,
+        'company' => $company
     ]) ?>
 
 </div>

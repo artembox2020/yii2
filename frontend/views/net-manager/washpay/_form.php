@@ -30,8 +30,6 @@ use frontend\models\Imei;
 
     <?= $form->field($imei, 'type_packet')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($imei, 'imei_central_board')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($imei, 'firmware_version')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($imei, 'type_bill_acceptance')->textInput(['maxlength' => true]) ?>
@@ -39,10 +37,10 @@ use frontend\models\Imei;
     <?= $form->field($imei, 'serial_number_kp')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($imei, 'address_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($addresses, 'id', 'address', 'name')
+        \yii\helpers\ArrayHelper::map($addresses, 'id', 'address')
     ) ?>
 
-    <?= $form->field($address, 'balance_holder_id')->dropDownList(
+    <?= $form->field($imei, 'balance_holder_id')->dropDownList(
         \yii\helpers\ArrayHelper::map($balanceHolders, 'id', 'name')
     ) ?>
 
