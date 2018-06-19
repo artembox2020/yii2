@@ -12,6 +12,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $id
  * @property int $imei_id
  * @property int $company_id
+ * @property int $balance_holder_id
+ * @property int $address_id
  * @property string $type_mashine
  * @property int $number_device
  * @property string $serial_number
@@ -24,7 +26,6 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
- * @property int $balance_holder_id
  * @property
  *
  * @property Imei $imei
@@ -99,7 +100,7 @@ class WmMashine extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['imei_id', 'status', 'company_id', 'balance_holder_id'], 'required'],
+            [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
             [['imei_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine', 'serial_number'], 'string', 'max' => 255],
             [['is_deleted'], 'string', 'max' => 1],
@@ -118,6 +119,7 @@ class WmMashine extends \yii\db\ActiveRecord
             'imei_id' => Yii::t('frontend', 'Imei ID'),
             'serial_number' => Yii::t('frontend', 'Serial number'),
             'company_id' => Yii::t('frontend', 'Company'),
+            'address_id' => Yii::t('frontend', 'Address'),
             'type_mashine' => Yii::t('frontend', 'Type Mashine'),
             'number_device' => Yii::t('frontend', 'Number Device'),
             'level_signal' => Yii::t('frontend', 'Level Signal'),
