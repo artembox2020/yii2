@@ -3,6 +3,8 @@
 namespace frontend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "wm_mashine_data".
@@ -31,6 +33,23 @@ class WmMashineData extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'wm_mashine_data';
+    }
+
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'is_deleted' => true,
+                    'deleted_at' => time()
+                ],
+            ],
+            TimestampBehavior::className()
+        ];
     }
 
     /**

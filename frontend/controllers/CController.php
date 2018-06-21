@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use frontend\services\imei\ImeiService;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use frontend\models\Imei;
@@ -179,6 +180,7 @@ class CController extends Controller
 
     /**
      * @param $data array
+     * $id - Imei->id
      * @param $id
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
@@ -286,7 +288,7 @@ class CController extends Controller
      * @param [type] $data
      * @return array
      */
-    public function setDC(array $data)
+    public function setDC(array $data): array
     {
         $array_fields = array();
 
@@ -306,7 +308,7 @@ class CController extends Controller
      * @param [type] $data
      * @return array
      */
-    public function setDM(array $data)
+    public function setDM(array $data): array
     {
         $array_fields = array();
 
@@ -331,13 +333,20 @@ class CController extends Controller
         $imei = $this->getImei($imei_id);
 
         $wash_machine = new WmMashine();
-        $wash_machine->load($wm_machine_dto, '');
+        $wash_machine->type_mashine = $wm_machine_dto->type_mashine;
+        $wash_machine->number_device = $wm_machine_dto->number_device;
+        $wash_machine->level_signal = $wm_machine_dto->level_signal;
+        $wash_machine->bill_cash = $wm_machine_dto->bill_cash;
+        $wash_machine->door_position = $wm_machine_dto->door_position;
+        $wash_machine->door_block_led = $wm_machine_dto->door_block_led;
+        $wash_machine->status = $wm_machine_dto->status;
         $wash_machine->imei_id = $imei_id;
         $wash_machine->company_id = $imei->company_id;
         $wash_machine->balance_holder_id = $imei->balance_holder_id;
         $wash_machine->address_id = $imei->address_id;
         $wash_machine->status = self::ZERO_CONST;
-        $wash_machine->save();
+        $wash_machine->is_deleted = false;
+        $wash_machine->save(false);
 
         return $wash_machine;
     }
@@ -359,13 +368,25 @@ class CController extends Controller
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function serviceWashMachine(array $data, int $id)
+    public function serviceWashMachine(array $data, int $imei_id)
     {
         foreach ($data[self::TYPE_WM] as $key => $value) {
-            if (WmMashine::findOne(['imei_id' => $id])) {
-                $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
+            $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
+
+            if (!WmMashine::find()
+            ->where(['number_device' => $wm_mashine_dto->number_device])
+            ->andWhere(['imei_id' => $imei_id])->one()) {
+                $this->autoCreateWashMachine($wm_mashine_dto, $imei_id);
+                    echo 'WM created!' . '<br>';
+            }
+            if (WmMashine::find()
+                ->where(['number_device' => $wm_mashine_dto->number_device])
+                ->andWhere(['imei_id' => $imei_id]))  {
+                $wm_mashine = WmMashine::find()
+                    ->where(['number_device' => $wm_mashine_dto->number_device])
+                    ->andWhere(['imei_id' => $imei_id])->one();
                 $wm_mashine_data = new WmMashineData();
-                $wm_mashine_data->mashine_id = $id;
+                $wm_mashine_data->mashine_id = $wm_mashine->id;
                 $wm_mashine_data->type_mashine = $wm_mashine_dto->type_mashine;
                 $wm_mashine_data->number_device = $wm_mashine_dto->number_device;
                 $wm_mashine_data->level_signal = $wm_mashine_dto->level_signal;
@@ -373,46 +394,33 @@ class CController extends Controller
                 $wm_mashine_data->door_position = $wm_mashine_dto->door_position;
                 $wm_mashine_data->door_block_led = $wm_mashine_dto->door_block_led;
                 $wm_mashine_data->status = $wm_mashine_dto->status;
-
+                $wm_mashine_data->is_deleted = false;
+                $this->updateWmMashine($wm_mashine, $wm_mashine_data);
                 if ($wm_mashine_data->save(false)) {
                     echo 'WM data save!' . '<br>';
                 } else {
                     echo 'WM data Don\'t save' . '<br>';
                 }
             }
-
-
-            if (WmMashine::findOne(['number_device' => $wm_mashine_dto->number_device])) {
-                $wm_mashine = WmMashine::findOne(['number_device' => $wm_mashine_dto->number_device]);
-                $wm_mashine->type_mashine = $wm_mashine_dto->type_mashine;
-                $wm_mashine->number_device = $wm_mashine_dto->number_device;
-                $wm_mashine->level_signal = $wm_mashine_dto->level_signal;
-                $wm_mashine->bill_cash = $wm_mashine_dto->bill_cash;
-                $wm_mashine->door_position = $wm_mashine_dto->door_position;
-                $wm_mashine->door_block_led = $wm_mashine_dto->door_block_led;
-                $wm_mashine->status = $wm_mashine_dto->status;
-                if ($wm_mashine->update()) {
-                    echo 'WM success update!' . '<br>';
-                } else {
-                    echo 'WM status has not changed' . '<br>';
-                }
-            } else {
-//                $this->autoCreateWashMachine($wm_mashine_dto, $id);
-//                $wm_mashine_new = new WmMashine();
-//                $wm_mashine_new->imei_id = $id;
-//                $wm_mashine_new->type_mashine = $wm_mashine_dto->type_mashine;
-//                $wm_mashine_new->number_device = $wm_mashine_dto->number_device;
-//                $wm_mashine_new->level_signal = $wm_mashine_dto->level_signal;
-//                $wm_mashine_new->bill_cash = $wm_mashine_dto->bill_cash;
-//                $wm_mashine_new->door_position = $wm_mashine_dto->door_position;
-//                $wm_mashine_new->door_block_led = $wm_mashine_dto->door_block_led;
-//                $wm_mashine_new->status = $wm_mashine_dto->status;
-//                if ($wm_mashine_new->save()) {
-//                    echo 'WM success save!' . '<br>';
-//                } else {
-//                    echo 'Don\'t save' . '<br>';
-//                }
-            }
         }
+    }
+    
+    /**
+     * @param $wm_mashine
+     * @param WmMashineData $wm_mashine_data
+     */
+    public function updateWmMashine($wm_mashine, WmMashineData $wm_mashine_data)
+    {
+        $wm_mashine_data->mashine_id = $wm_mashine->id;
+        $wm_mashine->type_mashine = $wm_mashine_data->type_mashine;
+        $wm_mashine->number_device = $wm_mashine_data->number_device;
+        $wm_mashine->level_signal = $wm_mashine_data->level_signal;
+        $wm_mashine->bill_cash = $wm_mashine_data->bill_cash;
+        $wm_mashine->door_position = $wm_mashine_data->door_position;
+        $wm_mashine->door_block_led = $wm_mashine_data->door_block_led;
+        $wm_mashine->status = $wm_mashine_data->status;
+        $wm_mashine_data->is_deleted = false;
+        $wm_mashine->update(false);
+        echo 'WM updated!' . '<br>';
     }
 }
