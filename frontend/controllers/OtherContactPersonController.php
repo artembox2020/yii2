@@ -5,8 +5,6 @@ namespace frontend\controllers;
 use common\models\User;
 use frontend\services\custom\Debugger;
 use Yii;
-use yii\behaviors\TimestampBehavior;
-use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use frontend\models\OtherContactPerson;
 use frontend\models\OtherContactPersonSearch;
 use yii\web\Controller;
@@ -31,14 +29,6 @@ class OtherContactPersonController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'is_deleted' => true,
-                    'deleted_at' => time()
-                ],
-            ],
-            TimestampBehavior::className(),
         ];
     }
 

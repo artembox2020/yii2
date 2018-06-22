@@ -3,8 +3,6 @@
 namespace frontend\controllers;
 
 use Yii;
-use yii\behaviors\TimestampBehavior;
-use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use frontend\models\ImeiData;
 use frontend\models\ImeiDataSearch;
 use yii\web\Controller;
@@ -28,14 +26,6 @@ class ImeiDataController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'is_deleted' => true,
-                    'deleted_at' => time()
-                ],
-            ],
-            TimestampBehavior::className(),
         ];
     }
 

@@ -6,8 +6,6 @@ use common\models\User;
 use frontend\models\AddressBalanceHolder;
 use frontend\services\custom\Debugger;
 use Yii;
-use yii\behaviors\TimestampBehavior;
-use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use frontend\models\Imei;
 use frontend\models\ImeiSearch;
 use yii\web\Controller;
@@ -31,14 +29,6 @@ class ImeiController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'is_deleted' => true,
-                    'deleted_at' => time()
-                ],
-            ],
-            TimestampBehavior::className(),
         ];
     }
 
