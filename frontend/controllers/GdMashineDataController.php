@@ -3,6 +3,8 @@
 namespace frontend\controllers;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use frontend\models\GdMashineData;
 use frontend\models\GdMashineDataSearch;
 use yii\web\Controller;
@@ -26,6 +28,14 @@ class GdMashineDataController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'is_deleted' => true,
+                    'deleted_at' => time()
+                ],
+            ],
+            TimestampBehavior::className(),
         ];
     }
 
@@ -104,8 +114,7 @@ class GdMashineDataController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $this->findModel($id)->softDelete();
         return $this->redirect(['index']);
     }
 

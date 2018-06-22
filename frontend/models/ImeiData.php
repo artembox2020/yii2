@@ -62,7 +62,6 @@ class ImeiData extends \yii\db\ActiveRecord
         return [
             [['imei_id'], 'required'],
             [['imei_id', 'created_at', 'imei', 'level_signal', 'on_modem_account', 'in_banknotes', 'money_in_banknotes', 'fireproof_residue', 'price_regim', 'updated_at', 'deleted_at'], 'integer'],
-            [['is_deleted'], 'string', 'max' => 1],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
         ];
     }

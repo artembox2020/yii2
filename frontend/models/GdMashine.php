@@ -87,6 +87,14 @@ class GdMashine extends \yii\db\ActiveRecord
             'status' => Yii::t('frontend', 'Status'),
         ];
     }
+    
+    /**
+     * @return $this|\yii\db\ActiveQuery
+     */
+    public static function find()
+    {
+        return parent::find()->where(['is_deleted' => false]);
+    }
 
     /**
      * @return \yii\db\ActiveQuery

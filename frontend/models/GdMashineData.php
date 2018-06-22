@@ -58,7 +58,6 @@ class GdMashineData extends \yii\db\ActiveRecord
             [['mashine_id'], 'required'],
             [['mashine_id', 'gel_in_tank', 'bill_cash', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
             [['mashine_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['mashine_id' => 'id']],
         ];
     }
@@ -80,6 +79,14 @@ class GdMashineData extends \yii\db\ActiveRecord
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
         ];
+    }
+    
+    /**
+     * @return $this|\yii\db\ActiveQuery
+     */
+    public static function find()
+    {
+        return parent::find()->where(['is_deleted' => false]);
     }
 
     /**

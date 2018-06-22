@@ -68,7 +68,6 @@ class BalanceHolder extends \yii\db\ActiveRecord
             [['company_id', 'created_at', 'deleted_at'], 'integer'],
             [['name', 'city', 'address', 'contact_person', 'position'], 'string', 'max' => 255],
             [['phone'], 'string', 'max' => 100],
-//            [['is_deleted'], 'string', 'max' => 1],
             [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::className(), 'targetAttribute' => ['company_id' => 'id']],
         ];
     }
