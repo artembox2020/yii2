@@ -66,9 +66,6 @@ class CController extends Controller
 
         $initDto = new ImeiInitDto($result);
 
-
-//        $imei = Imei::findOne(['imei' => $initDto->imei]);
-//                Debugger::dd(Imei::getStatus($imei));
         if (Imei::findOne(['imei' => $initDto->imei])) {
             $imei = Imei::findOne(['imei' => $initDto->imei]);
 
@@ -95,8 +92,8 @@ class CController extends Controller
     }
 
     /**
-     * Initialisation method
-     * sense.loc/c/?p=
+     * Data method
+     * sens.loc/c/d?p=
      * 1467707999*866104020101005*45*110*100*1500*25000*2*1_WM*1*86*15*1*1*22_DM*1*55*45*15_GD*3452*25*5_DC*25*15*-2$
      * $ - ignored
      * @param [type] $p
@@ -194,34 +191,7 @@ class CController extends Controller
 
         /** create or update gel dispenser (GD) */
         if (array_key_exists(self::TYPE_GD, $data)) {
-            foreach ($data[self::TYPE_GD] as $key => $value) {
-                $gd_mashine_dto = new GdDto($this->setGd($data[self::TYPE_GD][$key]));
-                $gd_mashine_data = new GdMashineData();
-                $gd_mashine_data->mashine_id = $id;
-                $gd_mashine_data->type_mashine = $gd_mashine_dto->type_mashine;
-                $gd_mashine_data->gel_in_tank = $gd_mashine_dto->gel_in_tank;
-                $gd_mashine_data->bill_cash = $gd_mashine_dto->bill_cash;
-                $gd_mashine_data->status = $gd_mashine_dto->status;
-                if ($gd_mashine_data->save()) {
-                    echo 'GD data success save!' . '<br>';
-                } else {
-                    echo 'GD data Don\'t save' . '<br>';
-                }
-
-                if (GdMashine::findOne(['imei_id' => $id])) {
-                    $gd_mashine = GdMashine::findOne(['imei_id' => $id]);
-                    $gd_mashine->imei_id = $id;
-                    $gd_mashine->type_mashine = $gd_mashine_dto->type_mashine;
-                    $gd_mashine->gel_in_tank = $gd_mashine_dto->gel_in_tank;
-                    $gd_mashine->bill_cash = $gd_mashine_dto->bill_cash;
-                    $gd_mashine->status = $gd_mashine_dto->status;
-                    if ($gd_mashine->update()) {
-                        echo 'GD success update!' . '<br>';
-                    } else {
-                        echo 'GD status has not changed' . '<br>';
-                    }
-                }
-            }
+            $this->serviceGelDispenser($data, $id);
         }
 
         /** does not work! */
@@ -352,6 +322,32 @@ class CController extends Controller
     }
 
     /**
+     * @param $wm_mashine_dto
+     * @param $imei_id
+     * @return GdMashine
+     */
+    public function autoCreateGelDispenser($gd_mashine_dto, $imei_id): GdMashine
+    {
+        $imei = $this->getImei($imei_id);
+
+        $gd_mashine = new GdMashine();
+        $gd_mashine->imei_id = $imei_id;
+        $gd_mashine->company_id = $imei->company_id;
+        $gd_mashine->balance_holder_id = $imei->balance_holder_id;
+        $gd_mashine->address_id = $imei->address_id;
+        $gd_mashine->status = self::ZERO_CONST;
+        $gd_mashine->is_deleted = false;
+        $gd_mashine->type_mashine = $gd_mashine_dto->type_mashine;
+        $gd_mashine->gel_in_tank = $gd_mashine_dto->gel_in_tank;
+        $gd_mashine->bill_cash = $gd_mashine_dto->bill_cash;
+        $gd_mashine->status = $gd_mashine_dto->status;
+        $gd_mashine->is_deleted = false;
+        $gd_mashine->save(false);
+
+        return $gd_mashine;
+    }
+
+    /**
      * @param $imei_id
      * @return Imei|null
      */
@@ -377,11 +373,12 @@ class CController extends Controller
             ->where(['number_device' => $wm_mashine_dto->number_device])
             ->andWhere(['imei_id' => $imei_id])->one()) {
                 $this->autoCreateWashMachine($wm_mashine_dto, $imei_id);
-                    echo 'WM created!' . '<br>';
+                     echo $wm_mashine_dto->number_device . ' WM created!' . '<br>';
             }
+
             if (WmMashine::find()
                 ->where(['number_device' => $wm_mashine_dto->number_device])
-                ->andWhere(['imei_id' => $imei_id]))  {
+                ->andWhere(['imei_id' => $imei_id])->one())  {
                 $wm_mashine = WmMashine::find()
                     ->where(['number_device' => $wm_mashine_dto->number_device])
                     ->andWhere(['imei_id' => $imei_id])->one();
@@ -397,14 +394,14 @@ class CController extends Controller
                 $wm_mashine_data->is_deleted = false;
                 $this->updateWmMashine($wm_mashine, $wm_mashine_data);
                 if ($wm_mashine_data->save(false)) {
-                    echo 'WM data save!' . '<br>';
+                    echo $wm_mashine_data->number_device . ' WM data save!' . '<br>';
                 } else {
                     echo 'WM data Don\'t save' . '<br>';
                 }
             }
         }
     }
-    
+
     /**
      * @param $wm_mashine
      * @param WmMashineData $wm_mashine_data
@@ -421,6 +418,63 @@ class CController extends Controller
         $wm_mashine->status = $wm_mashine_data->status;
         $wm_mashine_data->is_deleted = false;
         $wm_mashine->update(false);
-        echo 'WM updated!' . '<br>';
+        echo $wm_mashine->number_device . ' WM updated!' . '<br>';
+    }
+
+    /**
+     * @param $gd_mashine
+     * @param GdMashineData $gd_mashine_data
+     */
+    public function updateGdMashine($gd_mashine, GdMashineData $gd_mashine_data)
+    {
+        $gd_mashine_data->mashine_id = $gd_mashine->id;
+        $gd_mashine->type_mashine = $gd_mashine_data->type_mashine;
+        $gd_mashine->gel_in_tank = $gd_mashine_data->gel_in_tank;
+        $gd_mashine->bill_cash = $gd_mashine_data->bill_cash;
+        $gd_mashine->status = $gd_mashine_data->status;
+        $gd_mashine_data->is_deleted = false;
+        $gd_mashine->update(false);
+        echo 'GD updated!' . '<br>';
+    }
+
+    /**
+     * @param array $data
+     * @param int $imei_id
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function serviceGelDispenser(array $data, int $imei_id)
+    {
+        foreach ($data[self::TYPE_GD] as $key => $value) {
+            $gd_mashine_dto = new GdDto($this->setGd($data[self::TYPE_GD][$key]));
+
+            if (!GdMashine::find()
+                ->where(['imei_id' => $imei_id])->one()) {
+                $this->autoCreateGelDispenser($gd_mashine_dto, $imei_id);
+                echo 'Gel Dispenser created!' . '<br>';
+            }
+
+            if (GdMashine::find()
+                ->where(['imei_id' => $imei_id])->one()) {
+                $gd_mashine = GdMashine::find()
+                    ->where(['imei_id' => $imei_id])->one();
+
+                $gd_mashine_data = new GdMashineData();
+                $gd_mashine_data->mashine_id = $gd_mashine->id;
+                $gd_mashine_data->type_mashine = $gd_mashine_dto->type_mashine;
+                $gd_mashine_data->gel_in_tank = $gd_mashine_dto->gel_in_tank;
+                $gd_mashine_data->bill_cash = $gd_mashine_dto->bill_cash;
+                $gd_mashine_data->status = $gd_mashine_dto->status;
+                $gd_mashine_data->is_deleted = false;
+
+                $this->updateGdMashine($gd_mashine, $gd_mashine_data);
+
+                if ($gd_mashine_data->save(false)) {
+                    echo 'Gel Dispenser data save!' . '<br>';
+                } else {
+                    echo 'Gel Dispenser data Don\'t save' . '<br>';
+                }
+            }
+        }
     }
 }

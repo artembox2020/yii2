@@ -64,7 +64,6 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
             [['floor', 'company_id', 'balance_holder_id', 'number_of_floors', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['balance_holder_id'], 'required'],
             [['name', 'address'], 'string', 'max' => 255],
-//            [['is_deleted'], 'string', 'max' => 1],
             [['balance_holder_id'], 'exist', 'skipOnError' => true, 'targetClass' => BalanceHolder::className(), 'targetAttribute' => ['balance_holder_id' => 'id']],
         ];
     }

@@ -26,7 +26,6 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
- * @property
  *
  * @property Imei $imei
  */
