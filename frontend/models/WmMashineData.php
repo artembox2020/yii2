@@ -61,7 +61,6 @@ class WmMashineData extends \yii\db\ActiveRecord
             [['mashine_id'], 'required'],
             [['mashine_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
             [['mashine_id'], 'exist', 'skipOnError' => true, 'targetClass' => WmMashine::className(), 'targetAttribute' => ['mashine_id' => 'id']],
         ];
     }
@@ -86,6 +85,32 @@ class WmMashineData extends \yii\db\ActiveRecord
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
         ];
+    }
+    
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'is_deleted' => true,
+                    'deleted_at' => time()
+                ],
+            ],
+            TimestampBehavior::className()
+        ];
+    }
+
+
+    /**
+     * @return $this|\yii\db\ActiveQuery
+     */
+    public static function find()
+    {
+        return parent::find()->where(['is_deleted' => false]);
     }
 
     /**

@@ -104,8 +104,7 @@ class GdMashineDataController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $this->findModel($id)->softDelete();
         return $this->redirect(['index']);
     }
 

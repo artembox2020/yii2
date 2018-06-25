@@ -97,7 +97,6 @@ class Imei extends \yii\db\ActiveRecord
                     }
                 }
             ],
-//            [['is_deleted'], 'string', 'max' => 1],
             [['address_id'], 'exist', 'skipOnError' => true, 'targetClass' => AddressBalanceHolder::className(), 'targetAttribute' => ['address_id' => 'id']],
         ];
     }

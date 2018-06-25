@@ -56,7 +56,6 @@ class OtherContactPerson extends \yii\db\ActiveRecord
             [['balance_holder_id'], 'required'],
             [['balance_holder_id', 'created_at', 'deleted_at'], 'integer'],
             [['name', 'position', 'phone'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
             [['balance_holder_id'], 'exist', 'skipOnError' => true, 'targetClass' => BalanceHolder::className(), 'targetAttribute' => ['balance_holder_id' => 'id']],
         ];
     }
@@ -84,5 +83,13 @@ class OtherContactPerson extends \yii\db\ActiveRecord
     public function getBalanceHolder()
     {
         return $this->hasOne(BalanceHolder::className(), ['id' => 'balance_holder_id']);
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public static function find()
+    {
+        return parent::find()->where(['is_deleted' => false]);
     }
 }

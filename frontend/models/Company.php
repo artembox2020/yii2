@@ -5,6 +5,7 @@ namespace frontend\models;
 use common\models\User;
 use Yii;
 use \yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
@@ -59,6 +60,7 @@ class Company extends ActiveRecord
                     ],
                 ],
             ],
+            TimestampBehavior::className()
         ];
     }
 

@@ -7,12 +7,10 @@ use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\Company;
 use frontend\models\CompanySearch;
-use yii\behaviors\TimestampBehavior;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use vova07\fileapi\actions\UploadAction as FileAPIUpload;
-use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * CompanyController implements the CRUD actions for Company model.
@@ -44,14 +42,6 @@ class CompanyController extends Controller
                     'delete' => ['POST']
                 ]
             ],
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'is_deleted' => true,
-                    'deleted_at' => time()
-                ],
-            ],
-            TimestampBehavior::className(),
         ];
     }
 
