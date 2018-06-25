@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($model, 'roles')->checkboxList($roles) ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Create'), ['class' => 'btn btn-primary']) ?>
+        <?= Html::submitButton(Yii::t('frontend', 'Create'), ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end() ?>
