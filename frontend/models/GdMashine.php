@@ -113,11 +113,4 @@ class GdMashine extends \yii\db\ActiveRecord
         return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
     }
 
-    /**
-     * @return $this|\yii\db\ActiveQuery
-     */
-    public static function find()
-    {
-        return parent::find()->where(['is_deleted' => false]);
-    }
 }
