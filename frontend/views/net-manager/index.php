@@ -31,7 +31,8 @@ $gd_machine = array();
     Название: <?= $model->name; ?><br>
     Адрес: <?= $model->address; ?><br>
     Описание: <?= $model->description; ?><br>
-    Сайт: <?= $model->website; ?>
+    Сайт: <?= $model->website; ?><br/>
+    <?= Html::a("[".Yii::t('frontend', 'Update')."]", ['company/update'], ['style' => 'background-color: #5c87b2; color: aliceblue']) ?>
 </p>
 <p>
 <br>

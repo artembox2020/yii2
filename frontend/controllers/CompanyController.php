@@ -51,7 +51,7 @@ class CompanyController extends Controller
      */
     public function actionIndex()
     {
-        if (Yii::$app->user->can('view_companies')) {
+        if (!Yii::$app->user->isGuest) {
             $searchModel = new CompanySearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -74,7 +74,7 @@ class CompanyController extends Controller
      */
     public function actionView($id)
     {
-        if (Yii::$app->user->can('view_company')) {
+        if(!Yii::$app->user->isGuest) {
 
             $users = User::find()->where(['company_id' => $id])->all();
 
@@ -124,7 +124,7 @@ class CompanyController extends Controller
      */
     public function actionUpdate()
     {
-        if (Yii::$app->user->can('company_update')) {
+        if (!Yii::$app->user->isGuest) {
 
             $user = User::findOne(Yii::$app->user->id);
             $model = Company::findOne(['id' => $user->company_id]);
