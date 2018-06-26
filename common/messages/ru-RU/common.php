@@ -29,7 +29,6 @@ return [
     'Description' => 'Описание',
     'Email' => '',
     'Firstname' => 'Имя',
-    'Lastname' => 'Фамилия',
     'Frequency' => 'Частота',
     'Gender' => 'Пол',
     'Inactive' => '',
@@ -58,10 +57,4 @@ return [
     'Username or email' => 'Имя пользователя или email',
     'Value' => 'Значение',
     'Website' => 'Веб-сайт',
-    'Access' => 'Доступ',
-    'Administration' => 'Администрирование',
-    'Number' => '№',
-    'Flp' => 'Имя, фамилия, отчество',
-    'ServRight' => 'Права на сервере',
-    'WorkerCard' => 'Картка сотрудника'
 ];
