@@ -168,7 +168,7 @@ class DefaultController extends Controller
      */
     public function actionCreate()
     {
-        if (Yii::$app->user->can('create_employee')) {
+        if(!Yii::$app->user->isGuest) {
             $model = new UserForm();
             $model->setScenario('create');
 
