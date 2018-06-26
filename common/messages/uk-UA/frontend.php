@@ -203,8 +203,5 @@ return [
     'Role' => 'Роль',
     'Roles' => 'Ролі',
     'rising' => 'Полоскання',
-    'Permissions' => 'Правила',
-    'view' => 'Огляд',
-    'update' => 'Редагувати',
-    'Create' => 'Створити'
+    'Permissions' => 'Правила'
 ];
