@@ -77,7 +77,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionCreateEmployee()
     {
-        if (!Yii::$app->user->isGuest) {
+        if (Yii::$app->user->can('create_employee')) {
             $model = new UserForm();
             $model->setScenario('create');
 
@@ -131,8 +131,8 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionViewEmployee()
     {
-        if (Yii::$app->request->get()) {
-            $model = User::findOne(['id' => Yii::$app->request->get('id')]);
+        if (Yii::$app->request->post()) {
+            $model = User::findOne(['id' => Yii::$app->request->post('id')]);
 
             return $this->render('view-employee', [
                 'model' => $model
@@ -150,7 +150,6 @@ class NetManagerController extends \yii\web\Controller
         $profile = UserProfile::findOne($id);
 
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
-            $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
             $isValid = $user->validate(false);
             $isValid = $profile->validate(false) && $isValid;
             if ($isValid) {
