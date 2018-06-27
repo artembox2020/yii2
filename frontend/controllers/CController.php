@@ -182,7 +182,7 @@ class CController extends Controller
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function setTypeMashine(array $data, int $id)
+    public function setTypeMashine($data, int $id)
     {
         /** create or update wash machine (WM) */
         if (array_key_exists(self::TYPE_WM, $data)) {
@@ -217,7 +217,7 @@ class CController extends Controller
      * @param $data
      * @return array
      */
-    public function setWM(array $data)
+    public function setWM($data)
     {
         $array_fields = array();
 
@@ -238,7 +238,7 @@ class CController extends Controller
      * @param $data
      * @return array
      */
-    public function setGd(array $data)
+    public function setGd($data)
     {
         $array_fields = array();
 
@@ -258,7 +258,7 @@ class CController extends Controller
      * @param [type] $data
      * @return array
      */
-    public function setDC(array $data): array
+    public function setDC($data)
     {
         $array_fields = array();
 
@@ -298,7 +298,7 @@ class CController extends Controller
      * @param $imei_id
      * @return WmMashine
      */
-    public function autoCreateWashMachine($wm_machine_dto, $imei_id): WmMashine
+    public function autoCreateWashMachine($wm_machine_dto, $imei_id)
     {
         $imei = $this->getImei($imei_id);
 
@@ -328,7 +328,7 @@ class CController extends Controller
      * @param $imei_id
      * @return GdMashine
      */
-    public function autoCreateGelDispenser($gd_mashine_dto, $imei_id): GdMashine
+    public function autoCreateGelDispenser($gd_mashine_dto, $imei_id)
     {
         $imei = $this->getImei($imei_id);
 
@@ -366,7 +366,7 @@ class CController extends Controller
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function serviceWashMachine(array $data, int $imei_id)
+    public function serviceWashMachine($data, $imei_id)
     {
         foreach ($data[self::TYPE_WM] as $key => $value) {
             $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
@@ -409,7 +409,7 @@ class CController extends Controller
      * @param $wm_mashine
      * @param WmMashineData $wm_mashine_data
      */
-    public function updateWmMashine($wm_mashine, WmMashineData $wm_mashine_data)
+    public function updateWmMashine($wm_mashine, $wm_mashine_data)
     {
         $wm_mashine_data->mashine_id = $wm_mashine->id;
         $wm_mashine->type_mashine = $wm_mashine_data->type_mashine;
@@ -428,7 +428,7 @@ class CController extends Controller
      * @param $gd_mashine
      * @param GdMashineData $gd_mashine_data
      */
-    public function updateGdMashine($gd_mashine, GdMashineData $gd_mashine_data)
+    public function updateGdMashine($gd_mashine, $gd_mashine_data)
     {
         $gd_mashine_data->mashine_id = $gd_mashine->id;
         $gd_mashine->type_mashine = $gd_mashine_data->type_mashine;
@@ -446,7 +446,7 @@ class CController extends Controller
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function serviceGelDispenser(array $data, int $imei_id)
+    public function serviceGelDispenser($data, $imei_id)
     {
         foreach ($data[self::TYPE_GD] as $key => $value) {
             $gd_mashine_dto = new GdDto($this->setGd($data[self::TYPE_GD][$key]));
