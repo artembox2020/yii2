@@ -19,11 +19,45 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property int $current_status
  *
  * @property Imei $imei
  */
 class GdMashineData extends \yii\db\ActiveRecord
 {
+    /** @var array $current_status */
+    public $current_state = [
+        '-2' => 'nulling',
+        '-1' => 'refill',
+        'disconnected',
+        'idle',
+        'power on',
+        'busy',
+        'washing',
+        'rising',
+        'extraction',
+        'waiting door',
+        'end cycle',
+        'freeze mode',
+        '1e water sensor',
+        '3e motor sensor',
+        '4e water supply',
+        '5e problem plum',
+        '8e motor',
+        '9e uc poser supply',
+        'ae communication',
+        'de switch',
+        'ce cooling',
+        'de unclosed door',
+        'fe ventilation',
+        'he heater',
+        'le water leak',
+        'oe of overflow',
+        'te temp sensor',
+        'ue loading cloth',
+        'max error'
+    ];
+
     /**
      * @inheritdoc
      */
@@ -56,7 +90,12 @@ class GdMashineData extends \yii\db\ActiveRecord
     {
         return [
             [['mashine_id'], 'required'],
-            [['mashine_id', 'gel_in_tank', 'bill_cash', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['mashine_id',
+                'gel_in_tank',
+                'bill_cash',
+                'status',
+                'current_status',
+                'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine'], 'string', 'max' => 255],
             [['mashine_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['mashine_id' => 'id']],
         ];
@@ -74,6 +113,7 @@ class GdMashineData extends \yii\db\ActiveRecord
             'gel_in_tank' => Yii::t('frontend', 'Gel In Tank'),
             'bill_cash' => Yii::t('frontend', 'Bill Cash'),
             'status' => Yii::t('frontend', 'Status'),
+            'current_status' => Yii::t('frontend','Current status'),
             'created_at' => Yii::t('frontend', 'Created At'),
             'updated_at' => Yii::t('frontend', 'Updated At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),

@@ -32,7 +32,7 @@ class CController extends Controller
     const TYPE_GD = 'GD';
     const STAR = '*';
     const STAR_DOLLAR = '*$';
-    const ZERO_CONST = 1;
+    const ONE_CONST = 1;
 
     /**
      * Initialisation method
@@ -69,7 +69,7 @@ class CController extends Controller
         if (Imei::findOne(['imei' => $initDto->imei])) {
             $imei = Imei::findOne(['imei' => $initDto->imei]);
 
-            if (Imei::getStatus($imei) == self::ZERO_CONST) {
+            if (Imei::getStatus($imei) == self::ONE_CONST) {
                 $imei = Imei::findOne(['imei' => $initDto->imei]);
                 $imei->imei_central_board = $initDto->imei;
                 $imei->firmware_version = $initDto->firmware_version;
@@ -217,7 +217,7 @@ class CController extends Controller
      * @param $data
      * @return array
      */
-    public function setWM(array $data): array
+    public function setWM(array $data)
     {
         $array_fields = array();
 
@@ -228,7 +228,7 @@ class CController extends Controller
             'bill_cash',
             'door_position',
             'door_block_led',
-            'status',
+            'current_status',
         ];
 
         return $result = array_combine($array_fields, $data);
@@ -246,7 +246,7 @@ class CController extends Controller
             'type_mashine',
             'gel_in_tank',
             'bill_cash',
-            'status',
+            'current_status',
         ];
 
         return $result = array_combine($array_fields, $data);
@@ -266,7 +266,7 @@ class CController extends Controller
             'type_mashine',
             'sum_cards',
             'bill_cash',
-            'status',
+            'current_status',
         ];
 
         return $result = array_combine($array_fields, $data);
@@ -287,7 +287,7 @@ class CController extends Controller
             'number_device',
             'level_signal',
             'bill_cash',
-            'status',
+            'current_status',
         ];
 
         return $result = array_combine($array_fields, $data);
@@ -309,14 +309,16 @@ class CController extends Controller
         $wash_machine->bill_cash = $wm_machine_dto->bill_cash;
         $wash_machine->door_position = $wm_machine_dto->door_position;
         $wash_machine->door_block_led = $wm_machine_dto->door_block_led;
-        $wash_machine->status = $wm_machine_dto->status;
+        $wash_machine->current_status = $wm_machine_dto->current_status;
         $wash_machine->imei_id = $imei_id;
         $wash_machine->company_id = $imei->company_id;
         $wash_machine->balance_holder_id = $imei->balance_holder_id;
         $wash_machine->address_id = $imei->address_id;
-        $wash_machine->status = self::ZERO_CONST;
+        $wash_machine->current_status = $wm_machine_dto->current_status;
+        $wash_machine->status = self::ONE_CONST;
         $wash_machine->is_deleted = false;
-        $wash_machine->save(false);
+//        Debugger::dd($wash_machine->current_status);
+        $wash_machine->save();
 
         return $wash_machine;
     }
@@ -335,12 +337,12 @@ class CController extends Controller
         $gd_mashine->company_id = $imei->company_id;
         $gd_mashine->balance_holder_id = $imei->balance_holder_id;
         $gd_mashine->address_id = $imei->address_id;
-        $gd_mashine->status = self::ZERO_CONST;
+        $gd_mashine->current_status = self::ONE_CONST;
         $gd_mashine->is_deleted = false;
         $gd_mashine->type_mashine = $gd_mashine_dto->type_mashine;
         $gd_mashine->gel_in_tank = $gd_mashine_dto->gel_in_tank;
         $gd_mashine->bill_cash = $gd_mashine_dto->bill_cash;
-        $gd_mashine->status = $gd_mashine_dto->status;
+        $gd_mashine->current_status = $gd_mashine_dto->current_status;
         $gd_mashine->is_deleted = false;
         $gd_mashine->save(false);
 
@@ -390,7 +392,8 @@ class CController extends Controller
                 $wm_mashine_data->bill_cash = $wm_mashine_dto->bill_cash;
                 $wm_mashine_data->door_position = $wm_mashine_dto->door_position;
                 $wm_mashine_data->door_block_led = $wm_mashine_dto->door_block_led;
-                $wm_mashine_data->status = $wm_mashine_dto->status;
+                $wm_mashine_data->current_status = $wm_mashine_dto->current_status;
+                $wm_mashine_data->status = self::ONE_CONST;
                 $wm_mashine_data->is_deleted = false;
                 $this->updateWmMashine($wm_mashine, $wm_mashine_data);
                 if ($wm_mashine_data->save(false)) {
@@ -415,7 +418,7 @@ class CController extends Controller
         $wm_mashine->bill_cash = $wm_mashine_data->bill_cash;
         $wm_mashine->door_position = $wm_mashine_data->door_position;
         $wm_mashine->door_block_led = $wm_mashine_data->door_block_led;
-        $wm_mashine->status = $wm_mashine_data->status;
+        $wm_mashine->current_status = $wm_mashine_data->current_status;
         $wm_mashine_data->is_deleted = false;
         $wm_mashine->update(false);
         echo $wm_mashine->number_device . ' WM updated!' . '<br>';
@@ -431,7 +434,7 @@ class CController extends Controller
         $gd_mashine->type_mashine = $gd_mashine_data->type_mashine;
         $gd_mashine->gel_in_tank = $gd_mashine_data->gel_in_tank;
         $gd_mashine->bill_cash = $gd_mashine_data->bill_cash;
-        $gd_mashine->status = $gd_mashine_data->status;
+        $gd_mashine->current_status = $gd_mashine_data->current_status;
         $gd_mashine_data->is_deleted = false;
         $gd_mashine->update(false);
         echo 'GD updated!' . '<br>';
@@ -464,7 +467,7 @@ class CController extends Controller
                 $gd_mashine_data->type_mashine = $gd_mashine_dto->type_mashine;
                 $gd_mashine_data->gel_in_tank = $gd_mashine_dto->gel_in_tank;
                 $gd_mashine_data->bill_cash = $gd_mashine_dto->bill_cash;
-                $gd_mashine_data->status = $gd_mashine_dto->status;
+                $gd_mashine_data->current_status = $gd_mashine_dto->current_status;
                 $gd_mashine_data->is_deleted = false;
 
                 $this->updateGdMashine($gd_mashine, $gd_mashine_data);

@@ -92,11 +92,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         $lastCount = $imei->getMachineStatus()->orderBy('created_at DESC')->where('created_at >= CURDATE()')->count();
                         $count = $imei->getMachineStatus()->select('number_device')->distinct()->limit($lastCount)->count();
                         $machines = $imei->getMachineStatus()->orderBy('number_device DESC')->addOrderBy('number_device')->limit($count)->all();?>
+
                         <?php foreach ($machines as $machine) : ?>
                             CM <?= $machine->number_device ?>
-                            (status: <?php if (array_key_exists($machine->status, $machine->current_status)): ?> 
-                            <?php $machine->status = $machine->current_status[$machine->status] ?>
-                            <?= Yii::t('frontend', $machine->status) ?>
+                            (status: <?php if (array_key_exists($machine->current_status, $machine->current_state)): ?>
+                            <?php $machine->current_status = $machine->current_state[$machine->current_status] ?>
+                            <?= Yii::t('frontend', $machine->current_status) ?>
                             <?php endif; ?>)
                         <?php endforeach; ?><br>
                         <?php if ($imei->getGdMashine()->orderBy('id DESC')->one()): ?>
@@ -104,9 +105,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         TYPE: <?= $gd_machine->type_mashine; ?>
                         GEL IN TANK: <?= $gd_machine->gel_in_tank; ?>
                         BILL CASH: <?= $gd_machine->bill_cash ?>
-                        STATUS: <?php if (array_key_exists($gd_machine->status, $gd_machine->current_status)): ?> 
-                            <?php $gd_machine->status = $gd_machine->current_status[$gd_machine->status] ?>
-                            <?= Yii::t('frontend', $gd_machine->status) ?>
+                        STATUS: <?php if (array_key_exists($gd_machine->current_status, $gd_machine->current_state)): ?>
+                            <?php $gd_machine->current_status = $gd_machine->current_state[$gd_machine->current_status] ?>
+                            <?= Yii::t('frontend', $gd_machine->current_status) ?>
                             <?php endif; ?><br>
                         <?php endif; ?><br>
                     <?php endif; ?><br>
