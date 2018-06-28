@@ -86,24 +86,6 @@ class WmMashineData extends \yii\db\ActiveRecord
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
         ];
     }
-    
-    /**
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'is_deleted' => true,
-                    'deleted_at' => time()
-                ],
-            ],
-            TimestampBehavior::className()
-        ];
-    }
-
 
     /**
      * @return $this|\yii\db\ActiveQuery
