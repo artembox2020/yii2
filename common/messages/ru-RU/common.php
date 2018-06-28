@@ -35,7 +35,6 @@ return [
     'Email' => '',
     'Firstname' => 'Имя',
     'Fistname Lastname Patronymic' => 'Имя, фамилия, отчество',
-    'Lastname' => 'Фамилия',
     'Frequency' => 'Частота',
     'Gender' => 'Пол',
     'Inactive' => 'Неактивный',

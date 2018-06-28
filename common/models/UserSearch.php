@@ -46,14 +46,14 @@ class UserSearch extends User
      *
      * @return ActiveDataProvider
      */
-    public function searchManagerWorkers($params)
+    public function searchEmployees($params)
     {
         $user = User::findOne(Yii::$app->user->id);
         
         $query = User::find()
-                ->where(['company_id' => $user->company_id]) // user belongs to company
-                ->andWhere(['!=', 'id',Yii::$app->user->id]) // exclude company manager
-                ->andWhere(['is_deleted' => false, 'status' => User::STATUS_ACTIVE]);
+                ->andWhere(['company_id' => $user->company_id]) // user belongs to company
+                ->andWhere(['!=', 'id',Yii::$app->user->id]); // exclude company manager
+                //->andWhere(['is_deleted' => false, 'status' => User::STATUS_ACTIVE]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

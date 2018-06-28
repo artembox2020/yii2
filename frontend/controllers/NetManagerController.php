@@ -68,7 +68,7 @@ class NetManagerController extends \yii\web\Controller
     {
         $searchModel = new UserSearch();
         
-        $dataProvider = $searchModel->searchManagerWorkers(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchEmployees(Yii::$app->request->queryParams);
         
         return $this->render('employees', [
             'dataProvider' => $dataProvider,
@@ -157,6 +157,7 @@ class NetManagerController extends \yii\web\Controller
         $profile = UserProfile::findOne($id);
         
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
+            $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
             $isValid = $user->validate(false);
             $isValid = $profile->validate(false) && $isValid;
             if ($isValid) {
