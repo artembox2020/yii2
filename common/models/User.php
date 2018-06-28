@@ -90,7 +90,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['ip', 'ip'],
         ];
     }
-    
+
     /**
      * @inheritdoc
      */
