@@ -83,14 +83,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'email'], 'unique'],
+            [['email'], 'unique'],
             ['username', 'filter', 'filter' => '\yii\helpers\Html::encode'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             ['ip', 'ip'],
         ];
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -123,6 +123,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 
+    
     /**
      * @inheritdoc
      */
@@ -130,7 +131,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -262,12 +263,19 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function find()
     {
-//        return new UserQuery(get_called_class());
+//        return new UserQuery(get_called_class();
         return parent::find()->where(['is_deleted' => false])
             ->andWhere(['status' => User::STATUS_ACTIVE]);
 //            ->andWhere(['<', '{{%user}}.created_at', time()]);
     }
 
+    /**
+     * @return $this|\yii\db\ActiveQuery
+     */
+    public static function findParent() {
+        return parent::find();
+    }
+    
     /**
      * @param User $id
      * @return string|\yii\rbac\Role

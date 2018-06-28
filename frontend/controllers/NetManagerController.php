@@ -9,10 +9,13 @@ use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
 use Yii;
+use yii\data\ActiveDataProvider;
 use common\models\User;
+use common\models\UserSearch;
 use backend\models\UserForm;
 use backend\models\Company;
 use yii\helpers\ArrayHelper;
+use yii\filters\AccessControl;
 use backend\services\mail\MailSender;
 use frontend\services\custom\Debugger;
 use yii\web\NotFoundHttpException;
@@ -23,6 +26,21 @@ use yii\web\NotFoundHttpException;
  */
 class NetManagerController extends \yii\web\Controller
 {
+     public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+    
     /**
      * @return string
      */
@@ -48,25 +66,13 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionEmployees()
     {
-        // $searchModel = new UserSearch();
-        // $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        // $dataProvider->sort = [
-        //     'defaultOrder' => ['created_at' => SORT_DESC],
-        // ];
-
-        $user = User::findOne(Yii::$app->user->id);
-        $profile = UserProfile::findOne($user->id);
-
-        if (!empty($user->company)) {
-            $users = $user->company->users;
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
-        }
-
+        $searchModel = new UserSearch();
+        
+        $dataProvider = $searchModel->searchManagerWorkers(Yii::$app->request->queryParams);
+        
         return $this->render('employees', [
-            'users' => $users,
-            'profile' => $profile
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel
         ]);
     }
 
@@ -132,10 +138,11 @@ class NetManagerController extends \yii\web\Controller
     public function actionViewEmployee()
     {
         if (Yii::$app->request->get()) {
-            $model = User::findOne(['id' => Yii::$app->request->get('id')]);
-
+            
+            $model = User::findParent()->where([ 'id' => Yii::$app->request->get()['id'] ]);
+            
             return $this->render('view-employee', [
-                'model' => $model
+                'model' => $model->one()
             ]);
         }
     }
@@ -148,7 +155,7 @@ class NetManagerController extends \yii\web\Controller
         $user = new UserForm();
         $user->setModel($this->findModel($id));
         $profile = UserProfile::findOne($id);
-
+        
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
             $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
             $isValid = $user->validate(false);
@@ -156,9 +163,17 @@ class NetManagerController extends \yii\web\Controller
             if ($isValid) {
                 $user->save(false);
                 $profile->save(false);
-
+                
+                if($user->hiddenStatus == User::STATUS_INACTIVE && $user->status == User::STATUS_ACTIVE) {
+                    // send invite mail
+                    $password = $user->password;
+                    $sendMail = new MailSender();
+                    $company = Company::findOne(['id' => User::findOne(Yii::$app->user->id)->company_id]);
+                    $user = User::findOne(['email' => $user->email]);
+                    $sendMail->sendInviteToCompany($user, $company, $password);
+                }
                 return $this->redirect(['/net-manager/employees']);
-            }
+            }    
         }
 
         return $this->render('create', [
@@ -166,6 +181,14 @@ class NetManagerController extends \yii\web\Controller
             'profile' => $profile,
             'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
         ]);
+    }
+
+    public function actionDeleteEmployee($id) {
+        
+        $user = User::findParent()->where(['id' => $id])->one();
+        $user->softDelete();
+        
+        $this->redirect("/net-manager/employees");
     }
 
     /**
@@ -189,7 +212,7 @@ class NetManagerController extends \yii\web\Controller
      */
     protected function findModel($id)
     {
-        if (($model = User::findOne($id)) !== null) {
+        if (($model = User::findParent()->where(['id' => $id, 'is_deleted' => false])->one()) !== null) {
             return $model;
        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
