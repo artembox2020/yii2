@@ -17,17 +17,16 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Create user' => 'Створити користувача',
-    'Users' => 'Користувачі',
-    'Username' => 'Ім\'я користувача',
-    'Position' => 'Посада',
-    'Email' => 'Емейл',
-    'Password' => 'Пароль',
-    'Status' =>'Статус',
     'Activate' => 'Активувати',
     'Create' => 'Створити',
+    'Create user' => 'Створити користувача',
+    'Email' => 'Емейл',
+    'Password' => 'Пароль',
+    'Position' => 'Посада',
+    'Roles' => 'Роль',
+    'Status' =>'Статус',
     'Update' => 'Редагувати',
     'Update user: {username}' => 'Редагувати користувача: {username}',
-    'Roles' => 'Роль',
-    'Create' => 'Створити'
+    'Username' => 'Ім\'я користувача',
+    'Users' => 'Користувачі',
 ];

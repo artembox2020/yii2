@@ -12,9 +12,11 @@ use common\models\User;
  */
 class UserSearch extends User
 {
-    public $flp; // field for filtering by firstname and lastname
-    
+    public $name; // field for filtering by firstname and lastname
     public $position; // field for filtering by position
+    
+    /** @var int PAGE_SIZE */
+    const PAGE_SIZE = 10;
     
     /**
      * {@inheritdoc}
@@ -22,9 +24,9 @@ class UserSearch extends User
     public function rules()
     {
         return [
-            [['id', 'status', 'company_id', 'created_at', 'updated_at', 'action_at', 'deleted_at', 'is_deleted'], 'integer'],
+            [['id', 'company_id', 'created_at', 'updated_at', 'action_at', 'deleted_at', 'is_deleted'], 'integer'],
             [['username', 'auth_key', 'access_token', 'password_hash', 'email', 'ip', 'other', 'status'], 'safe'],
-            [['flp','position'], 'safe'],
+            [['name','position'], 'safe'],
         ];
     }
 
@@ -36,7 +38,7 @@ class UserSearch extends User
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
-
+    
     /**
      * Creates data provider instance with search query applied
      *
@@ -46,23 +48,16 @@ class UserSearch extends User
      */
     public function searchManagerWorkers($params)
     {
-        $user = UserSearch::findOne(Yii::$app->user->id);
+        $user = User::findOne(Yii::$app->user->id);
         
-        $query = UserSearch::findParent()
+        $query = User::find()
                 ->where(['company_id' => $user->company_id]) // user belongs to company
-                ->andWhere(new OrCondition( // status ACTIVE or INACTIVE
-                    [
-                        ['status' => User::STATUS_ACTIVE],
-                        ['status' => User::STATUS_INACTIVE]
-                    ]))
-                ->andWhere(['!=', 'id',Yii::$app->user->id]) // exclude company manager    
-                ->andWhere(['is_deleted' => false]); // not deleted
-
-        // add conditions that should always apply here
+                ->andWhere(['!=', 'id',Yii::$app->user->id]) // exclude company manager
+                ->andWhere(['is_deleted' => false, 'status' => User::STATUS_ACTIVE]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => ['pageSize' => 10]
+            'pagination' => ['pageSize' => UserSearch::PAGE_SIZE]
         ]);
 
         $this->load($params);
@@ -78,10 +73,10 @@ class UserSearch extends User
         ]);
         
         $query->joinWith(['userProfile' => function ($q) {
-            if(!empty($this->flp)) {
+            if(!empty($this->name)) {
                 $q->andWhere(new OrCondition([
-                    ['like','user_profile.firstname', $this->flp],
-                    ['like','user_profile.lastname', $this->flp],
+                    ['like','user_profile.firstname', $this->name],
+                    ['like','user_profile.lastname', $this->name],
                 ]));
             }
             

@@ -23,7 +23,6 @@ class UserForm extends Model
     public $roles;
     public $company_id;
     public $other;
-    public $hiddenStatus;
 
     private $model;
 
@@ -96,7 +95,6 @@ class UserForm extends Model
         $this->email = $model->email;
         $this->company_id = $model->company_id;
         $this->status = $model->status;
-        $this->hiddenStatus = $model->status;
         $this->model = $model;
         $this->roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($model->getId()), 'name');
 

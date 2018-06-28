@@ -68,7 +68,7 @@ $config = [
                 'port' => '587',
                 'encryption' => 'tls',
             ],
-            'useFileTransport' => false,
+            'useFileTransport' => true,
         ],
     ],
     'modules' => [

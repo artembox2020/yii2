@@ -31,16 +31,7 @@ $this->params['breadcrumbs'][] = Yii::t('backend', 'Update');
 
     <?= $form->field($user, 'roles')->checkboxList($roles) ?>
     
-    <?= $form->field($user, 'status')->dropDownList(
-        [
-            User::STATUS_ACTIVE => Yii::t('common','Active'), 
-            User::STATUS_INACTIVE => Yii::t('common','Inactive'),
-        ],
-        ['value' => $user->status ]
-        ) 
-    ?>
-    
-    <?= $form->field($user, 'hiddenStatus')->hiddenInput()->label(false); ?>
+    <?= $form->field($user, 'status')->hiddenInput(['value' => User::STATUS_ACTIVE])->label(false); ?>
     
     <?= $form->field($profile, 'firstname')->textInput(['maxlength' => true]) ?>
 

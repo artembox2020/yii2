@@ -177,29 +177,25 @@ class DefaultController extends Controller
                 return \yii\widgets\ActiveForm::validate($model);
             }
             
-
             if ($model->load(Yii::$app->request->post())) {
                 $model->other = $model->password;
                 $model->save();
 
                 $manager = User::findOne(Yii::$app->user->id);
-                $user = User::findParent()->where(['email' => $model->email])->one();
+                $user = User::find()->where(['email' => $model->email])->one();
 
                 $user->company_id = $manager->company_id;
                 $user->save();
     
-                if($model->status == User::STATUS_ACTIVE)
-                {
-                    // send invite mail
-                    $password = $model->other;
-                    $sendMail = new MailSender();
-                    $company = Company::findOne(['id' => $manager->company_id]);
-                    $user = User::findOne(['email' => $model->email]);
-                    $sendMail->sendInviteToCompany($user, $company, $password);
+                // send invite mail
+                $password = $model->other;
+                $sendMail = new MailSender();
+                $company = Company::findOne(['id' => $manager->company_id]);
+                $user = User::findOne(['email' => $model->email]);
+                $sendMail->sendInviteToCompany($user, $company, $password);
 
-                    Yii::$app->session->setFlash('success', Yii::t('backend', 'Send ' . $model->username . ' invite'));
-                }
-                
+                Yii::$app->session->setFlash('success', Yii::t('backend', 'Send ' . $model->username . ' invite'));
+                    
                 return $this->redirect(['users']);
             }
 

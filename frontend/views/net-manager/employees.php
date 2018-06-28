@@ -40,7 +40,7 @@ use common\models\User;
             ],
             
             [
-                'attribute' => 'flp',
+                'attribute' => 'name',
                 'label' => Yii::t('common', 'Fistname Lastname Patronymic'),
                 'value' => function($data) {
                     return $data->userProfile->firstname." ".$data->userProfile->lastname;
@@ -60,27 +60,6 @@ use common\models\User;
                 'value' => function($data) {
                     return  $data->getUserRoleName($data->id);
                 },
-            ],
-            
-            [
-                'attribute' => 'status',
-                'label' => Yii::t('common', 'Status'),
-                'value' => function($data) {
-                    switch($data->status) {
-                        case User::STATUS_INACTIVE: return Yii::t('common','Inactive');
-                        case User::STATUS_ACTIVE: return Yii::t('common','Active');
-                        default: return Yii::t('common','Undefined');
-                    }
-                },
-                'filter' => Html::activeDropDownList(
-                    $searchModel,
-                    'status',
-                    [
-                        User::STATUS_ACTIVE => Yii::t('common','Active'),    
-                        User::STATUS_INACTIVE => Yii::t('common','Inactive'),
-                    ],
-                    ['class' => 'form-control', 'prompt' => Yii::t('common','All')]
-                ),
             ],
  
             [

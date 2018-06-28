@@ -139,7 +139,7 @@ class NetManagerController extends \yii\web\Controller
     {
         if (Yii::$app->request->get()) {
             
-            $model = User::findParent()->where([ 'id' => Yii::$app->request->get()['id'] ]);
+            $model = User::find()->where([ 'id' => Yii::$app->request->get()['id'] ]);
             
             return $this->render('view-employee', [
                 'model' => $model->one()
@@ -163,15 +163,6 @@ class NetManagerController extends \yii\web\Controller
             if ($isValid) {
                 $user->save(false);
                 $profile->save(false);
-                
-                if($user->hiddenStatus == User::STATUS_INACTIVE && $user->status == User::STATUS_ACTIVE) {
-                    // send invite mail
-                    $password = $user->password;
-                    $sendMail = new MailSender();
-                    $company = Company::findOne(['id' => User::findOne(Yii::$app->user->id)->company_id]);
-                    $user = User::findOne(['email' => $user->email]);
-                    $sendMail->sendInviteToCompany($user, $company, $password);
-                }
                 return $this->redirect(['/net-manager/employees']);
             }    
         }
@@ -212,7 +203,7 @@ class NetManagerController extends \yii\web\Controller
      */
     protected function findModel($id)
     {
-        if (($model = User::findParent()->where(['id' => $id, 'is_deleted' => false])->one()) !== null) {
+        if (($model = User::find()->where(['id' => $id])->one()) !== null) {
             return $model;
        } else {
             throw new NotFoundHttpException('The requested page does not exist.');

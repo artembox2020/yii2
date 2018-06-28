@@ -43,7 +43,7 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 3;
 
     public $roles;
-
+   
     const ROLE_USER = 'user';
     const ROLE_FINANCIER = 'financier';
     const ROLE_TECHNICIAN = 'technician';
@@ -123,7 +123,6 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 
-    
     /**
      * @inheritdoc
      */
@@ -263,19 +262,12 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function find()
     {
-//        return new UserQuery(get_called_class();
+//        return new UserQuery(get_called_class());
         return parent::find()->where(['is_deleted' => false])
             ->andWhere(['status' => User::STATUS_ACTIVE]);
 //            ->andWhere(['<', '{{%user}}.created_at', time()]);
     }
 
-    /**
-     * @return $this|\yii\db\ActiveQuery
-     */
-    public static function findParent() {
-        return parent::find();
-    }
-    
     /**
      * @param User $id
      * @return string|\yii\rbac\Role
