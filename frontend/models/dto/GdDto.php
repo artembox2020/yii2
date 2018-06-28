@@ -11,7 +11,7 @@ class GdDto
     public $type_mashine;
     public $gel_in_tank;
     public $bill_cash;
-    public $status;
+    public $current_status;
 
     public function __construct($data)
     {
@@ -28,8 +28,8 @@ class GdDto
             $this->bill_cash = (integer) $data['bill_cash'];
         }
 
-        if (array_key_exists('status', $data)) {
-            $this->status = (integer) $data['status'];
+        if (array_key_exists('current_status', $data)) {
+            $this->current_status = (integer) $data['current_status'];
         }
     }
 }

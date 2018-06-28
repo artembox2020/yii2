@@ -26,6 +26,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property int $current_status
  *
  * @property Imei $imei
  */
@@ -36,7 +37,7 @@ class WmMashine extends \yii\db\ActiveRecord
     const STATUS_UNDER_REPAIR = 2;
     const STATUS_JUNK = 3;
 
-    public $current_status = [
+    public $current_state = [
         '-2' => 'nulling',
         '-1' => 'refill',
         'disconnected',
@@ -100,7 +101,14 @@ class WmMashine extends \yii\db\ActiveRecord
     {
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
-            [['imei_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['imei_id', 'number_device',
+                'level_signal',
+                'bill_cash',
+                'door_position',
+                'door_block_led',
+                'status',
+                'current_status',
+                'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine', 'serial_number'], 'string', 'max' => 255],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
@@ -125,6 +133,7 @@ class WmMashine extends \yii\db\ActiveRecord
             'door_position' => Yii::t('frontend', 'Door Position'),
             'door_block_led' => Yii::t('frontend', 'Door Block Led'),
             'status' => Yii::t('frontend', 'Status'),
+            'current_status' => Yii::t('frontend', 'Current Status'),
             'created_at' => Yii::t('frontend', 'Created At'),
             'updated_at' => Yii::t('frontend', 'Updated At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),

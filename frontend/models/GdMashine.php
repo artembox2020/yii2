@@ -23,13 +23,14 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property int $current_status
  *
  * @property Imei $imei
  */
 class GdMashine extends \yii\db\ActiveRecord
 {
 
-    public $current_status = [
+    public $current_state = [
         'dz no connect',
         'dz connect',
         'dz ready',
@@ -73,7 +74,7 @@ class GdMashine extends \yii\db\ActiveRecord
     {
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
-            [['imei_id', 'bill_cash', 'gel_in_tank', 'status'], 'integer'],
+            [['imei_id', 'bill_cash', 'gel_in_tank', 'status', 'current_status'], 'integer'],
             [['type_mashine'], 'string'],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
         ];
@@ -94,6 +95,7 @@ class GdMashine extends \yii\db\ActiveRecord
             'serial_number' => Yii::t('frontend', 'Serial Number'),
             'gel_in_tank' => Yii::t('frontend', 'Gel In Tank'),
             'status' => Yii::t('frontend', 'Status'),
+            'current_status' => Yii::t('frontend', 'Current status')
         ];
     }
     
@@ -112,5 +114,4 @@ class GdMashine extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
     }
-
 }

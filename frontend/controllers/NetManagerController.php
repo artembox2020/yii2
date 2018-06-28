@@ -83,7 +83,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionCreateEmployee()
     {
-        if (!Yii::$app->user->isGuest) {
+        if (Yii::$app->user->can('create_employee')) {
             $model = new UserForm();
             $model->setScenario('create');
 
@@ -157,7 +157,6 @@ class NetManagerController extends \yii\web\Controller
         $profile = UserProfile::findOne($id);
         
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
-            $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
             $isValid = $user->validate(false);
             $isValid = $profile->validate(false) && $isValid;
             if ($isValid) {
@@ -176,7 +175,7 @@ class NetManagerController extends \yii\web\Controller
 
     public function actionDeleteEmployee($id) {
         
-        $user = User::findParent()->where(['id' => $id])->one();
+        $user = User::find()->where(['id' => $id])->one();
         $user->softDelete();
         
         $this->redirect("/net-manager/employees");

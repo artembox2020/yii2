@@ -22,11 +22,45 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
+ * @property int $current_status
  *
  * @property WmMashine $wmMashine
  */
 class WmMashineData extends \yii\db\ActiveRecord
 {
+    /** @var array $current_state */
+    public $current_state = [
+        '-2' => 'nulling',
+        '-1' => 'refill',
+        'disconnected',
+        'idle',
+        'power on',
+        'busy',
+        'washing',
+        'rising',
+        'extraction',
+        'waiting door',
+        'end cycle',
+        'freeze mode',
+        '1e water sensor',
+        '3e motor sensor',
+        '4e water supply',
+        '5e problem plum',
+        '8e motor',
+        '9e uc poser supply',
+        'ae communication',
+        'de switch',
+        'ce cooling',
+        'de unclosed door',
+        'fe ventilation',
+        'he heater',
+        'le water leak',
+        'oe of overflow',
+        'te temp sensor',
+        'ue loading cloth',
+        'max error'
+    ];
+
     /**
      * @inheritdoc
      */
@@ -59,7 +93,12 @@ class WmMashineData extends \yii\db\ActiveRecord
     {
         return [
             [['mashine_id'], 'required'],
-            [['mashine_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['mashine_id', 'number_device',
+                'level_signal', 'bill_cash',
+                'door_position', 'door_block_led',
+                'status',
+                'current_status',
+                'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine'], 'string', 'max' => 255],
             [['mashine_id'], 'exist', 'skipOnError' => true, 'targetClass' => WmMashine::className(), 'targetAttribute' => ['mashine_id' => 'id']],
         ];
@@ -84,6 +123,7 @@ class WmMashineData extends \yii\db\ActiveRecord
             'updated_at' => Yii::t('frontend', 'Updated At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
+            'current_status' => Yii::t('frontend', 'Current Status')
         ];
     }
 
