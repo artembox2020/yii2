@@ -2,25 +2,53 @@
 /* @var $this yii\web\View */
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\widgets\DetailView;
 ?>
-<h4><?= Yii::t('common','WorkerCard') ?></h4>
-<table>
-    <tbody>
-        <tr>
-            <th><?= Yii::t('common','Number') ?></th>
-            <th><?= Yii::t('common','Flp') ?></th> 
-            <th><?= Yii::t('common','Position') ?></th>
-            <th><?= Yii::t('common','ServRight') ?></th>
-            <th><?= Yii::t('common','Birthday') ?></th>
-            <th><?= Yii::t('common','Administration') ?></th>
-        </tr>
-        <tr>
-            <td><b><?= $model->id ?></b></td>
-            <td><?= $model->userProfile->firstname. " ".$model->userProfile->lastname ?></td> 
-            <td><?= $model->userProfile->position ?></td>
-            <td><?= $model->getUserRoleName($model->id) ?></td>
-            <td><?= date("d.m.Y",$model->userProfile->birthday) ?></td>
-            <td><?= Html::a(Yii::t('frontend', 'update'), ['edit-employee', 'id' =>$model->id]) ?> | Delete</td>
-        </tr>
-    </tbody>
-</table>
+<?php $menu = []; ?>
+<b>
+<?= $this->render('_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b>
+<br/>
+<h4><?= Yii::t('common','Worker Card') ?></h4>
+
+<p>
+    <?= Html::a('['.Yii::t('frontend','Update').']', ['edit-employee', 'id' => $model->id], ['class' => 'btn btn-primary', 'style' => 'color: #fff;']) ?>
+    <?= Html::a('['.Yii::t('frontend','Delete').']', ['delete-employee', 'id' => $model->id], [
+        'class' => 'btn btn-danger',
+        'style' => 'color: #fff;',
+        'data' => [
+            'confirm' => Yii::t('common','Delete Confirmation'),
+            'method' => 'post',
+        ],
+    ]) ?>
+</p>
+
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' => Yii::t('common','Number'),
+                'value' => $model->id
+            ],
+            [
+                'label' => Yii::t('common','Fistname Lastname Patronymic'),
+                'value' => $model->userProfile->firstname. " ".$model->userProfile->lastname
+            ],
+            [    
+                'label' => Yii::t('common','Position'),
+                'value' => $model->userProfile->position
+            ],
+            [
+                'label' => Yii::t('common','Server Rights'),
+                'value' => $model->getUserRoleName($model->id)
+            ],
+            [
+                'label' => Yii::t('common','Birthday'),
+                'value' => date("d.m.Y",$model->userProfile->birthday)
+            ]
+            
+        ],
+    ])
+?>

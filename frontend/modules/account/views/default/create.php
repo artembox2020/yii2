@@ -15,13 +15,13 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-create">
 
-    <?php $form = ActiveForm::begin() ?>
+    <?php $form = ActiveForm::begin(['id' => 'user-create-form']) ?>
 
     <?= $form->field($model, 'username')->textInput(['maxlength' => $model->username]) ?>
 
     <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'email', ['enableAjaxValidation' => true])->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'status')->checkbox(['label' => Yii::t('backend', 'Activate'), 'checked' => true]) ?>
 

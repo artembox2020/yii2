@@ -61,7 +61,13 @@ return [
     'Access' => 'Доступ',
     'Administration' => 'Администрирование',
     'Number' => '№',
-    'Flp' => 'Имя, фамилия, отчество',
-    'ServRight' => 'Права на сервере',
-    'WorkerCard' => 'Картка сотрудника'
+    'Fistname Lastname Patronymic' => 'Имя, фамилия, отчество',
+    'Server Rights' => 'Права на сервере',
+    'Worker Card' => 'Картка сотрудника',
+    'Delete Confirmation' => 'Вы уверены, что хотите удалить эту запись?',
+    'Actions' => 'Действия',
+    'Active' => 'Активный',
+    'Inactive' => 'Неактивный',
+    'Undefined' => 'Не определенный',
+    'All' => 'Все'
 ];

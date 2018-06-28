@@ -28,7 +28,14 @@ return [
     'Access' => 'Доступ',
     'Administration' => 'Адміністрування',
     'Number' => '№',
-    'Flp' => 'Імя, Призвіще. По-Батькові',
-    'ServRight' => 'Права на сервері',
-    'WorkerCard' => 'Картка співробітника'
+    'Status' => 'Статус',
+    'Fistname Lastname Patronymic' => 'Імя, Призвіще. По-Батькові',
+    'Server Rights' => 'Права на сервері',
+    'Worker Card' => 'Картка співробітника',
+    'Delete Confirmation' => 'Ви впевнені, що хочете видалити цей запис?',
+    'Actions' => 'Дії',
+    'Active' => 'Активний',
+    'Inactive' => 'Неактивний',
+    'Undefined' => 'Не визначений',
+    'All' => 'Усі'
 ];
