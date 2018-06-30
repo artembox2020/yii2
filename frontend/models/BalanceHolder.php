@@ -187,9 +187,11 @@ class BalanceHolder extends \yii\db\ActiveRecord
                     }
                 }
             }
-        }
-
             return $gdm;
+        } else {
+//            Debugger::dd($gdm);
+            return $gdm;
+        }
     }
 
     /**
