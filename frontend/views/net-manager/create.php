@@ -30,7 +30,9 @@ $this->params['breadcrumbs'][] = Yii::t('backend', 'Update');
     <?= $form->field($user, 'email')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($user, 'roles')->checkboxList($roles) ?>
-
+    
+    <?= $form->field($user, 'status')->hiddenInput(['value' => User::STATUS_ACTIVE])->label(false); ?>
+    
     <?= $form->field($profile, 'firstname')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($profile, 'lastname')->textInput(['maxlength' => true]) ?>

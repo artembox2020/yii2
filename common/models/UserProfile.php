@@ -61,8 +61,8 @@ class UserProfile extends ActiveRecord
             ['other', 'string', 'max' => 1024],
             ['position', 'string', 'max' => 255],
             [['firstname', 'lastname', 'avatar_path'], 'string', 'max' => 255],
-            ['firstname', 'match', 'pattern' => '/^[a-zа-яё]+$/iu'],
-            ['lastname', 'match', 'pattern' => '/^[a-zа-яё]+(-[a-zа-яё]+)?$/iu'],
+            ['firstname', 'match', 'pattern' => '/^[a-zа-яёіїє]+$/iu'],
+            ['lastname', 'match', 'pattern' => '/^[a-zа-яёіїє]+(-[a-zа-яё]+)?$/iu'],
             ['user_id', 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
             [['firstname', 'lastname', 'birthday', 'gender', 'other'], 'default', 'value' => null],
         ];

@@ -2,6 +2,7 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\UserForm */
@@ -15,15 +16,15 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-create">
 
-    <?php $form = ActiveForm::begin() ?>
+    <?php $form = ActiveForm::begin(['id' => 'user-create-form']) ?>
 
     <?= $form->field($model, 'username')->textInput(['maxlength' => $model->username]) ?>
 
     <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'email', ['enableAjaxValidation' => true])->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status')->checkbox(['label' => Yii::t('backend', 'Activate'), 'checked' => true]) ?>
+    <?= $form->field($model, 'status')->hiddenInput(['value' => User::STATUS_ACTIVE])->label(false); ?>
 
     <?= $form->field($model, 'roles')->checkboxList($roles) ?>
 
