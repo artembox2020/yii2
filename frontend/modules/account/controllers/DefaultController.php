@@ -168,20 +168,25 @@ class DefaultController extends Controller
      */
     public function actionCreate()
     {
-        if (Yii::$app->user->can('create_employee')) {
+        if (!Yii::$app->user->isGuest) {
             $model = new UserForm();
             $model->setScenario('create');
-
+            
+            if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return \yii\widgets\ActiveForm::validate($model);
+            }
+            
             if ($model->load(Yii::$app->request->post())) {
                 $model->other = $model->password;
                 $model->save();
 
                 $manager = User::findOne(Yii::$app->user->id);
-                $user = User::findOne(['email' => $model->email]);
+                $user = User::find()->where(['email' => $model->email])->one();
 
                 $user->company_id = $manager->company_id;
                 $user->save();
-
+    
                 // send invite mail
                 $password = $model->other;
                 $sendMail = new MailSender();
@@ -190,7 +195,7 @@ class DefaultController extends Controller
                 $sendMail->sendInviteToCompany($user, $company, $password);
 
                 Yii::$app->session->setFlash('success', Yii::t('backend', 'Send ' . $model->username . ' invite'));
-
+                    
                 return $this->redirect(['users']);
             }
 

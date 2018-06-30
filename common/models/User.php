@@ -43,7 +43,7 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 3;
 
     public $roles;
-
+   
     const ROLE_USER = 'user';
     const ROLE_FINANCIER = 'financier';
     const ROLE_TECHNICIAN = 'technician';
@@ -83,7 +83,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'email'], 'unique'],
+            [['email'], 'unique'],
             ['username', 'filter', 'filter' => '\yii\helpers\Html::encode'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => array_keys(self::statuses())],
@@ -130,7 +130,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
-
+    
     /**
      * @inheritdoc
      */

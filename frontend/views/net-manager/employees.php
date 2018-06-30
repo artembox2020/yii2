@@ -9,6 +9,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\models\User;
 ?>
 <?php $menu = []; ?>
 <b>
@@ -16,32 +17,77 @@ use yii\widgets\ActiveForm;
         'menu' => $menu,
     ]) ?>
 </b>
-
+<br/>
+<div>
+    <?= Html::a("[".Yii::t('frontend', 'Create user')."]", ['account/default/create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?>
+</div>
 <div class="account-default-users">
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('frontend', 'Create user'), ['/account/default/create'], ['class' => 'btn btn-success']) ?>
-        <!-- <?= Html::a(Yii::t('frontend', 'Roles'), ['/rbac/access/role'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('frontend', 'Permissions'), ['/rbac/access/permission'], ['class' => 'btn btn-success']) ?> -->
-    </p>
-
-    <?php foreach ($users as $user) : ?>
-        <?= $user->username . ' ' .
-        Yii::t('backend', 'Position') . ': ' . $user->userProfile->position . ' ' .
-        Yii::t('frontend','Role') . ': ' .
-        Yii::t('frontend', $user->getUserRoleName($user->id)); ?>
-    <div style="display: inline-flex">
-        <?php $form = ActiveForm::begin([
-            'action' => '/net-manager/view-employee'
-        ]) ?>
-        <?=  Html::hiddenInput('id', $user->id); ?>
-        <?= Html::submitInput(Yii::t('frontend', 'view'), ['class' => 'btn btn-success']) ?>
-        <?php ActiveForm::end(); ?>
-        <?= Html::a(Yii::t('frontend', 'update'), ['edit-employee', 'id' =>$user->id]) ?>
-    </div> <br><br>
-<!--        <a href="/net-manager/view-employee">view</a> |-->
-    <?php endforeach; ?>
-
     
-</div>
+    <?= yii\grid\GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            [
+                'attribute' => 'id',
+                'label' => Yii::t('common', 'Number'),
+                'value' => function($model, $key, $index) {
+                    if(empty($_GET['per-page'])) $perPage = 10; else $perPage = $_GET['per-page'];
+                    if(!empty($_GET['page'])) return ($_GET['page'] - 1) * $perPage + $index + 1;
+                    else return $index + 1;
+                },
+                'filter' => false
+            ],
+            
+            [
+                'attribute' => 'name',
+                'label' => Yii::t('common', 'Fistname Lastname Patronymic'),
+                'value' => function($data) {
+                    return $data->userProfile->firstname." ".$data->userProfile->lastname;
+                },
+            ],
+            
+            [
+                'attribute' => 'position',
+                'label' => Yii::t('common', 'Position'),
+                'value' => function($data) {
+                    return $data->userProfile->position;
+                },
+            ],
+ 
+            [
+                'label' => Yii::t('common', 'Server Rights'),
+                'value' => function($data) {
+                    return  $data->getUserRoleName($data->id);
+                },
+            ],
+ 
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => Yii::t('common', 'Actions'),
+                'template' => '{view} {update} {delete}',
+                'buttons' => [
+                    'update' => function ($url,$model) {
+                        return Html::a('<span class="glyphicon glyphicon-screenshot"></span>', ['edit-employee', 'id' =>$model->id]);
+                    },
+                    
+                    'view' => function ($url,$model) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view-employee', 'id' =>$model->id]);
+                    },
+                    
+                    'delete' => function($url, $model) {
+                        if($model->is_deleted) return '';
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete-employee', 'id' => $model->id], 
+                        [
+                            'class' => '',
+                            'data' => [
+                                'confirm' => Yii::t('common', 'Delete Confirmation'),
+                                'method' => 'post',
+                            ],
+                        ]);
+                    }
+                ],
+            ],
+        ],
+    ]);  ?>
+</div>    

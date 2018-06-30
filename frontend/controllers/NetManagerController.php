@@ -9,10 +9,13 @@ use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
 use Yii;
+use yii\data\ActiveDataProvider;
 use common\models\User;
+use common\models\UserSearch;
 use backend\models\UserForm;
 use backend\models\Company;
 use yii\helpers\ArrayHelper;
+use yii\filters\AccessControl;
 use backend\services\mail\MailSender;
 use frontend\services\custom\Debugger;
 use yii\web\NotFoundHttpException;
@@ -23,6 +26,21 @@ use yii\web\NotFoundHttpException;
  */
 class NetManagerController extends \yii\web\Controller
 {
+     public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+    
     /**
      * @return string
      */
@@ -48,25 +66,13 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionEmployees()
     {
-        // $searchModel = new UserSearch();
-        // $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        // $dataProvider->sort = [
-        //     'defaultOrder' => ['created_at' => SORT_DESC],
-        // ];
-
-        $user = User::findOne(Yii::$app->user->id);
-        $profile = UserProfile::findOne($user->id);
-
-        if (!empty($user->company)) {
-            $users = $user->company->users;
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
-        }
-
+        $searchModel = new UserSearch();
+        
+        $dataProvider = $searchModel->searchEmployees(Yii::$app->request->queryParams);
+        
         return $this->render('employees', [
-            'users' => $users,
-            'profile' => $profile
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel
         ]);
     }
 
@@ -131,11 +137,12 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionViewEmployee()
     {
-        if (Yii::$app->request->post()) {
-            $model = User::findOne(['id' => Yii::$app->request->post('id')]);
-
+        if (Yii::$app->request->get()) {
+            
+            $model = User::find()->where([ 'id' => Yii::$app->request->get()['id'] ]);
+            
             return $this->render('view-employee', [
-                'model' => $model
+                'model' => $model->one()
             ]);
         }
     }
@@ -148,16 +155,16 @@ class NetManagerController extends \yii\web\Controller
         $user = new UserForm();
         $user->setModel($this->findModel($id));
         $profile = UserProfile::findOne($id);
-
+        
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
+            $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
             $isValid = $user->validate(false);
             $isValid = $profile->validate(false) && $isValid;
             if ($isValid) {
                 $user->save(false);
                 $profile->save(false);
-
                 return $this->redirect(['/net-manager/employees']);
-            }
+            }    
         }
 
         return $this->render('create', [
@@ -165,6 +172,14 @@ class NetManagerController extends \yii\web\Controller
             'profile' => $profile,
             'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
         ]);
+    }
+
+    public function actionDeleteEmployee($id) {
+        
+        $user = User::find()->where(['id' => $id])->one();
+        $user->softDelete();
+        
+        $this->redirect("/net-manager/employees");
     }
 
     /**
@@ -188,7 +203,7 @@ class NetManagerController extends \yii\web\Controller
      */
     protected function findModel($id)
     {
-        if (($model = User::findOne($id)) !== null) {
+        if (($model = User::find()->where(['id' => $id])->one()) !== null) {
             return $model;
        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
