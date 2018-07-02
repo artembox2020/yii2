@@ -42,6 +42,19 @@ class NetManagerController extends \yii\web\Controller
     }
     
     /**
+     * Check whether user is a member of your company
+     * @param $user_id
+     * @return true | false
+     */
+    private function checkCompanyMember($user_id = false) {
+        $currentUser = User::findOne(Yii::$app->user->id);
+        $user = User::findOne($user_id);
+        if(empty($currentUser) || empty($currentUser->company) || empty($user) || empty($user->company)) return false;
+        if($currentUser->company->id == $user->company->id) return true;
+        return false; 
+    }
+    
+    /**
      * @return string
      */
     public function actionIndex()
@@ -139,6 +152,11 @@ class NetManagerController extends \yii\web\Controller
     {
         if (Yii::$app->request->get()) {
             
+            if(!$this->checkCompanyMember(Yii::$app->request->get()['id'])) {
+                
+                return $this->redirect(['account/default/denied']);
+            }
+            
             $model = User::find()->where([ 'id' => Yii::$app->request->get()['id'] ]);
             
             return $this->render('view-employee', [
@@ -152,6 +170,11 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionEditEmployee($id)
     {
+        if(!$this->checkCompanyMember(Yii::$app->request->get()['id'])) {
+                
+            return $this->redirect(['account/default/denied']);
+        }
+        
         $user = new UserForm();
         $user->setModel($this->findModel($id));
         $profile = UserProfile::findOne($id);
@@ -175,6 +198,11 @@ class NetManagerController extends \yii\web\Controller
     }
 
     public function actionDeleteEmployee($id) {
+        
+        if(!$this->checkCompanyMember(Yii::$app->request->get()['id'])) {
+                
+            return $this->redirect(['account/default/denied']);
+        }
         
         $user = User::find()->where(['id' => $id])->one();
         $user->softDelete();
