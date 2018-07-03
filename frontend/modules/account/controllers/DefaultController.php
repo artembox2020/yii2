@@ -196,7 +196,7 @@ class DefaultController extends Controller
 
                 Yii::$app->session->setFlash('success', Yii::t('backend', 'Send ' . $model->username . ' invite'));
                     
-                return $this->redirect(['users']);
+                return $this->redirect(['/net-manager/employees']);
             }
 
             $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
@@ -228,5 +228,11 @@ class DefaultController extends Controller
             'error',
             Yii::t('frontend', 'Access denied')
         );
+    }
+    
+    public function actionDenied() {
+       return $this->render ('/denied/access-denied', [
+            $this->accessDenied()
+        ]); 
     }
 }
