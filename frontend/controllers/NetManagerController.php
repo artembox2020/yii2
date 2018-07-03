@@ -27,6 +27,9 @@ use yii\web\NotFoundHttpException;
  */
 class NetManagerController extends \yii\web\Controller
 {
+    /** @var int ONE */
+    const ONE = 1;
+
      public function behaviors()
     {
         return [
@@ -41,7 +44,7 @@ class NetManagerController extends \yii\web\Controller
             ],
         ];
     }
-    
+
     /**
      * Check whether user is a member of your company
      * @param $user_id
@@ -133,7 +136,7 @@ class NetManagerController extends \yii\web\Controller
                 $roles[$key] = Yii::t('backend', $role);
             }
 
-            $model->status = 1;
+            $model->status = self::ONE;
             return $this->render('create', [
                 'model' => $model,
                 'roles' => $roles
@@ -247,9 +250,6 @@ class NetManagerController extends \yii\web\Controller
         $user = User::findOne(Yii::$app->user->id);
 
         if (!empty($user->company)) {
-            $users = $user->company->users;
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
             $searchModel = new BalanceHolderSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         } else {
@@ -258,9 +258,6 @@ class NetManagerController extends \yii\web\Controller
         }
 
         return $this->render('balance-holder/index', [
-//            'model' => $model,
-//            'users' => $users,
-//            'balanceHolders' => $balanceHolders,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider
         ]);

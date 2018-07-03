@@ -180,6 +180,7 @@ class BalanceHolder extends \yii\db\ActiveRecord
     public function getCountGdMachine()
     {
         return $this->getGdMachine()->count();
+
     }
 
     /**
