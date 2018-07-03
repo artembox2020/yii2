@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use frontend\models\OtherContactPerson;
+use yii\helpers\ArrayHelper;
 
 /**
  * OtherContactPersonSearch represents the model behind the search form of `frontend\models\OtherContactPerson`.
@@ -36,12 +37,14 @@ class OtherContactPersonSearch extends OtherContactPerson
      * Creates data provider instance with search query applied
      *
      * @param array $params
+     * @param User $model
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $model)
     {
-        $query = OtherContactPerson::find();
+        $balanceHolderIds = ArrayHelper::getColumn($model->company->balanceHolders, 'id');
+        $query = OtherContactPerson::find()->andWhere(['balance_holder_id' => array_values($balanceHolderIds)]);
 
         // add conditions that should always apply here
 

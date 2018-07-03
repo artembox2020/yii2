@@ -18,6 +18,7 @@
  */
 return [
     'Access' => 'Доступ',
+    'Access Forbidden or user not exist' => 'Доступ запрещен или пользователь не существует',
     'Actions' => 'Действия',
     'Active' => 'Активный',
     'Administration' => 'Администрирование',
@@ -33,6 +34,7 @@ return [
     'Delete Confirmation' => 'Вы уверены, что хотите удалить эту запись?',
     'Description' => 'Описание',
     'Email' => '',
+    'Entity not found' => 'Энтити не найдено',
     'Firstname' => 'Имя',
     'Fistname Lastname Patronymic' => 'Имя, фамилия, отчество',
     'Frequency' => 'Частота',

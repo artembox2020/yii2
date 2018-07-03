@@ -7,6 +7,7 @@ use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\OtherContactPerson;
 use frontend\models\OtherContactPersonSearch;
+use frontend\services\globals\Entity;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -79,8 +80,9 @@ class OtherContactPersonController extends Controller
      */
     public function actionIndex()
     {
+        $user = Entity::findOne(Yii::$app->user->id);
         $searchModel = new OtherContactPersonSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $user->model);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -145,12 +147,9 @@ class OtherContactPersonController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
         $user = User::findOne(Yii::$app->user->id);
-        $users = $user->company->users;
-        $company = $user->company;
-        $balanceHolder = $company->balanceHolders;
+        $model = $this->findModel($id, $user);
+        $balanceHolder = $user->company->balanceHolders;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['/net-manager/view-balance-holder', 'id' => $model->balance_holder_id]);
@@ -178,17 +177,15 @@ class OtherContactPersonController extends Controller
 
     /**
      * Finds the OtherContactPerson model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
+     * @param User $model
      * @return OtherContactPerson the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id, $model = false)
     {
-        if (($model = OtherContactPerson::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('frontend', 'The requested page does not exist.'));
+        if(!$model) $user = Entity::findOne(Yii::$app->user->id);
+        else $user = new Entity($model);
+        
+        return $user->getEntity($id,'otherContactPerson');
     }
 }

@@ -39,9 +39,9 @@ class BalanceHolderSearch extends BalanceHolder
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $company)
     {
-        $query = BalanceHolder::find();
+        $query = BalanceHolder::find()->andWhere(['company_id' => $company->id]);
 
         // add conditions that should always apply here
 
