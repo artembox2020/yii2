@@ -18,15 +18,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('frontend', 'Create Balance Holder'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('frontend', 'Create Balance Holder'), ['/balance-holder/create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-//        'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
             'id',
             ['attribute' => 'name',
                 'label' => Yii::t('frontend', 'Balance Holder Name'),
@@ -50,8 +47,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => Yii::t('frontend', 'Count Imeis')],
             ['attribute' => 'countWmMachine',
                 'label' => Yii::t('frontend', 'Count Wash Machine')],
-            ['attribute' => 'countGdMachine',
-                'label' => Yii::t('frontend', 'Count Gd Machine')],
+            [
+                'attribute' => 'countGdMachine',
+                'label' => Yii::t('frontend', 'Count Gd Machine'),
+            ],
 //            'contact_person',
 //            'position',
 //            'phone',

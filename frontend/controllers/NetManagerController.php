@@ -8,6 +8,7 @@ use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
+use frontend\models\OtherContactPerson;
 use Yii;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -278,6 +279,10 @@ class NetManagerController extends \yii\web\Controller
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
             $model = $this->findBalanceHolder($balanceHolders, $id);
+            $dataProvider = new ActiveDataProvider([
+                'query' => OtherContactPerson::find()->andWhere(['balance_holder_id' => $id])->orderBy("id ASC"),
+                'pagination' => false
+            ]);
         } else {
 
             return $this->redirect('account/sign-in/login');
@@ -285,6 +290,7 @@ class NetManagerController extends \yii\web\Controller
 
         return $this->render('balance-holder/view-balance-holder', [
             'model' => $model,
+            'dataProvider' => $dataProvider
         ]);
     }
 
