@@ -18,6 +18,7 @@
  */
 return [
     'Access' => 'Доступ',
+    'Access Forbidden or user not exist' => 'Доступ заборонений або користувач не інує',
     'Actions' => 'Дії',
     'Active' => 'Активний',
     'Administration' => 'Адміністрування',

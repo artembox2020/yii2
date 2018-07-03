@@ -30,7 +30,7 @@ class NetManagerController extends \yii\web\Controller
     /** @var int ONE */
     const ONE = 1;
 
-     public function behaviors()
+    public function behaviors()
     {
         return [
             'access' => [
@@ -45,19 +45,6 @@ class NetManagerController extends \yii\web\Controller
         ];
     }
 
-    /**
-     * Check whether user is a member of your company
-     * @param $user_id
-     * @return true | false
-     */
-    private function checkCompanyMember($user_id = false) {
-        $currentUser = User::findOne(Yii::$app->user->id);
-        $user = User::findOne($user_id);
-        if(empty($currentUser) || empty($currentUser->company) || empty($user) || empty($user->company)) return false;
-        if($currentUser->company->id == $user->company->id) return true;
-        return false; 
-    }
-    
     /**
      * @return string
      */
@@ -152,21 +139,13 @@ class NetManagerController extends \yii\web\Controller
     /**
      *  view one employee
      */
-    public function actionViewEmployee()
+    public function actionViewEmployee($id=0)
     {
-        if (Yii::$app->request->get()) {
-            
-            if(!$this->checkCompanyMember(Yii::$app->request->get()['id'])) {
-                
-                return $this->redirect(['account/default/denied']);
-            }
-            
-            $model = User::find()->where([ 'id' => Yii::$app->request->get()['id'] ]);
-            
-            return $this->render('view-employee', [
-                'model' => $model->one()
-            ]);
-        }
+        $user = User::findOne(Yii::$app->user->id);
+        $model = $user->getUser($id);
+        return $this->render('view-employee', [
+                'model' => $model
+        ]);
     }
 
     /**
@@ -174,16 +153,10 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionEditEmployee($id)
     {
-        if(!$this->checkCompanyMember(Yii::$app->request->get()['id'])) {
-                
-            return $this->redirect(['account/default/denied']);
-        }
-        
         $user = new UserForm();
         $user->setModel($this->findModel($id));
         $profile = UserProfile::findOne($id);
-        
-        if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
+        if($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
             $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
             $isValid = $user->validate(false);
             $isValid = $profile->validate(false) && $isValid;
@@ -193,7 +166,6 @@ class NetManagerController extends \yii\web\Controller
                 return $this->redirect(['/net-manager/employees']);
             }    
         }
-
         return $this->render('create', [
             'user' => $user,
             'profile' => $profile,
@@ -201,17 +173,14 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     *  delete employee
+     */
     public function actionDeleteEmployee($id) {
-        
-        if(!$this->checkCompanyMember(Yii::$app->request->get()['id'])) {
-                
-            return $this->redirect(['account/default/denied']);
-        }
-        
-        $user = User::find()->where(['id' => $id])->one();
-        $user->softDelete();
-        
-        $this->redirect("/net-manager/employees");
+        $user = User::findOne(Yii::$app->user->id);
+        $model = $user->getUser($id);
+        $model->softDelete();
+        return $this->redirect("/net-manager/employees");
     }
 
     /**
@@ -227,7 +196,6 @@ class NetManagerController extends \yii\web\Controller
 
     /**
      * Finds the User model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param integer $id
      * @return User the loaded model
@@ -235,11 +203,8 @@ class NetManagerController extends \yii\web\Controller
      */
     protected function findModel($id)
     {
-        if (($model = User::find()->where(['id' => $id])->one()) !== null) {
-            return $model;
-       } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+        $user = User::findOne(Yii::$app->user->id);
+        return $user->getUser($id);
     }
 
     /**
