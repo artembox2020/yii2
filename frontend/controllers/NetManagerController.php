@@ -30,6 +30,9 @@ class NetManagerController extends \yii\web\Controller
 {
     /** @var int ONE */
     const ONE = 1;
+    
+    /** @var int ZERO */
+    const ZERO = 0;
 
     public function behaviors()
     {
@@ -140,10 +143,11 @@ class NetManagerController extends \yii\web\Controller
     /**
      *  view one employee
      */
-    public function actionViewEmployee($id=0)
+    public function actionViewEmployee($id = self::ZERO)
     {
         $user = User::findOne(Yii::$app->user->id);
         $model = $user->getUser($id);
+
         return $this->render('view-employee', [
                 'model' => $model
         ]);
@@ -167,6 +171,7 @@ class NetManagerController extends \yii\web\Controller
                 return $this->redirect(['/net-manager/employees']);
             }    
         }
+
         return $this->render('create', [
             'user' => $user,
             'profile' => $profile,
@@ -177,10 +182,12 @@ class NetManagerController extends \yii\web\Controller
     /**
      *  delete employee
      */
-    public function actionDeleteEmployee($id) {
+    public function actionDeleteEmployee($id) 
+    {
         $user = User::findOne(Yii::$app->user->id);
         $model = $user->getUser($id);
         $model->softDelete();
+        
         return $this->redirect("/net-manager/employees");
     }
 

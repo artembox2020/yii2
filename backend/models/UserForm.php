@@ -80,6 +80,7 @@ class UserForm extends Model
             'email' => Yii::t('backend', 'Email'),
             'password' => Yii::t('backend', 'Password'),
             'status' => Yii::t('backend', 'Status'),
+            'roles' => Yii::t('backend','Roles')
         ];
     }
 

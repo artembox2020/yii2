@@ -119,10 +119,21 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return common\models\User
      */
+<<<<<<< HEAD
     public function getUser($id) {
         if(!in_array($id,ArrayHelper::getColumn($this->company->users,"id"))) {
             throw new \yii\web\ForbiddenHttpException(Yii::t('common','Access Forbidden or user not exist'));
         }
+=======
+    public function getUser($id) 
+    {
+        
+        if(!in_array($id,ArrayHelper::getColumn($this->company->users,'id'))) {
+            
+            throw new \yii\web\ForbiddenHttpException(Yii::t('common','Access Forbidden or user not exist'));
+        }
+        
+>>>>>>> 733185273fe7f3adbbf21f44263b4e9718e36e3f
         return User::findOne($id);
     }
 
