@@ -187,7 +187,7 @@ class NetManagerController extends \yii\web\Controller
         $user = User::findOne(Yii::$app->user->id);
         $model = $user->getUser($id);
         $model->softDelete();
-        
+
         return $this->redirect("/net-manager/employees");
     }
 
