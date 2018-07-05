@@ -117,6 +117,14 @@ class BalanceHolder extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getGdMachine()
+    {
+        return $this->hasMany(GdMashine::className(), ['balance_holder_id' => 'id']);
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getWashPay()
     {
         return $this->hasMany(Imei::className(), ['balance_holder_id' => 'id']);
@@ -171,27 +179,8 @@ class BalanceHolder extends \yii\db\ActiveRecord
      */
     public function getCountGdMachine()
     {
-        $gdm = null;
-        $user = User::findOne(Yii::$app->user->id);
+        return $this->getGdMachine()->count();
 
-        if (!empty($user->company)) {
-            $company = $user->company;
-            foreach ($company->balanceHolders as $balanceHolder) {
-                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
-                    foreach ($addresses->imeis as $value) {
-                        foreach ($value->gdMashine as $gd) {
-                            if ($gdm) {
-                            $gdm[] = $gd;
-                            }
-                        }
-                    }
-                }
-            }
-            return $gdm;
-        } else {
-//            Debugger::dd($gdm);
-            return $gdm;
-        }
     }
 
     /**

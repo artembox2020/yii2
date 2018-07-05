@@ -10,6 +10,7 @@ use frontend\models\OtherContactPersonSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Html;
 
 /**
  * OtherContactPersonController implements the CRUD actions for OtherContactPerson model.
@@ -30,6 +31,46 @@ class OtherContactPersonController extends Controller
                 ],
             ],
         ];
+    }
+    
+    /**
+     * @return update person link
+     */
+    public static function getUpdateLink($id) {
+        return  Html::a(
+            "[".Yii::t('frontend','Edit contact person')."]", 
+            ['other-contact-person/update', 'id' => $id], 
+            ['class' => 'btn btn-success', 'style' => 'color: #fff;']
+        );
+    }
+    
+    /**
+     * @return delete person link
+     */
+    public static function getDeleteLink($id) {
+        return Html::a(
+            "[".Yii::t('frontend','Delete contact person')."]", 
+            ['other-contact-person/delete', 'id' => $id], 
+            [
+                'class' => 'btn btn-success',
+                'data' => [
+                    'confirm' => Yii::t('common', 'Delete Confirmation'),
+                    'method' => 'post',
+                ],
+                'style' => 'color: #fff;'
+            ]
+        );
+    }
+    
+    /**
+     * @return create person link
+     */
+    public static function getCreateLink() {
+        return Html::a(
+            "[".Yii::t('frontend','Add contact person')."]",
+            ['other-contact-person/create'],
+            ['class' => 'btn btn-success', 'style' => 'color: #fff;']
+        );
     }
 
     /**
@@ -86,7 +127,7 @@ class OtherContactPersonController extends Controller
                 $model->save();
             }
 
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['/net-manager/view-balance-holder', 'id' => $model->balance_holder_id]);
         }
 
         return $this->render('create', [
@@ -112,7 +153,7 @@ class OtherContactPersonController extends Controller
         $balanceHolder = $company->balanceHolders;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['/net-manager/view-balance-holder', 'id' => $model->balance_holder_id]);
         }
 
         return $this->render('update', [
@@ -130,9 +171,9 @@ class OtherContactPersonController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->softDelete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+        $model->softDelete();
+        return $this->redirect(['/net-manager/view-balance-holder', 'id' => $model->balance_holder_id]);
     }
 
     /**

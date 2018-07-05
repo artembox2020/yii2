@@ -53,9 +53,11 @@ class OtherContactPerson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['balance_holder_id'], 'required'],
+            [['balance_holder_id','name'], 'required'],
             [['balance_holder_id', 'created_at', 'deleted_at'], 'integer'],
             [['name', 'position', 'phone'], 'string', 'max' => 255],
+            ['is_deleted', 'default', 'value' => 0],
+            ['name', 'match', 'pattern' => '/^[a-zа-яёіїє]+$/iu'],
             [['balance_holder_id'], 'exist', 'skipOnError' => true, 'targetClass' => BalanceHolder::className(), 'targetAttribute' => ['balance_holder_id' => 'id']],
         ];
     }

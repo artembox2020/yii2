@@ -68,7 +68,7 @@ use common\models\User;
                 'template' => '{view} {update} {delete}',
                 'buttons' => [
                     'update' => function ($url,$model) {
-                        return Html::a('<span class="glyphicon glyphicon-screenshot"></span>', ['edit-employee', 'id' =>$model->id]);
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['edit-employee', 'id' =>$model->id]);
                     },
                     
                     'view' => function ($url,$model) {

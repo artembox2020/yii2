@@ -9,6 +9,7 @@ use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
+use frontend\models\OtherContactPerson;
 use Yii;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -45,6 +46,19 @@ class NetManagerController extends \yii\web\Controller
         ];
     }
 
+    /**
+     * Check whether user is a member of your company
+     * @param $user_id
+     * @return true | false
+     */
+    private function checkCompanyMember($user_id = false) {
+        $currentUser = User::findOne(Yii::$app->user->id);
+        $user = User::findOne($user_id);
+        if(empty($currentUser) || empty($currentUser->company) || empty($user) || empty($user->company)) return false;
+        if($currentUser->company->id == $user->company->id) return true;
+        return false; 
+    }
+    
     /**
      * @return string
      */
@@ -143,6 +157,11 @@ class NetManagerController extends \yii\web\Controller
     {
         if (Yii::$app->request->get()) {
             
+            if(!$this->checkCompanyMember(Yii::$app->request->get()['id'])) {
+                
+                return $this->redirect(['account/default/denied']);
+            }
+            
             $model = User::find()->where([ 'id' => Yii::$app->request->get()['id'] ]);
             
             return $this->render('view-employee', [
@@ -156,6 +175,11 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionEditEmployee($id)
     {
+        if(!$this->checkCompanyMember(Yii::$app->request->get()['id'])) {
+                
+            return $this->redirect(['account/default/denied']);
+        }
+        
         $user = new UserForm();
         $user->setModel($this->findModel($id));
         $profile = UserProfile::findOne($id);
@@ -179,6 +203,11 @@ class NetManagerController extends \yii\web\Controller
     }
 
     public function actionDeleteEmployee($id) {
+        
+        if(!$this->checkCompanyMember(Yii::$app->request->get()['id'])) {
+                
+            return $this->redirect(['account/default/denied']);
+        }
         
         $user = User::find()->where(['id' => $id])->one();
         $user->softDelete();
@@ -248,6 +277,10 @@ class NetManagerController extends \yii\web\Controller
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
             $model = $this->findBalanceHolder($balanceHolders, $id);
+            $dataProvider = new ActiveDataProvider([
+                'query' => OtherContactPerson::find()->andWhere(['balance_holder_id' => $id])->orderBy("id ASC"),
+                'pagination' => false
+            ]);
         } else {
 
             return $this->redirect('account/sign-in/login');
@@ -255,6 +288,7 @@ class NetManagerController extends \yii\web\Controller
 
         return $this->render('balance-holder/view-balance-holder', [
             'model' => $model,
+            'dataProvider' => $dataProvider
         ]);
     }
 
