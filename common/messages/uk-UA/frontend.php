@@ -182,6 +182,7 @@ return [
     'Limit reached! This Balance Holder reached the limit *10 of contact persons' =>
         'Досягнута межа! Цей Балансоутримувач досяг межі * 10 контактних осіб',
     'Logs' => 'Список',
+    'Location' => 'Місце розташування',
     'Accepted requests' => 'Прийняті запити',
     'Rejected requests' => 'Відкинуті запити',
     'Today' => 'Сьогодні',

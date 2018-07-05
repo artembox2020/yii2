@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\UserProfile;
 use frontend\models\AddressBalanceHolder;
+use frontend\models\AddressBalanceHolderSearch;
 use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
@@ -29,7 +30,7 @@ class NetManagerController extends \yii\web\Controller
     /** @var int ONE */
     const ONE = 1;
 
-     public function behaviors()
+    public function behaviors()
     {
         return [
             'access' => [
@@ -281,18 +282,30 @@ class NetManagerController extends \yii\web\Controller
         $user = User::findOne(Yii::$app->user->id);
 
         if (!empty($user->company)) {
-            $users = $user->company->users;
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
+//            $users = $user->company->users;
+//            $model = $user->company;
+//            $balanceHolders = $model->balanceHolders;
+
+            $searchModel = new AddressBalanceHolderSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         } else {
 
             return $this->redirect('account/sign-in/login');
         }
 
-        return $this->render('addresses/addresses', [
-            'model' => $model,
-            'users' => $users,
-            'balanceHolders' => $balanceHolders,
+        return $this->render('addresses/index', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel
+        ]);
+    }
+
+    public function actionAddressView($id)
+    {
+        $model = AddressBalanceHolder::findOne($id);
+
+        return $this->render('address/view', [
+            'model' => $model
         ]);
     }
 
