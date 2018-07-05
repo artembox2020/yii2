@@ -438,7 +438,7 @@ class NetManagerController extends \yii\web\Controller
     /**
      * @return string|\yii\web\Response
      */
-    public function actionWmMachine()
+    public function actionOsnovnizasoby()
     {
         $user = User::findOne(Yii::$app->user->id);
 
