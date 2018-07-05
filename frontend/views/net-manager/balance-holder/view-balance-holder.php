@@ -3,7 +3,9 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
 use frontend\services\custom\Debugger;
+use frontend\controllers\OtherContactPersonController;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
 /* @var $users common\models\User */
@@ -15,23 +17,140 @@ use frontend\services\custom\Debugger;
         'menu' => $menu,
     ]) ?>
 </b><br><br>
-<p><u><b>Балансотримач</b></u><p/>
-<div>Назва: <b><?=  $model->name ?></b></div>
-<div>Адреса балансотримача: <b><?= $model->address ?></b></div>
-<div>Дата початку співпраці: <b><?= $model->date_start_cooperation ?></b></div>
-<div>Дата підключення до моніторінга: <b><?= $model->date_connection_monitoring ?></b></div>
-<div>Контактна особа: <b><u><?= $model->contact_person ?></u></b></div>
-<div>Посада: <b><u><?= $model->position ?></u></b></div>
-<div>Телефон: <b><u><?= $model->phone ?></u></b></div>
-<div>Администрирование: <b><u>future</u></b></div>
+<p><u><b><?= Yii::t('frontend','Balance Holder') ?></b></u><p/>
+<?php
+    $person = $dataProvider->query->one();
+    $dataProvider->query = $dataProvider->query->offset(1);
+    
+    $contactPerson = 
+        [
+            'label' => Yii::t('frontend','Contact Person'),
+            'format' => 'raw',
+            'value' => (!empty($person->name) ? $person->name : '')
+                ." ".
+                (
+                    count($model->otherContactPerson) <= OtherContactPersonController::NINE_DIGIT 
+                    ? OtherContactPersonController::getCreateLink() : ''
+                )
+        ];
+        
+    if(!empty($person->id)) {
+        $contactPersonPosition =
+            [
+                'label' => Yii::t('common','Position'),
+                'value' => $person->position
+            ];
+            
+        $contactPersonPhone =
+            [
+                'label' => Yii::t('frontend','Phone'),
+                'value' => $person->phone
+            ];;
+            
+        $contactPersonCreated =
+            [
+                'label' => Yii::t('frontend','Created'),
+                'value' => date("M j, Y g:i:s A",$person->created_at)
+            ];
+            
+        $contactPersonControls =
+            [
+                'label' => Yii::t('common','Actions'),
+                'format' => 'raw',
+                'value' => OtherContactPersonController::getUpdateLink($person->id)." ".OtherContactPersonController::getDeleteLink($person->id)
+            ];    
+    }
+    else {
+        $contactPersonPosition = [];
+        $contactPersonPhone = [];
+        $contactPersonCreated = [];
+        $contactPersonControls = [];
+    }
+    
+    $widgetAttributes = [
+            [
+                'label' => Yii::t('common','Name'),
+                'value' => $model->name
+            ],
+            [
+                'label' => Yii::t('frontend','Address'),
+                'value' => $model->address
+            ],
+            [
+                'label' => Yii::t('frontend','Date Start'),
+                'value' => date("M j, Y g:i:s A",$model->date_start_cooperation)
+            ],
+            [
+                'label' => Yii::t('frontend','Date Monitoring'),
+                'value' => date("M j, Y g:i:s A",$model->date_connection_monitoring)
+            ],
+            $contactPerson,
+            $contactPersonPosition,
+            $contactPersonPhone,
+            $contactPersonCreated,
+            $contactPersonControls
+        ];
+        
+    $widgetAttributes= array_filter($widgetAttributes, function($value) { return ( is_array($value) && count($value) > 0 ); });
+    
+?>
+
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => $widgetAttributes
+    ]);
+?>
+
+<p><u><b><?= Yii::t('frontend','Summary Technical Data') ?></b></u><p/>
+
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' =>  Yii::t('frontend', 'Count Addresses'),
+                'value' => $model->countAddresses
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Count Imeis'),
+                'value' => $model->countWashpay
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Count Wash Machine'),
+                'value' => $model->countWmMachine
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Count Gd Machine'),
+                'value' => $model->countGdMachine
+            ],
+            [
+                'label' => Yii::t('frontend', 'Last errors'),
+                'value' => Yii::t('frontend', 'Last errors'),
+            ],
+            [
+                'label' => Yii::t('frontend', 'Last repairs'),
+                'value' => Yii::t('frontend', 'Last repairs'),
+            ]
+        ]
+    ]);
+?>
+
+<div><b><u><?= Yii::t('frontend','Other Contact People') ?></u></b></div>
 <br>
-<div><b><u>Iншi контактнi особи</u></b> <b><a href="/other-contact-person/"><?= Yii::t('frontend', 'Update') ?></a></b></div>
-<?php foreach ($model->otherContactPerson as $contact) : ?>
-    <?= $contact->name; ?>
-    <?= $contact->position; ?>
-    <?= $contact->phone; ?><br>
-<?php endforeach; ?>
-<br>
-<?php if (count($model->otherContactPerson) < 10) : ?>
-<div><a href="/other-contact-person/create">добавить контактну особу</a> (Лимит 10)</div>
-<?php endif; ?>
+<p>
+    <?= OtherContactPersonController::getCreateLink() ?>
+</p>
+<?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            'name',
+            'position',
+            'phone',
+            [
+                'label' => Yii::t('common','Actions'),
+                'format' => 'raw',
+                'value' => function($model) {
+                    return OtherContactPersonController::getUpdateLink($model->id)." ".OtherContactPersonController::getDeleteLink($model->id);
+                }
+            ]
+        ]
+]); ?>

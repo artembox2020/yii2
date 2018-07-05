@@ -9,6 +9,7 @@ use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
+use frontend\models\OtherContactPerson;
 use Yii;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -139,16 +140,13 @@ class NetManagerController extends \yii\web\Controller
     /**
      *  view one employee
      */
-    public function actionViewEmployee()
+    public function actionViewEmployee($id=0)
     {
-        if (Yii::$app->request->get()) {
-            
-            $model = User::find()->where([ 'id' => Yii::$app->request->get()['id'] ]);
-            
-            return $this->render('view-employee', [
-                'model' => $model->one()
-            ]);
-        }
+        $user = User::findOne(Yii::$app->user->id);
+        $model = $user->getUser($id);
+        return $this->render('view-employee', [
+                'model' => $model
+        ]);
     }
 
     /**
@@ -159,8 +157,7 @@ class NetManagerController extends \yii\web\Controller
         $user = new UserForm();
         $user->setModel($this->findModel($id));
         $profile = UserProfile::findOne($id);
-        
-        if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
+        if($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
             $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
             $isValid = $user->validate(false);
             $isValid = $profile->validate(false) && $isValid;
@@ -170,7 +167,6 @@ class NetManagerController extends \yii\web\Controller
                 return $this->redirect(['/net-manager/employees']);
             }    
         }
-
         return $this->render('create', [
             'user' => $user,
             'profile' => $profile,
@@ -178,12 +174,14 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     *  delete employee
+     */
     public function actionDeleteEmployee($id) {
-        
-        $user = User::find()->where(['id' => $id])->one();
-        $user->softDelete();
-        
-        $this->redirect("/net-manager/employees");
+        $user = User::findOne(Yii::$app->user->id);
+        $model = $user->getUser($id);
+        $model->softDelete();
+        return $this->redirect("/net-manager/employees");
     }
 
     /**
@@ -199,7 +197,6 @@ class NetManagerController extends \yii\web\Controller
 
     /**
      * Finds the User model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param integer $id
      * @return User the loaded model
@@ -207,11 +204,8 @@ class NetManagerController extends \yii\web\Controller
      */
     protected function findModel($id)
     {
-        if (($model = User::find()->where(['id' => $id])->one()) !== null) {
-            return $model;
-       } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+        $user = User::findOne(Yii::$app->user->id);
+        return $user->getUser($id);
     }
 
     /**
@@ -248,6 +242,10 @@ class NetManagerController extends \yii\web\Controller
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
             $model = $this->findBalanceHolder($balanceHolders, $id);
+            $dataProvider = new ActiveDataProvider([
+                'query' => OtherContactPerson::find()->andWhere(['balance_holder_id' => $id])->orderBy("id ASC"),
+                'pagination' => false
+            ]);
         } else {
 
             return $this->redirect('account/sign-in/login');
@@ -255,6 +253,7 @@ class NetManagerController extends \yii\web\Controller
 
         return $this->render('balance-holder/view-balance-holder', [
             'model' => $model,
+            'dataProvider' => $dataProvider
         ]);
     }
 
