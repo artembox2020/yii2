@@ -3,6 +3,7 @@
 namespace common\models;
 
 use frontend\models\Company;
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
