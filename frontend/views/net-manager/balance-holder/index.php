@@ -9,9 +9,15 @@ use yii\helpers\Url;
 /* @var $searchModel frontend\models\BalanceHolderSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('frontend', 'Balance Holders');
-$this->params['breadcrumbs'][] = $this->title;
+//$this->title = Yii::t('frontend', 'Balance Holders');
+//$this->params['breadcrumbs'][] = $this->title;
+$menu = [];
 ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b>
 <div class="balance-holder-index">
 
     <h1><?= Html::encode($this->title) ?></h1>

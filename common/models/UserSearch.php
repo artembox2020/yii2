@@ -52,7 +52,7 @@ class UserSearch extends User
         
         $query = User::find()
                 ->andWhere(['company_id' => $user->company_id])  // user belongs to company
-                ->andWhere(['!=', 'id',Yii::$app->user->id]);    // exclude company manager
+                ->andWhere(['!=', 'id', Yii::$app->user->id]);    // exclude company manager
                 //->andWhere(['is_deleted' => false, 'status' => User::STATUS_ACTIVE]);
 
         $dataProvider = new ActiveDataProvider([

@@ -10,6 +10,7 @@ use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
 use frontend\models\OtherContactPerson;
+use frontend\models\WmMashineSearch;
 use Yii;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -474,21 +475,12 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionOsnovnizasoby()
     {
-        $user = User::findOne(Yii::$app->user->id);
+        $searchModel = new WmMashineSearch();
+        $dataProvider = $searchModel->searchWashMachine(Yii::$app->request->queryParams);
 
-        if (!empty($user->company)) {
-            $users = $user->company->users;
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
-        } else {
-
-            return $this->redirect('account/sign-in/login');
-        }
-
-        return $this->render('wm-machine/wm-machine', [
-            'model' => $model,
-            'users' => $users,
-            'balanceHolders' => $balanceHolders,
+        return $this->render('wm-machine/osnovni-zasoby', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
