@@ -27,6 +27,12 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $is_deleted
  * @property int $deleted_at
  * @property int $current_status
+ * @property string $model
+ * @property string $brand
+ * @property int $date_install
+ * @property int $date_build
+ * @property int $date_purchase
+ * @property int $date_connection_monitoring
  *
  * @property Imei $imei
  */
@@ -101,6 +107,7 @@ class WmMashine extends \yii\db\ActiveRecord
     {
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
+            [['serial_number'], 'unique'],
             [['imei_id', 'number_device',
                 'level_signal',
                 'bill_cash',
@@ -108,8 +115,15 @@ class WmMashine extends \yii\db\ActiveRecord
                 'door_block_led',
                 'status',
                 'current_status',
-                'created_at', 'updated_at', 'deleted_at'], 'integer'],
-            [['type_mashine', 'serial_number'], 'string', 'max' => 255],
+                'created_at',
+                'updated_at',
+                'deleted_at',
+            ], 'integer'],
+            [['type_mashine', 'serial_number', 'model', 'brand'], 'string', 'max' => 255],
+            ['date_install', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
+            ['date_build', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
+            ['date_purchase', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
+            ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
         ];
@@ -138,6 +152,12 @@ class WmMashine extends \yii\db\ActiveRecord
             'updated_at' => Yii::t('frontend', 'Updated At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
+            'brand' => Yii::t('frontend', 'Brand'),
+            'model' => Yii::t('frontend', 'Model'),
+            'date_install' => Yii::t('frontend', 'Date Install'),
+            'date_build' => Yii::t('frontend', 'Date build'),
+            'date_purchase' => Yii::t('frontend', 'Date Purchase'),
+            'date_connection_monitoring' => Yii::t('frontend', 'Date connection to monitoring')
         ];
     }
 
@@ -191,5 +211,10 @@ class WmMashine extends \yii\db\ActiveRecord
     public static function getStatusOff()
     {
         return WmMashine::find()->where(['status' => WmMashine::STATUS_OFF])->all();
+    }
+
+    public function getAddress()
+    {
+        return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);
     }
 }

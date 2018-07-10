@@ -2,6 +2,8 @@
 
 namespace frontend\services\globals;
 
+use yii\di\Instance;
+
 /**
  * Interface EntityInterface
  * @package frontend\services\globals
