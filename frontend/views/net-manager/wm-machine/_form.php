@@ -3,17 +3,11 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use frontend\models\WmMashine;
+use bs\Flatpickr\FlatpickrWidget;
 
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
-/* @var $company frontend\models\Company */
 /* @var $model frontend\models\WmMashine */
-/* @var $address frontend\models\AddressBalanceHolder */
-/* @var $addresses frontend\models\AddressBalanceHolder */
-/* @var $balanceHolder frontend\models\BalanceHolder */
-/* @var $balanceHolders frontend\models\BalanceHolder */
-/* @var $imei frontend\models\Imei */
-/* @var $imeis frontend\models\Imei */
 
 ?>
 <?php if (Yii::$app->session->hasFlash('error')): ?>
@@ -28,11 +22,61 @@ use frontend\models\WmMashine;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'serial_number')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($model, 'number_device')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'company_id')->hiddenInput(['value'=> $company->id])->label(false); ?>
+    <?= $form->field($model, 'serial_number')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'brand')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'model')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'date_install')->widget(FlatpickrWidget::className(), [
+        'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
+        'groupBtnShow' => true,
+        'options' => [
+            'class' => 'form-control',
+        ],
+        'clientOptions' => [
+            'allowInput' => true,
+            'defaultDate' => $model->date_install ? date(DATE_ATOM, $model->date_install) : null,
+        ],
+    ]) ?>
+
+    <?= $form->field($model, 'date_build')->widget(FlatpickrWidget::className(), [
+        'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
+        'groupBtnShow' => true,
+        'options' => [
+            'class' => 'form-control',
+        ],
+        'clientOptions' => [
+            'allowInput' => true,
+            'defaultDate' => $model->date_build ? date(DATE_ATOM, $model->date_build) : null,
+        ],
+    ]) ?>
+
+    <?= $form->field($model, 'date_purchase')->widget(FlatpickrWidget::className(), [
+        'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
+        'groupBtnShow' => true,
+        'options' => [
+            'class' => 'form-control',
+        ],
+        'clientOptions' => [
+            'allowInput' => true,
+            'defaultDate' => $model->date_purchase ? date(DATE_ATOM, $model->date_purchase) : null,
+        ],
+    ]) ?>
+
+    <?= $form->field($model, 'date_connection_monitoring')->widget(FlatpickrWidget::className(), [
+        'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
+        'groupBtnShow' => true,
+        'options' => [
+            'class' => 'form-control',
+        ],
+        'clientOptions' => [
+            'allowInput' => true,
+            'defaultDate' => $model->date_connection_monitoring ? date(DATE_ATOM, $model->date_connection_monitoring) : null,
+        ],
+    ]) ?>
 
     <?= $form->field($model, 'status')->label(Yii::t('frontend', 'Status'))->radioList(WmMashine::statuses()) ?>
 

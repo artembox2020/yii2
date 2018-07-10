@@ -13,7 +13,7 @@ $menu = [];
 </b>
 <h1><?= Html::encode($this->title) ?></h1>
 <p>
-    <?= Html::a(Yii::t('frontend', 'Add WM Machine'), ['/wm-mashine/create'], ['class' => 'btn btn-success']) ?>
+    <?= Html::a(Yii::t('frontend', 'Add WM Machine'), ['/net-manager/wm-machine-add'], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('frontend', 'Add GD Machine'), ['/gd-mashine/create'], ['class' => 'btn btn-success']) ?>
 </p>
 <?= GridView::widget([
@@ -31,7 +31,7 @@ $menu = [];
         ['attribute' => 'created_at',
             'label' => Yii::t('frontend', 'Date Install'),
             'format' => ['date', 'php:d/m/Y']   ],
-        ['attribute' => 'address.name',
+        ['attribute' => 'address.address',
             'label' => Yii::t('frontend', 'Address Install'),],
 
     ]

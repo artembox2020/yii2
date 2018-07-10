@@ -11,6 +11,7 @@ use frontend\models\Imei;
 use frontend\models\WmMashine;
 use frontend\models\OtherContactPerson;
 use frontend\models\WmMashineSearch;
+use frontend\services\globals\Entity;
 use Yii;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -31,6 +32,9 @@ class NetManagerController extends \yii\web\Controller
 {
     /** @var int ONE */
     const ONE = 1;
+
+    /** @var int ZERO */
+    const ZERO = 0;
 
     public function behaviors()
     {
@@ -456,6 +460,7 @@ class NetManagerController extends \yii\web\Controller
 
             if ($imei->load(Yii::$app->request->post())) {
                 $imei->company_id = $company->id;
+                $imei->is_deleted = self::ZERO;
                 $imei->save();
                 return $this->redirect('washpay');
             }
@@ -484,28 +489,18 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionWmMachineView($id)
     {
-        $user = User::findOne(Yii::$app->user->id);
-
-        if (!empty($user->company)) {
-            $users = $user->company->users;
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
-            $wm_machine = WmMashine::findOne($id);
-//            $imei = WmMashine::findOne($id);
-//            $address = AddressBalanceHolder::findOne($imei->id);
-//            $balanceHolder = BalanceHolder::findOne($address->balance_holder_id);
-        } else {
-
-            return $this->redirect('account/sign-in/login');
-        }
+        $entity = new Entity();
+        $model = $entity->getUnitPertainCompany($id, new WmMashine());
 
         return $this->render('wm-machine/wm-machine-view', [
-            'wm_machine' => $wm_machine,
-//            'imei' => $imei,
-//            'address' => $address,
-//            'balanceHolder' => $balanceHolder
+            'model' => $model
         ]);
     }
 
@@ -514,25 +509,9 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionWmMachineAdd()
     {
+        $entity = new Entity();
+        $imeis = $entity->getUnitsPertainCompany(new Imei());
         $model = new WmMashine();
-
-        $user = User::findOne(Yii::$app->user->id);
-
-        if (!empty($user->company)) {
-            $users = $user->company->users;
-            $company = $user->company;
-            $balanceHolders = $company->balanceHolders;
-            foreach ($company->balanceHolders as $balanceHolder) {
-                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
-                    foreach ($addresses->imeis as $imei) {
-                        $imeis[] = $imei;
-                    }
-                }
-            }
-        } else {
-
-            return $this->redirect('account/sign-in/login');
-        }
 
         if ($model->load(Yii::$app->request->post())) {
 
@@ -540,6 +519,8 @@ class NetManagerController extends \yii\web\Controller
             $im = Imei::findOne(['id' => $model->imei_id]);
             $ad = AddressBalanceHolder::findOne(['id' => $im->address_id]);
 //            Debugger::dd($im);
+            $model->company_id = $im->company_id;
+            $model->address_id = $im->address_id;
             $model->balance_holder_id = $ad->balance_holder_id;
             $model->save(false);
             return $this->redirect('wm-machine');
@@ -548,8 +529,8 @@ class NetManagerController extends \yii\web\Controller
 //        Debugger::dd($imeis);
         return $this->render('wm-machine/wm-machine-add', [
             'model' => $model,
-            'company' => $company,
-            'balanceHolders' => $balanceHolders,
+//            'company' => $company,
+//            'balanceHolders' => $balanceHolders,
             'imeis' => $imeis
         ]);
     }
@@ -577,7 +558,7 @@ class NetManagerController extends \yii\web\Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->save(false);
-            return $this->redirect('wm-machine');
+            return $this->redirect('osnovnizasoby');
         }
 
         return $this->render('wm-machine/wm-machine-update', [
