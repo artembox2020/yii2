@@ -176,7 +176,9 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return parent::find()->where(['status' => WmMashine::STATUS_ACTIVE, 'is_deleted' => false]);
+        return parent::find()
+            ->where(['status' => WmMashine::STATUS_ACTIVE])
+            ->andWhere(['is_deleted' => false]);
 //        return new UserQuery(get_called_class());
 //        return parent::find()->where(['is_deleted' => 'false'])
 //            ->andWhere(['status' => Imei::STATUS_ACTIVE]);

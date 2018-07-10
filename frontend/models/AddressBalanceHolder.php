@@ -61,9 +61,9 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
         return [
             ['date_inserted', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
-            [['floor', 'company_id', 'balance_holder_id', 'number_of_floors', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
-            [['balance_holder_id'], 'required'],
-            [['name', 'address'], 'string', 'max' => 255],
+            [['company_id', 'balance_holder_id', 'number_of_floors', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['balance_holder_id', 'address'], 'required'],
+            [['name', 'address', 'floor'], 'string', 'max' => 255],
             [['balance_holder_id'], 'exist', 'skipOnError' => true, 'targetClass' => BalanceHolder::className(), 'targetAttribute' => ['balance_holder_id' => 'id']],
         ];
     }
@@ -83,6 +83,8 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
             'balance_holder_id' => Yii::t('frontend', 'Balance Holder'),
             'date_inserted' => Yii::t('frontend', 'Date Inserted'),
             'date_connection_monitoring' => Yii::t('frontend', 'Date connection monitoring'),
+            'countWashMachine' => Yii::t('frontend', 'Count Wash Machine'),
+            'countGelDispenser' => Yii::t('frontend', 'Count Gd Machine'),
             'created_at' => Yii::t('frontend', 'Created At'),
             'updated_at' => Yii::t('frontend', 'Updated At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
@@ -130,7 +132,25 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     {
         return $this->hasMany(GdMashine::className(), ['address_id' => 'id']);
     }
+    
+    /**
+     * WashMashines to address Count
+     * @return int|string
+     */
+    public function getCountWashMachine() {
+        
+        return $this->getWashMachines()->count();
+    }
 
+    /**
+     * GdMashines to address Count
+     * @return int|string
+     */
+    public function getCountGelDispenser() {
+        
+        return $this->getGelDispenser()->count();
+    }
+    
     /**
      * @return \yii\db\ActiveQuery
      */

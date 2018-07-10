@@ -111,6 +111,7 @@ class Imei extends \yii\db\ActiveRecord
             'imei' => Yii::t('frontend', 'Imei'),
             'init' => Yii::t('frontend', 'Init'),
             'address_id' => Yii::t('frontend', 'Address'),
+            'balance_holder_id' => Yii::t('frontend', 'Balance Holder Id'),
             'type_packet' => Yii::t('frontend', 'Type Packet'),
             'imei_central_board' => Yii::t('frontend', 'Imei Central Board'),
             'firmware_version' => Yii::t('frontend', 'Firmware Version'),

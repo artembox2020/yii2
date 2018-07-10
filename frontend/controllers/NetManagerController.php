@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\UserProfile;
 use frontend\models\AddressBalanceHolder;
+use frontend\models\AddressBalanceHolderSearch;
 use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
@@ -143,10 +144,9 @@ class NetManagerController extends \yii\web\Controller
     /**
      *  view one employee
      */
-    public function actionViewEmployee($id = self::ZERO)
+    public function actionViewEmployee($id = null)
     {
-        $user = Entity::findOne(Yii::$app->user->id);
-        $model = $user->getEntity($id,'user');
+        $model = $this->findModel($id, new User());
         
         return $this->render('view-employee', [
             'model' => $model
@@ -159,7 +159,7 @@ class NetManagerController extends \yii\web\Controller
     public function actionEditEmployee($id)
     {
         $user = new UserForm();
-        $user->setModel($this->findModel($id));
+        $user->setModel($this->findModel($id, new User()));
         $profile = UserProfile::findOne($id);
         if($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
             $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
@@ -184,8 +184,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionDeleteEmployee($id) 
     {
-        $user = Entity::findOne(Yii::$app->user->id);
-        $model = $user->getEntity($id,'user');
+        $model = $this->findModel($id, new User());
         $model->softDelete();
         
         return $this->redirect("/net-manager/employees");
@@ -203,16 +202,16 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
-     * Finds the User model based on its primary key value.
+     * Finds the instance model based on its primary key value.
      *
      * @param integer $id
-     * @return User the loaded model
+     * @return instance of the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id, $instance)
     {
-        $user = Entity::findOne(Yii::$app->user->id);
-        return $user->getEntity($id,'user');
+        $entity = new Entity();
+        return $entity->getUnitPertainCompany($id, $instance);
     }
 
     /**
@@ -242,8 +241,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionViewBalanceHolder($id)
     {
-        $user = Entity::findOne(Yii::$app->user->id);
-        $model = $user->getEntity($id, 'balanceHolder');
+        $model = $this->findModel($id, new BalanceHolder());
         
         $dataProvider = new ActiveDataProvider([
             'query' => OtherContactPerson::find()->andWhere(['balance_holder_id' => $id])->orderBy("id ASC"),
@@ -261,21 +259,12 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionAddresses()
     {
-        $user = User::findOne(Yii::$app->user->id);
-
-        if (!empty($user->company)) {
-            $users = $user->company->users;
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
-        } else {
-
-            return $this->redirect('account/sign-in/login');
-        }
+        $searchModel = new AddressBalanceHolderSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('addresses/addresses', [
-            'model' => $model,
-            'users' => $users,
-            'balanceHolders' => $balanceHolders,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -374,7 +363,7 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
-    public function actionWashpayCreate()
+    public function actionWashpayCreate($addressBalanceHolderId = null)
     {
         $user = User::findOne(Yii::$app->user->id);
 
@@ -391,17 +380,17 @@ class NetManagerController extends \yii\web\Controller
 
             if ($imei->load(Yii::$app->request->post())) {
                 $imei->company_id = $company->id;
+                $imei->is_deleted = false;
                 $imei->save();
-                return $this->redirect('washpay');
+                return $this->redirect('/net-manager/addresses');
             }
         }
 
         return $this->render('washpay/washpay-create', [
-            'company' => $company,
             'imei' => $imei,
-            'address' => $address,
             'addresses' => $tempadd,
-            'balanceHolders' => $balanceHolders
+            'balanceHolders' => $balanceHolders,
+            'addressBalanceHolderId' => $addressBalanceHolderId
         ]);
     }
 

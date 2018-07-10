@@ -157,7 +157,7 @@ class BalanceHolderController extends Controller
      */
     protected function findModel($id)
     {
-        $user = Entity::findOne(Yii::$app->user->id);
-        return $user->getEntity($id,'balanceHolder');
+        $entity = new Entity();
+        return $entity->getUnitPertainCompany($id, new BalanceHolder());
     }
 }

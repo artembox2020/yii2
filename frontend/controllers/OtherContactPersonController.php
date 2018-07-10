@@ -80,9 +80,9 @@ class OtherContactPersonController extends Controller
      */
     public function actionIndex()
     {
-        $user = Entity::findOne(Yii::$app->user->id);
+        $user = User::findOne(Yii::$app->user->id);
         $searchModel = new OtherContactPersonSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $user->model);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $user);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -126,6 +126,7 @@ class OtherContactPersonController extends Controller
                     Yii::t('frontend', 'Limit reached! This Balance Holder reached the limit *10 of contact persons'));
                 return $this->redirect(['/other-contact-person/create']);
             } else {
+                $model->company_id = $company->id;
                 $model->save();
             }
 
@@ -147,8 +148,8 @@ class OtherContactPersonController extends Controller
      */
     public function actionUpdate($id)
     {
+        $model = $this->findModel($id);
         $user = User::findOne(Yii::$app->user->id);
-        $model = $this->findModel($id, $user);
         $balanceHolder = $user->company->balanceHolders;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -178,14 +179,12 @@ class OtherContactPersonController extends Controller
     /**
      * Finds the OtherContactPerson model based on its primary key value.
      * @param integer $id
-     * @param User $model
      * @return OtherContactPerson the loaded model
      */
-    protected function findModel($id, $model = false)
+    protected function findModel($id)
     {
-        if(!$model) $user = Entity::findOne(Yii::$app->user->id);
-        else $user = new Entity($model);
-        
-        return $user->getEntity($id,'otherContactPerson');
+        $entity = new Entity();
+        return $entity->getUnitPertainCompany($id, new OtherContactPerson());
+       
     }
 }
