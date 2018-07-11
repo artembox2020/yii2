@@ -522,8 +522,8 @@ class NetManagerController extends \yii\web\Controller
             $model->company_id = $im->company_id;
             $model->address_id = $im->address_id;
             $model->balance_holder_id = $ad->balance_holder_id;
-            $model->save(false);
-            return $this->redirect('wm-machine');
+            $model->save();
+            return $this->redirect('/net-manager/osnovnizasoby');
         }
 
 //        Debugger::dd($imeis);

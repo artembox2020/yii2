@@ -107,9 +107,8 @@ class WmMashine extends \yii\db\ActiveRecord
     {
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
-            [['serial_number'], 'unique'],
-            [['']]
-            [['imei_id', 'number_device',
+            [['serial_number', 'number_device'], 'unique'],
+            [['imei_id',
                 'level_signal',
                 'bill_cash',
                 'door_position',
