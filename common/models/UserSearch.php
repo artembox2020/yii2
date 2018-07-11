@@ -46,13 +46,64 @@ class UserSearch extends User
      *
      * @return ActiveDataProvider
      */
-    public function searchEmployees($params)
+    public function search($params)
     {
         $user = User::findOne(Yii::$app->user->id);
         
         $query = User::find()
                 ->andWhere(['company_id' => $user->company_id])  // user belongs to company
                 ->andWhere(['!=', 'id', Yii::$app->user->id]);    // exclude company manager
+                //->andWhere(['is_deleted' => false, 'status' => User::STATUS_ACTIVE]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'status' => $this->status,
+            'company_id' => $this->company_id,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'action_at' => $this->action_at,
+            'deleted_at' => $this->deleted_at,
+            'is_deleted' => $this->is_deleted,
+        ]);
+
+        $query->andFilterWhere(['like', 'username', $this->username])
+            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
+            ->andFilterWhere(['like', 'access_token', $this->access_token])
+            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'ip', $this->ip])
+            ->andFilterWhere(['like', 'other', $this->other]);
+        
+        return $dataProvider;
+    }
+        
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchEmployees($params)
+    {
+        $user = User::findOne(Yii::$app->user->id);
+        
+        $query = User::find()
+                ->andWhere(['company_id' => $user->company_id]) // user belongs to company
+                ->andWhere(['!=', 'id',Yii::$app->user->id]); // exclude company manager
                 //->andWhere(['is_deleted' => false, 'status' => User::STATUS_ACTIVE]);
 
         $dataProvider = new ActiveDataProvider([
@@ -86,54 +137,6 @@ class UserSearch extends User
                 );
             }
         }]);
-        
-        return $dataProvider;
-    }
-    
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
-     * @return ActiveDataProvider
-     */
-    public function search($params)
-    {
-        $user = User::find();
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'status' => $this->status,
-            'company_id' => $this->company_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'action_at' => $this->action_at,
-            'deleted_at' => $this->deleted_at,
-            'is_deleted' => $this->is_deleted,
-        ]);
-
-        $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
-            ->andFilterWhere(['like', 'access_token', $this->access_token])
-            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'ip', $this->ip])
-            ->andFilterWhere(['like', 'other', $this->other]);
         
         return $dataProvider;
     }

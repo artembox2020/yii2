@@ -3,12 +3,14 @@
 namespace common\models;
 
 use frontend\models\Company;
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use common\models\query\UserQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%user}}".
@@ -113,6 +115,20 @@ class User extends ActiveRecord implements IdentityInterface
     public function getUserProfile()
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @param $id
+     * @return User|null
+     * @throws \yii\web\ForbiddenHttpException
+     */
+    public function getUser($id) 
+    {
+        if (!in_array($id, ArrayHelper::getColumn($this->company->users, 'id'))) {
+            throw new \yii\web\ForbiddenHttpException(Yii::t('common','Access Forbidden or user not exist'));
+        }
+
+        return User::findOne($id);
     }
 
     /**

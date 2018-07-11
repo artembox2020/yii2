@@ -76,6 +76,7 @@ class OtherContactPerson extends \yii\db\ActiveRecord
             'created_at' => Yii::t('frontend', 'Created At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
+            'balance_holder_id' => Yii::t('frontend', 'Balance Holder Id')
         ];
     }
 

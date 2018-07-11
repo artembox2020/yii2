@@ -11,15 +11,17 @@ use yii\di\Instance;
 interface EntityInterface
 {
     /**
-     * @param $id
-     * @param $instance
+     * @param null $id
+     * @param null $instance
      * @return null|Instance
+     * @throws \yii\web\NotFoundHttpException
      */
     public function getUnitPertainCompany($id, $instance);
 
     /**
-     * @param $instance
+     * @param null $instance
      * @return null|array
+     * @throws \yii\web\NotFoundHttpException
      */
     public function getUnitsPertainCompany($instance);
 }

@@ -5,6 +5,7 @@ namespace frontend\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use common\models\User;
 use frontend\models\AddressBalanceHolder;
 
 /**
@@ -41,7 +42,9 @@ class AddressBalanceHolderSearch extends AddressBalanceHolder
      */
     public function search($params)
     {
+        $user = User::findOne(Yii::$app->user->id);
         $query = AddressBalanceHolder::find();
+        $query = $query->andWhere(['company_id' => $user->company->id]);
 
         // add conditions that should always apply here
 

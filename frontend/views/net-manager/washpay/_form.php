@@ -3,15 +3,14 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use frontend\models\Imei;
-
+use frontend\models\AddressBalanceHolder;
+use frontend\services\globals\Entity;
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $imei frontend\models\Imei */
-/* @var $address frontend\models\AddressBalanceHolder */
 /* @var $addresses frontend\models\AddressBalanceHolder */
 /* @var $balanceHolder frontend\models\BalanceHolder */
 /* @var $balanceHolders frontend\models\BalanceHolder */
-/* @var $company frontend\models\Company */
 ?>
 <?php if (Yii::$app->session->hasFlash('error')): ?>
     <div class="alert alert-info alert-dismissable">
@@ -20,6 +19,27 @@ use frontend\models\Imei;
         <?= Yii::$app->session->getFlash('error') ?>
     </div>
 <?php endif; ?>
+<?php
+    // set default address and balanceHolder options
+    if(!empty($addressBalanceHolderId)) {
+        $entity = new Entity();
+        $addressBalanceHolder = $entity->getUnitPertainCompany($addressBalanceHolderId, new AddressBalanceHolder());
+        $defaultAddressBalanceHolderId = $addressBalanceHolder->id;
+        $defaultBalanceHolderId = $addressBalanceHolder->balanceHolder->id;
+        
+        $addressBalanceHolderOptions = [
+            $defaultAddressBalanceHolderId => ['Selected' => true] 
+        ];
+        
+        $balanceHolderOptions = [ 
+            $defaultBalanceHolderId => ['Selected' => true] 
+        ];
+    }
+    else {
+        $addressBalanceHolderOptions = [];
+        $balanceHolderOptions = [];
+    }
+?>
 <div class="other-contact-person-form">
 
     <?php $form = ActiveForm::begin(); ?>
@@ -37,11 +57,17 @@ use frontend\models\Imei;
     <?= $form->field($imei, 'serial_number_kp')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($imei, 'address_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($addresses, 'id', 'address')
+        \yii\helpers\ArrayHelper::map($addresses, 'id', 'address'),
+        [
+            'options' => $addressBalanceHolderOptions
+        ]
     ) ?>
 
     <?= $form->field($imei, 'balance_holder_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($balanceHolders, 'id', 'name')
+        \yii\helpers\ArrayHelper::map($balanceHolders, 'id', 'name'),
+        [
+            'options' => $balanceHolderOptions
+        ]
     ) ?>
 
     <?= $form->field($imei, 'status')->label(Yii::t('frontend', 'Status'))->radioList(Imei::statuses()) ?>

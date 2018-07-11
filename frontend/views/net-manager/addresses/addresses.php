@@ -15,26 +15,48 @@ use frontend\services\custom\Debugger;
         'menu' => $menu,
     ]) ?>
 </b><br><br>
-<?php foreach ($balanceHolders as $item) : ?>
-    <?php foreach ($item->addressBalanceHolders as $address) : ?>
-        <?= $item->name . ' ' . $item->address?>
-        Адрес: <a href="/address-balance-holder/view?id=<?= $address->id ?>"><b><?= $address->address; ?></b></a>
-        Этаж: <?= $address->floor ?>
-    <?php if (!empty($address->imeis)) : ?>
-        <?php foreach ($address->imeis as $imei) : ?>
-            Imei:
-            <?php if (!empty($imei->imei)) : ?>
-            <?= $imei->imei ?>
-            <?php else : ?>
-            <a href="/net-manager/washpay-create"><b>додати IMEI</b></a>
-            <?php endif; ?>
-            <br>
-        <?php endforeach;?><br>
-        <?php else : ?>
-            <a href="/net-manager/washpay-create"><b>додати IMEI</b></a><br>
-        <?php endif; ?>
-    <?php endforeach;?>
-<?php endforeach;?>
-<br>
-<b><a href="/address-balance-holder/create">[додати адресу]</a></b>
-
+<b><?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder/create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
+<br/>
+<?= yii\grid\GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+           'id',
+           
+            [
+               'attribute' => 'balanceHolder.address',
+               'label' => Yii::t('frontend','Balance Holder')
+            ],
+           
+            [
+                'attribute' => 'address',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return Html::a(
+                        $model->address,
+                        ['/address-balance-holder/view', 'id' => $model->id]
+                    );
+                }
+            ],
+            
+            'floor',
+            
+            [
+                'attribute' => 'imei',
+                'label' => Yii::t('frontend', 'Imei'),
+                'format' => 'raw',
+                'value' => function($model) {
+                    $addWashpay = Html::a(
+                        Yii::t('frontend', 'Add Washpay'), 
+                        ['/net-manager/washpay-create', 'addressBalanceHolderId' => $model->id], 
+                        ['class' => 'btn btn-success', 'style' => 'color: #fff;']
+                    );
+                    return count($model->imeis) ? $model->imeis[0]->imei : $addWashpay;
+                }
+            ],
+    
+            'countWashMachine',
+            
+            'countGelDispenser',
+        ]
+]); ?>

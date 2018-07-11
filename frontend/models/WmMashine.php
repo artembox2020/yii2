@@ -107,8 +107,8 @@ class WmMashine extends \yii\db\ActiveRecord
     {
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
-            [['serial_number', 'number_device'], 'unique'],
-            [['imei_id',
+            [['serial_number'], 'unique'],
+            [['imei_id', 'number_device',
                 'level_signal',
                 'bill_cash',
                 'door_position',
@@ -196,7 +196,9 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return parent::find()->where(['status' => WmMashine::STATUS_ACTIVE, 'is_deleted' => false]);
+        return parent::find()
+            ->where(['status' => WmMashine::STATUS_ACTIVE])
+            ->andWhere(['is_deleted' => false]);
 //        return new UserQuery(get_called_class());
 //        return parent::find()->where(['is_deleted' => 'false'])
 //            ->andWhere(['status' => Imei::STATUS_ACTIVE]);

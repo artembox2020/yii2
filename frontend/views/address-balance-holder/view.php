@@ -9,12 +9,9 @@ use yii\widgets\DetailView;
 /* @var $imeis frontend\models\Imei */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance Holders'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance Holders'), 'url' => ['/net-manager/addresses']];
 $this->params['breadcrumbs'][] = $this->title;
-
-$bh = \frontend\models\BalanceHolder::findOne($model->balance_holder_id);
-$countWmMashine = array();
-$countGdMashine = array();
+$dateFormat = "M j, Y";
 ?>
 <div class="address-balance-holder-view">
 
@@ -31,31 +28,71 @@ $countGdMashine = array();
         ]) ?>
     </p>
 
-    <div>Имя <?= $model->name ?></div>
-    <div>Адрес <?= $model->address ?></div>
-    <div>Поверх <?= $model->floor ?></div>
-    <div>Балансодержатель <?= $bh->name . ' ' . $bh->address ?></div>
-    <div>Кількість поверхів <?= $model->number_of_floors ?></div>
-    <div>Дата встановлення <?= $model->date_inserted ?></div>
-    <div>Дата підключення до моніторінгу <?= $model->date_connection_monitoring ?></div>
-    <div>Создано <?= Yii::$app->formatter->asDate($model->created_at, 'dd.MM.yyyy');?></div>
-    <?php foreach ($model->imeis as $imei) : ?>
-        <?php foreach ($imei->wmMashine as $wm_machine) : ?>
-        <?php $countWmMashine[] = $wm_machine ?>
-    <?php endforeach; ?>
-    <?php foreach ($imei->gdMashine as $gd_machine) : ?>
-        <?php $countGdMashine[] = $gd_machine ?>
-    <?php endforeach; ?>
-    <?php endforeach; ?>
-    <div>Кількість пральних машин <?= count($countWmMashine) ?></div>
-    <div>Кількість дозаторів геля <?= count($countGdMashine) ?></div>
-<br>
-    <p>
-        <b>Зведені технічні данні</b><br>
-        <b>Кількість циклів прання: 400000000000</b><br>
-        <b>Середня кількість купюр на день (мес.): 350</b><br>
-        <b>Кількість грошей: 8000000000</b><br>
-        <b>Останні помилки: список</b><br>
-        <b>Зведені фінансові дані</b><br>
-    </p>
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' => Yii::t('frontend','Address'),
+                'value' => $model->address
+            ],
+            
+            [
+                'label' => Yii::t('frontend','Balance Holder'),
+                'value' => $model->balanceHolder->address
+            ],
+            
+            [    
+                'label' => Yii::t('frontend','Date Inserted'),
+                'value' => date($dateFormat, $model->date_inserted)
+            ],
+            
+            [
+                'label' => Yii::t('frontend','Date Monitoring'),
+                'value' => date($dateFormat, $model->date_connection_monitoring)
+            ],
+            
+            'number_of_floors',
+            
+            'countWashMachine',
+            
+            'countGelDispenser',
+            
+        ],
+    ])
+?>
+
+<h3 align="center"><?= Yii::t('frontend', 'Address Card') ?></h3>
+
+<div><b><u><?= Yii::t('frontend','Summary Technical Data') ?></u></b></div>
+<br/>
+
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' => Yii::t('frontend','Number Washine Cycles'),
+                'value' => 400000000000
+            ],
+            
+            [
+                'label' => Yii::t('frontend','Average Currency Amount'),
+                'value' => 350
+            ],
+            
+            [    
+                'label' => Yii::t('frontend','Money Amount'),
+                'value' =>  8000000000
+            ],
+            
+            [
+                'label' => Yii::t('frontend','Last errors'),
+                'value' => Yii::t('frontend','Last errors'),
+            ],
+        ],
+    ])
+?>
+
+<div><b><u><?= Yii::t('frontend','Consolidated Financial Data') ?></u></b></div>
+<br/>
+
 </div>

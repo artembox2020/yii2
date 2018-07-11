@@ -6,6 +6,7 @@ use frontend\services\custom\Debugger;
 use Yii;
 use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
+use frontend\services\globals\Entity;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -39,15 +40,14 @@ class BalanceHolderController extends Controller
     public function actionIndex()
     {
         $user = User::findOne(Yii::$app->user->id);
-
-
-            if (!empty($user->company)) {
-                $users = $user->company->users;
-                $model = $user->company;
-                $balanceHolders = $model->balanceHolders;
-                $searchModel = new BalanceHolderSearch();
-                $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            } else {
+        
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+            $searchModel = new BalanceHolderSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $model);
+        } else {
 
             return $this->redirect('account/sign-in/login');
         }
@@ -154,14 +154,10 @@ class BalanceHolderController extends Controller
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
      * @return BalanceHolder the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = BalanceHolder::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('frontend', 'The requested page does not exist.'));
+        $entity = new Entity();
+        return $entity->getUnitPertainCompany($id, new BalanceHolder());
     }
 }
