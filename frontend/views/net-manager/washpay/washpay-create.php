@@ -22,12 +22,10 @@ use frontend\services\custom\Debugger;
         <h1><?= Html::encode($this->title) ?></h1>
 
         <?= $this->render('_form', [
-                'company' => $company,
             'imei' => $imei,
-            'address' => $address,
             'addresses' => $addresses,
-//            'balanceHolder' => $balanceHolder,
-            'balanceHolders' => $balanceHolders
+            'balanceHolders' => $balanceHolders,
+            'addressBalanceHolderId' => $addressBalanceHolderId
         ]) ?>
 
     </div>

@@ -4,7 +4,7 @@ use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
 use frontend\services\custom\Debugger;
 /* @var $this yii\web\View */
-/* @var $model frontend\models\Company */
+/* @var $model frontend\models\WmMashine */
 /* @var $users common\models\User */
 /* @var $balanceHolders  */
 /* @var $addresses */
@@ -16,14 +16,60 @@ use frontend\services\custom\Debugger;
         'menu' => $menu,
     ]) ?>
 </b><br><br>
-<div>
-    <b><u>Картка Пральной машины</u></b><br>
-    Серийный номер: <?= $wm_machine->serial_number ?><br>
-    Дата производства: 346567<br>
-    Дата підключення до моніторінга: 45665<br>
-    Адрес установки: Надається можливість обрати розташування пральної машини<br>
-    Номер пральної машини: Надається можливість обрати номер пральної машини зі списку<br>
-    Последний пинг: 12.08.2023 23:37:01<br>
-</div>
+<h3><?= Yii::t('frontend', 'Wash machine card'); ?></h3>
+<?= DetailView::widget([
+        'model'=> $model,
+        'attributes' => [
+                [
+                    'label' => Yii::t('frontend', 'Serial number'),
+                    'value' => $model->serial_number,
+                ],
+                [
+                    'label' => Yii::t('frontend', 'Model'),
+                    'value' => $model->model,
+                ],
+            'brand',
+            [
+                'label' => Yii::t('frontend', 'Date build'),
+                'value' => $model->date_build,
+            ],
+            [
+                'label' => Yii::t('frontend', 'Date Purchase'),
+                'value' => $model->date_purchase,
+            ],
+            [
+                'label' => Yii::t('frontend', 'Date connection to monitoring'),
+                'value' => $model->date_connection_monitoring,
+            ],
+            [
+                'label' => Yii::t('frontend', 'Address Install'),
+                'value' => $model->address->address,
+            ],
+            [
+                'label' => Yii::t('frontend', 'Device number'),
+                'value' => $model->number_device,
+            ],
+            [
+                'label' => Yii::t('frontend', 'Last ping'),
+                'value' => $model->created_at,
+                'format' => 'datetime',
+            ],
+    ],
+]);?>
+<?= Html::a(Yii::t('frontend', 'Update'), ['/net-manager/wm-machine-update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
 
-<a href="wm-machine-update?id=<?= $wm_machine->id ?>">Update</a>
+<?= Html::a(Yii::t('frontend', 'Delete'), ['wm-mashine/delete', 'id' => $model->id], [
+    'class' => 'btn btn-danger',
+    'data' => [
+        'confirm' => Yii::t('frontend', 'Are you sure you want to delete this item?'),
+        'method' => 'post',
+    ],
+]) ?>
+<br><br>
+<div>
+    <b><u>Технічні дані</u></b><br>
+    ....
+    <hr>
+    <b><u>Фінансові дані</u></b><br>
+    ....
+</div>

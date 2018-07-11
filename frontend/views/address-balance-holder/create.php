@@ -9,7 +9,7 @@ use yii\helpers\Html;
 /* @var $company frontend\models\Company */
 
 $this->title = Yii::t('frontend', 'Create Address Balance Holder');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance Holders'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance Holders'), 'url' => ['/net-manager/addresses']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="address-balance-holder-create">

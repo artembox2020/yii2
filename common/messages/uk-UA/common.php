@@ -27,6 +27,7 @@ return [
     'Birthday' => 'Дата народження',
     'Category' => 'Категорія',
     'Delete Confirmation' => 'Ви впевнені, що хочете видалити цей запис?',
+    'Entity not found' => 'Ентіті не знайдено',
     'Inactive' => 'Неактивний',
     'Firstname' => 'Ім\'я',
     'Fistname Lastname Patronymic' => 'Імя, Призвіще. По-Батькові',

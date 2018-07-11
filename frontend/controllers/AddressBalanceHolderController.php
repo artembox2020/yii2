@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\User;
 use frontend\services\custom\Debugger;
+use frontend\services\globals\Entity;
 use Yii;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\AddressBalanceHolderSearch;
@@ -124,7 +125,7 @@ class AddressBalanceHolderController extends Controller
     {
         $this->findModel($id)->softDelete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/net-manager/addresses']);
     }
 
     /**
@@ -136,10 +137,7 @@ class AddressBalanceHolderController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = AddressBalanceHolder::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('frontend', 'The requested page does not exist.'));
+       $entity = new Entity();
+       return $entity->getUnitPertainCompany($id, new AddressBalanceHolder());
     }
 }

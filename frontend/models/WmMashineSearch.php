@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use common\models\User;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -71,6 +72,34 @@ class WmMashineSearch extends WmMashine
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
         ]);
+
+        $query->andFilterWhere(['like', 'type_mashine', $this->type_mashine])
+            ->andFilterWhere(['like', 'is_deleted', $this->is_deleted]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function searchWashMachine($params)
+    {
+        $user = User::findOne(Yii::$app->user->id);
+
+        $query = WmMashine::find()->andWhere(['company_id' => $user->company_id]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
 
         $query->andFilterWhere(['like', 'type_mashine', $this->type_mashine])
             ->andFilterWhere(['like', 'is_deleted', $this->is_deleted]);

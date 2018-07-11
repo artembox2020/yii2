@@ -34,6 +34,7 @@ return [
     'Delete Confirmation' => 'Вы уверены, что хотите удалить эту запись?',
     'Description' => 'Описание',
     'Email' => '',
+    'Entity not found' => 'Энтити не найдено',
     'Firstname' => 'Имя',
     'Fistname Lastname Patronymic' => 'Имя, фамилия, отчество',
     'Frequency' => 'Частота',
