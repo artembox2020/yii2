@@ -8,7 +8,7 @@ use yii\helpers\Html;
 $this->title = Yii::t('frontend', 'Update Imei: {nameAttribute}', [
     'nameAttribute' => $model->id,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Imeis'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Imeis'), 'url' => ['/net-manager/washpay']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('frontend', 'Update');
 ?>
