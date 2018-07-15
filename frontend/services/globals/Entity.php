@@ -3,6 +3,7 @@
 namespace frontend\services\globals;
 
 use common\models\User;
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\di\Instance;
 
@@ -12,6 +13,9 @@ use yii\di\Instance;
  */
 class Entity implements EntityInterface
 {
+    /** @var int  */
+    const ONE = 1;
+
     /**
      * @param null $id
      * @param null $instance
@@ -34,6 +38,21 @@ class Entity implements EntityInterface
     public function getUnitsPertainCompany($instance)
     {
         $units = $instance::find(['company_id' => $this->getCompanyId()])->all();
+        $this->checkAccess($units);
+
+        return $units;
+    }
+
+    /**
+     * @param $instance
+     * @return mixed
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getFilteredStatusData($instance)
+    {
+        $units = $instance::find(['company_id' => $this->getCompanyId()])
+            ->where(['status' => self::ONE])
+            ->all();
         $this->checkAccess($units);
 
         return $units;

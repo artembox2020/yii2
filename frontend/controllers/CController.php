@@ -402,6 +402,8 @@ class CController extends Controller
                     echo 'WM data Don\'t save' . '<br>';
                 }
             }
+
+//            $this->updateWmDeviceNumberNull($wm_mashine_dto, $imei_id);
         }
     }
 
@@ -423,6 +425,14 @@ class CController extends Controller
         $wm_mashine->update(false);
         echo $wm_mashine->number_device . ' WM updated!' . '<br>';
     }
+
+//    public function updateWmDeviceNumberNull($wm_mashine_dto, $imei_id)
+//    {
+//        $imei = $this->getImei($imei_id);
+//
+////        Debugger::dd($imei);
+//        Debugger::dd($wm_mashine_dto->number_device);
+//    }
 
     /**
      * @param $gd_mashine
