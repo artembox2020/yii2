@@ -5,12 +5,14 @@ namespace frontend\controllers;
 use common\models\User;
 use frontend\models\AddressBalanceHolder;
 use frontend\services\custom\Debugger;
+use frontend\services\globals\Entity;
 use Yii;
 use frontend\models\Imei;
 use frontend\models\ImeiSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 /**
  * ImeiController implements the CRUD actions for Imei model.
@@ -70,7 +72,6 @@ class ImeiController extends Controller
 //        Debugger::dd($model);
 //        $res = $this->findModel($id);
 //        Debugger::dd($id);
-
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -93,6 +94,8 @@ class ImeiController extends Controller
                 $address[] = $result;
             }
         }
+
+        ArrayHelper::multisort($address, ['address'], [SORT_ASC]);
 
         if ($model->load(Yii::$app->request->post())) {
             $address_balance_holder = AddressBalanceHolder::findOne($model->address_id);
@@ -148,7 +151,7 @@ class ImeiController extends Controller
     {
         $this->findModel($id)->softDelete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/net-manager/washpay']);
     }
 
     /**
@@ -158,10 +161,8 @@ class ImeiController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Imei::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('frontend', 'The requested page does not exist.'));
+        $entity = new Entity();
+        
+        return $entity->getUnitPertainCompany($id, new Imei());
     }
 }

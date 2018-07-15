@@ -8,6 +8,7 @@ use frontend\models\AddressBalanceHolderSearch;
 use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
+use frontend\models\ImeiSearch;
 use frontend\models\WmMashine;
 use frontend\models\OtherContactPerson;
 use frontend\models\WmMashineSearch;
@@ -37,6 +38,9 @@ class NetManagerController extends \yii\web\Controller
     /** @var int ZERO */
     const ZERO = 0;
 
+    /** @var int PAGE_SIZE */
+    const PAGE_SIZE = 10;
+    
     public function behaviors()
     {
         return [
@@ -146,8 +150,9 @@ class NetManagerController extends \yii\web\Controller
     /**
      * @param null $id
      * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionViewEmployee($id = null)
+    public function actionViewEmployee($id)
     {
         $model = $this->findModel($id, new User());
         
@@ -157,7 +162,9 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
-     *  edit employee
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionEditEmployee($id)
     {
@@ -279,23 +286,13 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionWashpay()
     {
-        $user = User::findOne(Yii::$app->user->id);
-
-        if (!empty($user->company)) {
-            $users = $user->company->users;
-            $company = $user->company;
-            $model = $user->company;
-            $balanceHolders = $model->balanceHolders;
-        } else {
-
-            return $this->redirect('account/sign-in/login');
-        }
+        $searchModel = new ImeiSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = self::PAGE_SIZE;
 
         return $this->render('washpay/washpay', [
-            'company' => $company,
-            'model' => $model,
-            'users' => $users,
-            'balanceHolders' => $balanceHolders,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
         ]);
     }
 
@@ -329,46 +326,44 @@ class NetManagerController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return string|\yii\web\Response
+     */
     public function actionWashpayUpdate($id)
     {
         $user = User::findOne(Yii::$app->user->id);
-
-        if (!empty($user->company)) {
-            $company = $user->company;
-            $balanceHolders = $company->balanceHolders;
-            foreach ($company->balanceHolders as $balanceHolder) {
-                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
-                    $tempadd[] = $addresses;
-                    foreach ($addresses->imeis as $value) {
-                        if ($value->id == $id) {
-                            $imei = $value;
-                        }
-                    }
-                }
+        
+        $imei = $this->findModel($id, new Imei());
+        
+        $company = $user->company;
+        $balanceHolders = $company->balanceHolders;
+        foreach ($company->balanceHolders as $balanceHolder) {
+            
+            foreach ($balanceHolder->addressBalanceHolders as $addresses) {
+                $tempadd[] = $addresses;
             }
-                $address = AddressBalanceHolder::findOne($imei->address_id);
-                $balanceHolder = $address->balanceHolder;
+                
+        }
 
-            if ($imei->load(Yii::$app->request->post())) {
-                $imei->save();
-                return $this->redirect('washpay');
-            }
-
-        } else {
-
-            return $this->redirect('account/sign-in/login');
+        if ($imei->load(Yii::$app->request->post())) {
+            
+            $imei->save();
+                
+            return $this->redirect(['/imei/view', 'id' => $imei->id]);
         }
 
         return $this->render('washpay/washpay-update' , [
-            'company' => $company,
             'imei' => $imei,
-            'address' => $address,
             'addresses' => $tempadd,
-            'balanceHolder' => $balanceHolder,
             'balanceHolders' => $balanceHolders
         ]);
     }
 
+    /**
+     * @param $addressBalanceHolderId
+     * @return string|\yii\web\Response
+     */
     public function actionWashpayCreate($addressBalanceHolderId = null)
     {
         $user = User::findOne(Yii::$app->user->id);
@@ -377,18 +372,20 @@ class NetManagerController extends \yii\web\Controller
             $company = $user->company;
             $balanceHolders = $company->balanceHolders;
             foreach ($company->balanceHolders as $balanceHolder) {
+                
                 foreach ($balanceHolder->addressBalanceHolders as $addresses) {
                     $tempadd[] = $addresses;
-                    }
                 }
+            }
+            
             $imei = new Imei();
-            $address = new AddressBalanceHolder();
 
             if ($imei->load(Yii::$app->request->post())) {
                 $imei->company_id = $company->id;
                 $imei->is_deleted = false;
                 $imei->save();
-                return $this->redirect('/net-manager/addresses');
+                
+                return $this->redirect(['/imei/view', 'id' => $imei->id]);
             }
         }
 

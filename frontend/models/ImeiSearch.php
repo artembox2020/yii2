@@ -6,12 +6,14 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use frontend\models\Imei;
+use common\models\User;
 
 /**
  * ImeiSearch represents the model behind the search form of `frontend\models\Imei`.
  */
 class ImeiSearch extends Imei
 {
+    public $address;
 
     /**
      * @inheritdoc
@@ -21,6 +23,7 @@ class ImeiSearch extends Imei
         return [
             [['id', 'imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms', 'is_deleted'], 'safe'],
+            [['address'], 'trim']
         ];
     }
 
@@ -42,9 +45,9 @@ class ImeiSearch extends Imei
      */
     public function search($params)
     {
-        $query = Imei::find()->where(['is_deleted' => false])->orWhere(['is_deleted' => null]);
-
-        // add conditions that should always apply here
+        $user = User::findOne(Yii::$app->user->id);
+        $query = Imei::find();
+        $query = $query->andWhere(['imei.company_id' => $user->company_id]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -63,20 +66,21 @@ class ImeiSearch extends Imei
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'imei' => $this->imei,
             'address_id' => $this->address_id,
-            'imei_central_board' => $this->imei_central_board,
-            'critical_amount' => $this->critical_amount,
-            'time_out' => $this->time_out,
         ]);
-
-        $query->andFilterWhere(['like', 'type_packet', $this->type_packet])
-            ->andFilterWhere(['like', 'firmware_version', $this->firmware_version])
-            ->andFilterWhere(['like', 'type_bill_acceptance', $this->type_bill_acceptance])
-            ->andFilterWhere(['like', 'serial_number_kp', $this->serial_number_kp])
-            ->andFilterWhere(['like', 'phone_module_number', $this->phone_module_number])
-            ->andFilterWhere(['like', 'crash_event_sms', $this->crash_event_sms]);
-
+            
+        $query->andFilterWhere(
+            ['like', 'imei', $this->imei]
+        );
+        
+        $query->joinWith(['address' => function ($q) {
+            if(!empty($this->address)) {
+                $q->andWhere(
+                    ['like','address_balance_holder.address', $this->address]
+                );
+            }
+        }]);
+        
         return $dataProvider;
     }
 }

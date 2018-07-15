@@ -1,4 +1,5 @@
 <?php
+
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
@@ -15,20 +16,56 @@ use frontend\services\custom\Debugger;
         'menu' => $menu,
     ]) ?>
 </b><br><br>
-<?php foreach ($balanceHolders as $balanceHolder) : ?>
-    <?php foreach ($balanceHolder->addressBalanceHolders as $address) : ?>
-        <?php foreach ($address->imeis as $imei) : ?>
-            IMEI: <a href="/net-manager/washpay-view?id=<?= $imei->id ?>"><b><?= $imei->imei ?></b></a>
-            Адреса: <?= $address->address ?>
-            Балансоутримувач: <?= $balanceHolder->name ?>
-            Останній пінг: <?php if ($imei->getInit() == 'Ok') : ?>
-                <?= Yii::$app->formatter->asDate($imei->updated_at, 'dd.MM.yyyy H:i:s'); ?>
-            <?php else : ?>
-                <?= $imei->getInit(); ?>
-            <?php endif; ?>
-            <br>
-        <?php endforeach; ?>
-    <?php endforeach;?>
-<?php endforeach; ?>
-<br>
-<b><a href="washpay-create">[додати WASHPAY]</a></b>
+<b><?= Html::a(Yii::t('frontend', 'Add Washpay'), ['net-manager/washpay-create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
+<br/>
+<?= yii\grid\GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+           'id',
+           
+           [
+                'attribute' => 'imei',
+                'format' => 'raw',
+                'value' => function($model) {
+                    
+                    return Html::a(
+                        $model->imei,
+                        ['/imei/view', 'id' => $model->id]
+                    );
+                }
+           ],
+           
+           [
+               'attribute' => 'address',
+               'value' => function($model) {
+                   
+                   if(!empty($model->address))
+                   
+                       return $model->address->address;
+                   else
+                   
+                       return Yii::t('common', 'Not Set');       
+               },
+           ],
+           
+           [
+               'attribute' => 'balanceHolder.address',
+               'label' => Yii::t('frontend', 'Balance Holder'),
+           ],
+           
+           [
+                'attribute' => 'last_ping',
+                'label' => Yii::t('frontend', 'Last ping'),
+                'value' => function($model) {
+                    $getInitResult = $model->getInit();
+                    if($getInitResult == 'Ok')
+                    
+                        return date('dd.MM.yyyy H:i:s', $model->updated_at);
+                    else
+                    
+                        return $getInitResult;
+                },
+           ]
+        ]
+]); ?>

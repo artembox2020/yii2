@@ -27,10 +27,10 @@ use frontend\models\Imei;
 <!--    //$form->field($model, 'address_id')->hiddenInput(['value'=> Yii::$app->request->post('address_id')])->label(false);-->
 
     <?= $form->field($model, 'address_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($address, 'id', 'name')
+        \yii\helpers\ArrayHelper::map($address, 'id', 'address')
     ) ?>
-
-    <?= $form->field($model, 'status')->label(Yii::t('frontend', 'Status'))->radioList(Imei::statuses()) ?>
+    
+     <?= $form->field($model, 'status')->label(Yii::t('frontend', 'Status'))->dropDownList(Imei::statuses()) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>
