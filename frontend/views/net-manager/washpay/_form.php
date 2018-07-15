@@ -46,18 +46,14 @@ use frontend\services\globals\Entity;
 
     <?= $form->field($imei, 'imei')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($imei, 'imei_central_board')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($imei, 'type_packet')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($imei, 'firmware_version')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($imei, 'type_bill_acceptance')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($imei, 'serial_number_kp')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($imei, 'address_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($addresses, 'id', 'address'),
+        \yii\helpers\ArrayHelper::map($addresses, 'id', function($model) {
+            
+            return $model->address.' '.$model->floor;  
+        }),
+        
         [
             'options' => $addressBalanceHolderOptions
         ]
@@ -70,7 +66,7 @@ use frontend\services\globals\Entity;
         ]
     ) ?>
 
-    <?= $form->field($imei, 'status')->label(Yii::t('frontend', 'Status'))->radioList(Imei::statuses()) ?>
+    <?= $form->field($imei, 'status')->label(Yii::t('frontend', 'Status'))->dropDownList(Imei::statuses()) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>

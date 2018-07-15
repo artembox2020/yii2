@@ -161,6 +161,6 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return parent::find()->where(['is_deleted' => false]);
+        return parent::find()->where(['address_balance_holder.is_deleted' => false]);
     }
 }

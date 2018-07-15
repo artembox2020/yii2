@@ -110,7 +110,9 @@ class Imei extends \yii\db\ActiveRecord
             'id' => Yii::t('frontend', 'ID'),
             'imei' => Yii::t('frontend', 'Imei'),
             'init' => Yii::t('frontend', 'Init'),
+            'address' => Yii::t('frontend', 'Address'),
             'address_id' => Yii::t('frontend', 'Address'),
+            'balanceHolder' => Yii::t('frontend', 'Balance Holder'),
             'balance_holder_id' => Yii::t('frontend', 'Balance Holder Id'),
             'type_packet' => Yii::t('frontend', 'Type Packet'),
             'imei_central_board' => Yii::t('frontend', 'Imei Central Board'),
@@ -151,12 +153,21 @@ class Imei extends \yii\db\ActiveRecord
 
         return $this->model;
     }
+    
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getAddress()
     {
         return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBalanceHolder()
+    {
+        return $this->hasOne(BalanceHolder::className(), ['id' => 'balance_holder_id']);
     }
 
     /**
@@ -249,7 +260,7 @@ class Imei extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return parent::find()->where(['is_deleted' => false]);
+        return parent::find()->where(['imei.is_deleted' => false]);
 //        return new UserQuery(get_called_class());
 //        return parent::find()->where(['is_deleted' => 'false'])
 //            ->andWhere(['status' => Imei::STATUS_ACTIVE]);
