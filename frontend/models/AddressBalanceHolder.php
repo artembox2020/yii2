@@ -114,12 +114,17 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
      */
     public function getImeis()
     {
-        return $this->hasMany(Imei::className(), ['address_id' => 'id']);
+        return $this->hasMany(Imei::className(), ['address_id' => 'id'])
+                    ->andWhere(['status' => Imei::STATUS_ACTIVE]);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getImei()
     {
-        return $this->hasOne(Imei::className(), ['address_id' => 'id']);
+        return $this->hasOne(Imei::className(), ['address_id' => 'id'])
+                    ->andWhere(['status' => Imei::STATUS_ACTIVE]);
     }
 
     /**

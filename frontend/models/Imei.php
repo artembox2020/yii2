@@ -155,10 +155,11 @@ class Imei extends \yii\db\ActiveRecord
     }
     
     /**
-     * @return \yii\db\ActiveQuery
+     * @return null|\yii\db\ActiveQuery
      */
     public function getAddress()
     {
+        
         return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);
     }
     
@@ -261,6 +262,7 @@ class Imei extends \yii\db\ActiveRecord
     public static function find()
     {
         return parent::find()->where(['imei.is_deleted' => false]);
+                             //->andWhere(['imei.status' => Imei::STATUS_ACTIVE]);
 //        return new UserQuery(get_called_class());
 //        return parent::find()->where(['is_deleted' => 'false'])
 //            ->andWhere(['status' => Imei::STATUS_ACTIVE]);
@@ -291,5 +293,21 @@ class Imei extends \yii\db\ActiveRecord
     public static function checkStatus($int)
     {
         return self::statuses($int);
+    }
+    
+    /**
+     * Gets address relation value
+     * @param $imei
+     * @return string
+     */
+    public static function getAddressValue(Imei $imei) {
+        if(!empty($imei->address) && $imei->status == Imei::STATUS_ACTIVE) {
+                   
+            return $imei->address->address;
+        }
+        else {
+        
+            return Yii::t('common', 'Not Set');
+        }
     }
 }

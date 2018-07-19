@@ -19,8 +19,9 @@ class AddressBalanceHolderSearch extends AddressBalanceHolder
     public function rules()
     {
         return [
-            [['id', 'floor', 'balance_holder_id', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['id', 'balance_holder_id', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['name', 'address', 'is_deleted'], 'safe'],
+            [['floor'], 'trim']
         ];
     }
 
@@ -45,6 +46,9 @@ class AddressBalanceHolderSearch extends AddressBalanceHolder
         $user = User::findOne(Yii::$app->user->id);
         $query = AddressBalanceHolder::find();
         $query = $query->andWhere(['company_id' => $user->company->id]);
+        
+        if(!empty($params['balanceHolderId']))
+            $query = $query->andWhere(['balance_holder_id' => $params['balanceHolderId']]);
 
         // add conditions that should always apply here
 
@@ -63,7 +67,6 @@ class AddressBalanceHolderSearch extends AddressBalanceHolder
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'floor' => $this->floor,
             'balance_holder_id' => $this->balance_holder_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
@@ -72,6 +75,7 @@ class AddressBalanceHolderSearch extends AddressBalanceHolder
 
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'address', $this->address])
+            ->andFilterWhere(['like', 'floor', $this->floor])
             ->andFilterWhere(['like', 'is_deleted', $this->is_deleted]);
 
         return $dataProvider;

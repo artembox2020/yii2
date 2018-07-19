@@ -53,6 +53,16 @@ class BalanceHolder extends \yii\db\ActiveRecord
                     'deleted_at' => time()
                 ],
             ],
+            'uploadBehavior' => [
+                'class' => \frontend\services\balanceHolder\UploadBehavior::className(),
+                'attributes' => [
+                    'img' => [
+                        'path' => '@storage/logos',
+                        'tempPath' => '@storage/tmp',
+                        'url' => Yii::getAlias('@storageUrl/logos'),
+                    ],
+                ],
+            ],
             TimestampBehavior::className()
         ];
     }

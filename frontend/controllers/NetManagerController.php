@@ -82,11 +82,14 @@ class NetManagerController extends \yii\web\Controller
     {
         $searchModel = new UserSearch();
         
+        $model = new User();
+        
         $dataProvider = $searchModel->searchEmployees(Yii::$app->request->queryParams);
         
         return $this->render('employees', [
             'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel
+            'searchModel' => $searchModel,
+            'model' => $model
         ]);
     }
 
@@ -234,6 +237,7 @@ class NetManagerController extends \yii\web\Controller
         if (!empty($user->company)) {
             $searchModel = new BalanceHolderSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $user->company);
+            $company = \frontend\models\Company::findOne($user->company->id);
         } else {
 
             return $this->redirect('account/sign-in/login');
@@ -241,7 +245,8 @@ class NetManagerController extends \yii\web\Controller
 
         return $this->render('balance-holder/index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dataProvider,
+            'company' => $company
         ]);
     }
 
@@ -265,17 +270,37 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
+     * @param integer $balanceHolderId
      * @return string|\yii\web\Response
      */
-    public function actionAddresses()
+    public function actionAddresses($balanceHolderId = false)
     {
         $searchModel = new AddressBalanceHolderSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('addresses/addresses', [
+        
+        if(!$balanceHolderId) {
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        }
+        else {
+            $dataProvider = $searchModel->search(
+                array_merge(Yii::$app->request->queryParams, ['balanceHolderId' => $balanceHolderId])
+            );
+        }
+        
+        $params = [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-        ]);
+        ];
+        
+        if(!$balanceHolderId) {
+        
+            return $this->render('addresses/addresses', $params);
+        }
+        else {
+            $model = $this->findModel($balanceHolderId, new BalanceHolder());
+            $params = array_merge($params,['model' => $model]);
+        
+            return $this->renderPartial('addresses/balance-holder-addresses', $params);
+        }
     }
 
     /**
@@ -347,13 +372,12 @@ class NetManagerController extends \yii\web\Controller
             
             $imei->save();
                 
-            return $this->redirect(['/imei/view', 'id' => $imei->id]);
+            $this->redirect(['/net-manager/washpay']);
         }
 
         return $this->render('washpay/washpay-update' , [
             'imei' => $imei,
             'addresses' => $tempadd,
-            'balanceHolders' => $balanceHolders
         ]);
     }
 
@@ -368,6 +392,12 @@ class NetManagerController extends \yii\web\Controller
         if (!empty($user->company)) {
             $company = $user->company;
             $balanceHolders = $company->balanceHolders;
+            if(!empty($addressBalanceHolderId)) {
+                $addressBalanceHolder = $this->findModel($addressBalanceHolderId, new AddressBalanceHolder());
+            }
+            else {
+                $addressBalanceHolder = false;
+            }
             foreach ($company->balanceHolders as $balanceHolder) {
                 
                 foreach ($balanceHolder->addressBalanceHolders as $addresses) {
@@ -379,18 +409,19 @@ class NetManagerController extends \yii\web\Controller
 
             if ($imei->load(Yii::$app->request->post())) {
                 $imei->company_id = $company->id;
+                $addressBalanceHolder = $this->findModel($imei->address_id, new AddressBalanceHolder());
+                $imei->balance_holder_id = $addressBalanceHolder->balance_holder_id;
                 $imei->is_deleted = false;
                 $imei->save();
                 
-                return $this->redirect(['/imei/view', 'id' => $imei->id]);
+                $this->redirect(['/net-manager/washpay']);
             }
         }
 
         return $this->render('washpay/washpay-create', [
             'imei' => $imei,
             'addresses' => $tempadd,
-            'balanceHolders' => $balanceHolders,
-            'addressBalanceHolderId' => $addressBalanceHolderId
+            'addressBalanceHolder' => $addressBalanceHolder
         ]);
     }
 

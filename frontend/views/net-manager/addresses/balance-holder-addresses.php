@@ -10,13 +10,7 @@ use frontend\services\custom\Debugger;
 /* @var $balanceHolders  */
 /* @var $addresses */
 ?>
-<?php $menu = []; ?>
-<b>
-    <?= $this->render('/net-manager/_sub_menu', [
-        'menu' => $menu,
-    ]) ?>
-</b><br><br>
-<b><?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder/create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
+<b><?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder/create', 'balanceHolderId' => $model->id], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
 <br/>
 <?php \yii\widgets\Pjax::begin(['id' => 'address-pjax-container']); ?>
 <?= yii\grid\GridView::widget([
@@ -24,11 +18,6 @@ use frontend\services\custom\Debugger;
         'filterModel' => $searchModel,
         'columns' => [
            'id',
-           
-            [
-               'attribute' => 'balanceHolder.address',
-               'label' => Yii::t('frontend','Balance Holder')
-            ],
            
             [
                 'attribute' => 'address',

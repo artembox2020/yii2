@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use frontend\services\custom\Debugger;
 use bs\Flatpickr\FlatpickrWidget;
+use vova07\fileapi\Widget as FileApi;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\BalanceHolder */
@@ -20,6 +21,17 @@ foreach ($balanceHolders as $company) {
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    
+     <?= $form->field($model, 'img')->widget(
+            FileApi::className(),
+            [
+                'settings' => [
+                    'url' => ['/balance-holder/fileapi-upload'],
+                ],
+                'crop' => true,
+                'cropResizeWidth' => 100,
+                'cropResizeHeight' => 100,
+            ]) ?>
 
     <?= $form->field($model, 'city')->textInput(['maxlength' => true]) ?>
 

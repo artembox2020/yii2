@@ -124,4 +124,68 @@ class Company extends ActiveRecord
     {
         return $this->hasMany(AddressBalanceHolder::className(), ['company_id' => 'id']);
     }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImeis()
+    {
+        return $this->hasMany(Imei::className(), ['company_id' => 'id']);
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getWmMashines()
+    {
+        return $this->hasMany(WmMashine::className(), ['company_id' => 'id']);
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGdMashines()
+    {
+        return $this->hasMany(GdMashine::className(), ['company_id' => 'id']);
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCountBalanceHolder()
+    {
+        return $this->getBalanceHolders()->count();
+    }
+    
+    /**
+     * @return integer
+     */
+    public function getCountAddress() {
+        
+        return $this->getAddresses()->count(); 
+    }
+    
+    /**
+     * @return integer
+     */
+    public function getCountImei()
+    {
+        return $this->getImeis()->count();
+    }
+    
+    /**
+     * @return integer
+     */
+    public function getCountWmMashine() {
+        
+        return $this->getWmMashines()->count(); 
+    }
+    
+    /**
+     * @return integer
+     */
+    public function getCountGdMashine() {
+        
+        return $this->getGdMashines()->count(); 
+    }
 }

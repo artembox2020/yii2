@@ -33,9 +33,21 @@ class Entity implements EntityInterface
      */
     public function getUnitsPertainCompany($instance)
     {
-        $units = $instance::find(['company_id' => $this->getCompanyId()])->all();
+        
+        $units = $this->getUnitsQueryPertainCompany($instance)->all();
         $this->checkAccess($units);
-
+        
+        return $units;
+    }
+    
+    /**
+     * @param null $instance
+     * @return yii\db\Query
+     */
+    public function getUnitsQueryPertainCompany($instance)
+    {
+        $units = $instance::find()->andWhere(['company_id' => $this->getCompanyId()]);
+        
         return $units;
     }
 

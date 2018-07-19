@@ -37,20 +37,11 @@ $gd_machine = array();
 <p>
 <br>
     <b><u>Технічні дані</u></b>
-    <div>Кількість балансоутримувачив: <b><?= count($model->balanceHolders) ?></b></div>
-    <?php foreach ($model->balanceHolders as $val) : ?>
-        <?php $address[] = $val->addressBalanceHolders ?>
-        <?php foreach ($val->addressBalanceHolders as $item) : ?>
-            <?php $imei[] = $item->imeis ?>
-            <?php foreach ($item->imeis as $wm) : ?>
-                <?php $machine[] = $wm->wmMashine ?>
-            <?php endforeach; ?>
-        <?php endforeach; ?>
-    <?php endforeach; ?>
-    <div>Кількість адрес: <b><?= count($address) ?></b></div>
-    <div>Кількість IMEI <b><?= count($imei) ?></b></div>
-    <div>Кількість ПМ <b><?= count($machine) ?></b></div>
-    <div>Кількість Дозаторів геля <b><?= $wm_machine = isset($wm->getGdMashine) ? count($wm->getGdMashine()) : '0'; ?></b></div>
+    <div>Кількість балансоутримувачив: <b><?= $model->getCountBalanceHolder() ?></b></div>
+    <div>Кількість адрес: <b><?= $model->getCountAddress() ?></b></div>
+    <div>Кількість IMEI <b><?= $model->getCountImei() ?></b></div>
+    <div>Кількість ПМ <b><?= $model->getCountWmMashine() ?></b></div>
+    <div>Кількість Дозаторів геля <b><?= $model->getCountGdMashine(); ?></b></div>
 </p>
 <p>
     <b><u>Фінансові дані</u></b>

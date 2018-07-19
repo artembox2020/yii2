@@ -4,11 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
 use frontend\services\custom\Debugger;
+use frontend\models\Imei;
+
 /* @var $this yii\web\View */
-/* @var $model frontend\models\Company */
-/* @var $users common\models\User */
-/* @var $balanceHolders frontend\models\BalanceHolder */
-/* @var $addresses */
+/* @var $menu array */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $searchModel frontend\models\ImeiSearch */
+
 ?>
 <?php $menu = []; ?>
 <b>
@@ -40,12 +42,7 @@ use frontend\services\custom\Debugger;
                'attribute' => 'address',
                'value' => function($model) {
                    
-                   if(!empty($model->address))
-                   
-                       return $model->address->address;
-                   else
-                   
-                       return Yii::t('common', 'Not Set');       
+                   return Imei::getAddressValue($model);
                },
            ],
            

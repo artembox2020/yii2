@@ -12,7 +12,10 @@ use frontend\services\custom\Debugger;
 /* @var $company frontend\models\Company */
 
 ?>
-<?php $menu = []; ?>
+<?php 
+    $menu = [];
+    $this->title = Yii::t('frontend', 'Create Imei');
+?>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
@@ -24,8 +27,7 @@ use frontend\services\custom\Debugger;
         <?= $this->render('_form', [
             'imei' => $imei,
             'addresses' => $addresses,
-            'balanceHolders' => $balanceHolders,
-            'addressBalanceHolderId' => $addressBalanceHolderId
+            'addressBalanceHolder' => $addressBalanceHolder
         ]) ?>
 
     </div>
