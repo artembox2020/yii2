@@ -1,9 +1,14 @@
 <?php
+
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
+use \yii\jui\AutoComplete;
+use yii\web\JsExpression;
 use frontend\services\custom\Debugger;
+use frontend\services\globals\Entity;
+
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
 /* @var $users common\models\User */
@@ -38,12 +43,17 @@ use frontend\services\custom\Debugger;
                 'attribute' => 'imei',
                 'label' => Yii::t('frontend', 'Imei'),
                 'format' => 'raw',
-                'value' => function($model) {
-                    $addWashpay = Html::a(
-                        Yii::t('frontend', 'Add Washpay'), 
-                        ['/net-manager/washpay-create', 'addressBalanceHolderId' => $model->id], 
-                        ['class' => 'btn btn-success', 'style' => 'color: #fff;']
-                    );
+                'value' => function($model) use($imeis) {
+                    $addWashpay = Entity::AutoCompleteWidgetFilteredData([
+                        'model' => $model,
+                        'name' => 'imei',
+                        'url' => '/net-manager/addresses-bind-to-imei',
+                        'source' => $imeis,
+                        'options' => [
+                            'placeholder' => Yii::t('common', 'Type imei')
+                        ]
+                    ]);
+                        
                     return !empty($model->imei) ? $model->imei->imei : $addWashpay;
                 }
             ],

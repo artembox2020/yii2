@@ -270,39 +270,67 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
-     * @param integer $balanceHolderId
+     * Index page for addresses
+     * In case of $balanceHolderId is set, the appropriate filter is applied
+     * 
+     * @param $balanceHolderId
      * @return string|\yii\web\Response
      */
     public function actionAddresses($balanceHolderId = false)
     {
         $searchModel = new AddressBalanceHolderSearch();
+        $entity = new Entity();
         
-        if(!$balanceHolderId) {
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        }
-        else {
-            $dataProvider = $searchModel->search(
-                array_merge(Yii::$app->request->queryParams, ['balanceHolderId' => $balanceHolderId])
-            );
-        }
-        
+        // imeis list for AutoComplete widget
+        $imeis = $entity->getFilteredStatusDataMapped(
+            new Imei(), Imei::STATUS_OFF, ['id' => 'imei']
+        );
+                
         $params = [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'imeis' => $imeis
         ];
         
         if(!$balanceHolderId) {
-        
+            
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            
+            $params['dataProvider'] = $dataProvider;
+
             return $this->render('addresses/addresses', $params);
         }
         else {
+            
+            $dataProvider = $searchModel->search(
+                array_merge(Yii::$app->request->queryParams, ['balanceHolderId' => $balanceHolderId])
+            );
+            
             $model = $this->findModel($balanceHolderId, new BalanceHolder());
-            $params = array_merge($params,['model' => $model]);
+            $params = array_merge($params, ['model' => $model, 'dataProvider' => $dataProvider]);
         
             return $this->renderPartial('addresses/balance-holder-addresses', $params);
         }
     }
 
+    /**
+     * Binds imei to address and redirects to actionAddresses
+     * 
+     * @param integer $id
+     * @param integer $foreignId
+     * @return string|\yii\web\Response
+     */
+    public function actionAddressesBindToImei($id, $foreignId) 
+    {
+        $entity = new Entity();
+        
+        $imei = $entity->getUnitPertainCompany($foreignId, new Imei());
+        $imei->bindToAddress($id);
+        
+        $redirectUrl = array_merge(['addresses'], Yii::$app->request->queryParams);
+        
+        return $this->redirect($redirectUrl);
+    }
+    
     /**
      * @return string|\yii\web\Response
      */

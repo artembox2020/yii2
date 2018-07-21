@@ -29,6 +29,7 @@ return [
     'Delete Confirmation' => 'Ви впевнені, що хочете видалити цей запис?',
     'Entity not found' => 'Ентіті не знайдено',
     'Inactive' => 'Неактивний',
+    'Invalid Array [Key => Value] Configuration' => 'Невірна конфігурація [ключ=>значення]',
     'Firstname' => 'Ім\'я',
     'Fistname Lastname Patronymic' => 'Імя, Призвіще. По-Батькові',
     'Gender' => 'Стать',
@@ -41,6 +42,7 @@ return [
     'Position' => 'Посада',
     'Server Rights' => 'Права на сервері',
     'Status' => 'Статус',
+    'Type imei' => 'введіть імей',
     'Worker Card' => 'Картка співробітника',
     'Undefined' => 'Не визначений',
 ];

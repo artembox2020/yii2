@@ -159,7 +159,6 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getAddress()
     {
-        
         return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);
     }
     
@@ -309,5 +308,31 @@ class Imei extends \yii\db\ActiveRecord
         
             return Yii::t('common', 'Not Set');
         }
+    }
+    
+    /**
+     * Binds imei to address and switches off all others
+     * imeis at the same address
+     * 
+     * @param integer $addressId
+     * @return void
+     */
+    public function bindToAddress($addressId) {
+        
+        $this->status = Imei::STATUS_ACTIVE;
+        $this->address_id = $addressId;
+        $this->save();
+        
+        /* switch off all other imeis at the same address */
+        $addressImeis = Imei::find()
+                        ->andWhere(['address_id' => $addressId])
+                        ->andWhere(["!=", 'id', $this->id])
+                        ->all();
+        
+        foreach($addressImeis as $addressImei) {
+            $addressImei->status = Imei::STATUS_OFF;
+            $addressImei->save();
+        }
+        
     }
 }
