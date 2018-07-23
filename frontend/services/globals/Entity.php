@@ -3,6 +3,7 @@
 namespace frontend\services\globals;
 
 use common\models\User;
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\di\Instance;
 use yii\helpers\ArrayHelper;
@@ -15,6 +16,9 @@ use yii\web\JsExpression;
  */
 class Entity implements EntityInterface
 {
+    /** @var int  */
+    const ONE = 1;
+
     /**
      * @param null $id
      * @param null $instance
@@ -55,12 +59,14 @@ class Entity implements EntityInterface
     }
     
     /**
+     * Extended version of getFilteredStatusData
+     * 
      * @param $instance
      * @param $status
      * @return mixed
      * @throws \yii\web\NotFoundHttpException
      */
-    public function getFilteredStatusData($instance, $status)
+    public function getFilteredStatusDataEx($instance, $status)
     {
         $units = $instance::find()
             ->andWhere(['company_id' => $this->getCompanyId(), 'status' => $status])
@@ -70,6 +76,21 @@ class Entity implements EntityInterface
         return $units;
     }
     
+    /**
+     * @param $instance
+     * @return mixed
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getFilteredStatusData($instance)
+    {
+        $units = $instance::find(['company_id' => $this->getCompanyId()])
+            ->where(['status' => self::ONE])
+            ->all();
+        $this->checkAccess($units);
+
+        return $units;
+    }
+
     /**
      * @param $unit
      * @return mixed
@@ -106,7 +127,7 @@ class Entity implements EntityInterface
      */
     public function getFilteredStatusDataMapped($instance, $status, Array $map)
     {
-        $units = $this->getFilteredStatusData($instance, $status);
+        $units = $this->getFilteredStatusDataEx($instance, $status);
         
         try {
             $key = array_keys($map)[0];
