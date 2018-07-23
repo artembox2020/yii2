@@ -11,6 +11,15 @@ use bs\Flatpickr\FlatpickrWidget;
 /* @var $company \frontend\models\Company */
 ?>
 
+<?php
+    $balanceHolderOptions = [];
+    if(!empty($balanceHolder)) {
+        $balanceHolderOptions = [
+            'value' => $balanceHolder->id
+        ];
+    }
+?>
+
 <div class="address-balance-holder-form">
 
     <?php $form = ActiveForm::begin(); ?>
@@ -50,7 +59,8 @@ use bs\Flatpickr\FlatpickrWidget;
     <?= $form->field($model, 'company_id')->hiddenInput(['value'=> $company->id])->label(false); ?>
 
     <?= $form->field($model, 'balance_holder_id')->dropDownList(
-            \yii\helpers\ArrayHelper::map($balanceHolder, 'id', 'name')
+            \yii\helpers\ArrayHelper::map($balanceHolders, 'id', 'name'),
+            $balanceHolderOptions
     ) ?>
 
     <div class="form-group">

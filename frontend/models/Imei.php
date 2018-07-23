@@ -155,7 +155,7 @@ class Imei extends \yii\db\ActiveRecord
     }
     
     /**
-     * @return \yii\db\ActiveQuery
+     * @return null|\yii\db\ActiveQuery
      */
     public function getAddress()
     {
@@ -261,6 +261,7 @@ class Imei extends \yii\db\ActiveRecord
     public static function find()
     {
         return parent::find()->where(['imei.is_deleted' => false]);
+                             //->andWhere(['imei.status' => Imei::STATUS_ACTIVE]);
 //        return new UserQuery(get_called_class());
 //        return parent::find()->where(['is_deleted' => 'false'])
 //            ->andWhere(['status' => Imei::STATUS_ACTIVE]);
@@ -291,5 +292,47 @@ class Imei extends \yii\db\ActiveRecord
     public static function checkStatus($int)
     {
         return self::statuses($int);
+    }
+    
+    /**
+     * Gets address relation value
+     * @param $imei
+     * @return string
+     */
+    public static function getAddressValue(Imei $imei) {
+        if(!empty($imei->address) && $imei->status == Imei::STATUS_ACTIVE) {
+                   
+            return $imei->address->address;
+        }
+        else {
+        
+            return Yii::t('common', 'Not Set');
+        }
+    }
+    
+    /**
+     * Binds imei to address and switches off all others
+     * imeis at the same address
+     * 
+     * @param integer $addressId
+     * @return void
+     */
+    public function bindToAddress($addressId) {
+        
+        $this->status = Imei::STATUS_ACTIVE;
+        $this->address_id = $addressId;
+        $this->save();
+        
+        /* switch off all other imeis at the same address */
+        $addressImeis = Imei::find()
+                        ->andWhere(['address_id' => $addressId])
+                        ->andWhere(["!=", 'id', $this->id])
+                        ->all();
+        
+        foreach($addressImeis as $addressImei) {
+            $addressImei->status = Imei::STATUS_OFF;
+            $addressImei->save();
+        }
+        
     }
 }

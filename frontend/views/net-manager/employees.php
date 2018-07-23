@@ -9,7 +9,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\widgets\DetailView;
 use common\models\User;
+
 ?>
 <?php $menu = []; ?>
 <b>
@@ -90,4 +92,25 @@ use common\models\User;
             ],
         ],
     ]);  ?>
-</div>    
+</div>
+
+<p><u><b><?= Yii::t('frontend','Summary Technical Data') ?></b></u><p/>
+
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' =>  Yii::t('frontend', 'Count Employee'),
+                'value' => $model->getUserCount()
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Count Administrative Employee'),
+                'value' => $model->getUserAdminCount()
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Count Technical Employee'),
+                'value' => $model->getUserTechnicianCount()
+            ],
+        ]
+    ]);
+?>

@@ -3,7 +3,7 @@
 namespace common\models;
 
 use frontend\models\Company;
-use frontend\services\custom\Debugger;
+use frontend\services\globals\Entity;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -297,5 +297,35 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         return $role = 'Role not defined';
+    }
+    
+    /**
+     * @return integer
+     */
+    public function getUserTechnicianCount() {
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany(new User())
+                 ->innerJoin(['a' => 'auth_assignment'], 'a.user_id = user.id')
+                 ->andWhere(['a.item_name' => [self::ROLE_TECHNICIAN, self::ROLE_FINANCIER, self::ROLE_ADMINISTRATOR] ]);
+        
+        return $query->count();
+    }
+    
+    /**
+     * @return integer
+     */
+    public function getUserAdminCount() {
+        
+        return 1;
+    }
+    
+    /**
+     * @return integer
+     */
+    public function getUserCount() {
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany(new User());
+                 
+        return ( $query->count() + 1); // add also root admin, who has access everywhere
     }
 }

@@ -18,6 +18,34 @@ use frontend\controllers\OtherContactPersonController;
     ]) ?>
 </b><br><br>
 <p><u><b><?= Yii::t('frontend','Balance Holder') ?></b></u><p/>
+<br/>
+<div>
+    <?= Html::a(
+            '['.Yii::t('frontend', 'Update Balance Holder').']',
+            
+            ['/balance-holder/update', 'id' => $model->id],
+            
+            ['class' => 'btn btn-success', 'style' => 'color: #fff;']
+        );
+    ?>
+    
+    <?= Html::a(
+            '['.Yii::t('frontend', 'Delete Balance Holder').']',
+            
+            ['/balance-holder/delete', 'id' => $model->id],
+            
+            [
+                'class' => 'btn btn-success',
+                'style' => 'color: #fff;',
+                'data' => [
+                    'confirm' => Yii::t('common', 'Delete Confirmation'),
+                    'method' => 'post',
+                ],
+            ]
+        );
+    ?>                    
+</div>
+<br/>
 <?php
     $person = $dataProvider->query->one();
     $dataProvider->query = $dataProvider->query->offset(1);
@@ -69,6 +97,11 @@ use frontend\controllers\OtherContactPersonController;
     
     $widgetAttributes = [
             [
+                'label' => Yii::t('common', 'Logo'),
+                'format' => 'raw',
+                'value' => Html::img('@web/storage/logos/' . $model->img)
+            ],
+            [
                 'label' => Yii::t('common','Name'),
                 'value' => $model->name
             ],
@@ -100,6 +133,10 @@ use frontend\controllers\OtherContactPersonController;
         'attributes' => $widgetAttributes
     ]);
 ?>
+
+<p><u><b><?= Yii::t('frontend','Address List') ?></b></u><p/>
+
+<?php echo Yii::$app->runAction('/net-manager/addresses', ['balanceHolderId' => $model->id]); ?>
 
 <p><u><b><?= Yii::t('frontend','Summary Technical Data') ?></b></u><p/>
 
@@ -133,6 +170,32 @@ use frontend\controllers\OtherContactPersonController;
         ]
     ]);
 ?>
+
+<div><b><u><?= Yii::t('frontend','Consolidated Financial Data') ?></u></b></div>
+
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' =>  Yii::t('frontend', 'Money Amount'),
+                'value' => 1000
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Average Day Income'),
+                'value' => 200
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Average Income For 1WM'),
+                'value' => 400
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Average Income for 1 Point WM'),
+                'value' => 480
+            ],
+        ]
+    ]);
+?>
+
 
 <div><b><u><?= Yii::t('frontend','Other Contact People') ?></u></b></div>
 <br>

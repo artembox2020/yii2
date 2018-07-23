@@ -11,12 +11,26 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
+use vova07\fileapi\actions\UploadAction as FileAPIUpload;
 
 /**
  * BalanceHolderController implements the CRUD actions for BalanceHolder model.
  */
 class BalanceHolderController extends Controller
 {
+    /**
+     * @return array
+     */
+    public function actions()
+    {
+        return [
+            'fileapi-upload' => [
+                'class' => FileAPIUpload::className(),
+                'path' => '@storage/tmp',
+            ]
+        ];
+    }
+    
     /**
      * @inheritdoc
      */
@@ -117,7 +131,7 @@ class BalanceHolderController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['net-manager/view-balance-holder', 'id' => $model->id]);
         }
 
         $user = User::findOne(Yii::$app->user->id);
@@ -146,7 +160,7 @@ class BalanceHolderController extends Controller
     {
         $this->findModel($id)->softDelete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/net-manager/balance-holders']);
     }
 
     /**
