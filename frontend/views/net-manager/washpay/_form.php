@@ -10,7 +10,6 @@ use frontend\services\globals\Entity;
 /* @var $imei frontend\models\Imei */
 /* @var $addresses frontend\models\AddressBalanceHolder */
 /* @var $balanceHolder frontend\models\BalanceHolder */
-/* @var $balanceHolders frontend\models\BalanceHolder */
 ?>
 <?php if (Yii::$app->session->hasFlash('error')): ?>
     <div class="alert alert-info alert-dismissable">
@@ -21,23 +20,22 @@ use frontend\services\globals\Entity;
 <?php endif; ?>
 <?php
     // set default address and balanceHolder options
-    if(!empty($addressBalanceHolderId)) {
-        $entity = new Entity();
-        $addressBalanceHolder = $entity->getUnitPertainCompany($addressBalanceHolderId, new AddressBalanceHolder());
-        $defaultAddressBalanceHolderId = $addressBalanceHolder->id;
-        $defaultBalanceHolderId = $addressBalanceHolder->balanceHolder->id;
-        
+    if(!empty($addressBalanceHolder)) {
+        $addressBalanceHolderId = $addressBalanceHolder->id; 
         $addressBalanceHolderOptions = [
-            $defaultAddressBalanceHolderId => ['Selected' => true] 
+            $addressBalanceHolderId => ['Selected' => true] 
         ];
         
-        $balanceHolderOptions = [ 
-            $defaultBalanceHolderId => ['Selected' => true] 
-        ];
     }
     else {
-        $addressBalanceHolderOptions = [];
-        $balanceHolderOptions = [];
+        if(!empty($imei->address_id)) {
+            $addressBalanceHolderOptions = [
+                $imei->address_id => ['Selected' => true] 
+            ];
+        }
+        else {
+            $addressBalanceHolderOptions = [];
+        }
     }
 ?>
 <div class="other-contact-person-form">
@@ -56,13 +54,6 @@ use frontend\services\globals\Entity;
         
         [
             'options' => $addressBalanceHolderOptions
-        ]
-    ) ?>
-
-    <?= $form->field($imei, 'balance_holder_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($balanceHolders, 'id', 'name'),
-        [
-            'options' => $balanceHolderOptions
         ]
     ) ?>
 

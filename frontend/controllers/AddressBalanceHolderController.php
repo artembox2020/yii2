@@ -6,6 +6,7 @@ use common\models\User;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use Yii;
+use frontend\models\BalanceHolder;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\AddressBalanceHolderSearch;
 use yii\web\Controller;
@@ -63,15 +64,27 @@ class AddressBalanceHolderController extends Controller
     /**
      * Creates a new AddressBalanceHolder model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * @param $balanceHolderId
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($balanceHolderId = false)
     {
         $model = new AddressBalanceHolder();
 
         $user = User::findOne(Yii::$app->user->id);
         $company = $user->company;
-        $balanceHolder = $company->balanceHolders;
+        $balanceHolders = $company->balanceHolders;
+        if($balanceHolderId) {
+            $entity = new Entity();
+            $balanceHolder = $entity->getUnitPertainCompany
+            (
+                $balanceHolderId, 
+                new BalanceHolder()
+            );
+        }
+        else {
+            $balanceHolder = false;
+        }
 
         if ($model->load(Yii::$app->request->post())) {
             $model->created_at = Time();
@@ -84,6 +97,7 @@ class AddressBalanceHolderController extends Controller
         return $this->render('create', [
             'model' => $model,
             'company' => $company,
+            'balanceHolders' => $balanceHolders,
             'balanceHolder' => $balanceHolder
         ]);
     }

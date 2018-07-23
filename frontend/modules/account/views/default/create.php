@@ -11,7 +11,7 @@ use common\models\User;
 /* @var $permissions yii\rbac\Permission[] */
 
 $this->title = Yii::t('backend', 'Create user');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['users']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['/net-manager/employees']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-create">

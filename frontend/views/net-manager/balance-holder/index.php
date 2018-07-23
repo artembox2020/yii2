@@ -3,6 +3,7 @@
 use frontend\models\BalanceHolder;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\DetailView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -71,4 +72,17 @@ $menu = [];
 //            ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+    
+    <p><u><b><?= Yii::t('frontend','General Info') ?></b></u><p/>
+    
+    <?= DetailView::widget([
+        'model' => $company,
+        'attributes' => [
+            [
+                'label' =>  Yii::t('frontend', 'Count Balance Holders'),
+                'value' => $company->getCountBalanceHolder()
+            ],
+        ]
+    ]);
+?>    
 </div>

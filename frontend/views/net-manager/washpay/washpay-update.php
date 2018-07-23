@@ -8,11 +8,13 @@ use frontend\services\custom\Debugger;
 /* @var $address frontend\models\AddressBalanceHolder */
 /* @var $addresses frontend\models\AddressBalanceHolder */
 /* @var $balanceHolder frontend\models\BalanceHolder */
-/* @var $balanceHolders frontend\models\BalanceHolder */
 /* @var $company frontend\models\Company */
 
 ?>
-<?php $menu = []; ?>
+<?php 
+    $menu = [];
+    $this->title = Yii::t('frontend', 'Update Imei: {nameAttribute}', ['nameAttribute' => $imei->id]);
+?>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
@@ -24,7 +26,6 @@ use frontend\services\custom\Debugger;
         <?= $this->render('_form', [
             'imei' => $imei,
             'addresses' => $addresses,
-            'balanceHolders' => $balanceHolders
         ]) ?>
 
     </div>

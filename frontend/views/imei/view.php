@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use \frontend\models\Imei;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -51,12 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'address',
                 'value' => function($model) {
                     
-                    if(!empty($model->address))
-                    
-                        return $model->address->address." ".$model->address->floor;
-                    else
-                    
-                        return Yii::t('common', 'Not Set');
+                    return Imei::getAddressValue($model);
                 }
             ],
             
