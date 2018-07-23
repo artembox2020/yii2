@@ -19,6 +19,7 @@ use common\models\User;
 use common\models\UserSearch;
 use backend\models\UserForm;
 use backend\models\Company;
+use yii\di\Instance;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 use backend\services\mail\MailSender;
@@ -150,9 +151,9 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
-     * view one employee
-     * @param $id
-     * @return string|\yii\web\Response
+     * @param null $id
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionViewEmployee($id)
     {
@@ -164,9 +165,9 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
-     * edit employee
      * @param $id
      * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionEditEmployee($id)
     {
@@ -192,13 +193,15 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
-     *  delete employee
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionDeleteEmployee($id) 
     {
         $model = $this->findModel($id, new User());
         $model->softDelete();
-        
+
         return $this->redirect("/net-manager/employees");
     }
 
@@ -252,7 +255,8 @@ class NetManagerController extends \yii\web\Controller
 
     /**
      * @param $id
-     * @return string|\yii\web\Response
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionViewBalanceHolder($id)
     {
@@ -484,31 +488,28 @@ class NetManagerController extends \yii\web\Controller
 
     /**
      * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionWmMachineAdd()
     {
         $entity = new Entity();
-        $imeis = $entity->getUnitsPertainCompany(new Imei());
+        $imeis = $entity->getFilteredStatusData(new Imei());
+
         $model = new WmMashine();
 
         if ($model->load(Yii::$app->request->post())) {
-
-//            Debugger::dd($model->imei_id);
             $im = Imei::findOne(['id' => $model->imei_id]);
             $ad = AddressBalanceHolder::findOne(['id' => $im->address_id]);
-//            Debugger::dd($im);
             $model->company_id = $im->company_id;
             $model->address_id = $im->address_id;
             $model->balance_holder_id = $ad->balance_holder_id;
-            $model->save(false);
-            return $this->redirect('wm-machine');
+            $model->save();
+
+            return $this->redirect('/net-manager/osnovnizasoby');
         }
 
-//        Debugger::dd($imeis);
         return $this->render('wm-machine/wm-machine-add', [
             'model' => $model,
-//            'company' => $company,
-//            'balanceHolders' => $balanceHolders,
             'imeis' => $imeis
         ]);
     }

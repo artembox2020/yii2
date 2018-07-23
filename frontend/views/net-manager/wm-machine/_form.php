@@ -18,7 +18,7 @@ use bs\Flatpickr\FlatpickrWidget;
     </div>
 <?php endif; ?>
 <div class="other-contact-person-form">
-    <h3><u>Add WM Machine</u></h3>
+    <h3><u><?= Yii::t('frontend', 'Create Wash Machine') ?></u></h3>
 
     <?php $form = ActiveForm::begin(); ?>
 
