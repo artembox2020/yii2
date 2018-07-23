@@ -40,6 +40,9 @@ class NetManagerController extends \yii\web\Controller
 
     /** @var int PAGE_SIZE */
     const PAGE_SIZE = 10;
+
+    /** @var string  */
+    const TYPE_WM = 'WM';
     
     public function behaviors()
     {
@@ -93,8 +96,8 @@ class NetManagerController extends \yii\web\Controller
 
     /**
      * Create Employee & set role & position & birthday
-     *
-     * @return void
+     * @return string|\yii\web\Response
+     * @throws \Exception
      */
     public function actionCreateEmployee()
     {
@@ -135,6 +138,7 @@ class NetManagerController extends \yii\web\Controller
             }
 
             $model->status = self::ONE;
+
             return $this->render('create', [
                 'model' => $model,
                 'roles' => $roles
@@ -330,6 +334,7 @@ class NetManagerController extends \yii\web\Controller
     /**
      * @param $id
      * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionWashpayUpdate($id)
     {
@@ -373,7 +378,6 @@ class NetManagerController extends \yii\web\Controller
             $company = $user->company;
             $balanceHolders = $company->balanceHolders;
             foreach ($company->balanceHolders as $balanceHolder) {
-                
                 foreach ($balanceHolder->addressBalanceHolders as $addresses) {
                     $tempadd[] = $addresses;
                 }
@@ -439,12 +443,32 @@ class NetManagerController extends \yii\web\Controller
         $model = new WmMashine();
 
         if ($model->load(Yii::$app->request->post())) {
+
+//            Debugger::dd($model->number_device);
+
             $im = Imei::findOne(['id' => $model->imei_id]);
             $ad = AddressBalanceHolder::findOne(['id' => $im->address_id]);
             $model->company_id = $im->company_id;
             $model->address_id = $im->address_id;
             $model->balance_holder_id = $ad->balance_holder_id;
-            $model->save();
+            $model->is_deleted = self::ZERO;
+            $model->type_mashine = self::TYPE_WM;
+
+            if ($model->validate() && $model->castomValidation()) {
+                // все данные корректны
+                $model->save();
+            } else {
+                // данные не корректны: $errors - массив содержащий сообщения об ошибках
+//                $errors = $model->errors;
+                return $this->render('wm-machine/wm-machine-add', [
+                    'model' => $model,
+                    'imeis' => $imeis
+                ]);
+            }
+
+//            print_r($errors); die;
+
+//            $model->save();
 
             return $this->redirect('/net-manager/osnovnizasoby');
         }

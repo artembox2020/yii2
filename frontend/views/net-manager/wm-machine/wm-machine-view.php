@@ -6,7 +6,7 @@ use frontend\services\custom\Debugger;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\WmMashine */
 /* @var $users common\models\User */
-/* @var $balanceHolders  */
+/* @var $balanceHolders */
 /* @var $addresses */
 /* @var $wm_machine */
 ?>
@@ -32,14 +32,17 @@ use frontend\services\custom\Debugger;
             [
                 'label' => Yii::t('frontend', 'Date build'),
                 'value' => $model->date_build,
+                'format' => ['date', 'php:d.m.Y']
             ],
             [
                 'label' => Yii::t('frontend', 'Date Purchase'),
                 'value' => $model->date_purchase,
+                'format' => ['date', 'php:d.m.Y']
             ],
             [
                 'label' => Yii::t('frontend', 'Date connection to monitoring'),
                 'value' => $model->date_connection_monitoring,
+                'format' => ['date', 'php:d.m.Y']
             ],
             [
                 'label' => Yii::t('frontend', 'Address Install'),
@@ -51,8 +54,8 @@ use frontend\services\custom\Debugger;
             ],
             [
                 'label' => Yii::t('frontend', 'Last ping'),
-                'value' => $model->created_at,
-                'format' => 'datetime',
+                'value' => $model->updated_at,
+                'format' => ['date','[H:i:s] dd.MM.yyyy']
             ],
     ],
 ]);?>

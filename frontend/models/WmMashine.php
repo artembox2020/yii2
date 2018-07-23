@@ -108,6 +108,10 @@ class WmMashine extends \yii\db\ActiveRecord
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
             [['serial_number'], 'unique'],
+            [['number_device'], 'unique'],
+            [['number_device'], 'unique', 'targetAttribute' => ['number_device']],
+            ['number_device', 'validateNumberDevice', 'targetClass' => WmMashine::className(),
+                'message' => \Yii::t('frontend', 'This Device number has already been taken')],
             [['imei_id', 'number_device',
                 'level_signal',
                 'bill_cash',
@@ -219,5 +223,13 @@ class WmMashine extends \yii\db\ActiveRecord
     public function getAddress()
     {
         return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBalanceHolder()
+    {
+        return $this->hasOne(BalanceHolder::className(), ['id' => 'balance_holder_id']);
     }
 }
