@@ -279,6 +279,8 @@ class NetManagerController extends \yii\web\Controller
      * 
      * @param $balanceHolderId
      * @return string|\yii\web\Response
+     * @throws \yii\web\NotFoundHttpException
+     * @throws \yii\web\ServerErrorHttpException
      */
     public function actionAddresses($balanceHolderId = false)
     {
@@ -321,6 +323,7 @@ class NetManagerController extends \yii\web\Controller
      * @param integer $id
      * @param integer $foreignId
      * @return string|\yii\web\Response
+     * @throws \yii\web\NotFoundHttpException
      */
     public function actionAddressesBindToImei($id, $foreignId) 
     {

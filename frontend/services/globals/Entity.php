@@ -74,8 +74,7 @@ class Entity implements EntityInterface
      * 
      * @param $instance
      * @param $status
-     * @return mixed
-     * @throws \yii\web\NotFoundHttpException
+     * @return array
      */
     public function getFilteredStatusDataEx($instance, $status)
     {
@@ -134,14 +133,12 @@ class Entity implements EntityInterface
      * @param $instance
      * @param $status
      * @param $map
-     * @return mixed
-     * @throws \yii\web\NotFoundHttpException
+     * @return array
      * @throws \yii\web\ServerErrorHttpException
      */
     public function getFilteredStatusDataMapped($instance, $status, Array $map)
     {
         $units = $this->getFilteredStatusDataEx($instance, $status);
-        
         try {
             $key = array_keys($map)[0];
             $value = $map[$key];
