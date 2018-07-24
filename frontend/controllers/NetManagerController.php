@@ -295,10 +295,9 @@ class NetManagerController extends \yii\web\Controller
             'imeis' => $imeis
         ];
         
-        if(!$balanceHolderId) {
+        if (!$balanceHolderId) {
             
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            
             $params['dataProvider'] = $dataProvider;
 
             return $this->render('addresses/addresses', $params);

@@ -71,7 +71,9 @@ class Entity implements EntityInterface
         $units = $instance::find()
             ->andWhere(['company_id' => $this->getCompanyId(), 'status' => $status])
             ->all();
-        $this->checkAccess($units);
+        if(!$units) {
+            $units = [];
+        }
 
         return $units;
     }
