@@ -213,6 +213,9 @@ class WmMashine extends \yii\db\ActiveRecord
         return WmMashine::find()->where(['status' => WmMashine::STATUS_OFF])->all();
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getAddress()
     {
         return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);

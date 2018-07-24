@@ -100,16 +100,24 @@ use common\models\User;
         'model' => $model,
         'attributes' => [
             [
-                'label' =>  Yii::t('frontend', 'Count Employee'),
+                'label' => Yii::t('frontend', 'Count Employee'),
                 'value' => $model->getUserCount()
             ],
             [
-                'label' =>  Yii::t('frontend', 'Count Administrative Employee'),
-                'value' => $model->getUserAdminCount()
+                'label' => Yii::t('frontend', 'Count Administrative Employee'),
+                'value' => $model->getUserCountByRoles([User::ROLE_MANAGER])
             ],
             [
-                'label' =>  Yii::t('frontend', 'Count Technical Employee'),
-                'value' => $model->getUserTechnicianCount()
+                'label' => Yii::t('frontend', 'Count Technical Employee'),
+                'value' => $model->getUserCountByRoles([User::ROLE_TECHNICIAN])
+            ],
+            [
+                'label' => Yii::t('frontend', 'Count Financier Employee'),
+                'value' => $model->getUserCountByRoles([User::ROLE_FINANCIER])
+            ],
+            [
+                'label' => Yii::t('frontend', 'Count Other Employee'),
+                'value' => $model->getUserOtherCount()
             ],
         ]
     ]);

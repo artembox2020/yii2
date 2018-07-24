@@ -59,6 +59,8 @@ return [
     'Count Administrative Employee' => 'Количество административных сотрудников',
     'Count Balance Holders' => 'Количество балансодержателей',
     'Count Employee' => 'Количество сотрудников',
+    'Count Financier Employee' => 'Количество финансовых сотрудников',
+    'Count Other Employee' => 'Количество остальных сотрудников',
     'Count Technical Employee' => 'Количество технических сотрудников',
     'Create' => 'Создать',
     'Created' => 'Создано',
