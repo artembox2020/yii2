@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = Yii::t('frontend', 'Update');
 
     <?= $this->render('_form', [
         'model' => $model,
-        'balanceHolder' => $balanceHolder,
+        'balanceHolders' => $balanceHolders,
         'company' => $company
     ]) ?>
 

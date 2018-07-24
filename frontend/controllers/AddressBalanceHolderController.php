@@ -74,17 +74,10 @@ class AddressBalanceHolderController extends Controller
         $user = User::findOne(Yii::$app->user->id);
         $company = $user->company;
         $balanceHolders = $company->balanceHolders;
-        if($balanceHolderId) {
-            $entity = new Entity();
-            $balanceHolder = $entity->getUnitPertainCompany
-            (
-                $balanceHolderId, 
-                new BalanceHolder()
-            );
-        }
-        else {
-            $balanceHolder = false;
-        }
+        $entity = new Entity();
+        $balanceHolder = $entity->getUnitPertainCompany(
+            $balanceHolderId, new BalanceHolder(), false
+        );
 
         if ($model->load(Yii::$app->request->post())) {
             $model->created_at = Time();
@@ -115,7 +108,7 @@ class AddressBalanceHolderController extends Controller
 
         $user = User::findOne(Yii::$app->user->id);
         $company = $user->company;
-        $balanceHolder = $company->balanceHolders;
+        $balanceHolders = $company->balanceHolders;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -124,7 +117,7 @@ class AddressBalanceHolderController extends Controller
         return $this->render('update', [
             'model' => $model,
             'company' => $company,
-            'balanceHolder' => $balanceHolder
+            'balanceHolders' => $balanceHolders
         ]);
     }
 

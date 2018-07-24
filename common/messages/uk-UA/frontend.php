@@ -63,6 +63,8 @@ return [
     'Count Administrative Employee' => 'Кількість адміністративних співробітників',
     'Count Balance Holders' => 'Кількість балансотримачів',
     'Count Employee' => 'Кількість співробітників',
+    'Count Financier Employee' => 'Кількість фінансових співробітників',
+    'Count Other Employee' => 'Кількість інших співробітників',
     'Count Technical Employee' => 'Кількість технічних співробітників',
     'Count Imeis' => 'Кількість WashPay',
     'Consolidated Financial Data' => 'Зведені фінансові дані',
