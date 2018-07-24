@@ -82,7 +82,7 @@ class Entity implements EntityInterface
         $units = $instance::find()
             ->andWhere(['company_id' => $this->getCompanyId(), 'status' => $status])
             ->all();
-        if(!$units) {
+        if (!$units) {
             $units = [];
         }
 
@@ -172,7 +172,7 @@ class Entity implements EntityInterface
         $queryString = '';
         
         // exclude params ['id', 'foreignId', '_pjax'] from query string
-        if(!empty(Yii::$app->request->queryParams)) {
+        if (!empty(Yii::$app->request->queryParams)) {
             $excludeParams = ['id' => 1, 'foreignId' => 1, '_pjax' => 1];
             $queryParams = array_diff_key(Yii::$app->request->queryParams, $excludeParams);
             $queryString = '&'.http_build_query($queryParams);
@@ -181,7 +181,7 @@ class Entity implements EntityInterface
         $selectExpr = new JsExpression(
             "function( event, ui )
             {
-                if(typeof ui.item != 'undefined' && ui.item != null)
+                if (typeof ui.item != 'undefined' && ui.item != null)
                 {
                     location.href = 
                         '{$url}'+'?id='+{$model->id}+

@@ -174,7 +174,7 @@ class NetManagerController extends \yii\web\Controller
         $user = new UserForm();
         $user->setModel($this->findModel($id, new User()));
         $profile = UserProfile::findOne($id);
-        if($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
+        if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
             $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
             $isValid = $user->validate(false);
             $isValid = $profile->validate(false) && $isValid;
@@ -423,7 +423,7 @@ class NetManagerController extends \yii\web\Controller
         if (!empty($user->company)) {
             $company = $user->company;
             $balanceHolders = $company->balanceHolders;
-            if(!empty($addressBalanceHolderId)) {
+            if (!empty($addressBalanceHolderId)) {
                 $addressBalanceHolder = $this->findModel($addressBalanceHolderId, new AddressBalanceHolder());
             }
             else {
