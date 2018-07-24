@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -45,9 +46,10 @@ class AddressBalanceHolderSearch extends AddressBalanceHolder
     {
         $user = User::findOne(Yii::$app->user->id);
         $query = AddressBalanceHolder::find();
+
         $query = $query->andWhere(['company_id' => $user->company->id]);
         
-        if(!empty($params['balanceHolderId']))
+        if (!empty($params['balanceHolderId']))
             $query = $query->andWhere(['balance_holder_id' => $params['balanceHolderId']]);
 
         // add conditions that should always apply here
