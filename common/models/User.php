@@ -301,25 +301,27 @@ class User extends ActiveRecord implements IdentityInterface
     }
     
     /**
+     * @param string $roleNames
      * @return integer
      */
-    public function getUserTechnicianCount() {
+    public function getUserCountByRoles($roleNames) {
         $entity = new Entity();
-        $query = $entity->getUnitsQueryPertainCompany(new User())
-                 ->innerJoin(['a' => 'auth_assignment'], 'a.user_id = user.id')
-                 ->andWhere(['a.item_name' => [self::ROLE_TECHNICIAN, self::ROLE_FINANCIER, self::ROLE_ADMINISTRATOR] ]);
+        $users = $entity->getUnitsPertainCompany(new User());
+        $ids = ArrayHelper::getColumn($users, 'id');
+        $authManager = Yii::$app->authManager;
+        $userRoleIds = [];
+        foreach($roleNames as $role)
+        {
+            $userIdsByRole = $authManager->getUserIdsByRole($role);
+            $arr_diff = array_diff($userIdsByRole, $userRoleIds);
+            $userRoleIds = array_merge($userRoleIds, $arr_diff);
+        }
+        $userIds = array_intersect($ids, $userRoleIds);
         
-        return $query->count();
+        return count($userIds);
     }
-    
-    /**
-     * @return integer
-     */
-    public function getUserAdminCount() {
         
-        return 1;
-    }
-    
+        
     /**
      * @return integer
      */
@@ -327,6 +329,18 @@ class User extends ActiveRecord implements IdentityInterface
         $entity = new Entity();
         $query = $entity->getUnitsQueryPertainCompany(new User());
                  
-        return ( $query->count() + 1); // add also root admin, who has access everywhere
+        return $query->count();
+    }
+    
+    /**
+     * @return integer
+     */
+    public function getUserOtherCount() {
+        $countAll = $this->getUserCount();
+        $countRoles = $this->getUserCountByRoles(
+            [User::ROLE_FINANCIER, User::ROLE_TECHNICIAN, User::ROLE_MANAGER]
+        );
+                    
+        return $countAll - $countRoles;
     }
 }
