@@ -74,17 +74,10 @@ class AddressBalanceHolderController extends Controller
         $user = User::findOne(Yii::$app->user->id);
         $company = $user->company;
         $balanceHolders = $company->balanceHolders;
-        if($balanceHolderId) {
-            $entity = new Entity();
-            $balanceHolder = $entity->getUnitPertainCompany
-            (
-                $balanceHolderId, 
-                new BalanceHolder()
-            );
-        }
-        else {
-            $balanceHolder = false;
-        }
+        $entity = new Entity();
+        $balanceHolder = $entity->getUnitPertainCompany(
+            $balanceHolderId, new BalanceHolder(), false
+        );
 
         if ($model->load(Yii::$app->request->post())) {
             $model->created_at = Time();

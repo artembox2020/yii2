@@ -22,11 +22,22 @@ class Entity implements EntityInterface
     /**
      * @param null $id
      * @param null $instance
+     * @param $returnIfZero
      * @return null|Instance
      * @throws \yii\web\NotFoundHttpException
      */
-    public function getUnitPertainCompany($id, $instance)
+    public function getUnitPertainCompany($id, $instance, $returnIfZero = -1)
     {
+        if (!$id) {
+            if ($returnIfZero !== -1) {
+                
+                return $returnIfZero;
+            }
+            else {
+                throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
+            }
+        }
+        
         $unit = $instance::findOne(['id' => $id, 'company_id' => $this->getCompanyId()]);
         $this->checkAccess($unit);
 
