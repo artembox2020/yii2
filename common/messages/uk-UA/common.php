@@ -42,6 +42,7 @@ return [
     'Position' => 'Посада',
     'Server Rights' => 'Права на сервері',
     'Status' => 'Статус',
+    'Type address' => 'введіть адресу',
     'Type imei' => 'введіть імей',
     'Worker Card' => 'Картка співробітника',
     'Undefined' => 'Не визначений',
