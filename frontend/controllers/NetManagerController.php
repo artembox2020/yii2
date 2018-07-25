@@ -174,7 +174,7 @@ class NetManagerController extends \yii\web\Controller
         $user = new UserForm();
         $user->setModel($this->findModel($id, new User()));
         $profile = UserProfile::findOne($id);
-        if($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
+        if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
             $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
             $isValid = $user->validate(false);
             $isValid = $profile->validate(false) && $isValid;
@@ -279,6 +279,8 @@ class NetManagerController extends \yii\web\Controller
      * 
      * @param $balanceHolderId
      * @return string|\yii\web\Response
+     * @throws \yii\web\NotFoundHttpException
+     * @throws \yii\web\ServerErrorHttpException
      */
     public function actionAddresses($balanceHolderId = false)
     {
@@ -287,7 +289,7 @@ class NetManagerController extends \yii\web\Controller
         
         // imeis list for AutoComplete widget
         $imeis = $entity->getFilteredStatusDataMapped(
-            new Imei(), Imei::STATUS_OFF, ['id' => 'imei']
+            new Imei(), Imei::STATUS_OFF, ['id' => ['imei']]
         );
                 
         $params = [
@@ -321,6 +323,7 @@ class NetManagerController extends \yii\web\Controller
      * @param integer $id
      * @param integer $foreignId
      * @return string|\yii\web\Response
+     * @throws \yii\web\NotFoundHttpException
      */
     public function actionAddressesBindToImei($id, $foreignId) 
     {
@@ -342,11 +345,36 @@ class NetManagerController extends \yii\web\Controller
         $searchModel = new ImeiSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = self::PAGE_SIZE;
+        $entity = new Entity();
+        // addresses list for AutoComplete widget
+        $addresses = $entity->getFilteredStatusDataMapped(
+            new AddressBalanceHolder(), 
+            AddressBalanceHolder::STATUS_FREE, ['id' => ['address', 'floor'], ', ']
+        );
 
         return $this->render('washpay/washpay', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dataProvider,
+            'addresses' => $addresses
         ]);
+    }
+    
+    /**
+     * Binds address to imei and redirects to actionWashpay
+     * 
+     * @param integer $id
+     * @param integer $foreignId
+     * @return string|\yii\web\Response
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function actionWashpayBindToAddress($id, $foreignId) 
+    {
+        $entity = new Entity();
+        $imei = $entity->getUnitPertainCompany($id, new Imei());
+        $imei->bindToAddress($foreignId);
+        $redirectUrl = array_merge(['washpay'], Yii::$app->request->queryParams);
+
+        return $this->redirect($redirectUrl);
     }
 
     /**
@@ -386,29 +414,31 @@ class NetManagerController extends \yii\web\Controller
     public function actionWashpayUpdate($id)
     {
         $user = User::findOne(Yii::$app->user->id);
+        $entity = new Entity();
         
         $imei = $this->findModel($id, new Imei());
         
-        $company = $user->company;
-        $balanceHolders = $company->balanceHolders;
-        foreach ($company->balanceHolders as $balanceHolder) {
-            
-            foreach ($balanceHolder->addressBalanceHolders as $addresses) {
-                $tempadd[] = $addresses;
-            }
-                
-        }
+        $addresses = $entity->getFilteredStatusDataMapped(
+            new AddressBalanceHolder(), 
+            AddressBalanceHolder::STATUS_FREE, ['id' => ['address', 'floor'], ', '],
+            $imei->address_id
+        );
+        $addresses = ArrayHelper::map($addresses, 'id', 'value');
 
         if ($imei->load(Yii::$app->request->post())) {
-            
+            $imei->company_id = $user->company_id;
+            $addressBalanceHolder = $this->findModel($imei->address_id, new AddressBalanceHolder());
+            $imei->balance_holder_id = $addressBalanceHolder->balance_holder_id;
+            $imei->is_deleted = false;
+            $imei->bindToAddress($imei->address_id, true);
             $imei->save();
                 
             $this->redirect(['/net-manager/washpay']);
         }
 
-        return $this->render('washpay/washpay-update' , [
+        return $this->render('washpay/washpay-update', [
             'imei' => $imei,
-            'addresses' => $tempadd,
+            'addresses' => $addresses,
         ]);
     }
 
@@ -419,39 +449,31 @@ class NetManagerController extends \yii\web\Controller
     public function actionWashpayCreate($addressBalanceHolderId = null)
     {
         $user = User::findOne(Yii::$app->user->id);
+        $entity = new Entity();
+        $addressBalanceHolder = $entity->getUnitPertainCompany(
+            $addressBalanceHolderId, new AddressBalanceHolder(), false
+        );
+        $addresses = $entity->getFilteredStatusDataMapped(
+            new AddressBalanceHolder(), 
+            AddressBalanceHolder::STATUS_FREE, ['id' => ['address', 'floor'], ', ']
+        );
+        $addresses = ArrayHelper::map($addresses, 'id', 'value');
+        $imei = new Imei();
 
-        if (!empty($user->company)) {
-            $company = $user->company;
-            $balanceHolders = $company->balanceHolders;
-            if(!empty($addressBalanceHolderId)) {
-                $addressBalanceHolder = $this->findModel($addressBalanceHolderId, new AddressBalanceHolder());
-            }
-            else {
-                $addressBalanceHolder = false;
-            }
-            foreach ($company->balanceHolders as $balanceHolder) {
+        if ($imei->load(Yii::$app->request->post())) {
+            $imei->company_id = $user->company_id;
+            $addressBalanceHolder = $this->findModel($imei->address_id, new AddressBalanceHolder());
+            $imei->balance_holder_id = $addressBalanceHolder->balance_holder_id;
+            $imei->is_deleted = false;
+            $imei->bindToAddress($imei->address_id, true);
+            $imei->save();
                 
-                foreach ($balanceHolder->addressBalanceHolders as $addresses) {
-                    $tempadd[] = $addresses;
-                }
-            }
-            
-            $imei = new Imei();
-
-            if ($imei->load(Yii::$app->request->post())) {
-                $imei->company_id = $company->id;
-                $addressBalanceHolder = $this->findModel($imei->address_id, new AddressBalanceHolder());
-                $imei->balance_holder_id = $addressBalanceHolder->balance_holder_id;
-                $imei->is_deleted = false;
-                $imei->save();
-                
-                $this->redirect(['/net-manager/washpay']);
-            }
+            $this->redirect(['/net-manager/washpay']);
         }
 
         return $this->render('washpay/washpay-create', [
             'imei' => $imei,
-            'addresses' => $tempadd,
+            'addresses' => $addresses,
             'addressBalanceHolder' => $addressBalanceHolder
         ]);
     }

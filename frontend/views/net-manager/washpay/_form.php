@@ -47,11 +47,7 @@ use frontend\services\globals\Entity;
     <?= $form->field($imei, 'type_bill_acceptance')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($imei, 'address_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($addresses, 'id', function($model) {
-            
-            return $model->address.' '.$model->floor;  
-        }),
-        
+        $addresses,
         [
             'options' => $addressBalanceHolderOptions
         ]
