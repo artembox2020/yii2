@@ -73,13 +73,8 @@ class ImeiSearch extends Imei
             ['like', 'imei', $this->imei]
         );
         
-        $query->joinWith(['address' => function ($q) {
-            if(!empty($this->address)) {
-                $q->andWhere(
-                    ['like','address_balance_holder.address', $this->address]
-                );
-            }
-        }]);
+        $query->join('LEFT JOIN', 'address_balance_holder', 'address_balance_holder.id = imei.address_id')
+              ->andWhere(['like','address_balance_holder.address', $this->address]); 
         
         return $dataProvider;
     }

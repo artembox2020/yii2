@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use \frontend\models\Imei;
+use frontend\services\globals\Entity;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -39,20 +40,28 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'balanceHolder',
                 'value' => function($model) {
                     
-                    if(!empty($model->balanceHolder))
-                    
+                    if (!empty($model->balanceHolder))
+                    {
+
                         return $model->balanceHolder->address;
+                    }
                     else
-                    
+                    {
+
                         return Yii::t('common', 'Not Set');
+                    }
                 }
             ],
             
             [
                 'attribute' => 'address',
                 'value' => function($model) {
+                    $entity = new Entity();
                     
-                    return Imei::getAddressValue($model);
+                    return $model->getRelationData(
+                        ['address' => 'address'],
+                        Yii::t('common', 'Not Set')
+                    );
                 }
             ],
             

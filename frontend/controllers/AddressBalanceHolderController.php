@@ -81,6 +81,7 @@ class AddressBalanceHolderController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->created_at = Time();
+            $model->status = AddressBalanceHolder::STATUS_FREE;
             $model->is_deleted = false;
             $model->deleted_at = time();
             $model->save();
@@ -138,9 +139,10 @@ class AddressBalanceHolderController extends Controller
     /**
      * Finds the AddressBalanceHolder model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     * 
      * @param integer $id
-     * @return AddressBalanceHolder the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return null|Instance
+     * @throws \yii\web\NotFoundHttpException
      */
     protected function findModel($id)
     {
