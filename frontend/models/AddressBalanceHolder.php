@@ -5,6 +5,7 @@ namespace frontend\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use frontend\services\globals\Entity;
 
 /**
  * This is the model class for table "address_balance_holder".
@@ -28,6 +29,9 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  */
 class AddressBalanceHolder extends \yii\db\ActiveRecord
 {
+    const STATUS_FREE = 0;
+    const STATUS_BUSY = 1;
+    
     /**
      * @inheritdoc
      */
@@ -167,5 +171,27 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     public static function find()
     {
         return parent::find()->where(['address_balance_holder.is_deleted' => false]);
+    }
+
+    /**
+     * @return true|false
+     */
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            
+            return false;
+        }
+
+        $entity = new Entity();
+        $imeis = $entity->getUnitsQueryPertainCompany(new Imei())
+                        ->andWhere(['address_id' => $this->id, 'status' => Imei::STATUS_ACTIVE])
+                        ->all();
+        foreach($imeis as $imei) {        
+            $imei->status = Imei::STATUS_OFF;
+            $imei->save();
+        }
+
+        return true;
     }
 }

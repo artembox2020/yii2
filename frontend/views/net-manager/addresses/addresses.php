@@ -55,8 +55,8 @@ use frontend\services\globals\Entity;
                 'label' => Yii::t('frontend', 'Imei'),
                 'format' => 'raw',
                 'value' => function($model) use($imeis) {
-                   
-                    $addWashpay = Entity::AutoCompleteWidgetFilteredData([
+                    $entity = new Entity();
+                    $addWashpay = $entity->AutoCompleteWidgetFilteredData([
                         'model' => $model,
                         'name' => 'imei',
                         'url' => '/net-manager/addresses-bind-to-imei',
@@ -65,8 +65,12 @@ use frontend\services\globals\Entity;
                             'placeholder' => Yii::t('common', 'Type imei')
                         ]
                     ]);
-                    
-                    return !empty($model->imei) ? $model->imei->imei : $addWashpay;
+
+                    return $entity->getUnitRelationData(
+                        $model,
+                        ['imei' => 'imei'],
+                        $addWashpay
+                    );
                 }
             ],
     

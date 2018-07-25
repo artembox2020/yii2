@@ -28,18 +28,8 @@ class Entity implements EntityInterface
      */
     public function getUnitPertainCompany($id, $instance, $returnIfZero = -1)
     {
-        if (!$id) {
-            if ($returnIfZero !== -1) {
-                
-                return $returnIfZero;
-            }
-            else {
-                throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
-            }
-        }
-        
         $unit = $instance::findOne(['id' => $id, 'company_id' => $this->getCompanyId()]);
-        $this->checkAccess($unit);
+        $unit = $this->checkAccess($unit, $returnIfZero);
 
         return $unit;
     }
@@ -51,10 +41,9 @@ class Entity implements EntityInterface
      */
     public function getUnitsPertainCompany($instance)
     {
-        
         $units = $this->getUnitsQueryPertainCompany($instance)->all();
         $this->checkAccess($units);
-        
+
         return $units;
     }
     
@@ -74,15 +63,14 @@ class Entity implements EntityInterface
      * 
      * @param $instance
      * @param $status
-     * @return mixed
-     * @throws \yii\web\NotFoundHttpException
+     * @return array
      */
     public function getFilteredStatusDataEx($instance, $status)
     {
         $units = $instance::find()
             ->andWhere(['company_id' => $this->getCompanyId(), 'status' => $status])
             ->all();
-        if(!$units) {
+        if (!$units) {
             $units = [];
         }
 
@@ -106,12 +94,18 @@ class Entity implements EntityInterface
 
     /**
      * @param $unit
+     * @param mixed $returnOnFail
      * @return mixed
      * @throws \yii\web\NotFoundHttpException
      */
-    public function checkAccess($unit)
+    public function checkAccess($unit, $returnOnFail = -1)
     {
         if (!$unit) {
+            if ($returnOnFail !== -1) {
+                
+                return $returnOnFail;
+            }
+            
             throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
         }
 
@@ -134,20 +128,43 @@ class Entity implements EntityInterface
      * @param $instance
      * @param $status
      * @param $map
-     * @return mixed
+     * @return array
      * @throws \yii\web\NotFoundHttpException
      * @throws \yii\web\ServerErrorHttpException
      */
-    public function getFilteredStatusDataMapped($instance, $status, Array $map)
+    public function getFilteredStatusDataMapped($instance, $status, Array $map, $unitId = false)
     {
         $units = $this->getFilteredStatusDataEx($instance, $status);
         
+        // addition one more unit if specified
+        if (!empty($unitId)) {
+            $unitIds = ArrayHelper::getColumn($units, 'id');
+            if (!in_array($unitId, $unitIds)) {
+                $unit = $this->getUnitPertainCompany($unitId, $instance);
+                $units = array_merge($units, [$unit]);
+            }
+        }
+        
         try {
             $key = array_keys($map)[0];
-            $value = $map[$key];
+            $names = $map[$key];
+            $glue = empty($map[0]) ? ' ' : $map[0];
             $maps = [];
             foreach($units as $unit) {
-                $maps[] = (object)['id' => $unit->$key, 'value' => $unit->$value];
+                $value = '';
+                if (is_array($names))
+                {
+                    foreach($names as $name) {
+                        $value.= $unit->$name.$glue;
+                    }
+                    if (!empty($value)) {
+                        $value = mb_substr($value, 0, -mb_strlen($glue));
+                    }
+                }
+                else {
+                    $value = $unit->$names;
+                }
+                $maps[] = (object)['id' => $unit->$key, 'value' => $value];
             }
         }
         catch(Exception $e) {
@@ -165,14 +182,14 @@ class Entity implements EntityInterface
      * @param $params
      * @return \yii\jui\AutoComplete
      */
-    public static function AutoCompleteWidgetFilteredData($params)
+    public function AutoCompleteWidgetFilteredData($params)
     {
         extract($params);
         
         $queryString = '';
         
         // exclude params ['id', 'foreignId', '_pjax'] from query string
-        if(!empty(Yii::$app->request->queryParams)) {
+        if (!empty(Yii::$app->request->queryParams)) {
             $excludeParams = ['id' => 1, 'foreignId' => 1, '_pjax' => 1];
             $queryParams = array_diff_key(Yii::$app->request->queryParams, $excludeParams);
             $queryString = '&'.http_build_query($queryParams);
@@ -181,7 +198,7 @@ class Entity implements EntityInterface
         $selectExpr = new JsExpression(
             "function( event, ui )
             {
-                if(typeof ui.item != 'undefined' && ui.item != null)
+                if (typeof ui.item != 'undefined' && ui.item != null)
                 {
                     location.href = 
                         '{$url}'+'?id='+{$model->id}+
@@ -191,16 +208,68 @@ class Entity implements EntityInterface
 		);
 		
         return AutoComplete::widget([
-                                        
             'name' => $name,
-                        
+
             'options' => $options,
-            
+
             'clientOptions' => [
                 'source' => $source,
                 'autoFill' => true,
                 'select' => $selectExpr,
             ],
         ]);
+    }
+    
+    /**
+     * @param $unit
+     * @param $params
+     * @param $returnIfNotExist
+     * @return string
+     * @throw \yii\web\NotFoundHttpEception
+     * @thorw \yii\web\ServerErrorHttpException
+     */
+    public function getUnitRelationData($unit, $params, $returnIfNotExist = -1)
+    {
+        if (!$unit) {
+            throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
+        }
+        try {
+            $relation = array_keys($params)[0];
+            $names = $params[$relation];
+            $glue = empty($params[0]) ? ' ' : $params[0];
+
+            if (empty($unit->$relation)) {
+                if ($returnIfNotExist == -1) {
+                    throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
+                }
+                else {
+                    
+                    return $returnIfNotExist;
+                }
+            }
+            else {
+                if (is_array($names)) {
+                    $value = '';
+                    foreach($names as $name) {
+                        $value.= $unit->$relation->$name.$glue;
+                    }
+                    if (!empty($value)) {
+                        $value = mb_substr($value, 0, -mb_strlen($glue));
+                    }
+
+                }
+                else {
+                    $value = $unit->$relation->$names;
+                }
+            }
+        }
+        catch (Exception $e) {
+            throw new \yii\web\HttpException(
+                500, 
+                Yii::t('common', 'Invalid Array [Key => Value] Configuration')
+            );
+        }
+
+        return $value;
     }
 }
