@@ -58,7 +58,7 @@ use frontend\models\Imei;
                     $getInitResult = $model->getInit();
                     if($getInitResult == 'Ok')
                     
-                        return date('dd.MM.yyyy H:i:s', $model->updated_at);
+                        return date('H:i:s dd.MM.yyyy', $model->updated_at);
                     else
                     
                         return $getInitResult;

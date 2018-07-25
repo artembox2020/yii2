@@ -280,9 +280,11 @@ class NetManagerController extends \yii\web\Controller
     /**
      * Index page for addresses
      * In case of $balanceHolderId is set, the appropriate filter is applied
-     * 
-     * @param $balanceHolderId
-     * @return string|\yii\web\Response
+     *
+     * @param bool $balanceHolderId
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws \yii\web\ServerErrorHttpException
      */
     public function actionAddresses($balanceHolderId = false)
     {
@@ -321,10 +323,11 @@ class NetManagerController extends \yii\web\Controller
 
     /**
      * Binds imei to address and redirects to actionAddresses
-     * 
-     * @param integer $id
-     * @param integer $foreignId
-     * @return string|\yii\web\Response
+     *
+     * @param $id
+     * @param $foreignId
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionAddressesBindToImei($id, $foreignId) 
     {
@@ -391,21 +394,18 @@ class NetManagerController extends \yii\web\Controller
     public function actionWashpayUpdate($id)
     {
         $user = User::findOne(Yii::$app->user->id);
-        
         $imei = $this->findModel($id, new Imei());
         
         $company = $user->company;
         $balanceHolders = $company->balanceHolders;
+
         foreach ($company->balanceHolders as $balanceHolder) {
-            
             foreach ($balanceHolder->addressBalanceHolders as $addresses) {
                 $tempadd[] = $addresses;
             }
-                
         }
 
         if ($imei->load(Yii::$app->request->post())) {
-            
             $imei->save();
                 
             $this->redirect(['/net-manager/washpay']);
@@ -418,8 +418,9 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
-     * @param $addressBalanceHolderId
-     * @return string|\yii\web\Response
+     * @param null $addressBalanceHolderId
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionWashpayCreate($addressBalanceHolderId = null)
     {

@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'last_ping',
                 'label' => Yii::t('frontend', 'Last ping'),
                 'value' => function($model) {
-                    $formattedDate = Yii::$app->formatter->asDate($model->updated_at, 'dd.MM.yyyy H:i:s');
+                    $formattedDate = Yii::$app->formatter->asDate($model->updated_at, 'H:i:s dd.MM.yyyy');
                     $getInitResult = $model->getInit();
                     
                     return $getInitResult == 'Ok' ? $formattedDate : $getInitResult;
