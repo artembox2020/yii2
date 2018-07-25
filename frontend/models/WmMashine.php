@@ -2,6 +2,8 @@
 
 namespace frontend\models;
 
+use frontend\services\custom\Debugger;
+use frontend\services\globals\Entity;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -108,9 +110,10 @@ class WmMashine extends \yii\db\ActiveRecord
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
             [['serial_number'], 'unique'],
-            [['number_device'], 'unique'],
-            [['number_device'], 'unique', 'targetAttribute' => ['number_device']],
-            ['number_device', 'validateNumberDevice', 'targetClass' => WmMashine::className(),
+//            [['number_device'], 'unique'],
+//            [['number_device'], 'unique', 'targetAttribute' => ['number_device']],
+            [['serial_number'], 'unique', 'targetAttribute' => ['serial_number']],
+            ['number_device', 'validateNumberDevice', 'skipOnEmpty' => false, 'skipOnError' => false,
                 'message' => \Yii::t('frontend', 'This Device number has already been taken')],
             [['imei_id', 'number_device',
                 'level_signal',
@@ -231,5 +234,25 @@ class WmMashine extends \yii\db\ActiveRecord
     public function getBalanceHolder()
     {
         return $this->hasOne(BalanceHolder::className(), ['id' => 'balance_holder_id']);
+    }
+
+    /**
+     * @param $attribute
+     * @param $params
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function validateNumberDevice($attribute, $params)
+    {
+        $array = [];
+        $entity = new Entity();
+        $result = $entity->getUnitsPertainCompany(new WmMashine());
+
+        foreach ($result as $value) {
+            $array[] = $value->number_device;
+        }
+
+        if (in_array($this->$attribute, $array)) {
+            $this->addError($attribute, 'This Device number has already been taken');
+        }
     }
 }

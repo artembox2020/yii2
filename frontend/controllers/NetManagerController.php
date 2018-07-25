@@ -340,9 +340,11 @@ class NetManagerController extends \yii\web\Controller
         
         return $this->redirect($redirectUrl);
     }
-    
+
     /**
-     * @return string|\yii\web\Response
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws \yii\web\ServerErrorHttpException
      */
     public function actionWashpay()
     {
@@ -413,8 +415,9 @@ class NetManagerController extends \yii\web\Controller
 
     /**
      * @param $id
-     * @return string|\yii\web\Response
+     * @return string
      * @throws NotFoundHttpException
+     * @throws \yii\web\ServerErrorHttpException
      */
     public function actionWashpayUpdate($id)
     {
@@ -451,6 +454,7 @@ class NetManagerController extends \yii\web\Controller
      * @param null $addressBalanceHolderId
      * @return string
      * @throws NotFoundHttpException
+     * @throws \yii\web\ServerErrorHttpException
      */
     public function actionWashpayCreate($addressBalanceHolderId = null)
     {
@@ -485,7 +489,7 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
-     * @return string|\yii\web\Response
+     * @return string
      */
     public function actionOsnovnizasoby()
     {
@@ -536,7 +540,7 @@ class NetManagerController extends \yii\web\Controller
             $model->is_deleted = self::ZERO;
             $model->type_mashine = self::TYPE_WM;
 
-            if ($model->validate() && $model->castomValidation()) {
+            if ($model->validate()) {
                 // все данные корректны
                 $model->save();
             } else {
