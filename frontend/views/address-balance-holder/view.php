@@ -13,6 +13,12 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance
 $this->params['breadcrumbs'][] = $this->title;
 $dateFormat = "M j, Y";
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br>
 <div class="address-balance-holder-view">
 
     <h1><?= Html::encode($this->title) ?></h1>

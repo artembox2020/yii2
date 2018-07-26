@@ -19,7 +19,7 @@ use common\models\User;
         'menu' => $menu,
     ]) ?>
 </b>
-<br/>
+<br/><br/>
 <div>
     <?= Html::a("[".Yii::t('frontend', 'Create user')."]", ['account/default/create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?>
 </div>

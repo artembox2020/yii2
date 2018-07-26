@@ -12,6 +12,12 @@ $this->title = $model->imei;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Imeis'), 'url' => ['/net-manager/washpay']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br><br>
  <p><u><b><?= Yii::t('frontend','WashPay Card').'-'.$model->id ?></b></u><p/>
 <div class="imei-view">
 

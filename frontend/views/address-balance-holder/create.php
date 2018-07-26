@@ -12,6 +12,12 @@ $this->title = Yii::t('frontend', 'Create Address Balance Holder');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance Holders'), 'url' => ['/net-manager/addresses']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br>
 <div class="address-balance-holder-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
