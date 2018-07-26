@@ -44,7 +44,7 @@ $dateFormat = "M j, Y";
             
             [
                 'label' => Yii::t('frontend','Balance Holder'),
-                'value' => $model->balanceHolder->address
+                'value' => $model->balanceHolder->name
             ],
             
             [    

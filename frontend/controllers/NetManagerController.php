@@ -286,6 +286,8 @@ class NetManagerController extends \yii\web\Controller
     {
         $searchModel = new AddressBalanceHolderSearch();
         $entity = new Entity();
+        $user = User::findOne(Yii::$app->user->id);
+        $company = \frontend\models\Company::findOne($user->company->id);
         
         // imeis list for AutoComplete widget
         $imeis = $entity->getFilteredStatusDataMapped(
@@ -301,6 +303,7 @@ class NetManagerController extends \yii\web\Controller
             
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $params['dataProvider'] = $dataProvider;
+            $params['company'] = $company;
 
             return $this->render('addresses/addresses', $params);
         }

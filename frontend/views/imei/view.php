@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     if (!empty($model->balanceHolder))
                     {
 
-                        return $model->balanceHolder->address;
+                        return $model->balanceHolder->name;
                     }
                     else
                     {

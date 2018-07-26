@@ -31,7 +31,7 @@ use frontend\services\globals\Entity;
            'id',
            
             [
-               'attribute' => 'balanceHolder.address',
+               'attribute' => 'balanceHolder.name',
                'label' => Yii::t('frontend','Balance Holder')
             ],
            
@@ -80,3 +80,13 @@ use frontend\services\globals\Entity;
         ]
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
+<p><u><b><?= Yii::t('frontend','General Info') ?></b></u><p/>
+<?= DetailView::widget([
+    'model' => $company,
+    'attributes' => [
+        [
+            'label' =>  Yii::t('frontend', 'Count Addresses'),
+            'value' => $company->getCountAddress()
+        ],
+    ]
+]);

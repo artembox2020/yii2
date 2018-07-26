@@ -62,7 +62,7 @@ use frontend\models\Imei;
             ],
            
             [
-               'attribute' => 'balanceHolder.address',
+               'attribute' => 'balanceHolder.name',
                'label' => Yii::t('frontend', 'Balance Holder'),
             ],
            
