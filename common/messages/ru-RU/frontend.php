@@ -56,6 +56,7 @@ return [
     'Consolidated Financial Data' => 'Сведенные финансовые данные',
     'Contact' => 'Контакты',
     'Contact Person' => 'Контактное лицо',
+    'Count Addresses' => 'Количество адресов',
     'Count Administrative Employee' => 'Количество административных сотрудников',
     'Count Balance Holders' => 'Количество балансодержателей',
     'Count Employee' => 'Количество сотрудников',

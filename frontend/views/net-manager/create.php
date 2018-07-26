@@ -19,6 +19,12 @@ $this->title = Yii::t('backend', 'Update user: {username}', ['username' => $user
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['/net-manager/employees']];
 $this->params['breadcrumbs'][] = Yii::t('backend', 'Update');
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br><br>
 <div class="user-update">
 
     <?php $form = ActiveForm::begin() ?>

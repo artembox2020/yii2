@@ -53,9 +53,8 @@ use frontend\models\Imei;
                             'placeholder' => Yii::t('common', 'Type address')
                         ]
                     ]);
-                    
-                    return $entity->getUnitRelationData(
-                        $model,
+
+                    return $model->getRelationData(
                         ['address' => ['address', 'floor'], ', '],
                         $addAddress
                     );
@@ -63,7 +62,7 @@ use frontend\models\Imei;
             ],
            
             [
-               'attribute' => 'balanceHolder.address',
+               'attribute' => 'balanceHolder.name',
                'label' => Yii::t('frontend', 'Balance Holder'),
             ],
            
@@ -72,12 +71,11 @@ use frontend\models\Imei;
                 'label' => Yii::t('frontend', 'Last ping'),
                 'value' => function($model) {
                     $getInitResult = $model->getInit();
-                    if($getInitResult == 'Ok')
-                    
-                        return date('dd.MM.yyyy H:i:s', $model->updated_at);
-                    else
-                    
+                    if ($getInitResult == 'Ok') {
+                        return date('d.m.Y H:i:s', $model->updated_at);
+                    } else {
                         return $getInitResult;
+                    }
                 },
             ]
         ]

@@ -14,6 +14,12 @@ $this->title = Yii::t('backend', 'Create user');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['/net-manager/employees']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('@frontend/views/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br><br>
 <div class="user-create">
 
     <?php $form = ActiveForm::begin(['id' => 'user-create-form']) ?>

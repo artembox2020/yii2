@@ -14,6 +14,12 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('frontend', 'Update');
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br>
 <div class="address-balance-holder-update">
 
     <h1><?= Html::encode($this->title) ?></h1>

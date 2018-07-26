@@ -10,6 +10,12 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Other Contact People'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br>
 <div class="other-contact-person-view">
 
     <h1><?= Html::encode($this->title) ?></h1>

@@ -13,6 +13,12 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Other Contact P
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('frontend', 'Update');
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br>
 <div class="other-contact-person-update">
 
     <h1><?= Html::encode($this->title) ?></h1>

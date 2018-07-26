@@ -11,8 +11,14 @@ use yii\widgets\DetailView;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance Holders'), 'url' => ['/net-manager/addresses']];
 $this->params['breadcrumbs'][] = $this->title;
-$dateFormat = "M j, Y";
+$dateFormat = "d.m.Y";
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br>
 <div class="address-balance-holder-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -38,7 +44,7 @@ $dateFormat = "M j, Y";
             
             [
                 'label' => Yii::t('frontend','Balance Holder'),
-                'value' => $model->balanceHolder->address
+                'value' => $model->balanceHolder->name
             ],
             
             [    
