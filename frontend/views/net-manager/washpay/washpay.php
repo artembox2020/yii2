@@ -71,12 +71,15 @@ use frontend\models\Imei;
                 'label' => Yii::t('frontend', 'Last ping'),
                 'value' => function($model) {
                     $getInitResult = $model->getInit();
-                    if($getInitResult == 'Ok')
+                    if ($getInitResult == 'Ok')
+                    {
                     
-                        return date('dd.MM.yyyy H:i:s', $model->updated_at);
-                    else
+                        return date('d.m.Y H:i:s', $model->updated_at);
+                    }
+                    else {
                     
                         return $getInitResult;
+                    }
                 },
             ]
         ]
