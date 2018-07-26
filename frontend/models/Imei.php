@@ -332,7 +332,31 @@ class Imei extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return void
+     * @param $params
+     * @param int $returnIfNotExist
+     * @return int|string
+     * @throws \yii\web\HttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getRelationData($params, $returnIfNotExist = -1) {
+        if ($this->status == self::STATUS_ACTIVE) {
+            $entity = new Entity();
+            
+            return $entity->getUnitRelationData($this, $params, $returnIfNotExist);
+        } else {
+            if ($returnIfNotExist != -1) {
+                
+                return $returnIfNotExist;
+            } else {
+                throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
+            }
+        }
+    }
+
+    /**
+     * @param bool $insert
+     * @param array $attr
+     * @throws \yii\web\NotFoundHttpException
      */
     public function afterSave($insert, $attr) {
         parent::afterSave($insert, $attr);
@@ -379,9 +403,10 @@ class Imei extends \yii\db\ActiveRecord
             }
         }
     }
-    
-    /** 
-     * @return true|false
+
+    /**
+     * @return bool
+     * @throws \yii\web\NotFoundHttpException
      */
     public function beforeDelete() {
         if (!parent::beforeDelete()) {
@@ -393,9 +418,16 @@ class Imei extends \yii\db\ActiveRecord
         $address = $entity->getUnitPertainCompany(
             $this->address_id, new AddressBalanceHolder(), false
         );
+        
         if ($address) {
-            $address->status = AddressBalanceHolder::STATUS_FREE;
-            $address->save();
+            $countBindedImeis = $this->getCountImeiBindedToAddress($address->id);
+            if ($this->status == Imei::STATUS_ACTIVE) {
+                --$countBindedImeis;
+            }
+            if ($countBindedImeis <= 0) {
+                $address->status = AddressBalanceHolder::STATUS_FREE;
+                $address->save();
+            }
         }
         
         return true;

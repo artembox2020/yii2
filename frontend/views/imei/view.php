@@ -12,6 +12,12 @@ $this->title = $model->imei;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Imeis'), 'url' => ['/net-manager/washpay']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_sub_menu', [
+        'menu' => $menu,
+    ]) ?>
+</b><br><br>
  <p><u><b><?= Yii::t('frontend','WashPay Card').'-'.$model->id ?></b></u><p/>
 <div class="imei-view">
 
@@ -40,14 +46,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'balanceHolder',
                 'value' => function($model) {
                     
-                    if (!empty($model->balanceHolder))
-                    {
-
-                        return $model->balanceHolder->address;
-                    }
-                    else
-                    {
-
+                    if (!empty($model->balanceHolder)) {
+                        return $model->balanceHolder->name;
+                    } else {
                         return Yii::t('common', 'Not Set');
                     }
                 }
@@ -57,9 +58,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'address',
                 'value' => function($model) {
                     $entity = new Entity();
-                    
-                    return $entity->getUnitRelationData(
-                        $model,
+
+                    return $model->getRelationData(
                         ['address' => 'address'],
                         Yii::t('common', 'Not Set')
                     );
