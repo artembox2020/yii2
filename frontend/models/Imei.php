@@ -419,9 +419,16 @@ class Imei extends \yii\db\ActiveRecord
         $address = $entity->getUnitPertainCompany(
             $this->address_id, new AddressBalanceHolder(), false
         );
+        
         if ($address) {
-            $address->status = AddressBalanceHolder::STATUS_FREE;
-            $address->save();
+            $countBindedImeis = $this->getCountImeiBindedToAddress($address->id);
+            if ($this->status == Imei::STATUS_ACTIVE) {
+                --$countBindedImeis;
+            }
+            if ($countBindedImeis <= 0) {
+                $address->status = AddressBalanceHolder::STATUS_FREE;
+                $address->save();
+            }
         }
         
         return true;
