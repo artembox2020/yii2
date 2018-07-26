@@ -11,7 +11,10 @@ use frontend\controllers\OtherContactPersonController;
 /* @var $users common\models\User */
 /* @var $balanceHolders  */
 ?>
-<?php $menu = []; ?>
+<?php 
+    $menu = [];
+    $dateFormat = "d.m.Y";
+?>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
@@ -78,7 +81,7 @@ use frontend\controllers\OtherContactPersonController;
         $contactPersonCreated =
             [
                 'label' => Yii::t('frontend','Created'),
-                'value' => date("M j, Y g:i:s A",$person->created_at)
+                'value' => date($dateFormat, $person->created_at)
             ];
             
         $contactPersonControls =
@@ -111,11 +114,11 @@ use frontend\controllers\OtherContactPersonController;
             ],
             [
                 'label' => Yii::t('frontend','Date Start'),
-                'value' => date("M j, Y g:i:s A",$model->date_start_cooperation)
+                'value' => date($dateFormat, $model->date_start_cooperation)
             ],
             [
                 'label' => Yii::t('frontend','Date Monitoring'),
-                'value' => date("M j, Y g:i:s A",$model->date_connection_monitoring)
+                'value' => date($dateFormat, $model->date_connection_monitoring)
             ],
             $contactPerson,
             $contactPersonPosition,
