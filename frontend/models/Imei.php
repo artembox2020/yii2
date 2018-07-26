@@ -330,24 +330,28 @@ class Imei extends \yii\db\ActiveRecord
         
         return $query->count();                
     }
-
+    
     /**
-     * @param $params
-     * @param int $returnIfNotExist
-     * @return int|string
-     * @throws \yii\web\HttpException
-     * @throws \yii\web\NotFoundHttpException
+     * Gets relations data
+     * 
+     * @param array $params
+     * @param mixed $returnIfNotExist
+     * @return string
+     * @throws \yii\web\NotFoundHttpEception
+     * @throws \yii\web\ServerErrorHttpException
      */
     public function getRelationData($params, $returnIfNotExist = -1) {
         if ($this->status == self::STATUS_ACTIVE) {
             $entity = new Entity();
             
             return $entity->getUnitRelationData($this, $params, $returnIfNotExist);
-        } else {
+        }
+        else {
             if ($returnIfNotExist != -1) {
                 
                 return $returnIfNotExist;
-            } else {
+            }
+            else {
                 throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
             }
         }
@@ -403,8 +407,8 @@ class Imei extends \yii\db\ActiveRecord
             }
         }
     }
-
-    /**
+    
+    /** 
      * @return bool
      * @throws \yii\web\NotFoundHttpException
      */
@@ -413,6 +417,10 @@ class Imei extends \yii\db\ActiveRecord
             
             return false;
         }
+        
+        // release status of the model to be deleted
+        $this->status = Imei::STATUS_OFF;
+        $this->save();
     
         $entity = new Entity();
         $address = $entity->getUnitPertainCompany(
@@ -421,9 +429,6 @@ class Imei extends \yii\db\ActiveRecord
         
         if ($address) {
             $countBindedImeis = $this->getCountImeiBindedToAddress($address->id);
-            if ($this->status == Imei::STATUS_ACTIVE) {
-                --$countBindedImeis;
-            }
             if ($countBindedImeis <= 0) {
                 $address->status = AddressBalanceHolder::STATUS_FREE;
                 $address->save();

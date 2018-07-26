@@ -182,6 +182,10 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
             
             return false;
         }
+        
+        // release status of the model to be deleted
+        $this->status = AddressBalanceHolder::STATUS_FREE;
+        $this->save();
 
         $entity = new Entity();
         $imeis = $entity->getUnitsQueryPertainCompany(new Imei())
