@@ -25,7 +25,6 @@ use frontend\services\globals\Entity;
         $addressBalanceHolderOptions = [
             $addressBalanceHolderId => ['Selected' => true] 
         ];
-        
     }
     else {
         if(!empty($imei->address_id)) {
@@ -44,7 +43,7 @@ use frontend\services\globals\Entity;
 
     <?= $form->field($imei, 'imei')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($imei, 'type_bill_acceptance')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($imei, 'type_bill_acceptance')->dropDownList($typeBillAcceptance) ?>
 
     <?= $form->field($imei, 'address_id')->dropDownList(
         $addresses,

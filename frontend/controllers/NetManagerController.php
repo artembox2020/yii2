@@ -435,6 +435,7 @@ class NetManagerController extends \yii\web\Controller
             $imei->address_id
         );
         $addresses = ArrayHelper::map($addresses, 'id', 'value');
+        $typeBillAcceptance = $imei->getTypeBillAcceptanceList();
 
         if ($imei->load(Yii::$app->request->post())) {
             $imei->company_id = $user->company_id;
@@ -450,6 +451,7 @@ class NetManagerController extends \yii\web\Controller
         return $this->render('washpay/washpay-update', [
             'imei' => $imei,
             'addresses' => $addresses,
+            'typeBillAcceptance' => $typeBillAcceptance
         ]);
     }
 
@@ -472,6 +474,7 @@ class NetManagerController extends \yii\web\Controller
         );
         $addresses = ArrayHelper::map($addresses, 'id', 'value');
         $imei = new Imei();
+        $typeBillAcceptance = $imei->getTypeBillAcceptanceList();
 
         if ($imei->load(Yii::$app->request->post())) {
             $imei->company_id = $user->company_id;
@@ -487,7 +490,8 @@ class NetManagerController extends \yii\web\Controller
         return $this->render('washpay/washpay-create', [
             'imei' => $imei,
             'addresses' => $addresses,
-            'addressBalanceHolder' => $addressBalanceHolder
+            'addressBalanceHolder' => $addressBalanceHolder,
+            'typeBillAcceptance' => $typeBillAcceptance
         ]);
     }
 

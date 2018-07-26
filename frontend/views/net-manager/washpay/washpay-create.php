@@ -27,7 +27,8 @@ use frontend\services\custom\Debugger;
         <?= $this->render('_form', [
             'imei' => $imei,
             'addresses' => $addresses,
-            'addressBalanceHolder' => $addressBalanceHolder
+            'addressBalanceHolder' => $addressBalanceHolder,
+            'typeBillAcceptance' => $typeBillAcceptance
         ]) ?>
 
     </div>
