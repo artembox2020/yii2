@@ -28,7 +28,6 @@ use frontend\services\custom\Debugger;
             'imei' => $imei,
             'addresses' => $addresses,
             'addressBalanceHolder' => $addressBalanceHolder,
-            'typeBillAcceptance' => $typeBillAcceptance
         ]) ?>
 
     </div>

@@ -437,18 +437,4 @@ class Imei extends \yii\db\ActiveRecord
         
         return true;
     }
-    
-    /**
-     * Gets type bill acceptance list
-     * 
-     * @return array
-     */
-    public function getTypeBillAcceptanceList() {
-        $listArray = [
-            'ICT/ict' => 'ICT/ict',
-            'ICT/mdb' => 'ICT/mdb'
-        ];
-
-        return $listArray;
-    }
 }
