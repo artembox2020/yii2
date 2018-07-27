@@ -11,10 +11,11 @@ use common\models\User;
 /* @var $permissions yii\rbac\Permission[] */
 
 $this->title = Yii::t('backend', 'Create user');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['/net-manager/employees']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php $menu = []; ?>
+<b>
+    <?= $this->render('@frontend/views/net-manager/_button_back') ?>
+</b><br>
 <b>
     <?= $this->render('@frontend/views/net-manager/_sub_menu', [
         'menu' => $menu,

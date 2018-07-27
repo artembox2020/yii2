@@ -9,11 +9,11 @@ use yii\helpers\Html;
 $this->title = Yii::t('frontend', 'Update Balance Holder: {nameAttribute}', [
     'nameAttribute' => $model->name,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Balance Holders'), 'url' => ['/net-manager/balance-holders']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['/net-manager/view-balance-holder', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('frontend', 'Update');
 ?>
 <?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_button_back') ?>
+</b><br>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,

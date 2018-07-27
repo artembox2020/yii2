@@ -25,6 +25,7 @@ return [
     'All' => 'Все',
     'Author' => 'Автор',
     'Avatar' => 'Аватар',
+    'Back' => 'Назад',
     'Banned' => '',
     'Birthday' => 'День рождения',
     'Category' => 'Категория',

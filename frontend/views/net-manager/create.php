@@ -16,10 +16,11 @@ use vova07\fileapi\Widget as FileApi;
 /* @var $user common\models\User */
 
 $this->title = Yii::t('backend', 'Update user: {username}', ['username' => $user->username]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['/net-manager/employees']];
-$this->params['breadcrumbs'][] = Yii::t('backend', 'Update');
 ?>
 <?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_button_back') ?>
+</b><br>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,

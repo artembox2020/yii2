@@ -7,10 +7,11 @@ use yii\helpers\Html;
 /* @var $model frontend\models\GdMashine */
 
 $this->title = Yii::t('frontend', 'Create Gd Mashine');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Gd Mashines'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_button_back') ?>
+</b><br>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,

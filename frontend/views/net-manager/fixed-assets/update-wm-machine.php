@@ -18,6 +18,9 @@ use frontend\services\custom\Debugger;
 ?>
 <?php $menu = []; ?>
 <b>
+    <?= $this->render('/net-manager/_button_back') ?>
+</b><br>
+<b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
     ]) ?>
