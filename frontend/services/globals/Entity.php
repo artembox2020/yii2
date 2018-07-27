@@ -140,8 +140,10 @@ class Entity implements EntityInterface
         if (!empty($unitId)) {
             $unitIds = ArrayHelper::getColumn($units, 'id');
             if (!in_array($unitId, $unitIds)) {
-                $unit = $this->getUnitPertainCompany($unitId, $instance);
-                $units = array_merge($units, [$unit]);
+                $unit = $this->getUnitPertainCompany($unitId, $instance, false);
+                if ($unit) {
+                    $units = array_merge($units, [$unit]);
+                }
             }
         }
         
