@@ -37,7 +37,8 @@
         "beaten-sect0r/yii2-db-manager": "*",
         "samdark/sitemap": "*",
         "creocoder/yii2-taggable": "*",
-        "yii2tech/ar-softdelete": "*"
+        "yii2tech/ar-softdelete": "*",
+        "kartik-v/yii2-widget-datepicker": "@dev"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",

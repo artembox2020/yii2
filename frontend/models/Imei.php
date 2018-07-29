@@ -86,6 +86,7 @@ class Imei extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+
             [['imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['imei', 'address_id', 'company_id', 'balance_holder_id', 'status'], 'required'],
             [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms'], 'string', 'max' => 255],
@@ -98,6 +99,7 @@ class Imei extends \yii\db\ActiveRecord
                     }
                 }
             ],
+            [['created_at', 'updated_at'], 'date', 'format' => 'dd.MM.yyyy'],
             [['address_id'], 'exist', 'skipOnError' => true, 'targetClass' => AddressBalanceHolder::className(), 'targetAttribute' => ['address_id' => 'id']],
         ];
     }
@@ -330,15 +332,13 @@ class Imei extends \yii\db\ActiveRecord
         
         return $query->count();                
     }
-    
+
     /**
-     * Gets relations data
-     * 
-     * @param array $params
-     * @param mixed $returnIfNotExist
-     * @return string
-     * @throws \yii\web\NotFoundHttpEception
-     * @throws \yii\web\ServerErrorHttpException
+     * @param $params
+     * @param int $returnIfNotExist
+     * @return int|string
+     * @throws \yii\web\HttpException
+     * @throws \yii\web\NotFoundHttpException
      */
     public function getRelationData($params, $returnIfNotExist = -1) {
         if ($this->status == self::STATUS_ACTIVE) {

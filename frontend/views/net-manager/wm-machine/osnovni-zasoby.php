@@ -46,7 +46,9 @@ $menu = [];
         ],
         ['attribute' => 'updated_at',
             'label' => Yii::t('frontend', 'Last ping'),
-            'format' => ['date','[H:i:s] dd.MM.yyyy']
+            'value' => function($dataProvider) {
+                return date('[H:i:s] d.m.Y', $dataProvider->updated_at);
+            },
         ],
 
     ]

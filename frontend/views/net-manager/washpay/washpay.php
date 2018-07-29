@@ -72,7 +72,7 @@ use frontend\models\Imei;
                 'value' => function($model) {
                     $getInitResult = $model->getInit();
                     if ($getInitResult == 'Ok') {
-                        return date('d.m.Y H:i:s', $model->updated_at);
+                        return date('[H:i:s] d.m.Y', $model->updated_at);
                     } else {
                         return $getInitResult;
                     }

@@ -499,6 +499,8 @@ class NetManagerController extends \yii\web\Controller
         $searchModel = new WmMashineSearch();
         $dataProvider = $searchModel->searchWashMachine(Yii::$app->request->queryParams);
 
+//        Debugger::dd($dataProvider);
+
         return $this->render('wm-machine/osnovni-zasoby', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
