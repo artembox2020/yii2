@@ -9,10 +9,11 @@ use yii\helpers\Html;
 /* @var $company frontend\models\Company */
 
 $this->title = Yii::t('frontend', 'Create Address Balance Holder');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance Holders'), 'url' => ['/net-manager/addresses']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_button_back') ?>
+</b><br>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,

@@ -24,6 +24,7 @@ return [
     'Administration' => 'Адміністрування',
     'All' => 'Усі',
     'Avatar' => 'Аватарка',
+    'Back' => 'Назад',
     'Birthday' => 'Дата народження',
     'Category' => 'Категорія',
     'Delete Confirmation' => 'Ви впевнені, що хочете видалити цей запис?',

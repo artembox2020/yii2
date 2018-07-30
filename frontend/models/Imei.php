@@ -302,21 +302,12 @@ class Imei extends \yii\db\ActiveRecord
      * Binds imei to address
      * 
      * @param integer $addressId
-     * @param bool $checkStatus
-     * @return void
      */
-    public function bindToAddress($addressId, $checkStatus = false) {
-        if ($checkStatus) {
-            if ($this->status == Imei::STATUS_ACTIVE) {
-                $this->address_id = $addressId;
-                $this->save();
-            }
-        }
-        else {
-            $this->status = Imei::STATUS_ACTIVE;
-            $this->address_id = $addressId;
-            $this->save();
-        }
+    public function bindToAddress($addressId)
+    {
+        $this->status = Imei::STATUS_ACTIVE;
+        $this->address_id = $addressId;
+        $this->save();
     }
     
     /**
@@ -325,7 +316,8 @@ class Imei extends \yii\db\ActiveRecord
      * @param integer $addressId
      * @return integer
      */
-    public function getCountImeiBindedToAddress($addressId) {
+    public function getCountImeiBindedToAddress($addressId)
+    {
         $entity = new Entity();
         $query = $entity->getUnitsQueryPertainCompany(new Imei())
                         ->andWhere(['address_id' => $addressId, 'status' => Imei::STATUS_ACTIVE]);
@@ -340,7 +332,8 @@ class Imei extends \yii\db\ActiveRecord
      * @throws \yii\web\HttpException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function getRelationData($params, $returnIfNotExist = -1) {
+    public function getRelationData($params, $returnIfNotExist = -1)
+    {
         if ($this->status == self::STATUS_ACTIVE) {
             $entity = new Entity();
             
@@ -362,47 +355,34 @@ class Imei extends \yii\db\ActiveRecord
      * @param array $attr
      * @throws \yii\web\NotFoundHttpException
      */
-    public function afterSave($insert, $attr) {
+    public function afterSave($insert, $attr)
+    {
         parent::afterSave($insert, $attr);
 
         $entity = new Entity();
-        $address = $entity->getUnitPertainCompany($this->address_id, new AddressBalanceHolder());
-
-        // change statuses
-        if ($this->status == Imei::STATUS_ACTIVE) {
+        $address = $entity->getUnitPertainCompany(
+            $this->address_id, new AddressBalanceHolder()
+        );
+        
+        if ($this->getCountImeiBindedToAddress($this->address_id)) {
             $address->status = AddressBalanceHolder::STATUS_BUSY;
-            $address->save();
-            
-            $imeisQuery = $entity->getUnitsQueryPertainCompany(new Imei());
-            $imeis = $imeisQuery
-                         ->andWhere(['address_id' => $this->address_id])
-                         ->andWhere(['!=', 'id', $this->id])
-                         ->all();
-
-            foreach($imeis as $imei) {
-                $imei->status = Imei::STATUS_OFF;
-                $imei->save();
-            }
+        } else {
+            $address->status = AddressBalanceHolder::STATUS_FREE;
         }
-        else {
-            if (!$this->getCountImeiBindedToAddress($this->address_id)) {
-                $address->status = AddressBalanceHolder::STATUS_FREE;
-                $address->save();
-            }
-        }
-
-        // check and change status for the previous address
-        if (
-            !empty($attr['address_id']) && 
-            !$this->getCountImeiBindedToAddress($attr['address_id'])
-           )
-        {
+        $address->save();
+        
+        // if old address_id exists then update old address status
+        if (!empty($attr['address_id'])) {
             $prevAddress = $entity->getUnitPertainCompany(
                 $attr['address_id'], new AddressBalanceHolder(), false
             );
-
+            
             if ($prevAddress) {
-                $prevAddress->status = AddressBalanceHolder::STATUS_FREE;
+                if ($this->getCountImeiBindedToAddress($attr['address_id'])) {
+                    $prevAddress->status = AddressBalanceHolder::STATUS_BUSY;
+                } else {
+                    $prevAddress->status = AddressBalanceHolder::STATUS_FREE;
+                }
                 $prevAddress->save();
             }
         }
@@ -412,7 +392,8 @@ class Imei extends \yii\db\ActiveRecord
      * @return bool
      * @throws \yii\web\NotFoundHttpException
      */
-    public function beforeDelete() {
+    public function beforeDelete()
+    {
         if (!parent::beforeDelete()) {
             
             return false;
@@ -436,5 +417,17 @@ class Imei extends \yii\db\ActiveRecord
         }
         
         return true;
+    }
+    
+    /**
+     * Binds imei to address in case imei is active only
+     * 
+     * @param int $addressId
+     */
+    public function bindToAddressIfActive($addressId)
+    {
+        if ($this->status == Imei::STATUS_ACTIVE) {
+            $this->bindToAddress($addressId);
+        }
     }
 }

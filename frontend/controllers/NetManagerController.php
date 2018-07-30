@@ -441,7 +441,7 @@ class NetManagerController extends \yii\web\Controller
             $addressBalanceHolder = $this->findModel($imei->address_id, new AddressBalanceHolder());
             $imei->balance_holder_id = $addressBalanceHolder->balance_holder_id;
             $imei->is_deleted = false;
-            $imei->bindToAddress($imei->address_id, true);
+            $imei->bindToAddressIfActive($imei->address_id);
             $imei->save();
                 
             $this->redirect(['/net-manager/washpay']);
@@ -478,7 +478,7 @@ class NetManagerController extends \yii\web\Controller
             $addressBalanceHolder = $this->findModel($imei->address_id, new AddressBalanceHolder());
             $imei->balance_holder_id = $addressBalanceHolder->balance_holder_id;
             $imei->is_deleted = false;
-            $imei->bindToAddress($imei->address_id, true);
+            $imei->bindToAddressIfActive($imei->address_id);
             $imei->save();
                 
             $this->redirect(['/net-manager/washpay']);

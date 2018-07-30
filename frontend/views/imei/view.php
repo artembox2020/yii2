@@ -9,8 +9,6 @@ use yii\widgets\DetailView;
 /* @var $model frontend\models\Imei */
 
 $this->title = $model->imei;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Imeis'), 'url' => ['/net-manager/washpay']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php $menu = []; ?>
 <b>

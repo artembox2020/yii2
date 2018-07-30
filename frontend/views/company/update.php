@@ -8,11 +8,11 @@ use yii\helpers\Html;
 $this->title = Yii::t('frontend', 'Update Company: {nameAttribute}', [
     'nameAttribute' => $model->name,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Companies'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('frontend', 'Update');
 ?>
 <?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_button_back') ?>
+</b><br>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,

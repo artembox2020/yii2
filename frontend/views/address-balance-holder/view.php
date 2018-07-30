@@ -9,8 +9,6 @@ use yii\widgets\DetailView;
 /* @var $imeis frontend\models\Imei */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Address Balance Holders'), 'url' => ['/net-manager/addresses']];
-$this->params['breadcrumbs'][] = $this->title;
 $dateFormat = "d.m.Y";
 ?>
 <?php $menu = []; ?>

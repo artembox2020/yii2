@@ -8,10 +8,11 @@ use yii\helpers\Html;
 /* @var $balanceHolder frontend\models\BalanceHolder */
 
 $this->title = Yii::t('frontend', 'Create Other Contact Person');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Other Contact People'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php $menu = []; ?>
+<b>
+    <?= $this->render('/net-manager/_button_back') ?>
+</b><br>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
