@@ -34,6 +34,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $company_id
  * @property int $balance_holder_id
  * @property int $status
+ * @property int $ping
  *
  * @property AddressBalanceHolder $address
  * @property Machine[] $machines
@@ -44,6 +45,7 @@ class Imei extends \yii\db\ActiveRecord
     const STATUS_ACTIVE = 1;
     const STATUS_UNDER_REPAIR = 2;
     const STATUS_JUNK = 3;
+    const DATE_TIME_FORMAT = 'php:d.m.Y H:i:s';
 
     public $current_status = [
         'Off',
@@ -428,6 +430,30 @@ class Imei extends \yii\db\ActiveRecord
     {
         if ($this->status == Imei::STATUS_ACTIVE) {
             $this->bindToAddress($addressId);
+        }
+    }
+    
+    /**
+     * Gets the last ping or status in case
+     * it is not active
+     * 
+     * @param string $dateFormat
+     * @return string|date
+     */
+    public function getLastPing($dateFormat = self::DATE_TIME_FORMAT)
+    {
+        if ($this->status != self::STATUS_ACTIVE) {
+            
+            return self::checkStatus($this->status);
+        }
+        $getInitResult = $this->getInit();
+        if ($getInitResult == 'Ok') {
+            $formattedDate = Yii::$app->formatter->asDate($this->ping, $dateFormat);
+            
+            return $formattedDate;
+        } else {
+            
+            return $getInitResult;
         }
     }
 }
