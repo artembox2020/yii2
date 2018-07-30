@@ -73,7 +73,7 @@ $this->title = $model->imei;
                 'label' => Yii::t('frontend', 'Last ping'),
                 'value' => function($model) {
                     
-                    return $model->getLastPing("php:m.d.Y H:i:s");
+                    return $model->getLastPing();
                 }
             ]
         ],

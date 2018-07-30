@@ -45,6 +45,7 @@ class Imei extends \yii\db\ActiveRecord
     const STATUS_ACTIVE = 1;
     const STATUS_UNDER_REPAIR = 2;
     const STATUS_JUNK = 3;
+    const DATE_TIME_FORMAT = 'php:d.m.Y H:i:s';
 
     public $current_status = [
         'Off',
@@ -439,7 +440,7 @@ class Imei extends \yii\db\ActiveRecord
      * @param string $dateFormat
      * @return string|date
      */
-    public function getLastPing($dateFormat)
+    public function getLastPing($dateFormat = self::DATE_TIME_FORMAT)
     {
         if ($this->status != self::STATUS_ACTIVE) {
             
