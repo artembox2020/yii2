@@ -80,7 +80,7 @@ class CController extends Controller
                 $imei->crash_event_sms = $initDto->crash_event_sms;
                 $imei->critical_amount = $initDto->critical_amount;
                 $imei->time_out = $initDto->time_out;
-                $imei->updated_at = date('now');
+                $imei->ping = time();
                 $imei->update();
                 echo 'Success!';
             } else {
@@ -146,6 +146,9 @@ class CController extends Controller
             $imeiData->price_regim = $imeiDataDto->price_regim;
 
             $imeiData->save();
+            
+            $imei->ping = time();
+            $imei->save();
 
             $this->setTypeMashine($mashineData, $imei->id);
 
