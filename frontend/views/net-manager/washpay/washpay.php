@@ -54,10 +54,10 @@ use frontend\models\Imei;
                         ]
                     ]);
 
-                    return $model->getRelationData(
-                        ['address' => ['address', 'floor'], ', '],
-                        $addAddress
-                    );
+                        return $model->getRelationData(
+                            ['address' => ['address', 'floor'], ', '],
+                            $addAddress
+                        );
                },
             ],
            

@@ -177,10 +177,11 @@ class Entity implements EntityInterface
         
         return $maps;
     }
-    
+
     /**
      * @param $params
-     * @return \yii\jui\AutoComplete
+     * @return string
+     * @throws \Exception
      */
     public function AutoCompleteWidgetFilteredData($params)
     {
@@ -219,14 +220,14 @@ class Entity implements EntityInterface
             ],
         ]);
     }
-    
+
     /**
      * @param $unit
      * @param $params
-     * @param $returnIfNotExist
-     * @return string
-     * @throw \yii\web\NotFoundHttpEception
-     * @thorw \yii\web\ServerErrorHttpException
+     * @param int $returnIfNotExist
+     * @return int|string
+     * @throws \yii\web\HttpException
+     * @throws \yii\web\NotFoundHttpException
      */
     public function getUnitRelationData($unit, $params, $returnIfNotExist = -1)
     {
