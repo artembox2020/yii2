@@ -72,10 +72,8 @@ $this->title = $model->imei;
                 'attribute' => 'last_ping',
                 'label' => Yii::t('frontend', 'Last ping'),
                 'value' => function($model) {
-                    $formattedDate = Yii::$app->formatter->asDate($model->updated_at, 'H:i:s dd.MM.yyyy');
-                    $getInitResult = $model->getInit();
                     
-                    return $getInitResult == 'Ok' ? $formattedDate : $getInitResult;
+                    return $model->getLastPing("php:m.d.Y H:i:s");
                 }
             ]
         ],
