@@ -71,6 +71,7 @@ $this->title = $model->imei;
             [
                 'attribute' => 'last_ping',
                 'label' => Yii::t('frontend', 'Last ping'),
+                'format' => 'raw',
                 'value' => function($model) {
                     
                     return $model->getLastPing();

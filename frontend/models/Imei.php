@@ -101,7 +101,7 @@ class Imei extends \yii\db\ActiveRecord
                     }
                 }
             ],
-            [['created_at', 'updated_at'], 'date', 'format' => 'dd.MM.yyyy'],
+            /*[['created_at', 'updated_at'], 'date', 'format' => 'dd.MM.yyyy'],*/
             [['address_id'], 'exist', 'skipOnError' => true, 'targetClass' => AddressBalanceHolder::className(), 'targetAttribute' => ['address_id' => 'id']],
         ];
     }

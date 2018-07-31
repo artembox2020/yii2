@@ -68,6 +68,7 @@ use frontend\models\Imei;
            
             [
                 'attribute' => 'last_ping',
+                'format' => 'raw',
                 'label' => Yii::t('frontend', 'Last ping'),
                 'value' => function($model) {
 
