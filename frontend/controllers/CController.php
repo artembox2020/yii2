@@ -81,6 +81,7 @@ class CController extends Controller
                 $imei->critical_amount = $initDto->critical_amount;
                 $imei->time_out = $initDto->time_out;
                 $imei->updated_at = date('now');
+                $imei->ping = date('now');
                 $imei->update();
                 echo 'Success!';
             } else {
