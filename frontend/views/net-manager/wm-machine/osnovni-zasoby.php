@@ -5,6 +5,7 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 $menu = [];
+$machine_menu = [];
 ?>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
@@ -12,6 +13,13 @@ $menu = [];
     ]) ?>
 </b>
 <h1><?= Html::encode($this->title) ?></h1>
+
+<b>
+    <?= $this->render('/net-manager/_machine_menu', [
+            'machine_menu' => $machine_menu,
+    ]) ?>
+</b>
+<br><br>
 <p>
     <?= Html::a(Yii::t('frontend', 'Add WM Machine'), ['/net-manager/wm-machine-add'], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('frontend', 'Add GD Machine'), ['/gd-mashine/create'], ['class' => 'btn btn-success']) ?>

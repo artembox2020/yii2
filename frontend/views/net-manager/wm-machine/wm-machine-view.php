@@ -54,8 +54,9 @@ use frontend\services\custom\Debugger;
             ],
             [
                 'label' => Yii::t('frontend', 'Last ping'),
-                'value' => $model->updated_at,
-                'format' => ['date','[H:i:s] dd.MM.yyyy']
+                'value' => function($model) {
+                return date('[H:i:s] d.m.Y', $model->updated_at);
+            },
             ],
     ],
 ]);?>
