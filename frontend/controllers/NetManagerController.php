@@ -364,6 +364,7 @@ class NetManagerController extends \yii\web\Controller
 
         return $this->render('washpay/washpay', [
             'searchModel' => $searchModel,
+            'model' => new Imei(),
             'dataProvider' => $dataProvider,
             'addresses' => $addresses
         ]);

@@ -13,7 +13,10 @@ use frontend\models\Imei;
 /* @var $searchModel frontend\models\ImeiSearch */
 
 ?>
-<?php $menu = []; ?>
+<?php
+    $menu = [];
+    define('UNKNOWN', Yii::t('common', 'Unknown'));
+?>
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
@@ -78,3 +81,137 @@ use frontend\models\Imei;
             ]
         ]
 ]); ?>
+
+<p><u><b><?= Yii::t('frontend','General Info') ?></b></u><p/>
+
+<!-- Summary by models -->
+<?php ob_start(); ?>
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' =>  Yii::t('frontend', 'WP-3'),
+                'value' => UNKNOWN
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'WP-4'),
+                'value' => UNKNOWN
+            ],
+        ]
+    ]);
+?>
+<?php $modelSummary = ob_get_clean(); ?>
+
+<!-- Summary by the date of production -->
+<?php ob_start(); ?>
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' =>  Yii::t('frontend', 'Up-To 1 year'),
+                'value' => UNKNOWN
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Up-To 2 years'),
+                'value' => UNKNOWN
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Up-To 3 years'),
+                'value' => UNKNOWN
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Up-To 4 years'),
+                'value' => UNKNOWN
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Up-To 5 years'),
+                'value' => UNKNOWN
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Above 5 years'),
+                'value' => UNKNOWN
+            ],
+        ]
+    ]);
+?>
+<?php $dateProductionSummary = ob_get_clean(); ?>
+
+<!-- Summary by status -->
+<?php ob_start(); ?>
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' => Yii::t('frontend', 'Actual Ping'),
+                'value' => $model->getActualPingCount()
+            ],
+            [
+                'label' => Yii::t('frontend', 'Not Actual Ping'),
+                'value' => $model->getNotInitializedCount()
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'Status Off'),
+                'value' => $model->getCountByStatus(Imei::STATUS_OFF)
+            ],
+        ]
+    ]);
+?>
+<?php $statusSummary = ob_get_clean(); ?>
+
+<!-- Summary by location -->
+<?php ob_start(); ?>
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' => Yii::t('frontend', 'On Point/At Work'),
+                'value' => $model->getCountBystatus(Imei::STATUS_ACTIVE)
+            ],
+            [
+                'label' => Yii::t('frontend', 'In Stock/Sale'),
+                'value' => UNKNOWN
+            ],
+            [
+                'label' => Yii::t('frontend', 'In Stock/Repair'),
+                'value' => $model->getCountBystatus(Imei::STATUS_UNDER_REPAIR)
+            ],
+            [
+                'label' => Yii::t('frontend', 'Junk'),
+                'value' => $model->getCountBystatus(Imei::STATUS_JUNK)
+            ],
+        ]
+    ]);
+?>
+<?php $locationSummary = ob_get_clean(); ?>
+
+<!-- Main Detail View -->
+<?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            [
+                'label' => Yii::t('frontend', 'General Count'),
+                'value' => $model->getGeneralCount()
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'By Models'),
+                'format' => 'raw',
+                'value' => $modelSummary
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'By Date Production'),
+                'format' => 'raw',
+                'value' => $dateProductionSummary
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'By Status'),
+                'format' => 'raw',
+                'value' => $statusSummary
+            ],
+            [
+                'label' =>  Yii::t('frontend', 'By Location'),
+                'format' => 'raw',
+                'value' => $locationSummary
+            ],
+        ]
+    ]);
+?>
