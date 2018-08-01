@@ -8,6 +8,7 @@ use frontend\models\ImeiData;
 use frontend\models\GdMashine;
 use frontend\models\WmMashine;
 use frontend\services\globals\Entity;
+use frontend\services\globals\EntityHelper;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\ArrayHelper;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -328,27 +329,20 @@ class Imei extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param $params
-     * @param int $returnIfNotExist
+     * @param array $params
      * @return int|string
      * @throws \yii\web\HttpException
-     * @throws \yii\web\NotFoundHttpException
      */
-    public function getRelationData($params, $returnIfNotExist = -1)
+    public function tryRelationData(Array $params)
     {
         if ($this->status == self::STATUS_ACTIVE) {
-            $entity = new Entity();
+            $entityHelper = new EntityHelper();
             
-            return $entity->getUnitRelationData($this, $params, $returnIfNotExist);
+            return $entityHelper->tryUnitRelationData($this, $params);
         }
         else {
-            if ($returnIfNotExist != -1) {
-                
-                return $returnIfNotExist;
-            }
-            else {
-                throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
-            }
+            
+            return false;
         }
     }
 
@@ -375,8 +369,8 @@ class Imei extends \yii\db\ActiveRecord
         
         // if old address_id exists then update old address status
         if (!empty($attr['address_id'])) {
-            $prevAddress = $entity->getUnitPertainCompany(
-                $attr['address_id'], new AddressBalanceHolder(), false
+            $prevAddress = $entity->tryUnitPertainCompany(
+                $attr['address_id'], new AddressBalanceHolder()
             );
             
             if ($prevAddress) {
@@ -406,8 +400,8 @@ class Imei extends \yii\db\ActiveRecord
         $this->save();
     
         $entity = new Entity();
-        $address = $entity->getUnitPertainCompany(
-            $this->address_id, new AddressBalanceHolder(), false
+        $address = $entity->tryUnitPertainCompany(
+            $this->address_id, new AddressBalanceHolder()
         );
         
         if ($address) {
