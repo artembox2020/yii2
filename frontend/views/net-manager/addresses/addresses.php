@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 use \yii\jui\AutoComplete;
 use yii\web\JsExpression;
 use frontend\services\custom\Debugger;
-use frontend\services\globals\Entity;
+use frontend\services\globals\EntityHelper;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
@@ -55,8 +55,8 @@ use frontend\services\globals\Entity;
                 'label' => Yii::t('frontend', 'Imei'),
                 'format' => 'raw',
                 'value' => function($model) use($imeis) {
-                    $entity = new Entity();
-                    $addWashpay = $entity->AutoCompleteWidgetFilteredData([
+                    $entityHelper = new EntityHelper();
+                    $addWashpay = $entityHelper->AutoCompleteWidgetFilteredData([
                         'model' => $model,
                         'name' => 'imei',
                         'url' => '/net-manager/addresses-bind-to-imei',
@@ -65,12 +65,12 @@ use frontend\services\globals\Entity;
                             'placeholder' => Yii::t('common', 'Type imei')
                         ]
                     ]);
-
-                    return $entity->getUnitRelationData(
+                    $relationData = $entityHelper->tryUnitRelationData(
                         $model,
-                        ['imei' => 'imei'],
-                        $addWashpay
+                        ['imei' => 'imei']
                     );
+                    
+                    return $relationData ? $relationData : $addWashpay;
                 }
             ],
     
