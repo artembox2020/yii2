@@ -13,6 +13,7 @@ use frontend\models\WmMashine;
 use frontend\models\OtherContactPerson;
 use frontend\models\WmMashineSearch;
 use frontend\services\globals\Entity;
+use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -289,12 +290,12 @@ class NetManagerController extends \yii\web\Controller
     public function actionAddresses($balanceHolderId = false)
     {
         $searchModel = new AddressBalanceHolderSearch();
-        $entity = new Entity();
+        $entityHelper = new EntityHelper();
         $user = User::findOne(Yii::$app->user->id);
         $company = \frontend\models\Company::findOne($user->company->id);
         
         // imeis list for AutoComplete widget
-        $imeis = $entity->getFilteredStatusDataMapped(
+        $imeis = $entityHelper->tryFilteredStatusDataMapped(
             new Imei(), Imei::STATUS_OFF, ['id' => ['imei']]
         );
                 
@@ -354,9 +355,9 @@ class NetManagerController extends \yii\web\Controller
         $searchModel = new ImeiSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = self::PAGE_SIZE;
-        $entity = new Entity();
+        $entityHelper = new EntityHelper();
         // addresses list for AutoComplete widget
-        $addresses = $entity->getFilteredStatusDataMapped(
+        $addresses = $entityHelper->tryFilteredStatusDataMapped(
             new AddressBalanceHolder(), 
             AddressBalanceHolder::STATUS_FREE, ['id' => ['address', 'floor'], ', ']
         );
@@ -425,14 +426,15 @@ class NetManagerController extends \yii\web\Controller
     public function actionWashpayUpdate($id)
     {
         $user = User::findOne(Yii::$app->user->id);
-        $entity = new Entity();
+        $entityHelper = new EntityHelper();
         
         $imei = $this->findModel($id, new Imei());
         
-        $addresses = $entity->getFilteredStatusDataMapped(
+        $addresses = $entityHelper->tryFilteredStatusDataMapped(
             new AddressBalanceHolder(), 
-            AddressBalanceHolder::STATUS_FREE, ['id' => ['address', 'floor'], ', '],
-            $imei->address_id
+            AddressBalanceHolder::STATUS_FREE,
+            ['id' => ['address', 'floor'], ', '],
+            [$imei->address_id]
         );
         $addresses = ArrayHelper::map($addresses, 'id', 'value');
 
@@ -463,12 +465,14 @@ class NetManagerController extends \yii\web\Controller
     {
         $user = User::findOne(Yii::$app->user->id);
         $entity = new Entity();
-        $addressBalanceHolder = $entity->getUnitPertainCompany(
-            $addressBalanceHolderId, new AddressBalanceHolder(), false
+        $entityHelper = new EntityHelper();
+        $addressBalanceHolder = $entity->tryUnitPertainCompany(
+            $addressBalanceHolderId, new AddressBalanceHolder()
         );
-        $addresses = $entity->getFilteredStatusDataMapped(
+        $addresses = $entityHelper->tryFilteredStatusDataMapped(
             new AddressBalanceHolder(), 
-            AddressBalanceHolder::STATUS_FREE, ['id' => ['address', 'floor'], ', ']
+            AddressBalanceHolder::STATUS_FREE,
+            ['id' => ['address', 'floor'], ', ']
         );
         $addresses = ArrayHelper::map($addresses, 'id', 'value');
         $imei = new Imei();

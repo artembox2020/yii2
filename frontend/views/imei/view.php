@@ -55,12 +55,11 @@ $this->title = $model->imei;
             [
                 'attribute' => 'address',
                 'value' => function($model) {
-                    $entity = new Entity();
-
-                    return $model->getRelationData(
-                        ['address' => 'address'],
-                        Yii::t('common', 'Not Set')
+                    $relationData = $model->tryRelationData(
+                        ['address' => 'address']
                     );
+                    
+                    return $relationData ? $relationData : Yii::t('common', 'Not Set');
                 }
             ],
             

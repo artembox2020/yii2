@@ -75,10 +75,10 @@ class AddressBalanceHolderController extends Controller
         $company = $user->company;
         $balanceHolders = $company->balanceHolders;
         $entity = new Entity();
-        $balanceHolder = $entity->getUnitPertainCompany(
-            $balanceHolderId, new BalanceHolder(), false
+        $balanceHolder = $entity->tryUnitPertainCompany(
+            $balanceHolderId, new BalanceHolder()
         );
-
+        
         if ($model->load(Yii::$app->request->post())) {
             $model->created_at = Time();
             $model->status = AddressBalanceHolder::STATUS_FREE;

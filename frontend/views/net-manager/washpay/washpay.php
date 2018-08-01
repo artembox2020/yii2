@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
 use frontend\services\custom\Debugger;
-use frontend\services\globals\Entity;
+use frontend\services\globals\EntityHelper;
 use frontend\models\Imei;
 
 /* @var $this yii\web\View */
@@ -43,8 +43,8 @@ use frontend\models\Imei;
                'attribute' => 'address',
                'format' => 'raw',
                'value' => function($model) use($addresses) {
-                    $entity = new Entity();
-                    $addAddress = $entity->AutoCompleteWidgetFilteredData([
+                    $entityHelper = new EntityHelper();
+                    $addAddress = $entityHelper->AutoCompleteWidgetFilteredData([
                         'model' => $model,
                         'name' => 'address',
                         'url' => '/net-manager/washpay-bind-to-address',
@@ -54,10 +54,11 @@ use frontend\models\Imei;
                         ]
                     ]);
 
-                        return $model->getRelationData(
-                            ['address' => ['address', 'floor'], ', '],
-                            $addAddress
-                        );
+                    $relationData = $model->tryRelationData(
+                        ['address' => ['address', 'floor'], ', ']
+                    );
+                    
+                    return $relationData ? $relationData : $addAddress;
                },
             ],
            
