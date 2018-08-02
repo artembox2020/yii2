@@ -45,7 +45,7 @@ class EntityHelper implements EntityHelperInterface
     public function tryFilteredStatusDataMapped($instance, $status, Array $params, Array $unitIds = [])
     {
         $units = $this->tryFilteredStatusDataEx($instance, $status);
-        
+
         // addition of some more units if specified
         if (!empty($unitIds)) {
             $entity = new Entity();
@@ -61,7 +61,7 @@ class EntityHelper implements EntityHelperInterface
         $array_keys = array_keys($params);
         $key = !empty($array_keys[0]) ? $array_keys[0] : false;
         if (!$key) {
-            
+
             return $maps;
         }
         foreach ($units as $unit) {
@@ -74,7 +74,7 @@ class EntityHelper implements EntityHelperInterface
 
         return $maps;
     }
-    
+
     /**
      * @param array $params
      * @return \yii\jui\AutoComplete
@@ -84,14 +84,14 @@ class EntityHelper implements EntityHelperInterface
     {
         extract($params);
         $queryString = '';
-        
+
         // exclude params ['id', 'foreignId', '_pjax'] from query string
         if (!empty(Yii::$app->request->queryParams)) {
             $excludeParams = ['id' => 1, 'foreignId' => 1, '_pjax' => 1];
             $queryParams = array_diff_key(Yii::$app->request->queryParams, $excludeParams);
             $queryString = '&'.http_build_query($queryParams);
         }
-            
+
         $selectExpr = new JsExpression(
             "function( event, ui )
             {
@@ -103,7 +103,7 @@ class EntityHelper implements EntityHelperInterface
                 }
 			}"
 		);
-		
+
         return AutoComplete::widget([
             'name' => $name,
 
@@ -116,7 +116,7 @@ class EntityHelper implements EntityHelperInterface
             ],
         ]);    
     }
-    
+
     /**
      * @param Instance $unit
      * @param string $relation
@@ -128,16 +128,16 @@ class EntityHelper implements EntityHelperInterface
             
             return false;
         }
-        
+
         if (empty($relation) || empty($unit->$relation)) {
-            
+
             return false;
         } else {
-            
+
             return $unit->$relation;
         }
     }
-    
+
     /**
      * @param Instance $unit
      * @param array $params
@@ -150,16 +150,16 @@ class EntityHelper implements EntityHelperInterface
             $relation = array_keys($params)[0];
             $names = $params[$relation];
             $glue = empty($params[0]) ? ' ' : $params[0];
-            
+
             if (!$relationObject = $this->tryUnitRelation($unit, $relation)) {
-                
+
                 return false;
             }
-            
+
             if (!is_object($relationObject)) {
                 $relationObject = $unit;
             }
-           
+
             if (is_array($names)) {
                 $value = '';
                 foreach($names as $name) {

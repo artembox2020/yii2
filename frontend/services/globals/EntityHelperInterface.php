@@ -18,7 +18,7 @@ interface EntityHelperInterface
      * @return array
      */
     public function tryFilteredStatusDataEx($instance, $status);
-    
+
     /**
      * Gets and maps filtered status data, specified by $params parameter
      * 
@@ -29,14 +29,14 @@ interface EntityHelperInterface
      * @throws \yii\web\HttpException
      */
     public function tryFilteredStatusDataMapped($instance, $status, Array $params, Array $unitIds = []);
-    
+
     /**
      * @param array $params
      * @return \yii\jui\AutoComplete
      * @throws \yii\web\HttpException
      */
     public function AutoCompleteWidgetFilteredData(Array $params);
-    
+
     /**
      * Attempts to get relation of the instance
      * In case of not existing returns bool(false)
@@ -46,7 +46,7 @@ interface EntityHelperInterface
      * @return Instance|bool
      */
     public function tryUnitRelation($unit, $relation);
-    
+
     /**
      * Attempts to retrieve relations data, specified by $params
      * In case of not existing returns bool(false)

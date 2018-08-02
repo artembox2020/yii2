@@ -47,7 +47,7 @@ class Entity implements EntityInterface
 
         return $units;
     }
-    
+
     /**
      * @param null $instance
      * @return yii\db\Query
@@ -104,7 +104,7 @@ class Entity implements EntityInterface
 
         return $user->company_id;
     }
-    
+
     /**
      * Attempts to get unit pertaining to company
      * In case it is not found returns bool(false)
@@ -137,7 +137,7 @@ class Entity implements EntityInterface
                     'id' => $unitIds
                 ])
             ->all();
-        
-        return $this->checkAccess($units, false);    
+
+        return $this->checkAccess($units, false);
     }
 }
