@@ -27,6 +27,8 @@ use bs\Flatpickr\FlatpickrWidget;
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
+    
+    <?= $form->field($model, 'number_of_citizens')->input('number', ['maxlength' => true]) ?>
 
     <?= $form->field($model, 'floor')->textInput() ?>
 

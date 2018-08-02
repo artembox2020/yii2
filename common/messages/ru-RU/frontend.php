@@ -136,6 +136,7 @@ return [
     'Not Actual Ping' => 'Не актуальный пинг',
     'Not Set' => '(не задано)',
     'nulling' => 'обнулено',
+    'Number Of Citizens' => 'Количество жителей',
     'On' => 'Включено',
     'On Point/At Work' => 'На пункте/в работе',
     'Off' => 'Отключено',
