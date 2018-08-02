@@ -67,6 +67,7 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
             ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             [['company_id', 'balance_holder_id', 'number_of_floors', 'created_at', 'updated_at', 'deleted_at', 'number_of_citizens'], 'integer'],
             [['balance_holder_id', 'address', 'number_of_citizens'], 'required'],
+            [['number_of_citizens'], 'number', 'min' => 1],
             [['name', 'address', 'floor'], 'string', 'max' => 255],
             [['balance_holder_id'], 'exist', 'skipOnError' => true, 'targetClass' => BalanceHolder::className(), 'targetAttribute' => ['balance_holder_id' => 'id']],
         ];
