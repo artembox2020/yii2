@@ -241,13 +241,10 @@ return [
     'Your account has been successfully created. Check your email for further instructions.' => 'Ваш обліковий запис була успішно створена. Перевірте свою електронну пошту для отримання подальших інструкцій.',
     'Your message has been sent successfully.' => 'Ваше повідомлення було успішно надіслано.',
     'Your password has been successfully changed.' => 'Ваш пароль був успішно змінений.',
-<<<<<<< HEAD
-=======
     'WASHER_FREE' => 'Пральна машина вільна.',
     'WP-3' => 'WP-3',
     'WP-4' => 'WP-4',
     'waiting door' => 'Розблокування дверцята',
->>>>>>> artem
     'disconnected' => 'Відключено',
     'Add Device' => 'Додати пристрій',
     'Enter IMEI' => 'Введіть IMEI',
