@@ -450,4 +450,45 @@ class Imei extends \yii\db\ActiveRecord
             return $getInitResult;
         }
     }
+
+    /**
+     * @return integer
+     */
+    public function getActualPingCount()
+    {
+        $query = Imei::find()->andWhere(['IS NOT', 'firmware_version', null]);
+
+        return $query->count();
+    }
+
+    /**
+     * @return integer
+     */
+    public function getNotInitializedCount()
+    {
+        $query = Imei::find()->andWhere(['IS', 'firmware_version', null]);
+
+        return $query->count();
+    }
+
+    /**
+     * @param int $status
+     * @return integer
+     */
+    public function getCountByStatus($status)
+    {
+        $query = Imei::find()->andWhere(['status' => $status]);
+
+        return $query->count();
+    }
+
+    /**
+     * @return integer
+     */
+    public function getGeneralCount()
+    {
+        $query = Imei::find();
+
+        return $query->count();    
+    }
 }

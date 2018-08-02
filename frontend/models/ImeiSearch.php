@@ -65,7 +65,7 @@ class ImeiSearch extends Imei
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'imei.id' => $this->id,
             'address_id' => $this->address_id,
         ]);
             

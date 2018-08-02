@@ -108,10 +108,11 @@ class Entity implements EntityInterface
     /**
      * Attempts to get unit pertaining to company
      * In case it is not found returns bool(false)
-     * 
+     *
      * @param null $id
      * @param null $instance
      * @return bool|Instance
+     * @throws \yii\web\NotFoundHttpException
      */
     public function tryUnitPertainCompany($id, $instance)
     {
@@ -127,6 +128,7 @@ class Entity implements EntityInterface
      * @param array $unitIds
      * @param null $instance
      * @return bool|array
+     * @throws \yii\web\NotFoundHttpException
      */
     public function tryUnitsPertainCompanyByIds(Array $unitIds, $instance)
     {
