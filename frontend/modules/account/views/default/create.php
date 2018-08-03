@@ -3,6 +3,7 @@
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
 use common\models\User;
+use bs\Flatpickr\FlatpickrWidget;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\UserForm */
@@ -26,6 +27,24 @@ $this->title = Yii::t('backend', 'Create user');
     <?php $form = ActiveForm::begin(['id' => 'user-create-form']) ?>
 
     <?= $form->field($model, 'username')->textInput(['maxlength' => $model->username]) ?>
+    
+    <?= $form->field($profile, 'firstname')->textInput(['maxlength' => $profile->firstname]) ?>
+    
+    <?= $form->field($profile, 'lastname')->textInput(['maxlength' => $profile->lastname]) ?>
+    
+    <?= $form->field($profile, 'position')->textInput(['maxlength' => $profile->position]) ?>
+    
+    <?= $form->field($profile, 'birthday')->widget(FlatpickrWidget::className(), [
+        'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
+        'groupBtnShow' => true,
+        'options' => [
+            'class' => 'form-control',
+        ],
+        'clientOptions' => [
+            'allowInput' => true,
+            'defaultDate' => $profile->birthday ? date(DATE_ATOM, $profile->birthday) : null,
+        ],
+    ]) ?>
 
     <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
 
