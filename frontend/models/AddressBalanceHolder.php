@@ -23,6 +23,7 @@ use frontend\services\globals\Entity;
  * @property int $number_of_floors
  * @property int $date_inserted
  * @property int $date_connection_monitoring
+ * @property int $number_of_citizens
  *
  * @property BalanceHolder $balanceHolder
  * @property Imei[] $imeis
