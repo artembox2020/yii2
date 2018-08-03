@@ -142,4 +142,16 @@ class Entity implements EntityInterface
 
         return $this->checkAccess($units, false);
     }
+    
+    /** 
+     * @param int $id
+     * @param Instance $instance
+     * @return bool|Instance
+     */
+    public function tryUnit($id, $instance)
+    {
+        $unit = $instance::findOne(['id' => $id]);
+
+        return $this->checkAccess($unit, false);
+    }
 }
