@@ -217,6 +217,7 @@ return [
     'Translations' => 'Перекладач',
     'Type mashine' => 'Тип машини',
     'te temp sensor' => 'Помилка датчика температури',
+    'This Device number has already been taken' => 'Цей номер пристрою вже використовується',
     'Under repair' => 'В ремонті',
     'Update' => 'Редагувати',
     'Update Address Balance Holder: {nameAttribute}' => 'Редагувати адресу балансотримача: {nameAttribute}',

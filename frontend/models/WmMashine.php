@@ -110,8 +110,6 @@ class WmMashine extends \yii\db\ActiveRecord
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
             [['serial_number'], 'unique'],
-//            [['number_device'], 'unique'],
-//            [['number_device'], 'unique', 'targetAttribute' => ['number_device']],
             [['serial_number'], 'unique', 'targetAttribute' => ['serial_number']],
             ['number_device', 'validateNumberDevice', 'skipOnEmpty' => false, 'skipOnError' => false,
                 'message' => \Yii::t('frontend', 'This Device number has already been taken')],
@@ -204,8 +202,8 @@ class WmMashine extends \yii\db\ActiveRecord
     public static function find()
     {
         return parent::find()
-            ->where(['status' => WmMashine::STATUS_ACTIVE])
-            ->andWhere(['is_deleted' => false]);
+//            ->where(['status' => WmMashine::STATUS_ACTIVE])
+            ->where(['is_deleted' => false]);
 //        return new UserQuery(get_called_class());
 //        return parent::find()->where(['is_deleted' => 'false'])
 //            ->andWhere(['status' => Imei::STATUS_ACTIVE]);
@@ -252,7 +250,7 @@ class WmMashine extends \yii\db\ActiveRecord
         }
 
         if (in_array($this->$attribute, $array)) {
-            $this->addError($attribute, 'This Device number has already been taken');
+            $this->addError($attribute, Yii::t('frontend', 'This Device number has already been taken'));
         }
     }
 }
