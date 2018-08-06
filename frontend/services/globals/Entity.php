@@ -66,8 +66,8 @@ class Entity implements EntityInterface
      */
     public function getFilteredStatusData($instance)
     {
-        $units = $instance::find(['company_id' => $this->getCompanyId()])
-            ->where(['status' => self::ONE])
+        $units = $instance::find()
+            ->andWhere(['status' => self::ONE, 'company_id' => $this->getCompanyId()])
             ->all();
         $this->checkAccess($units);
 
