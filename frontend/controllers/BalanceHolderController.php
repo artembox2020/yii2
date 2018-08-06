@@ -101,7 +101,7 @@ class BalanceHolderController extends Controller
             $model->company_id = $user->company_id;
             $model->is_deleted = false;
             $model->save();
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['/net-manager/view-balance-holder', 'id' => $model->id]);
         }
 
         $user = User::findOne(Yii::$app->user->id);
