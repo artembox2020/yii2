@@ -455,7 +455,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getActualPingCount()
     {
+        $entity = new Entity();
         $query = Imei::find()->andWhere(['IS NOT', 'firmware_version', null]);
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId()]);
 
         return $query->count();
     }
@@ -465,7 +467,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getNotInitializedCount()
     {
+        $entity = new Entity();
         $query = Imei::find()->andWhere(['IS', 'firmware_version', null]);
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId()]);
 
         return $query->count();
     }
@@ -476,7 +480,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getCountByStatus($status)
     {
+        $entity = new Entity();
         $query = Imei::find()->andWhere(['status' => $status]);
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId()]);
 
         return $query->count();
     }
@@ -486,7 +492,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getGeneralCount()
     {
+        $entity = new Entity();
         $query = Imei::find();
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId()]);
 
         return $query->count();    
     }
