@@ -16,6 +16,7 @@ use frontend\models\GdMashineData;
 use frontend\models\WmMashineData;
 use frontend\models\dto\ImeiDataDto;
 use frontend\models\dto\ImeiInitDto;
+use frontend\models\Jlog;
 use frontend\services\custom\Debugger;
 
 /**
@@ -82,6 +83,9 @@ class CController extends Controller
                 $imei->time_out = $initDto->time_out;
                 $imei->ping = time();
                 $imei->update();
+                
+                $jlog = new Jlog();
+                $jlog->createLogFromImei($imei, $p, 'Initialization');
                 echo 'Success!';
             } else {
                 echo 'Imei not Active';exit;
@@ -149,6 +153,9 @@ class CController extends Controller
             
             $imei->ping = time();
             $imei->save();
+            
+            $jlog = new Jlog();
+            $jlog->createLogFromImei($imei, $p, 'Data');
 
             $this->setTypeMashine($mashineData, $imei->id);
 

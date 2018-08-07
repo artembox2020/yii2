@@ -124,7 +124,7 @@ AppAsset::register($this);
             ],
             [
                 'label' => Yii::t('frontend', 'Dlogs'),
-                'url' => ['/site/dlogs'],
+                'url' => ['/journal'],
 //            'visible' => Yii::$app->user->can('dlogs'),
             ],
 ];
