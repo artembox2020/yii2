@@ -15,6 +15,7 @@ class WmDto
     public $door_position;
     public $door_block_led;
     public $current_status;
+    public $display;
 
     public function __construct($data)
     {
@@ -44,6 +45,10 @@ class WmDto
 
         if (array_key_exists('current_status', $data)) {
             $this->current_status = (integer) $data['current_status'];
+        }
+
+        if (array_key_exists('display', $data)) {
+            $this->current_status = (integer) $data['display'];
         }
     }
 }

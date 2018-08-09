@@ -35,6 +35,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $date_build
  * @property int $date_purchase
  * @property int $date_connection_monitoring
+ * @property string $display
  *
  * @property Imei $imei
  */
@@ -131,6 +132,7 @@ class WmMashine extends \yii\db\ActiveRecord
             ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
+            [['display'], 'string' , 'max' => 255],
         ];
     }
 
@@ -162,7 +164,8 @@ class WmMashine extends \yii\db\ActiveRecord
             'date_install' => Yii::t('frontend', 'Date Install'),
             'date_build' => Yii::t('frontend', 'Date build'),
             'date_purchase' => Yii::t('frontend', 'Date Purchase'),
-            'date_connection_monitoring' => Yii::t('frontend', 'Date connection to monitoring')
+            'date_connection_monitoring' => Yii::t('frontend', 'Date connection to monitoring'),
+            'display' => Yii::t('frontend' ,'Display'),
         ];
     }
 

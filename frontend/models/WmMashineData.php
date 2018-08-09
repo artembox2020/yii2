@@ -23,6 +23,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $is_deleted
  * @property int $deleted_at
  * @property int $current_status
+ * @property string $display
  *
  * @property WmMashine $wmMashine
  */
@@ -99,7 +100,7 @@ class WmMashineData extends \yii\db\ActiveRecord
                 'status',
                 'current_status',
                 'created_at', 'updated_at', 'deleted_at'], 'integer'],
-            [['type_mashine'], 'string', 'max' => 255],
+            [['type_mashine', 'display'], 'string', 'max' => 255],
             [['mashine_id'], 'exist', 'skipOnError' => true, 'targetClass' => WmMashine::className(), 'targetAttribute' => ['mashine_id' => 'id']],
         ];
     }
@@ -123,7 +124,8 @@ class WmMashineData extends \yii\db\ActiveRecord
             'updated_at' => Yii::t('frontend', 'Updated At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
-            'current_status' => Yii::t('frontend', 'Current Status')
+            'current_status' => Yii::t('frontend', 'Current Status'),
+            'display' => Yii::t('frontend' ,'Display'),
         ];
     }
 
