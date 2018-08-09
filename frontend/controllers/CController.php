@@ -408,7 +408,7 @@ class CController extends Controller
                 $wm_mashine_data->status = self::ONE_CONST;
                 $wm_mashine_data->is_deleted = false;
                 $wm_mashine_data->display = $wm_mashine_dto->display;
-                Debugger::dd($wm_mashine_data->display);
+//                Debugger::dd($wm_mashine_data->display);
                 $this->updateWmMashine($wm_mashine, $wm_mashine_data);
                 if ($wm_mashine_data->save(false)) {
                     echo $wm_mashine_data->number_device . ' WM data save!' . '<br>';
