@@ -20,19 +20,17 @@ use frontend\services\globals\Entity;
 <?php endif; ?>
 <?php
     // set default address and balanceHolder options
-    if(!empty($addressBalanceHolder)) {
+    if (!empty($addressBalanceHolder)) {
         $addressBalanceHolderId = $addressBalanceHolder->id; 
         $addressBalanceHolderOptions = [
             $addressBalanceHolderId => ['Selected' => true] 
         ];
-    }
-    else {
-        if(!empty($imei->address_id)) {
+    } else {
+        if (!empty($imei->address_id)) {
             $addressBalanceHolderOptions = [
                 $imei->address_id => ['Selected' => true] 
             ];
-        }
-        else {
+        } else {
             $addressBalanceHolderOptions = [];
         }
     }
