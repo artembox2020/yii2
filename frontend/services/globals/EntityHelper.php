@@ -188,9 +188,10 @@ class EntityHelper implements EntityHelperInterface
      * 
      * @param string $formSelector
      * @param array $eventSelectors
+     * @param int $timeDelay
      * @return javascript
      */
-    public function submitFormOnInputEvents($formSelector, Array $eventSelectors)
+    public function submitFormOnInputEvents($formSelector, Array $eventSelectors, $timeDelay = 1500)
     {
         $setFocusIfNecessary = new JsExpression(
             "function setFocusIfNecessary(form)
@@ -220,7 +221,18 @@ class EntityHelper implements EntityHelperInterface
                           var formElement = formElements[i];     
                           formElement.on{$event} = function() 
                           {
-                             eventProcessFunction('{$event}', '{$formSelector}', this);
+                              if ('{$event}' == 'keyup') {
+                                  clearInterval(hKeyUpInterval);
+                                  var form = document.querySelector('{$formSelector}');
+                                  fillHiddenSelectionFields(form, this);
+                                  hKeyUpInterval = setInterval(function()
+                                  {
+                                      submitForm('{$formSelector}');
+                                      clearInterval(hKeyUpInterval);
+                                  }, {$timeDelay});
+                              } else {
+                                  submitForm('{$formSelector}');
+                              }
                           };
                      }
                  })();"

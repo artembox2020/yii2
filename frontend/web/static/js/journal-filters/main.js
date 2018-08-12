@@ -1,3 +1,6 @@
+// global keyup event time interval handler
+var hKeyUpInterval;
+
 /**
  * @param string formSelector
  */ 
@@ -20,20 +23,6 @@ function fillHiddenSelectionFields(form, formElement)
     var formHiddenSelectionCaretPos = form.querySelector('input[name=selectionCaretPos]');
     formHiddenSelectionName.value = formElement.name;
     formHiddenSelectionCaretPos.value = formCaretPos; 
-}
-
-/**
- * @param string event
- * @param string formSelector
- * @param DOM Element formElement
- */
-function eventProcessFunction(event, formSelector, formElement)
-{
-    if (event == 'keyup') {
-        var form = document.querySelector(formSelector);
-        fillHiddenSelectionFields(form, formElement);
-    }
-    submitForm(formSelector); 
 }
 
 /**
