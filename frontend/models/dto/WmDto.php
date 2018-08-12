@@ -48,7 +48,7 @@ class WmDto
         }
 
         if (array_key_exists('display', $data)) {
-            $this->current_status = (integer) $data['display'];
+            $this->display = (string) $data['display'];
         }
     }
 }
