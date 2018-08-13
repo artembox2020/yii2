@@ -20,6 +20,11 @@ use Yii;
  */
 class Jlog extends ActiveRecord
 {
+    const TYPE_PACKET_INITIALIZATION = 1;
+    const TYPE_PACKET_DATA = 2;
+    const TYPE_PACKET_LOG = 3;
+    const TYPE_PACKET_PRICE = 4;
+    
     /**
      * @inheritdoc
      */
@@ -35,8 +40,8 @@ class Jlog extends ActiveRecord
     {
         return [
             [['company_id'], 'required'],
-            [['company_id', 'imei_id'], 'integer'],
-            [['imei', 'address', 'type_packet'], 'string', 'max' => 250],
+            [['company_id', 'imei_id', 'type_packet'], 'integer'],
+            [['imei', 'address'], 'string', 'max' => 250],
             [['date'], 'string', 'max' => 128]
         ];
     }
@@ -86,5 +91,31 @@ class Jlog extends ActiveRecord
         }
         $jlog->date = Yii::$app->formatter->asDate(time(), Imei::DATE_TIME_FORMAT);
         $jlog->save();
+    }
+    
+    /**
+     * Gets all type packets
+     */
+    public static function getTypePackets()
+    {
+        $typePackets = [
+            self::TYPE_PACKET_INITIALIZATION => Yii::t('frontend', 'Initialization'),
+            self::TYPE_PACKET_DATA => Yii::t('frontend', 'Data'),
+            self::TYPE_PACKET_LOG => Yii::t('frontend', 'Log'),
+            self::TYPE_PACKET_PRICE => Yii::t('frontend', 'Price'),
+        ];
+        
+        return $typePackets;
+    }
+    
+    /**
+     * @param int $type_packet
+     * @return string 
+     */
+    public static function getTypePacketName($type_packet)
+    {
+        $typePackets = self::getTypePackets();
+        
+        return $typePackets[$type_packet];
     }
 }

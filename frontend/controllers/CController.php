@@ -85,7 +85,7 @@ class CController extends Controller
                 $imei->update();
                 
                 $jlog = new Jlog();
-                $jlog->createLogFromImei($imei, $p, 'Initialization');
+                $jlog->createLogFromImei($imei, $p, Jlog::TYPE_PACKET_INITIALIZATION);
                 echo 'Success!';
             } else {
                 echo 'Imei not Active';exit;
@@ -155,7 +155,7 @@ class CController extends Controller
             $imei->save();
             
             $jlog = new Jlog();
-            $jlog->createLogFromImei($imei, $p, 'Data');
+            $jlog->createLogFromImei($imei, $p, Jlog::TYPE_PACKET_DATA);
 
             $this->setTypeMashine($mashineData, $imei->id);
 
