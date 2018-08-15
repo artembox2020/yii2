@@ -100,7 +100,7 @@ class Jlog extends ActiveRecord
     {
         $typePackets = [
             self::TYPE_PACKET_INITIALIZATION => Yii::t('frontend', 'Initialization'),
-            self::TYPE_PACKET_DATA => Yii::t('frontend', 'Data'),
+            self::TYPE_PACKET_DATA => Yii::t('frontend', 'Status Packages'),
             self::TYPE_PACKET_LOG => Yii::t('frontend', 'Log'),
             self::TYPE_PACKET_PRICE => Yii::t('frontend', 'Price'),
         ];

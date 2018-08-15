@@ -206,6 +206,7 @@ return [
     'Settings' => 'Налаштування',
     'Signup' => 'Реєстрація',
     'Sorry, we are unable to reset password for the provided email address.' => 'Вибачте, ми не можемо скинути пароль на вказану адресу електронної пошти.',
+    'Status Packages' => 'Пакети стану',
     'Subject' => 'Тема',
     'Summary Technical Data' => 'Зведені технічні дані',
     'Status' => 'Статус',
