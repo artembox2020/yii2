@@ -272,9 +272,19 @@ class EntityHelper implements EntityHelperInterface
     public function makeParamsFromRequest(Array $requiredParams)
     {
         $params = Yii::$app->request->get();
-        foreach ($requiredParams as $param) {
-            if (!isset($params[$param])) {
-                $params[$param] = null;
+        foreach ($requiredParams as $key => $param) {
+            if (is_int($key)) {
+                if (!isset($params[$param])) {
+                    $params[$param] = null;
+                }
+            } else {
+                foreach ($param as $p) {
+                    if (!isset($params[$key])){
+                        $params[$key] = null;
+                    } elseif (!isset($params[$key][$p])) {
+                        $params[$key][$p] = null;
+                    }
+                }
             }
         }
         
