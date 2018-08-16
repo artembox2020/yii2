@@ -97,8 +97,9 @@
      * Filter date select click processing function
      * 
      * @param DOM Element element
+     * @param string value
      */ 
-    function filterDateSelectClickFunction(element)
+    function filterDateSelectClickFunction(element, value)
     {
         var dateSelect = document.createElement("select");
         var inputVar1 = element.closest(".filter-group").querySelector(".input-val1");
@@ -119,9 +120,10 @@
             optionToday.value = dateOptions[i];
             optionToday.innerHTML = dateOptionsTranslations[i];
             dateSelect.appendChild(optionToday);
-            
         }
-        
+
+        dateSelect.value = value;
+
         dateSelect.onchange = function(event)
         {
             preventDefaultBehavior(event);
@@ -172,8 +174,9 @@
     {
         dateFilterSelects[i].onchange = function()
         {
-            filterDateSelectClickFunction(this);
+            filterDateSelectClickFunction(this, "<?= $params['val1']['date']  ?>");
         };
+        dateFilterSelects[i].onchange();
     }
     
     for(var i = 0; i < filterHyperlinks.length; ++i)

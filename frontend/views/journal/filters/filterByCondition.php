@@ -20,7 +20,7 @@ $filterConditions = JlogSearch::getAccessibleFiltersByColumnName($columnName);
         <div class="form-inputs-container">
             <div class="form-group">
                 <?= Html::input("text",  "val1[{$columnName}]", 
-                        Yii::t('frontend', ucfirst($params['val1'][$columnName])),
+                        $params['val1'][$columnName],
                         [
                             'class' => 'form-control input-val1',
                             'placeholder' => Yii::t('frontend', 'Argument 1')

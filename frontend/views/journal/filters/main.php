@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 
-echo Html::beginForm('', 'get', ['class' => 'grid-view-filter-form']);
+echo Html::beginForm('', 'get', ['class' => 'grid-view-filter-form', 'data-pjax' => '']);
 
 $filterTypeCondition = Yii::t('frontend', 'Filter By Condition');
 $filterTypeValue = Yii::t('frontend', 'Filter By Value');

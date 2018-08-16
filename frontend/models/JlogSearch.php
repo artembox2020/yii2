@@ -48,6 +48,7 @@ class JlogSearch extends Jlog
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
+
         return Model::scenarios();
     }
 
@@ -76,26 +77,32 @@ class JlogSearch extends Jlog
         $this->load($params);
 
         // apply filters by id column
+
         $query = $this->applyFilterByValueMethod($query, 'id', $params);
         $query = $this->applyFilterByConditionMethod($query, 'id', $params, self::FILTER_CATEGORY_NUMERIC);
 
         // apply filters by type_packet column
+
         $query = $this->applyFilterByValueMethod($query, 'type_packet', $params);
         $query = $this->applyFilterByConditionMethod($query, 'type_packet', $params, self::FILTER_CATEGORY_COMMON);
 
         // apply filters by date column 
+
         $query = $this->applyFilterByValueMethod($query, 'date', $params);
         $query = $this->applyFilterByConditionMethod($query, 'date', $params, self::FILTER_CATEGORY_DATE);
 
         // apply filters by address column
+
         $query = $this->applyFilterByValueMethod($query, 'address', $params);
         $query = $this->applyFilterByConditionMethod($query, 'address', $params, self::FILTER_CATEGORY_COMMON);
 
         // apply filters by imei column
+
         $query = $this->applyFilterByValueMethod($query, 'imei', $params);
         $query = $this->applyFilterByConditionMethod($query, 'imei', $params, self::FILTER_CATEGORY_COMMON);
 
         // grid filtering conditions
+
         if (!empty($params['type_packet'])) {
             $query->andFilterWhere([
                 'type_packet' => $params['type_packet'],
@@ -605,7 +612,7 @@ class JlogSearch extends Jlog
 
             return $query;
         }
-        
+
         if ($columnName == 'type_packet') {
             $typeIds = Jlog::getTypePacketsFromNameByContainCondition($params['inputValue'][$columnName]);
             

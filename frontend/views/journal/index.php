@@ -100,9 +100,9 @@ $this->title = Yii::t('frontend', 'Events Journal');
             ],
         ]); ?>
     </div>
-    <?php echo $removeRedundantGrids; ?>
-    <?php echo $columnFilterScript; ?>
     <?php
+        echo $removeRedundantGrids;
+        echo $columnFilterScript;
         Pjax::end();
     ?>
 </div>

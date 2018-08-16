@@ -53,6 +53,7 @@ class JournalController extends Controller
                 'lastmonth' => Yii::t('frontend', 'Lastmonth'),
                 'lastyear' => Yii::t('frontend', 'Lastyear'),
                 'certain' => Yii::t('frontend', 'Certain'),
+                'params' => $params
             ]
         );
 
