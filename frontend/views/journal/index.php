@@ -8,6 +8,7 @@ use frontend\models\Imei;
 use frontend\models\Jlog;
 use frontend\services\globals\EntityHelper;
 use yii\widgets\Pjax;
+use \yii\jui\AutoComplete;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\JlogSearch */
@@ -25,18 +26,51 @@ $this->title = Yii::t('frontend', 'Events Journal');
     ?>
     <div class="form-group">
         <label for="type_packet"><?= Yii::t('frontend', 'Type Packet') ?></label>
-        <?= Html::dropDownList('type_packet', $params['type_packet'] ? $params['type_packet'] : '', $typePackets); ?>
+        <?= Html::dropDownList(
+                'type_packet', 
+                $params['type_packet'] ? $params['type_packet'] : '', $typePackets,
+                [
+                    'class' => 'form-control'
+                ]
+            );
+        ?>
     </div>
     <div class="form-group">
-        <?= Html::input('text', 'imei', $params['imei'], 
-            ['placeholder' => Yii::t('frontend', 'Begin to type imei')]
-        );
+        
+        <?= AutoComplete::widget([
+                'name' => 'imei',
+                'options' => [
+                    'placeholder' => Yii::t('frontend', 'Begin to type imei'),
+                    'class' => 'form-control',
+                    'size' => 30
+                ],
+                'value' => $params['imei'],
+                'clientOptions' => [
+                    'source' => $imeis,
+                    'autoFill' => true,
+                ],
+            ]);
         ?>
+        
     </div>
     
     <div class="form-group">
-        <?= Html::input('text', 'address', $params['address'], 
-            ['placeholder' => Yii::t('frontend', 'Begin to type address')]); ?>
+
+        <?= AutoComplete::widget([
+                'name' => 'address',
+                'options' => [
+                    'placeholder' => Yii::t('frontend', 'Begin to type address'),
+                    'class' => 'form-control',
+                    'size' => 30
+                ],
+                'value' => $params['address'],
+                'clientOptions' => [
+                    'source' => $addresses,
+                    'autoFill' => true,
+                ],
+            ]);
+        ?>
+
     </div>
     
     <div class="form-group">
@@ -55,50 +89,54 @@ $this->title = Yii::t('frontend', 'Events Journal');
         echo Html::endForm();
         echo $submitFormOnInputEvents;
     ?>
+    <br>
     <div class="table-responsives">
+
         <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'options' => [
-                'class' => 'journal-grid-view',
-            ],
-            'columns' => [
-                [
-                    'attribute' => 'id',
-                    'filter' =>  $this->render('/journal/filters/main', ['name'=> 'id', 'params' => $params]),
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'options' => [
+                    'class' => 'journal-grid-view',
                 ],
-                [
-                    'attribute' => 'type_packet',
-                    'value' => function($model)
-                    { 
-                        
-                        return Jlog::getTypePacketName($model->type_packet);
-                    },
-                    'filter' => $this->render('/journal/filters/main', ['name'=> 'type_packet', 'params' => $params]),
+                'columns' => [
+                    [
+                        'attribute' => 'id',
+                        'filter' =>  $this->render('/journal/filters/main', ['name'=> 'id', 'params' => $params]),
+                    ],
+                    [
+                        'attribute' => 'type_packet',
+                        'value' => function($model)
+                        { 
+
+                            return Jlog::getTypePacketName($model->type_packet);
+                        },
+                        'filter' => $this->render('/journal/filters/main', ['name'=> 'type_packet', 'params' => $params]),
+                    ],
+                    [
+                        'attribute' => 'date',
+                        'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params]),
+                    ],
+                    [
+                        'attribute' => 'imei',
+                        'filter' => $this->render('/journal/filters/main', ['name'=> 'imei', 'params' => $params]),
+                    ],
+                    [
+                        'attribute' => 'address',
+                        'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+                    ],
+                    [
+                        'attribute' => 'events',
+                        'filter' => false,
+                        'content' => function($model)
+                        {
+
+                            return '';
+                        }
+                    ],
                 ],
-                [
-                    'attribute' => 'date',
-                    'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params]),
-                ],
-                [
-                    'attribute' => 'imei',
-                    'filter' => $this->render('/journal/filters/main', ['name'=> 'imei', 'params' => $params]),
-                ],
-                [
-                    'attribute' => 'address',
-                    'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
-                ],
-                [
-                    'attribute' => 'events',
-                    'filter' => false,
-                    'content' => function($model)
-                    {
-                        
-                        return '';
-                    }
-                ],
-            ],
-        ]); ?>
+            ]);
+
+        ?>
     </div>
     <?php
         echo $removeRedundantGrids;

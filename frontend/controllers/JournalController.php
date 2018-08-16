@@ -7,6 +7,8 @@ use frontend\services\globals\EntityHelper;
 use Yii;
 use frontend\models\Jlog;
 use frontend\models\JlogSearch;
+use frontend\models\AddressBalanceHolder;
+use frontend\models\Imei;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -33,6 +35,8 @@ class JournalController extends Controller
                 'inputValue' => ['date', 'type_packet', 'address', 'imei', 'id']
             ]
         );
+        $addresses = $searchModel->getAddressesMapped();
+        $imeis = $searchModel->getImeisMapped();
         $dataProvider = $searchModel->search($params);
         $typePackets = Jlog::getTypePackets();
         $typePackets[''] = Yii::t('frontend', 'All');
@@ -64,7 +68,9 @@ class JournalController extends Controller
             'params' => $params,
             'submitFormOnInputEvents' => $submitFormOnInputEvents,
             'removeRedundantGrids' => $removeRedundantGrids,
-            'columnFilterScript' => $columnFilterScript
+            'columnFilterScript' => $columnFilterScript,
+            'addresses' =>  $addresses,
+            'imeis' => $imeis
         ]);
     }
 }
