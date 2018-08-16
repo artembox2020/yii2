@@ -191,7 +191,7 @@ class EntityHelper implements EntityHelperInterface
      * @param int $timeDelay
      * @return javascript
      */
-    public function submitFormOnInputEvents($formSelector, Array $eventSelectors, $timeDelay = 1500)
+    public function submitFormOnInputEvents($formSelector, Array $eventSelectors, $timeDelay = 2000)
     {
         $setFocusIfNecessary = new JsExpression(
             "function setFocusIfNecessary(form)
@@ -203,6 +203,9 @@ class EntityHelper implements EntityHelperInterface
                      if (typeof input != 'undefined' && input !== null) {
                          input.focus();
                          input.selectionStart = selectionCaretPos;
+                         var event = document.createEvent('HTMLEvents');
+                         event.initEvent('change', false, true);
+                         input.dispatchEvent(event);
                      }
                  }
              }"

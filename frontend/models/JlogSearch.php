@@ -168,7 +168,7 @@ class JlogSearch extends Jlog
             self::FILTER_LESS_EQUAL => Yii::t('frontend', 'FILTER LESS EQUAL'),
             self::FILTER_EQUAL => Yii::t('frontend', 'FILTER EQUAL'),
             self::FILTER_NOT_EQUAL => Yii::t('frontend', 'FILTER NOT EQUAL'),
-            self::FILTER_BETWEEN => Yii::t('frontend', 'BETWEEEN'),
+            self::FILTER_BETWEEN => Yii::t('frontend', 'FILTER BETWEEN'),
             self::FILTER_NOT_BETWEEN => Yii::t('frontend', 'FILTER NOT BETWEEN')
         ];
     }
@@ -545,6 +545,10 @@ class JlogSearch extends Jlog
                 $query = $query->andWhere(["=", $columnName, $params['val1'][$columnName]]);
 
                 break;
+            case self::FILTER_NOT_EQUAL:
+                $query = $query->andWhere(["!=", $columnName, $params['val1'][$columnName]]);
+
+                break;    
             case self::FILTER_BETWEEN:
                 $condition = new \yii\db\conditions\BetweenCondition(
                     $columnName, 'BETWEEN', $min, $max
@@ -620,6 +624,44 @@ class JlogSearch extends Jlog
         }
 
         return $query->andWhere(['like', $columnName, $params['inputValue'][$columnName]]);
+    }
+
+    /**
+     * Gets all distinct imeis from j_log, mapped to array of objects
+     * 
+     * @return array
+     */
+    public function getImeisMapped()
+    {
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany(new Jlog());
+        $imeis = $query->select('imei')->distinct()->all();
+        $imeisMapped = [];
+        $counter = 1;
+        foreach($imeis as $imei) {
+            $imeisMapped[] = (object)['id' => $counter++, 'value' => $imei->imei]; 
+        }
+
+        return $imeisMapped;
+    }
+
+    /**
+     * Gets all distinct addresses from j_log, mapped to array of objects
+     * 
+     * @return array
+     */
+    public function getAddressesMapped()
+    {
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany(new Jlog());
+        $addresses = $query->select('address')->distinct()->all();
+        $addressesMapped = [];
+        $counter = 1;
+        foreach($addresses as $address) {
+            $addressesMapped[] = (object)['id' => $counter++, 'value' => $address->address]; 
+        }
+
+        return $addressesMapped;
     }
 
 }
