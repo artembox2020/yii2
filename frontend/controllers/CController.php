@@ -329,8 +329,7 @@ class CController extends Controller
         $wash_machine->status = self::ONE_CONST;
         $wash_machine->is_deleted = false;
         $wash_machine->display = $wm_machine_dto->display;
-//        Debugger::dd($wash_machine->current_status);
-        $wash_machine->save();
+        $wash_machine->save(false);
 
         return $wash_machine;
     }
