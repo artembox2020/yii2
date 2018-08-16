@@ -55,7 +55,7 @@ $this->title = Yii::t('frontend', 'Events Journal');
         echo Html::endForm();
         echo $submitFormOnInputEvents;
     ?>
-    <div class="table-responsive">
+    <div class="table-responsives">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
@@ -65,7 +65,7 @@ $this->title = Yii::t('frontend', 'Events Journal');
             'columns' => [
                 [
                     'attribute' => 'id',
-                    'filter' => false
+                    'filter' =>  $this->render('/journal/filters/main', ['name'=> 'id', 'params' => $params]),
                 ],
                 [
                     'attribute' => 'type_packet',
@@ -74,19 +74,19 @@ $this->title = Yii::t('frontend', 'Events Journal');
                         
                         return Jlog::getTypePacketName($model->type_packet);
                     },
-                    'filter' => false
+                    'filter' => $this->render('/journal/filters/main', ['name'=> 'type_packet', 'params' => $params]),
                 ],
                 [
                     'attribute' => 'date',
-                    'filter' => false
+                    'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params]),
                 ],
                 [
                     'attribute' => 'imei',
-                    'filter' => false
+                    'filter' => $this->render('/journal/filters/main', ['name'=> 'imei', 'params' => $params]),
                 ],
                 [
                     'attribute' => 'address',
-                    'filter' => false
+                    'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
                 ],
                 [
                     'attribute' => 'events',
@@ -99,9 +99,10 @@ $this->title = Yii::t('frontend', 'Events Journal');
                 ],
             ],
         ]); ?>
-        <?php echo $removeRedundantGrids; ?>
     </div>
-    <?php 
+    <?php echo $removeRedundantGrids; ?>
+    <?php echo $columnFilterScript; ?>
+    <?php
         Pjax::end();
     ?>
 </div>

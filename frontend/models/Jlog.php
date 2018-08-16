@@ -100,7 +100,7 @@ class Jlog extends ActiveRecord
     {
         $typePackets = [
             self::TYPE_PACKET_INITIALIZATION => Yii::t('frontend', 'Initialization'),
-            self::TYPE_PACKET_DATA => Yii::t('frontend', 'Data'),
+            self::TYPE_PACKET_DATA => Yii::t('frontend', 'Status Packages'),
             self::TYPE_PACKET_LOG => Yii::t('frontend', 'Log'),
             self::TYPE_PACKET_PRICE => Yii::t('frontend', 'Price'),
         ];
@@ -117,5 +117,124 @@ class Jlog extends ActiveRecord
         $typePackets = self::getTypePackets();
         
         return $typePackets[$type_packet];
+    }
+    
+    /**
+     * @param string $name
+     * @return integer 
+     */
+    public static function getTypePacketFromName($name)
+    {
+        $typePackets = self::getTypePackets();
+        $typePackets = array_flip($typePackets);
+        
+        return empty($typePackets[$name]) ? 0 : $typePackets[$name];
+    }
+    
+    /**
+     * @param int $name
+     * @return array
+     */
+    public static function getTypePacketsFromNameByStartCondition($name)
+    {
+        $typePackets = self::getTypePackets();
+
+        if (empty($name)) {
+            
+            return array_keys($typePackets);
+        }
+
+        $packets = [];
+
+        foreach ($typePackets as $index => $typeName)
+        {
+            if (mb_stripos($typeName, $name) === 0) {
+                
+                $packets[] = $index;
+            }
+        }
+        
+        return $packets;
+    }
+    
+    /**
+     * @param string $name
+     * @return array 
+     */
+    public static function getTypePacketsFromNameByEndCondition($name)
+    {
+        $typePackets = self::getTypePackets();
+        
+        if (empty($name)) {
+            
+            return array_keys($typePackets);
+        }
+        
+        $length = strlen($name);
+        $packets = [];
+        
+        foreach ($typePackets as $index => $typeName)
+        {
+            $typeLength = strlen($typeName);
+            
+            if (mb_stripos($typeName, $name) === ($typeLength - $length)) {
+                
+                $packets[] = $index;
+            }
+        }
+        
+        return $packets;
+    }
+    
+    /**
+     * @param string $name
+     * @return array
+     */
+    public static function getTypePacketsFromNameByContainCondition($name)
+    {
+        $typePackets = self::getTypePackets();
+        
+        if (empty($name)) {
+            
+            return array_keys($typePackets);
+        }
+
+        $packets = [];
+
+        foreach ($typePackets as $index => $typeName)
+        {
+            if (mb_stripos($typeName, $name) !== false) {
+                
+                $packets[] = $index;
+            }
+        }
+        
+        return $packets;
+    }
+    
+    /**
+     * @param string $name
+     * @return array
+     */
+    public static function getTypePacketsFromNameByNotContainCondition($name)
+    {
+        $typePackets = self::getTypePackets();
+
+        if (empty($name)) {
+            
+            return array_keys($typePackets);
+        }
+
+        $packets = [];
+
+        foreach ($typePackets as $index => $typeName)
+        {
+            if (mb_stripos($typeName, $name) === false) {
+                
+                $packets[] = $index;
+            }
+        }
+        
+        return $packets;
     }
 }

@@ -47,6 +47,7 @@ class Imei extends \yii\db\ActiveRecord
     const STATUS_UNDER_REPAIR = 2;
     const STATUS_JUNK = 3;
     const DATE_TIME_FORMAT = 'php:d.m.Y H:i:s';
+    const MYSQL_DATE_TIME_FORMAT = '%d.%m.%Y %H:%i:%s';
 
     public $current_status = [
         'Off',
