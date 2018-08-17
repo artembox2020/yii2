@@ -20,6 +20,7 @@ class WmMashineDataSearch extends WmMashineData
         return [
             [['id', 'wm_mashine_id', 'number_device', 'level_signal', 'bill_cash', 'door_position', 'door_block_led', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['type_mashine', 'is_deleted'], 'safe'],
+            [['display'], 'string', 'max' => 255],
         ];
     }
 
@@ -70,6 +71,7 @@ class WmMashineDataSearch extends WmMashineData
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
+            'display' => $this->display,
         ]);
 
         $query->andFilterWhere(['like', 'type_mashine', $this->type_mashine])

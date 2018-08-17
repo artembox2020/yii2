@@ -35,6 +35,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $date_build
  * @property int $date_purchase
  * @property int $date_connection_monitoring
+ * @property string $display
  *
  * @property Imei $imei
  */
@@ -110,8 +111,6 @@ class WmMashine extends \yii\db\ActiveRecord
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
             [['serial_number'], 'unique'],
-//            [['number_device'], 'unique'],
-//            [['number_device'], 'unique', 'targetAttribute' => ['number_device']],
             [['serial_number'], 'unique', 'targetAttribute' => ['serial_number']],
             ['number_device', 'validateNumberDevice', 'skipOnEmpty' => false, 'skipOnError' => false,
                 'message' => \Yii::t('frontend', 'This Device number has already been taken')],
@@ -133,6 +132,7 @@ class WmMashine extends \yii\db\ActiveRecord
             ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
+            [['display'], 'string' , 'max' => 255],
         ];
     }
 
@@ -164,7 +164,8 @@ class WmMashine extends \yii\db\ActiveRecord
             'date_install' => Yii::t('frontend', 'Date Install'),
             'date_build' => Yii::t('frontend', 'Date build'),
             'date_purchase' => Yii::t('frontend', 'Date Purchase'),
-            'date_connection_monitoring' => Yii::t('frontend', 'Date connection to monitoring')
+            'date_connection_monitoring' => Yii::t('frontend', 'Date connection to monitoring'),
+            'display' => Yii::t('frontend' ,'Display'),
         ];
     }
 
@@ -204,8 +205,8 @@ class WmMashine extends \yii\db\ActiveRecord
     public static function find()
     {
         return parent::find()
-            ->where(['status' => WmMashine::STATUS_ACTIVE])
-            ->andWhere(['is_deleted' => false]);
+//            ->where(['status' => WmMashine::STATUS_ACTIVE])
+            ->where(['is_deleted' => false]);
 //        return new UserQuery(get_called_class());
 //        return parent::find()->where(['is_deleted' => 'false'])
 //            ->andWhere(['status' => Imei::STATUS_ACTIVE]);
@@ -252,7 +253,7 @@ class WmMashine extends \yii\db\ActiveRecord
         }
 
         if (in_array($this->$attribute, $array)) {
-            $this->addError($attribute, 'This Device number has already been taken');
+            $this->addError($attribute, Yii::t('frontend', 'This Device number has already been taken'));
         }
     }
 }

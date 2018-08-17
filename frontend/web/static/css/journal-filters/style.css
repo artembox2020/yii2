@@ -43,3 +43,11 @@
         cursor: pointer;
         margin-bottom: -16px;
     }
+    .grid-view-filter .order {
+        align: left;
+        text-align: left;
+        cursor: pointer;
+    }
+    .grid-view-filter .order:hover {
+        background-color: #f0f0f0;
+    }

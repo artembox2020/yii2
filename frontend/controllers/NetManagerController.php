@@ -536,12 +536,11 @@ class NetManagerController extends \yii\web\Controller
         $entity = new Entity();
         $imeis = $entity->getFilteredStatusData(new Imei());
 
+//        Debugger::dd($imeis);
+
         $model = new WmMashine();
 
         if ($model->load(Yii::$app->request->post())) {
-
-//            Debugger::dd($model->number_device);
-
             $im = Imei::findOne(['id' => $model->imei_id]);
             $ad = AddressBalanceHolder::findOne(['id' => $im->address_id]);
             $model->company_id = $im->company_id;
@@ -551,20 +550,14 @@ class NetManagerController extends \yii\web\Controller
             $model->type_mashine = self::TYPE_WM;
 
             if ($model->validate()) {
-                // все данные корректны
                 $model->save();
             } else {
-                // данные не корректны: $errors - массив содержащий сообщения об ошибках
-//                $errors = $model->errors;
+
                 return $this->render('wm-machine/wm-machine-add', [
                     'model' => $model,
                     'imeis' => $imeis
                 ]);
             }
-
-//            print_r($errors); die;
-
-//            $model->save();
 
             return $this->redirect('/net-manager/osnovnizasoby');
         }

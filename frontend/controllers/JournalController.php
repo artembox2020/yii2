@@ -32,7 +32,8 @@ class JournalController extends Controller
                 'filterCondition' => ['date', 'type_packet', 'address', 'imei', 'id'],
                 'val1' => ['date', 'type_packet', 'address', 'imei', 'id'],
                 'val2' => ['date', 'type_packet', 'address', 'imei', 'id'],
-                'inputValue' => ['date', 'type_packet', 'address', 'imei', 'id']
+                'inputValue' => ['date', 'type_packet', 'address', 'imei', 'id'],
+                'sort'
             ]
         );
         $addresses = $searchModel->getAddressesMapped();

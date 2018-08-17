@@ -120,7 +120,7 @@ class Entity implements EntityInterface
 
         return $this->checkAccess($unit, false);  
     }
-
+    
     /**
      * Attempts to get units by its ids
      * In case units not found returns bool(false)

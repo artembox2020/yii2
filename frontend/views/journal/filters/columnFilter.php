@@ -147,7 +147,27 @@
         var inputElement = element.closest(".form-group").querySelector("input.inputValue");
         inputElement.value = '';
     }
-    
+
+    /**
+     * Filter sort arrow function
+     * 
+     * @param DOM Element element
+     */
+    function filterSortByArrowClick(element)
+    {
+        var filterMenu = element.closest(".filter-menu");
+        var field = filterMenu.getAttribute('data-field');
+        var a = filterMenu.closest(".journal-grid-view").querySelector("th a[data-sort=" + field + "]");
+        
+        if (typeof a == 'undefined' || a == null) {
+            a = filterMenu.closest(".journal-grid-view").querySelector("th a[data-sort=-" + field + "]");
+        }
+        
+        if (typeof a != 'undefined' && a != null) {
+            a.click();
+        }
+    }
+
     var formElements = document.querySelectorAll(".grid-view-filter-form input, .grid-view-filter-form select");
     
     disableDefaultBehaviorFormElements(formElements);
@@ -159,17 +179,18 @@
     var filterHyperlinks = document.querySelectorAll(".grid-view-filter-form .left-hyperlink a");
     var dateFilterSelects  = document.querySelectorAll(".grid-view-filter-form .filter-menu .filter-group select[name='filterCondition[date]']");
     var cancelButtons = document.querySelectorAll(".grid-view-filter-form .btn-cancel");
+    var orderArrows = document.querySelectorAll(".grid-view-filter-form .filter-menu .order");
 
     for (var i =0; i < filterTypes.length; ++i)
     {
         filterTypes[i].onclick = filterTypeClickFunction;
     }
-    
+
     for (var i =0; i < filterExpandIcons.length; ++i)
     {
         filterExpandIcons[i].onclick = filterExpandClickFunction;
     }
-    
+
     for (var i = 0; i < dateFilterSelects.length; ++i)
     {
         dateFilterSelects[i].onchange = function()
@@ -178,21 +199,29 @@
         };
         dateFilterSelects[i].onchange();
     }
-    
-    for(var i = 0; i < filterHyperlinks.length; ++i)
+
+    for (var i = 0; i < filterHyperlinks.length; ++i)
     {
         filterHyperlinks[i].onclick = function()
         {
             filterEraseInputValue(this);
         }
     }
-    
-    for(var i = 0; i < cancelButtons.length; ++i)
+
+    for (var i = 0; i < cancelButtons.length; ++i)
     {
         cancelButtons[i].onclick = function()
         {
             this.closest(".grid-view-filter").querySelector(".glyphicon").click();
         }
+    }
+
+    for (var i = 0; i < orderArrows.length; ++i)
+    {
+        orderArrows[i].onclick = function()
+        {
+            filterSortByArrowClick(this);
+        };
     }
 })();
 </script>
