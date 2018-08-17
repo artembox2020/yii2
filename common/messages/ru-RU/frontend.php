@@ -203,7 +203,7 @@ return [
     'Signup' => 'Регистрация',
     'Sorry, we are unable to reset password for the provided email address.' => 'Извините, мы не можем сбросить пароль на указанный адрес электронной почты.',
     'Status Off' => 'Отключен',
-    'Status Packages' => 'Пакеты состояния',
+    'Status Packages' => 'Состояние',
     'Subject' => 'Тема',
     'Submit' => 'Ок',
     'Summary Technical Data' => 'Сведенные технические данные',
