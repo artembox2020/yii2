@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use frontend\services\imei\ImeiService;
+use frontend\services\parser\CParser;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -44,27 +45,8 @@ class CController extends Controller
      */
     public function actionI($p)
     {
-        $arrOut = array();
-
-        $column = [
-            'imei',
-            'firmware_version',
-            'type_bill_acceptance',
-            'serial_number_kp',
-            'phone_module_number',
-            'crash_event_sms',
-            'critical_amount',
-            'time_out'
-        ];
-
-        $array = array_map("str_getcsv", explode('*', $p));
-
-        foreach ($array as $subArr) {
-            $arrOut = array_merge($arrOut, $subArr);
-        }
-
-        $result = array_combine($column, $arrOut);
-
+        $cParser = new CParser();
+        $result = $cParser->iParse($p);
         $initDto = new ImeiInitDto($result);
 
         if (Imei::findOne(['imei' => $initDto->imei])) {
