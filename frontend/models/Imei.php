@@ -47,6 +47,7 @@ class Imei extends \yii\db\ActiveRecord
     const STATUS_UNDER_REPAIR = 2;
     const STATUS_JUNK = 3;
     const DATE_TIME_FORMAT = 'php:d.m.Y H:i:s';
+    const MYSQL_DATE_TIME_FORMAT = '%d.%m.%Y %H:%i:%s';
 
     public $current_status = [
         'Off',
@@ -321,9 +322,7 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getCountImeiBindedToAddress($addressId)
     {
-        $entity = new Entity();
-        $query = $entity->getUnitsQueryPertainCompany(new Imei())
-                        ->andWhere(['address_id' => $addressId, 'status' => Imei::STATUS_ACTIVE]);
+        $query = Imei::find()->andWhere(['address_id' => $addressId, 'status' => Imei::STATUS_ACTIVE]);
         
         return $query->count();                
     }
@@ -356,20 +355,21 @@ class Imei extends \yii\db\ActiveRecord
         parent::afterSave($insert, $attr);
 
         $entity = new Entity();
-        $address = $entity->getUnitPertainCompany(
+        $address = $entity->tryUnit(
             $this->address_id, new AddressBalanceHolder()
         );
-        
-        if ($this->getCountImeiBindedToAddress($this->address_id)) {
-            $address->status = AddressBalanceHolder::STATUS_BUSY;
-        } else {
-            $address->status = AddressBalanceHolder::STATUS_FREE;
+        if ($address) {
+            if ($this->getCountImeiBindedToAddress($this->address_id)) {
+                $address->status = AddressBalanceHolder::STATUS_BUSY;
+            } else {
+                $address->status = AddressBalanceHolder::STATUS_FREE;
+            }
+            $address->save();
         }
-        $address->save();
         
         // if old address_id exists then update old address status
         if (!empty($attr['address_id'])) {
-            $prevAddress = $entity->tryUnitPertainCompany(
+            $prevAddress = $entity->tryUnit(
                 $attr['address_id'], new AddressBalanceHolder()
             );
             
@@ -456,7 +456,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getActualPingCount()
     {
+        $entity = new Entity();
         $query = Imei::find()->andWhere(['IS NOT', 'firmware_version', null]);
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId()]);
 
         return $query->count();
     }
@@ -466,7 +468,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getNotInitializedCount()
     {
+        $entity = new Entity();
         $query = Imei::find()->andWhere(['IS', 'firmware_version', null]);
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId()]);
 
         return $query->count();
     }
@@ -477,7 +481,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getCountByStatus($status)
     {
+        $entity = new Entity();
         $query = Imei::find()->andWhere(['status' => $status]);
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId()]);
 
         return $query->count();
     }
@@ -487,7 +493,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getGeneralCount()
     {
+        $entity = new Entity();
         $query = Imei::find();
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId()]);
 
         return $query->count();    
     }

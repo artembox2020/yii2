@@ -15,7 +15,7 @@ class ImeiDataDto
     public $money_in_banknotes;
     public $fireproof_residue;
     public $price_regim;
-    public $tiem_out;
+//    public $tiem_out;
 
     public function __construct($data)
     {
@@ -51,8 +51,8 @@ class ImeiDataDto
             $this->price_regim = (integer)$data['price_regim'];
         }
 
-        if (array_key_exists('time_out', $data)) {
-            $this->time_out = (integer)$data['time_out'];
-        }
+//        if (array_key_exists('time_out', $data)) {
+//            $this->time_out = (integer)$data['time_out'];
+//        }
     }
 }

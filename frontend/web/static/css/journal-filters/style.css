@@ -1,0 +1,45 @@
+
+    .grid-view-filter {
+        position: relative;
+        text-align: right;
+        padding: 0;
+        z-index: 100;
+    }
+    .grid-view-filter .filter-menu {
+        position: absolute;
+        display: none;
+        right: 0;
+        background-color: white;
+        border: 1px solid #dedede;
+        padding: 6px;
+    }
+    .grid-view-filter .glyphicon {
+        cursor: pointer;
+    }
+    .grid-view-filter .filter-type .glyphicon.rotate90 {
+        transform: rotate(90deg);
+    }
+    .grid-view-filter .filter-type.border {
+        padding: 4px;
+        border: 1px solid #bc8f8f;
+        margin-bottom: 10px;
+    }
+    .grid-view-filter .filter-type {
+        text-align: left;
+    }
+    .grid-view-filter .filter-group {
+        display: none;
+    }
+    .grid-view-filter .form-button-group {
+        text-align: center;
+        margin-top: 16px;
+    }
+    .grid-view-filter .filter-value-container .filter-group {
+        display: block;
+    }
+    .grid-view-filter .left-hyperlink {
+        align: left;
+        text-align: left;
+        cursor: pointer;
+        margin-bottom: -16px;
+    }

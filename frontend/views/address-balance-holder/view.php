@@ -40,6 +40,8 @@ $dateFormat = "d.m.Y";
                 'value' => $model->address
             ],
             
+            'number_of_citizens',
+            
             [
                 'label' => Yii::t('frontend','Balance Holder'),
                 'value' => $model->balanceHolder->name

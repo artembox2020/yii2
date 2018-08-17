@@ -66,8 +66,8 @@ class Entity implements EntityInterface
      */
     public function getFilteredStatusData($instance)
     {
-        $units = $instance::find(['company_id' => $this->getCompanyId()])
-            ->where(['status' => self::ONE])
+        $units = $instance::find()
+            ->andWhere(['status' => self::ONE, 'company_id' => $this->getCompanyId()])
             ->all();
         $this->checkAccess($units);
 
@@ -108,10 +108,11 @@ class Entity implements EntityInterface
     /**
      * Attempts to get unit pertaining to company
      * In case it is not found returns bool(false)
-     * 
+     *
      * @param null $id
      * @param null $instance
      * @return bool|Instance
+     * @throws \yii\web\NotFoundHttpException
      */
     public function tryUnitPertainCompany($id, $instance)
     {
@@ -127,6 +128,7 @@ class Entity implements EntityInterface
      * @param array $unitIds
      * @param null $instance
      * @return bool|array
+     * @throws \yii\web\NotFoundHttpException
      */
     public function tryUnitsPertainCompanyByIds(Array $unitIds, $instance)
     {
@@ -139,5 +141,17 @@ class Entity implements EntityInterface
             ->all();
 
         return $this->checkAccess($units, false);
+    }
+    
+    /** 
+     * @param int $id
+     * @param Instance $instance
+     * @return bool|Instance
+     */
+    public function tryUnit($id, $instance)
+    {
+        $unit = $instance::findOne(['id' => $id]);
+
+        return $this->checkAccess($unit, false);
     }
 }

@@ -186,6 +186,11 @@ class DefaultController extends Controller
 
                 $user->company_id = $manager->company_id;
                 $user->save();
+                
+                $profile = UserProfile::findOne($user->id);
+                if ($profile->load(Yii::$app->request->post())) {
+                    $profile->save();
+                }
     
                 // send invite mail
                 $password = $model->other;
@@ -212,7 +217,8 @@ class DefaultController extends Controller
             $model->status = 1;
             return $this->render('create', [
                 'model' => $model,
-                'roles' => $roles
+                'roles' => $roles,
+                'profile' => new UserProfile()
             ]);
 
         }

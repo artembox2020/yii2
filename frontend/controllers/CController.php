@@ -16,6 +16,7 @@ use frontend\models\GdMashineData;
 use frontend\models\WmMashineData;
 use frontend\models\dto\ImeiDataDto;
 use frontend\models\dto\ImeiInitDto;
+use frontend\models\Jlog;
 use frontend\services\custom\Debugger;
 
 /**
@@ -82,6 +83,9 @@ class CController extends Controller
                 $imei->time_out = $initDto->time_out;
                 $imei->ping = time();
                 $imei->update();
+                
+                $jlog = new Jlog();
+                $jlog->createLogFromImei($imei, $p, Jlog::TYPE_PACKET_INITIALIZATION);
                 echo 'Success!';
             } else {
                 echo 'Imei not Active';exit;
@@ -149,6 +153,9 @@ class CController extends Controller
             
             $imei->ping = time();
             $imei->save();
+            
+            $jlog = new Jlog();
+            $jlog->createLogFromImei($imei, $p, Jlog::TYPE_PACKET_DATA);
 
             $this->setTypeMashine($mashineData, $imei->id);
 
@@ -172,7 +179,7 @@ class CController extends Controller
             'money_in_banknotes',
             'fireproof_residue',
             'price_regim',
-            'time_out'
+//            'time_out'
         ];
 
         return $result = array_combine($array_fields, $data);
@@ -232,6 +239,7 @@ class CController extends Controller
             'door_position',
             'door_block_led',
             'current_status',
+            'display',
         ];
 
         return $result = array_combine($array_fields, $data);
@@ -320,8 +328,8 @@ class CController extends Controller
         $wash_machine->current_status = $wm_machine_dto->current_status;
         $wash_machine->status = self::ONE_CONST;
         $wash_machine->is_deleted = false;
-//        Debugger::dd($wash_machine->current_status);
-        $wash_machine->save();
+        $wash_machine->display = $wm_machine_dto->display;
+        $wash_machine->save(false);
 
         return $wash_machine;
     }
@@ -398,6 +406,8 @@ class CController extends Controller
                 $wm_mashine_data->current_status = $wm_mashine_dto->current_status;
                 $wm_mashine_data->status = self::ONE_CONST;
                 $wm_mashine_data->is_deleted = false;
+                $wm_mashine_data->display = $wm_mashine_dto->display;
+//                Debugger::dd($wm_mashine_data->display);
                 $this->updateWmMashine($wm_mashine, $wm_mashine_data);
                 if ($wm_mashine_data->save(false)) {
                     echo $wm_mashine_data->number_device . ' WM data save!' . '<br>';
@@ -424,6 +434,7 @@ class CController extends Controller
         $wm_mashine->door_position = $wm_mashine_data->door_position;
         $wm_mashine->door_block_led = $wm_mashine_data->door_block_led;
         $wm_mashine->current_status = $wm_mashine_data->current_status;
+        $wm_mashine->display = $wm_mashine_data->display;
         $wm_mashine_data->is_deleted = false;
         $wm_mashine->update(false);
         echo $wm_mashine->number_device . ' WM updated!' . '<br>';
