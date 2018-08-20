@@ -11,12 +11,27 @@ use frontend\models\AddressBalanceHolder;
 use frontend\models\Imei;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 
 /**
  * JournalController implements the CRUD actions for journal logs
  */
 class JournalController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
 
     /**
      * Lists all Jlog models.
