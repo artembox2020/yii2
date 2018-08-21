@@ -95,10 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?php foreach ($machines as $machine) : ?>
                             CM <?= $machine->number_device ?>
-                            (status: <?php if (array_key_exists($machine->current_status, $machine->current_state)): ?>
-                            <?php $machine->current_status = $machine->current_state[$machine->current_status] ?>
-                            <?= Yii::t('frontend', $machine->current_status) ?>
-                            <?php endif; ?>)
+                            (status: <?= Yii::t('frontend', $machine->getState())  ?>)
                         <?php endforeach; ?><br>
                         <?php if ($imei->getGdMashine()->orderBy('id DESC')->one()): ?>
                         <?php $gd_machine = $imei->getGdMashine()->orderBy('id DESC')->one(); ?>

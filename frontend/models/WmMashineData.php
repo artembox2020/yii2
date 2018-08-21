@@ -144,4 +144,19 @@ class WmMashineData extends \yii\db\ActiveRecord
     {
         return $this->hasOne(WmMashine::className(), ['id' => 'mashine_id']);
     }
+
+    /**
+     * Gets current state of the machine
+     * 
+     * @return string|null
+     */
+    public function getState()
+    {
+        if (array_key_exists($this->current_status, $this->current_state)) {
+
+            return $this->current_state[$this->current_status];
+        }
+
+        return null;
+    }
 }

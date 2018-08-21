@@ -256,4 +256,19 @@ class WmMashine extends \yii\db\ActiveRecord
             $this->addError($attribute, Yii::t('frontend', 'This Device number has already been taken'));
         }
     }
+
+    /**
+     * Gets current state of the machine
+     * 
+     * @return string|null
+     */
+    public function getState()
+    {
+        if (array_key_exists($this->current_status, $this->current_state)) {
+
+            return $this->current_state[$this->current_status];
+        }
+
+        return null;
+    }
 }
