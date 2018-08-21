@@ -23,6 +23,8 @@ class CParser implements CParserInterface
         $column = [
             'imei',
             'firmware_version',
+            'firmware_version_cpu',
+            'firmware_6lowpan',
             'type_bill_acceptance',
             'serial_number_kp',
             'phone_module_number',

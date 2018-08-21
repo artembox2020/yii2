@@ -38,7 +38,7 @@ class CController extends Controller
 
     /**
      * Initialisation method
-     * sens.loc/c/i?p=866104020101005*0.1.33*MDB*7070000435*380937777777*380937777777*2*1
+     * sens.loc/c/i?p=862631033023192*1.60*1.11*2.00*MDB**380733108207*+380936769548*3*60
      * @param $p
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
@@ -56,6 +56,8 @@ class CController extends Controller
                 $imei = Imei::findOne(['imei' => $initDto->imei]);
                 $imei->imei_central_board = $initDto->imei;
                 $imei->firmware_version = $initDto->firmware_version;
+                $imei->firmware_version_cpu = $initDto->firmware_version_cpu;
+                $imei->firmware_6lowpan = $initDto->firmware_6lowpan;
                 $imei->type_packet = self::TYPE_PACKET;
                 $imei->type_bill_acceptance = $initDto->type_bill_acceptance;
                 $imei->serial_number_kp = $initDto->serial_number_kp;

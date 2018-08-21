@@ -17,6 +17,8 @@ class ImeiInitDto
     public $crash_event_sms;
     public $critical_amount;
     public $time_out;
+    public $firmware_version_cpu;
+    public $firmware_6lowpan;
 
     /**
      * map string to ImeiInitDto
@@ -63,6 +65,14 @@ class ImeiInitDto
 
         if (array_key_exists('time_out', $data)) {
             $this->time_out = (int)$data['time_out'];
+        }
+
+        if (array_key_exists('firmware_6lowpan', $data)) {
+            $this->firmware_6lowpan = (float)$data['firmware_6lowpan'];
+        }
+
+        if (array_key_exists('firmware_version_cpu', $data)) {
+            $this->firmware_version_cpu = (string)$data['firmware_version_cpu'];
         }
     }
 }

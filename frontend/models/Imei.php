@@ -20,14 +20,14 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $imei
  * @property int $address_id
  * @property string $type_packet
- * @property int $imei_central_board
+ * @property string $imei_central_board
  * @property string $firmware_version
  * @property string $type_bill_acceptance
  * @property string $serial_number_kp
  * @property string $phone_module_number
  * @property string $crash_event_sms
- * @property int $critical_amount
- * @property int $time_out
+ * @property float $critical_amount
+ * @property double $time_out
  * @property int $created_at
  * @property int $updated_at
  * @property int $is_deleted
@@ -36,6 +36,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $balance_holder_id
  * @property int $status
  * @property int $ping
+ * @property string $firmware_version_cpu
+ * @property float $firmware_6lowpan
  *
  * @property AddressBalanceHolder $address
  * @property Machine[] $machines
