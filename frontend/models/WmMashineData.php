@@ -24,6 +24,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $deleted_at
  * @property int $current_status
  * @property string $display
+ * @property int $ping
  *
  * @property WmMashine $wmMashine
  */

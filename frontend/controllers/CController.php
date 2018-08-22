@@ -65,7 +65,7 @@ class CController extends Controller
                 $imei->crash_event_sms = $initDto->crash_event_sms;
                 $imei->critical_amount = $initDto->critical_amount;
                 $imei->time_out = $initDto->time_out;
-                $imei->ping = time();
+                $imei->ping = $initDto->date;
                 $imei->update();
                 
                 $jlog = new Jlog();
@@ -135,13 +135,13 @@ class CController extends Controller
 
             $imeiData->save();
             
-            $imei->ping = time();
+            $imei->ping = $imeiDataDto->date;
             $imei->save();
             
             $jlog = new Jlog();
             $jlog->createLogFromImei($imei, $p, Jlog::TYPE_PACKET_DATA);
 
-            $this->setTypeMashine($mashineData, $imei->id);
+            $this->setTypeMashine($mashineData, $imei);
 
         } else {
             echo 'Imei not init or not exists'; exit;
@@ -172,20 +172,20 @@ class CController extends Controller
     /**
      * @param $data array
      * $id - Imei->id
-     * @param $id
+     * @param Imei $imei
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function setTypeMashine($data, int $id)
+    public function setTypeMashine($data, Imei $imei)
     {
         /** create or update wash machine (WM) */
         if (array_key_exists(self::TYPE_WM, $data)) {
-            $this->serviceWashMachine($data, $id);
+            $this->serviceWashMachine($data, $imei);
         }
 
         /** create or update gel dispenser (GD) */
         if (array_key_exists(self::TYPE_GD, $data)) {
-            $this->serviceGelDispenser($data, $id);
+            $this->serviceGelDispenser($data, $imei->id);
         }
 
         /** does not work! */
@@ -357,28 +357,28 @@ class CController extends Controller
 
     /**
      * @param $data
-     * @param $id
+     * @param $imei
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function serviceWashMachine($data, $imei_id)
+    public function serviceWashMachine($data, $imei)
     {
         foreach ($data[self::TYPE_WM] as $key => $value) {
             $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
 
             if (!WmMashine::find()
             ->where(['number_device' => $wm_mashine_dto->number_device])
-            ->andWhere(['imei_id' => $imei_id])->one()) {
-                $this->autoCreateWashMachine($wm_mashine_dto, $imei_id);
+            ->andWhere(['imei_id' => $imei->id])->one()) {
+                $this->autoCreateWashMachine($wm_mashine_dto, $imei->id);
                      echo $wm_mashine_dto->number_device . ' WM created!' . '<br>';
             }
 
             if (WmMashine::find()
                 ->where(['number_device' => $wm_mashine_dto->number_device])
-                ->andWhere(['imei_id' => $imei_id])->one())  {
+                ->andWhere(['imei_id' => $imei->id])->one())  {
                 $wm_mashine = WmMashine::find()
                     ->where(['number_device' => $wm_mashine_dto->number_device])
-                    ->andWhere(['imei_id' => $imei_id])->one();
+                    ->andWhere(['imei_id' => $imei->id])->one();
                 $wm_mashine_data = new WmMashineData();
                 $wm_mashine_data->mashine_id = $wm_mashine->id;
                 $wm_mashine_data->type_mashine = $wm_mashine_dto->type_mashine;
@@ -391,6 +391,7 @@ class CController extends Controller
                 $wm_mashine_data->status = self::ONE_CONST;
                 $wm_mashine_data->is_deleted = false;
                 $wm_mashine_data->display = $wm_mashine_dto->display;
+                $wm_mashine_data->ping = $imei->ping;
 //                Debugger::dd($wm_mashine_data->display);
                 $this->updateWmMashine($wm_mashine, $wm_mashine_data);
                 if ($wm_mashine_data->save(false)) {
@@ -400,7 +401,7 @@ class CController extends Controller
                 }
             }
 
-//            $this->updateWmDeviceNumberNull($wm_mashine_dto, $imei_id);
+//            $this->updateWmDeviceNumberNull($wm_mashine_dto, $imei->id);
         }
     }
 
@@ -420,6 +421,7 @@ class CController extends Controller
         $wm_mashine->current_status = $wm_mashine_data->current_status;
         $wm_mashine->display = $wm_mashine_data->display;
         $wm_mashine_data->is_deleted = false;
+        $wm_mashine->ping = $wm_mashine_data->ping;
         $wm_mashine->update(false);
         echo $wm_mashine->number_device . ' WM updated!' . '<br>';
     }
