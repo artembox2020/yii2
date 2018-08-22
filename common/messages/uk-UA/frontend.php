@@ -67,6 +67,7 @@ return [
     'By Location' => 'По місцерозташуванню',
     'By Status' => 'По статусу',
     'Cancel' => 'Відміна',
+    'Capacity Bill Acceptance' => 'Місткість купюроприймача, шт',
     'Certain' => 'конкретна дата',
     'Change password' => 'Змінити пароль',
     'Check your email for further instructions.' => 'Перевірте ваш ваш email.',

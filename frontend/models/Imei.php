@@ -38,6 +38,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $ping
  * @property string $firmware_version_cpu
  * @property float $firmware_6lowpan
+ * @property int $capacity_bill_acceptance
  *
  * @property AddressBalanceHolder $address
  * @property Machine[] $machines
@@ -93,9 +94,10 @@ class Imei extends \yii\db\ActiveRecord
     {
         return [
 
-            [['imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at', 'capacity_bill_acceptance'], 'integer'],
             [['imei', 'address_id', 'company_id', 'balance_holder_id', 'status'], 'required'],
             [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms'], 'string', 'max' => 255],
+            [['capacity_bill_acceptance'], 'integer', 'min' => 1],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             ['imei', 'unique',
                 'targetClass' => Imei::className(),
@@ -137,6 +139,7 @@ class Imei extends \yii\db\ActiveRecord
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'addressName' => Yii::t('frontend', 'Address'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
+            'capacity_bill_acceptance' => Yii::t('frontend', 'Capacity Bill Acceptance')
         ];
     }
 

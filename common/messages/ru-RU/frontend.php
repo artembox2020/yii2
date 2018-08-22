@@ -62,6 +62,7 @@ return [
     'By Status' => 'По статусу',
     'busy' => 'Устройство занято',
     'Cancel' => 'Отмена',
+    'Capacity Bill Acceptance' => 'Вместительность купюроприемника, шт',
     'Certain' => 'конкретная дата',
     'Change password' => 'Сменить пароль',
     'Check your email for further instructions.' => 'Проверьте ваш email.',

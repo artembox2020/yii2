@@ -48,6 +48,8 @@ use frontend\services\globals\Entity;
         ]
     ) ?>
 
+    <?= $form->field($imei, 'capacity_bill_acceptance')->input('number', ['maxlength' => true]) ?>
+
     <?= $form->field($imei, 'status')->label(Yii::t('frontend', 'Status'))->dropDownList(Imei::statuses()) ?>
 
     <div class="form-group">
