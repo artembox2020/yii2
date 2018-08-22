@@ -8,7 +8,7 @@
 <a href="/net-manager/addresses">[Адреси]</a>
 <a href="/net-manager/washpay">[WashPay]</a>
 <a href="/net-manager/osnovnizasoby">[Основні засоби]</a>
-<a href="/net-manager/fixed-assets">[Відключені]</a>
+<!--<a href="/net-manager/fixed-assets">[Відключені]</a>-->
 <?php
 $url = \yii\helpers\BaseUrl::current();
 $url = explode("?", $url)[0];
