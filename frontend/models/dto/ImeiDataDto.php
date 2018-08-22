@@ -28,27 +28,27 @@ class ImeiDataDto
         }
 
         if (array_key_exists('level_signal', $data)) {
-            $this->level_signal = (integer)$data['level_signal'];
+            $this->level_signal = (double)$data['level_signal'];
         }
 
         if (array_key_exists('on_modem_account', $data)) {
-            $this->on_modem_account = (integer)$data['on_modem_account'];
+            $this->on_modem_account = (float)$data['on_modem_account'];
         }
 
         if (array_key_exists('in_banknotes', $data)) {
-            $this->in_banknotes = (integer)$data['in_banknotes'];
+            $this->in_banknotes = (double)$data['in_banknotes'];
         }
 
         if (array_key_exists('money_in_banknotes', $data)) {
-            $this->money_in_banknotes = (integer)$data['money_in_banknotes'];
+            $this->money_in_banknotes = (float)$data['money_in_banknotes'];
         }
 
         if (array_key_exists('fireproof_residue', $data)) {
-            $this->fireproof_residue = (integer)$data['fireproof_residue'];
+            $this->fireproof_residue = (float)$data['fireproof_residue'];
         }
 
         if (array_key_exists('price_regim', $data)) {
-            $this->price_regim = (integer)$data['price_regim'];
+            $this->price_regim = (double)$data['price_regim'];
         }
 
 //        if (array_key_exists('time_out', $data)) {

@@ -12,13 +12,14 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $id
  * @property int $imei_id
  * @property int $created_at
- * @property int $imei
- * @property int $level_signal
- * @property int $on_modem_account
- * @property int $in_banknotes
- * @property int $money_in_banknotes
- * @property int $fireproof_residue
- * @property int $price_regim
+ * @property integer $date
+ * @property string $imei
+ * @property double $level_signal
+ * @property float $on_modem_account
+ * @property double $in_banknotes
+ * @property float $money_in_banknotes
+ * @property float $fireproof_residue
+ * @property double $price_regim
  * @property int $updated_at
  * @property int $is_deleted
  * @property int $deleted_at
@@ -61,7 +62,7 @@ class ImeiData extends \yii\db\ActiveRecord
     {
         return [
             [['imei_id'], 'required'],
-            [['imei_id', 'created_at', 'imei', 'level_signal', 'on_modem_account', 'in_banknotes', 'money_in_banknotes', 'fireproof_residue', 'price_regim', 'updated_at', 'deleted_at'], 'integer'],
+            [['imei_id', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
         ];
     }
