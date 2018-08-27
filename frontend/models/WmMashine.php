@@ -7,6 +7,7 @@ use frontend\services\globals\Entity;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\web\view;
 
 /**
  * This is the model class for table "wm_mashine".
@@ -46,6 +47,8 @@ class WmMashine extends \yii\db\ActiveRecord
     const STATUS_ACTIVE = 1;
     const STATUS_UNDER_REPAIR = 2;
     const STATUS_JUNK = 3;
+
+    const DATE_TIME_FORMAT = 'h:i d.m.Y';
 
     public $current_state = [
         '-2' => 'nulling',
@@ -272,5 +275,30 @@ class WmMashine extends \yii\db\ActiveRecord
         }
 
         return null;
+    }
+
+    /**
+     * Gets mashine query by imei id
+     * 
+     * @param int $imeiId
+     * @return ActiveQuery
+     */
+    public static function getMachinesQueryByImeiId($imeiId)
+    {
+        $query = self::find()->andWhere(['imei_id' => $imeiId]);
+
+        return $query;
+    }
+
+    /**
+     * Gets state view
+     * 
+     * @return string
+     */
+    public function getStateView()
+    {
+        $viewObject = new View();
+
+        return $viewObject->render('/wm-mashine/stateView', ['mashine' => $this]);
     }
 }
