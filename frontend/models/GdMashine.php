@@ -5,6 +5,7 @@ namespace frontend\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\web\view;
 
 /**
  * This is the model class for table "gd_mashine".
@@ -95,10 +96,10 @@ class GdMashine extends \yii\db\ActiveRecord
             'serial_number' => Yii::t('frontend', 'Serial Number'),
             'gel_in_tank' => Yii::t('frontend', 'Gel In Tank'),
             'status' => Yii::t('frontend', 'Status'),
-            'current_status' => Yii::t('frontend', 'Current status')
+            'current_status' => Yii::t('frontend', 'Current Status')
         ];
     }
-    
+
     /**
      * @return $this|\yii\db\ActiveQuery
      */
@@ -113,5 +114,45 @@ class GdMashine extends \yii\db\ActiveRecord
     public function getImei()
     {
         return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
+    }
+
+    /**
+     * Gets current state of the machine
+     * 
+     * @return string|null
+     */
+    public function getState()
+    {
+        if (array_key_exists($this->current_status, $this->current_state)) {
+
+            return $this->current_state[$this->current_status];
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets mashine query by imei id
+     * 
+     * @param int $imeiId
+     * @return ActiveQuery
+     */
+    public static function getMachinesQueryByImeiId($imeiId)
+    {
+        $query = self::find()->andWhere(['imei_id' => $imeiId]);
+
+        return $query;
+    }
+
+    /**
+     * Gets state view
+     * 
+     * @return string
+     */
+    public function getStateView()
+    {
+        $viewObject = new View();
+
+        return $viewObject->render('/wm-mashine/stateView', ['mashine' => $this]);
     }
 }

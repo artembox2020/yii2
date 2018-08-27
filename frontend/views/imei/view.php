@@ -62,7 +62,9 @@ $this->title = $model->imei;
                     return $relationData ? $relationData : Yii::t('common', 'Not Set');
                 }
             ],
-            
+
+            'capacity_bill_acceptance',
+
             'imei_central_board',
             
             'firmware_version',

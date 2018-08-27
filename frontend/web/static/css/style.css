@@ -210,3 +210,12 @@ div.required label:after {
   height: 25px;
   width: 25px;
 }
+.monitoring .filters {
+  display: none;
+}
+.mashine-state-container .mashine-state-addons {
+  margin-top: 10px;
+  width: 100%;
+  text-align: left;
+  color: #28A157;
+}

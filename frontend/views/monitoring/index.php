@@ -1,28 +1,65 @@
 <?php
-/* @var $this yii\web\View */
 
 use yii\helpers\Html;
+use yii\grid\GridView;
+use frontend\models\ImeiDataSearch;
 
-/* @var $model frontend\models\Company */
-/* @var $users common\models\User */
-/* @var $balanceHolders  */
+/* @var $this yii\web\View */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $searchModel  frontend\models\ImeiDataSearch*/
+/* @var $monitoringController frontend\controllers\MonitoringController */
 ?>
-<h1>monitoring</h1>
-
-<p>
-    <?php foreach ($balanceHolders as $item) : ?>
-    <?= $item->name ?> (<?= $item->address ?>)<br>
-        <?php foreach ($item->addressBalanceHolders as $address) : ?>
-            <?php foreach ($address->imeis as $imei) : ?>
-                [<?= $imei->imei ?>]
-            <?php endforeach; ?>
-            <?= $address->address ?>
-            Этаж: <?= $address->floor ?>
-            <?php foreach ($imei->getImeiData() as $value) : ?>
-            <?php endforeach; ?>
-            <br>
-        <?php endforeach; ?>
-        <br>
-    <?php endforeach; ?>
-<p>
-</p>
+<h1><?= Yii::t('frontend', 'Monitoring') ?></h1>
+<div class="monitoring">
+    <div class="form-group monitoring-shapter">
+        <label for="type_packet"><?= Yii::t('frontend', 'Monitoring Shapter') ?></label>
+        <?= Html::dropDownList(
+                'monitoring_shapter', 
+                'devices',
+                $monitoringShapters,
+                [
+                    'class' => 'form-control'
+                ]
+            );
+        ?>
+    </div>
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => false,
+        'summary' => '',
+        'columns' => [
+            'imei',
+            [
+                'label' => $monitoringShapters['remote-connection'],
+                'format' => 'raw',
+                'value' => function($model) use($monitoringController)
+                {
+                    return $monitoringController->renderImeiCard($model->id);
+                },
+                'contentOptions' => ['class' => 'remote-connection all'],
+                'headerOptions' => ['class' => 'remote-connection all']
+            ],
+            [
+                'label' => $monitoringShapters['devices'],
+                'format' => 'raw',
+                'value' => function($model) use($monitoringController)
+                {
+                    return $monitoringController->renderDevicesByImeiId($model->id);
+                },
+                'contentOptions' => ['class' => 'devices all'],
+                'headerOptions' => ['class' => 'devices all']
+            ],
+            [
+                'label' => $monitoringShapters['terminal'],
+                'format' => 'raw',
+                'value' => function($model) use($monitoringController)
+                {
+                    return $monitoringController->renderTerminalDataByImeiId($model->id);
+                },
+                'contentOptions' => ['class' => 'terminal all'],
+                'headerOptions' => ['class' => 'terminal all']
+            ],
+        ],
+    ]); ?>
+</div>
+<?php echo $script; ?>

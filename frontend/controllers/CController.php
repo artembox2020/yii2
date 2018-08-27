@@ -67,7 +67,7 @@ class CController extends Controller
                 $imei->time_out = $initDto->time_out;
                 $imei->ping = $initDto->date;
                 $imei->update();
-                
+
                 $jlog = new Jlog();
                 $jlog->createLogFromImei($imei, $p, Jlog::TYPE_PACKET_INITIALIZATION);
                 echo 'Success!';

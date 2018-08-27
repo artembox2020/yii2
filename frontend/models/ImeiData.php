@@ -30,6 +30,11 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  */
 class ImeiData extends \yii\db\ActiveRecord
 {
+    public $bill_acceptance_fullness;
+    public $bill_acceptance;
+    public $software_versions;
+    public $actions;
+
     /**
      * @return array
      */
@@ -88,20 +93,24 @@ class ImeiData extends \yii\db\ActiveRecord
             'updated_at' => Yii::t('frontend', 'Updated At'),
             'is_deleted' => Yii::t('frontend', 'Is Deleted'),
             'deleted_at' => Yii::t('frontend', 'Deleted At'),
+            'bill_acceptance_fullness' => Yii::t('frontend', 'Bill Acceptance Fullness'),
+            'bill_acceptance' => Yii::t('frontend', 'Bill Acceptance'),
+            'software_versions' => Yii::t('frontend', 'Software Versions'),
+            'actions' => Yii::t('frontend', 'Actions'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getImei()
+    public function getImeiRelation()
     {
         return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
     }
 
     public static function find()
     {
-        return parent::find()->where(['is_deleted' => false]);
+        return parent::find()->where(['imei_data.is_deleted' => false]);
     }
 
     /**
@@ -110,5 +119,56 @@ class ImeiData extends \yii\db\ActiveRecord
     public function getWmMashines()
     {
         return $this->hasMany(WmMashine::className(), ['imei_id' => 'id']);
+    }
+
+    /**
+     * Gets bill acceptance data view
+     */
+    public function getBillAcceptanceData()
+    {
+        $result ='';
+
+        if (!empty($this->imeiRelation->capacity_bill_acceptance) && !empty($this->in_banknotes)) {
+            $fullness = (int)$this->in_banknotes / (int)$this->imeiRelation->capacity_bill_acceptance;
+            $fullness = $fullness * 100;
+            $fullness = number_format($fullness, 2);
+        } else {
+            $fullness = null;
+        }
+
+        $result.= '<b>'.$this->attributeLabels()['status'].'</b>:<br>';
+        $result.= '<b>'.$this->attributeLabels()['bill_acceptance_fullness'].'</b>: '.$fullness.'<br>';
+        $result.= '<b>'.$this->attributeLabels()['in_banknotes'].'</b>: '.$this->in_banknotes;
+
+        return $result;
+    }
+
+    /**
+     * Gets software versions view
+     */
+    public function getSoftwareVersions()
+    {
+        $result ='';
+        $result.= '<b>'.$this->imeiRelation->attributeLabels()['firmware_version'].'</b>: '.
+                  $this->imeiRelation->firmware_version.'<br>';
+
+        return $result;
+    }
+
+    /**
+     * Gets current modem card info view
+     */
+    public function getModemCard()
+    {
+        $result = '<b>'.$this->imeiRelation->attributeLabels()['phone_module_number'].'</b>:'.
+                  ' '.$this->imeiRelation->phone_module_number.'<br>';
+
+        $result.= '<b>'.$this->attributeLabels()['level_signal'].'</b>:'.
+                  ' '.$this->level_signal.'%<br>';
+
+        $result.= '<b>'.$this->attributeLabels()['money_in_banknotes'].'</b>:'.
+                  ' '.$this->money_in_banknotes;
+
+        return $result;
     }
 }
