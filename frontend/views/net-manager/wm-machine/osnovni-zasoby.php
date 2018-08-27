@@ -52,6 +52,10 @@ $machine_menu = [];
         ['attribute' => 'address.address',
             'label' => Yii::t('frontend', 'Address Install'),
         ],
+        [
+            'attribute' => 'balanceHolder.name',
+            'label' => Yii::t('frontend', 'Balance Holder'),
+        ],
         ['attribute' => 'updated_at',
             'label' => Yii::t('frontend', 'Last ping'),
             'value' => function($dataProvider) {
@@ -62,3 +66,6 @@ $machine_menu = [];
     ]
 ]);
 ?>
+
+<p><u><b><?= Yii::t('frontend','Consolidated technical data') ?></b></u><p/>
+<p><u><b><?= Yii::t('frontend','Consolidated financial data') ?></b></u><p/>

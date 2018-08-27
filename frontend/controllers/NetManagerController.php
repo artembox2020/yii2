@@ -281,11 +281,11 @@ class NetManagerController extends \yii\web\Controller
     /**
      * Index page for addresses
      * In case of $balanceHolderId is set, the appropriate filter is applied
-     * 
-     * @param $balanceHolderId
-     * @return string|\yii\web\Response
-     * @throws \yii\web\NotFoundHttpException
-     * @throws \yii\web\ServerErrorHttpException
+     *
+     * @param bool $balanceHolderId
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws \yii\web\HttpException
      */
     public function actionAddresses($balanceHolderId = false)
     {
@@ -347,8 +347,7 @@ class NetManagerController extends \yii\web\Controller
 
     /**
      * @return string
-     * @throws NotFoundHttpException
-     * @throws \yii\web\ServerErrorHttpException
+     * @throws \yii\web\HttpException
      */
     public function actionWashpay()
     {
@@ -422,7 +421,7 @@ class NetManagerController extends \yii\web\Controller
      * @param $id
      * @return string
      * @throws NotFoundHttpException
-     * @throws \yii\web\ServerErrorHttpException
+     * @throws \yii\web\HttpException
      */
     public function actionWashpayUpdate($id)
     {
@@ -460,7 +459,7 @@ class NetManagerController extends \yii\web\Controller
      * @param null $addressBalanceHolderId
      * @return string
      * @throws NotFoundHttpException
-     * @throws \yii\web\ServerErrorHttpException
+     * @throws \yii\web\HttpException
      */
     public function actionWashpayCreate($addressBalanceHolderId = null)
     {

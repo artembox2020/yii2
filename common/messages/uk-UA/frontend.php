@@ -98,6 +98,8 @@ return [
     'Created' => 'Створено',
     'Created At' => 'Створено',
     'ce cooling' => 'Помилка охолодження (cE)',
+    'Consolidated technical data' => 'Зведені технічні дані',
+    'Consolidated financial data' => 'Зведені фінансові дані',
     'Disabled' => 'Відключено',
     'Data' => 'Дані',
     'DateTime' => 'Дата і час',
