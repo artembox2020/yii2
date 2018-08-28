@@ -59,7 +59,7 @@ $machine_menu = [];
         ['attribute' => 'updated_at',
             'label' => Yii::t('frontend', 'Last ping'),
             'value' => function($dataProvider) {
-                return date('[H:i:s] d.m.Y', $dataProvider->updated_at);
+                return date('[H:i:s] d.m.Y', $dataProvider->ping);
             },
         ],
 
