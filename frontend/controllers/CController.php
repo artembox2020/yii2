@@ -132,6 +132,7 @@ class CController extends Controller
             $imeiData->money_in_banknotes = $imeiDataDto->money_in_banknotes;
             $imeiData->fireproof_residue = $imeiDataDto->fireproof_residue;
             $imeiData->price_regim = $imeiDataDto->price_regim;
+            $imeiData->is_deleted = false;
 
             $imeiData->save();
             
