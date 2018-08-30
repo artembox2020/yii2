@@ -25,6 +25,8 @@ class CParser implements CParserInterface
             'firmware_version',
             'firmware_version_cpu',
             'firmware_6lowpan',
+            'number_channel',
+            'pcb_version',
             'type_bill_acceptance',
             'serial_number_kp',
             'phone_module_number',
