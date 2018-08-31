@@ -156,6 +156,9 @@
         adjustModemCardTableSize();
         adjustTableSize('devices', 'cell-device');
         adjustTableSize('financial', 'cell-financial');
+        adjustTableSize('terminal', 'cell-bill-acceptance');
+        adjustTableSize('terminal', 'cell-software');
+        adjustTableSize('terminal', 'cell-actions');
         hideRedundantHeaders();
         hideRedundantCommonHeaders();
     }());

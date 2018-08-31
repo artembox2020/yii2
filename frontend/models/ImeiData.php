@@ -170,4 +170,13 @@ class ImeiData extends \yii\db\ActiveRecord
 
         return Yii::$app->view->render('/monitoring/data/modemCard', ['model' => $this]);
     }
+
+    /**
+     * Gets actions info view
+     */
+    public function getActions()
+    {
+
+        return Yii::$app->view->render('/monitoring/data/actions', ['model' => $this]);
+    }
 }

@@ -41,6 +41,11 @@ use yii\widgets\Pjax;
             [
                 'attribute' => 'actions',
                 'format' => 'raw',
+                'value' => function($model)
+                {
+
+                   return $model->getActions();
+                },
                 'contentOptions' => ['class' => 'terminal all'],
                 'headerOptions' => ['class' => 'terminal all']
             ]

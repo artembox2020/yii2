@@ -1,7 +1,7 @@
 <table class="table table-striped table-bordered table-software-versions" id="table-software-versions">
     <tbody>
         <tr>
-            <td>
+            <td class="cell-software">
                 <b><?= $model->imeiRelation->attributeLabels()['firmware_version'] ?></b>
                 <br>
             </td>

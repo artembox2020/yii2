@@ -1,7 +1,7 @@
 <table class="table table-striped table-bordered table-bill-acceptance">
     <tbody>
         <tr>
-            <td>
+            <td class="cell-bill-acceptance">
                 <b><?= $model->attributeLabels()['status'] ?></b>
                 <br>
                 <br>
