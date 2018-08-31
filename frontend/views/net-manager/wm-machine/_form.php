@@ -24,6 +24,8 @@ use bs\Flatpickr\FlatpickrWidget;
 
     <?= $form->field($model, 'number_device')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'inventory_number')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'serial_number')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'brand')->textInput(['maxlength' => true]) ?>

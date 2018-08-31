@@ -38,6 +38,7 @@ use yii\web\view;
  * @property int $date_connection_monitoring
  * @property string $display
  * @property int $ping
+ * @property int $inventory_number
  *
  * @property Imei $imei
  */
@@ -113,11 +114,11 @@ class WmMashine extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
+            [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id', 'number_device', 'inventory_number', 'serial_number'], 'required'],
             [['serial_number'], 'unique'],
             [['serial_number'], 'unique', 'targetAttribute' => ['serial_number']],
-            ['number_device', 'validateNumberDevice', 'skipOnEmpty' => false, 'skipOnError' => false,
-                'message' => \Yii::t('frontend', 'This Device number has already been taken')],
+            ['inventory_number', 'validateNumberDevice', 'skipOnEmpty' => false, 'skipOnError' => false,
+                'message' => \Yii::t('frontend', 'This Inventory number has already been taken')],
             [['imei_id', 'number_device',
                 'level_signal',
                 'bill_cash',
@@ -171,6 +172,7 @@ class WmMashine extends \yii\db\ActiveRecord
             'date_connection_monitoring' => Yii::t('frontend', 'Date connection to monitoring'),
             'display' => Yii::t('frontend' ,'Display'),
             'ping' => Yii::t('frontend', 'Ping'),
+            'inventory_number' => Yii::t('frontend', 'Inventory number'),
         ];
     }
 
@@ -254,11 +256,11 @@ class WmMashine extends \yii\db\ActiveRecord
         $result = $entity->getUnitsPertainCompany(new WmMashine());
 
         foreach ($result as $value) {
-            $array[] = $value->number_device;
+            $array[] = $value->inventory_number;
         }
 
         if (in_array($this->$attribute, $array)) {
-            $this->addError($attribute, Yii::t('frontend', 'This Device number has already been taken'));
+            $this->addError($attribute, Yii::t('frontend', 'This Inventory number has already been taken'));
         }
     }
 
