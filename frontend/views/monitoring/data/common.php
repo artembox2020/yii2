@@ -33,5 +33,15 @@ use yii\widgets\Pjax;
     </div>
     <div class="col-md-4 col-sm-4 cell">
         <span><?= $data->imeiRelation->address->address ?></span>
+        <br/><br/>
+        <div class="row common-container-block">
+            <div class= "common-header">
+                <div class="header">
+                    <?= Yii::t('frontend', 'Address Name') ?>
+                </div>
+            </div>
+            <br>
+            <span><?= $data->imeiRelation->address->name ?></span>
+        </div>    
     </div>
 </div>

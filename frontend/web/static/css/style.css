@@ -296,3 +296,7 @@ div.required label:after {
 .monitoring .common-container .cell span {
     vertical-align: middle;
 }
+.monitoring .common-container-block .header {
+    border-top: 2px solid rgb(221, 221, 221);
+    border-left: 1px solid rgb(221, 221, 221);
+}
