@@ -55,7 +55,7 @@ class Entity implements EntityInterface
     public function getUnitsQueryPertainCompany($instance)
     {
         $units = $instance::find()->andWhere(['company_id' => $this->getCompanyId()]);
-        
+
         return $units;
     }
 

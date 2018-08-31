@@ -33,9 +33,9 @@ $machine_menu = [];
             'label' => Yii::t('frontend', 'Serial number'),
         ],
         ['attribute' => 'number_device',
-            'label' => Yii::t('frontend', 'Device number'),
+            'label' => Yii::t('frontend', 'Inventory number'),
             'value' => function ($dataProvider) {
-                return Html::a(Html::encode($dataProvider->number_device), Url::to(['wm-machine-view', 'id' => $dataProvider->id]));
+                return Html::a(Html::encode($dataProvider->inventory_number), Url::to(['wm-machine-view', 'id' => $dataProvider->id]));
             },
             'format' => 'raw',],
 //        ['attribute' => 'type_mashine',

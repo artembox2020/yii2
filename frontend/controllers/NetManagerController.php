@@ -547,7 +547,8 @@ class NetManagerController extends \yii\web\Controller
             $model->balance_holder_id = $ad->balance_holder_id;
             $model->is_deleted = self::ZERO;
             $model->type_mashine = self::TYPE_WM;
-
+//            $model->save(false);
+            print_r($model->getErrors());
             if ($model->validate()) {
                 $model->save();
             } else {

@@ -119,7 +119,7 @@ class WmMashine extends \yii\db\ActiveRecord
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id', 'number_device', 'inventory_number', 'serial_number'], 'required'],
             [['serial_number'], 'unique'],
             [['serial_number'], 'unique', 'targetAttribute' => ['serial_number']],
-            ['inventory_number', 'validateNumberDevice', 'skipOnEmpty' => false, 'skipOnError' => false,
+            ['inventory_number', 'validateNumberDevice', 'skipOnEmpty' => true, 'skipOnError' => false,
                 'message' => \Yii::t('frontend', 'This Inventory number has already been taken')],
             [['imei_id', 'number_device',
                 'level_signal',
@@ -248,22 +248,25 @@ class WmMashine extends \yii\db\ActiveRecord
 
     /**
      * @param $attribute
-     * @param $params
      * @throws \yii\web\NotFoundHttpException
      */
-    public function validateNumberDevice($attribute, $params)
+    public function validateNumberDevice($attribute)
     {
         $array = [];
         $entity = new Entity();
-        $result = $entity->getUnitsPertainCompany(new WmMashine());
 
-        foreach ($result as $value) {
-            $array[] = $value->inventory_number;
+        if (WmMashine::find()->all()) {
+            $result = $entity->getUnitsPertainCompany(new WmMashine());
+
+            foreach ($result as $value) {
+                $array[] = $value->inventory_number;
+            }
+
+            if (in_array($this->$attribute, $array)) {
+                $this->addError($attribute, Yii::t('frontend', 'This Inventory number has already been taken'));
+            }
         }
 
-        if (in_array($this->$attribute, $array)) {
-            $this->addError($attribute, Yii::t('frontend', 'This Inventory number has already been taken'));
-        }
     }
 
     /**
