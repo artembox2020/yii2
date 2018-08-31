@@ -73,7 +73,7 @@
 
                 for (var j = 0; j < cells.length; ++j) {
                     cells[j].style.height = height + 'px';
-                    cells[j].style.paddingTop = (height / 2 - 78) + 'px';
+                    cells[j].style.paddingTop = (height / 2 - 90) + 'px';
                 }
             }
         }
