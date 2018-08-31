@@ -40,6 +40,7 @@ return [
     'Address Card' => 'Картка адреси',
     'Address Install' => 'Адреса установки',
     'Address List' => 'Список адрес',
+    'Address Name' => 'Коротка назва',
     'Address amount' => 'Кількість адрес',
     'Add IMEI' => 'Додати IMEI',
     'Add Washpay' => 'Додати WASHPAY',

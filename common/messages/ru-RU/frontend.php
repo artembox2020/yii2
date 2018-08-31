@@ -39,6 +39,7 @@ return [
     'Address' => 'Адрес',
     'Address Card' => 'Картка адреса',
     'Address List' => 'Список адресов',
+    'Address Name' => 'Короткое название',
     'Add IMEI' => 'Добавить IMEI',
     'Add Washpay' => 'Добавить WASHPAY',
     'Add WM Machine' => 'Добавить СМ',
