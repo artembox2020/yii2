@@ -58,6 +58,8 @@ class CController extends Controller
                 $imei->firmware_version = $initDto->firmware_version;
                 $imei->firmware_version_cpu = $initDto->firmware_version_cpu;
                 $imei->firmware_6lowpan = $initDto->firmware_6lowpan;
+                $imei->number_channel = $initDto->number_channel;
+                $imei->pcb_version = $initDto->pcb_version;
                 $imei->type_packet = self::TYPE_PACKET;
                 $imei->type_bill_acceptance = $initDto->type_bill_acceptance;
                 $imei->serial_number_kp = $initDto->serial_number_kp;

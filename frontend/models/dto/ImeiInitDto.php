@@ -19,6 +19,8 @@ class ImeiInitDto
     public $time_out;
     public $firmware_version_cpu;
     public $firmware_6lowpan;
+    public $number_channel;
+    public $pcb_version;
 
     /**
      * map string to ImeiInitDto
@@ -73,6 +75,14 @@ class ImeiInitDto
 
         if (array_key_exists('firmware_version_cpu', $data)) {
             $this->firmware_version_cpu = (string)$data['firmware_version_cpu'];
+        }
+
+        if (array_key_exists('number_channel', $data)) {
+            $this->number_channel = (string)$data['number_channel'];
+        }
+
+        if (array_key_exists('pcb_version', $data)) {
+            $this->pcb_version = (string)$data['pcb_version'];
         }
     }
 }

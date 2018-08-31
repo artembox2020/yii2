@@ -39,6 +39,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property string $firmware_version_cpu
  * @property float $firmware_6lowpan
  * @property int $capacity_bill_acceptance
+ * @property float $number_channel
+ * @property  float $pcb_version
  *
  * @property AddressBalanceHolder $address
  * @property Machine[] $machines
@@ -355,10 +357,14 @@ class Imei extends \yii\db\ActiveRecord
         }
     }
 
+//    /**
+//     * @param bool $insert
+//     * @param array $attr
+//     * @throws \yii\web\NotFoundHttpException
+//     */
     /**
      * @param bool $insert
      * @param array $attr
-     * @throws \yii\web\NotFoundHttpException
      */
     public function afterSave($insert, $attr)
     {
@@ -437,12 +443,17 @@ class Imei extends \yii\db\ActiveRecord
         }
     }
     
+//    /**
+//     * Gets the last ping or status in case
+//     * it is not active
+//     *
+//     * @param string $dateFormat
+//     * @return string|date
+//     */
     /**
-     * Gets the last ping or status in case
-     * it is not active
-     * 
      * @param string $dateFormat
-     * @return string|date
+     * @return array|mixed|string
+     * @throws \yii\base\InvalidConfigException
      */
     public function getLastPing($dateFormat = self::DATE_TIME_FORMAT)
     {
