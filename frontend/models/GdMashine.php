@@ -43,6 +43,8 @@ class GdMashine extends \yii\db\ActiveRecord
         'dz error param'
     ];
 
+    public $level_signal;
+
     /**
      * @return array
      */
@@ -75,7 +77,7 @@ class GdMashine extends \yii\db\ActiveRecord
     {
         return [
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id'], 'required'],
-            [['imei_id', 'bill_cash', 'gel_in_tank', 'status', 'current_status'], 'integer'],
+            [['imei_id', 'bill_cash', 'gel_in_tank', 'status', 'current_status', 'level_signal'], 'integer'],
             [['type_mashine'], 'string'],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
         ];
@@ -96,7 +98,8 @@ class GdMashine extends \yii\db\ActiveRecord
             'serial_number' => Yii::t('frontend', 'Serial Number'),
             'gel_in_tank' => Yii::t('frontend', 'Gel In Tank'),
             'status' => Yii::t('frontend', 'Status'),
-            'current_status' => Yii::t('frontend', 'Current Status')
+            'current_status' => Yii::t('frontend', 'Current Status'),
+            'level_signal' => Yii::t('frontend', 'Level Signal')
         ];
     }
 
@@ -105,7 +108,7 @@ class GdMashine extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return parent::find()->where(['is_deleted' => false]);
+        return parent::find()->where(['gd_mashine.is_deleted' => false]);
     }
 
     /**

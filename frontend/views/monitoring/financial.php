@@ -29,11 +29,6 @@ use frontend\models\ImeiDataSearch;
         'summary' => '',
         'columns' => [
             [
-                'attribute' => 'imei',
-                'contentOptions' => ['class' => 'imei'],
-                'headerOptions' => ['class' => 'imei header']
-            ],
-            [
                 'label' => $monitoringShapters['common'],
                 'format' => 'raw',
                 'value' => function($model) use($monitoringController)
@@ -44,16 +39,6 @@ use frontend\models\ImeiDataSearch;
                 'headerOptions' => ['class' => 'common all']
             ],
             [
-                'label' => $monitoringShapters['remote-connection'],
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController)
-                {
-                    return $monitoringController->renderImeiCard($model->id);
-                },
-                'contentOptions' => ['class' => 'remote-connection all'],
-                'headerOptions' => ['class' => 'remote-connection all']
-            ],
-            [
                 'label' => $monitoringShapters['financial'],
                 'format' => 'raw',
                 'value' => function($model) use($monitoringController)
@@ -62,26 +47,6 @@ use frontend\models\ImeiDataSearch;
                 },
                 'contentOptions' => ['class' => 'financial all'],
                 'headerOptions' => ['class' => 'financial all']
-            ],
-            [
-                'label' => $monitoringShapters['devices'],
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController)
-                {
-                    return $monitoringController->renderDevicesByImeiId($model->id);
-                },
-                'contentOptions' => ['class' => 'devices all'],
-                'headerOptions' => ['class' => 'devices all']
-            ],
-            [
-                'label' => $monitoringShapters['terminal'],
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController)
-                {
-                    return $monitoringController->renderTerminalDataByImeiId($model->id);
-                },
-                'contentOptions' => ['class' => 'terminal all'],
-                'headerOptions' => ['class' => 'terminal all']
             ],
         ],
     ]); ?>

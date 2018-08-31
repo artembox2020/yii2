@@ -82,7 +82,7 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('frontend', 'ID'),
             'company_id' => Yii::t('frontend', 'Company'),
-            'name' => Yii::t('frontend', 'Name'),
+            'name' => Yii::t('frontend', 'Address Name'),
             'address' => Yii::t('frontend', 'Address'),
             'floor' => Yii::t('frontend', 'Floor'),
             'number_of_floors' => Yii::t('frontend', 'Number of Floors'),

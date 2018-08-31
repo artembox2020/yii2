@@ -50,6 +50,8 @@ class WmMashine extends \yii\db\ActiveRecord
     const STATUS_JUNK = 3;
 
     const DATE_TIME_FORMAT = 'h:i d.m.Y';
+    
+    const LEVEL_SIGNAL_MAX = 10000;
 
     public $current_state = [
         '-2' => 'nulling',
@@ -213,7 +215,7 @@ class WmMashine extends \yii\db\ActiveRecord
     {
         return parent::find()
 //            ->where(['status' => WmMashine::STATUS_ACTIVE])
-            ->where(['is_deleted' => false]);
+            ->where(['wm_mashine.is_deleted' => false]);
 //        return new UserQuery(get_called_class());
 //        return parent::find()->where(['is_deleted' => 'false'])
 //            ->andWhere(['status' => Imei::STATUS_ACTIVE]);
@@ -287,7 +289,7 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public static function getMachinesQueryByImeiId($imeiId)
     {
-        $query = self::find()->andWhere(['imei_id' => $imeiId]);
+        $query = self::find()->andWhere(['wm_mashine.imei_id' => $imeiId]);
 
         return $query;
     }
@@ -302,5 +304,20 @@ class WmMashine extends \yii\db\ActiveRecord
         $viewObject = new View();
 
         return $viewObject->render('/wm-mashine/stateView', ['mashine' => $this]);
+    }
+
+    /**
+     * Gets level signal
+     * 
+     * @return null|int
+     */
+    public function getLevelSignal()
+    {
+        if (is_null($this->level_signal) || $this->level_signal > self::LEVEL_SIGNAL_MAX) {
+
+            return null;
+        }
+
+        return $this->level_signal;
     }
 }

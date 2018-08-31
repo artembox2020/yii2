@@ -61,6 +61,9 @@ class Imei extends \yii\db\ActiveRecord
         'Junk'
     ];
 
+    /** @var $communication_program_version */
+    public $communication_program_version;
+
     /** @var $model */
     private $model;
 
@@ -98,7 +101,7 @@ class Imei extends \yii\db\ActiveRecord
 
             [['imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at', 'capacity_bill_acceptance'], 'integer'],
             [['imei', 'address_id', 'company_id', 'balance_holder_id', 'status'], 'required'],
-            [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms'], 'string', 'max' => 255],
+            [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms', 'communication_program_version'], 'string', 'max' => 255],
             [['capacity_bill_acceptance'], 'integer', 'min' => 1],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             ['imei', 'unique',
@@ -130,6 +133,8 @@ class Imei extends \yii\db\ActiveRecord
             'type_packet' => Yii::t('frontend', 'Type Packet'),
             'imei_central_board' => Yii::t('frontend', 'Imei Central Board'),
             'firmware_version' => Yii::t('frontend', 'Firmware Version'),
+            'firmware_version_cpu' => Yii::t('frontend', 'Firmware Version CPU'),
+            'communication_program_version' => Yii::t('frontend', 'Communication Program Version'),
             'type_bill_acceptance' => Yii::t('frontend', 'Type Bill Acceptance'),
             'serial_number_kp' => Yii::t('frontend', 'Serial Number Kp'),
             'phone_module_number' => Yii::t('frontend', 'Phone Module Number'),

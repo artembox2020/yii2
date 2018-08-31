@@ -23,7 +23,9 @@ use yii\widgets\Pjax;
                 {
                     
                     return $model->getBillAcceptanceData();
-                }
+                },
+                'contentOptions' => ['class' => 'terminal all'],
+                'headerOptions' => ['class' => 'terminal all']
             ],
             [
                 'attribute' => 'software_versions',
@@ -32,11 +34,20 @@ use yii\widgets\Pjax;
                 {
 
                    return $model->getSoftwareVersions();
-                }
+                },
+                'contentOptions' => ['class' => 'terminal all'],
+                'headerOptions' => ['class' => 'terminal all']
             ],
             [
                 'attribute' => 'actions',
-                'format' => 'raw'
+                'format' => 'raw',
+                'value' => function($model)
+                {
+
+                   return $model->getActions();
+                },
+                'contentOptions' => ['class' => 'terminal all'],
+                'headerOptions' => ['class' => 'terminal all']
             ]
         ],
     ]); ?>

@@ -12,10 +12,6 @@ use yii\widgets\Pjax;
 <div>
     <?php Pjax::begin(); ?>
 
-    <p>
-        <u><b><?= Yii::t('frontend', 'Wm Mashines') ?></b></u>
-    </p>
-
     <?= GridView::widget([
         'dataProvider' => $dataProviderWmMashine,
         'filterModel' => $searchModel,
@@ -25,13 +21,20 @@ use yii\widgets\Pjax;
                 'label' => Yii::t('frontend', 'Device'),
                 'format' => 'raw',
                 'attribute' => 'id',
-                'value' => function($model)
+                'value' => function($model, $index)
                 {
-                    return Yii::t('frontend', $model->type_mashine).$model->id;
-                }
+                    return Yii::t('frontend', $model->type_mashine).$index;
+                },
+                'contentOptions' => ['class' => 'cell-device'],
             ],
             'bill_cash',
-            'level_signal',
+            [
+                'attribute' => 'level_signal',
+                'value' => function($model)
+                {
+                    return $model->getLevelSignal();
+                }
+            ],    
             [
                 'attribute' => 'current_status',
                 'format' => 'raw',
@@ -43,34 +46,5 @@ use yii\widgets\Pjax;
         ],
     ]); ?>
 
-    <p>
-        <u><b><?= Yii::t('frontend', 'Gd Mashines') ?></b></u>
-    </p>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProviderGdMashine,
-        'filterModel' => $searchModel,
-        'summary' => '',
-        'columns' => [
-            [
-                'label' => Yii::t('frontend', 'Device'),
-                'format' => 'raw',
-                'attribute' => 'id',
-                'value' => function($model)
-                {
-                    return Yii::t('frontend', $model->type_mashine).$model->id;
-                }
-            ],
-            'bill_cash',
-            [
-                'attribute' => 'current_status',
-                'format' => 'raw',
-                'value' => function($model)
-                {
-                    return $model->getStateView();
-                }
-            ]
-        ],
-    ]); ?>
     <?php Pjax::end(); ?>
 </div>

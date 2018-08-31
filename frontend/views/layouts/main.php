@@ -105,6 +105,20 @@ AppAsset::register($this);
             [
                 'label' => Yii::t('frontend', 'Monitoring'),
                 'url' => ['/monitoring'],
+                'items' => [
+                    [
+                        'label' => Yii::t('frontend', 'Тechnical Data'),
+                        'url' => ['/monitoring/technical'],
+                    ],
+                    [
+                        'label' => Yii::t('frontend', 'Financial Data'),
+                        'url' => ['/monitoring/financial'],
+                    ],
+                    [
+                        'label' => Yii::t('frontend', 'All'),
+                        'url' => ['/monitoring'],
+                    ],
+                ]
 //            'visible' => Yii::$app->user->can('mntr'),
             ],
 //            [

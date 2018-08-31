@@ -34,6 +34,10 @@ class ImeiData extends \yii\db\ActiveRecord
     public $bill_acceptance;
     public $software_versions;
     public $actions;
+    public $date_last_encashment;
+    public $counter_last_encashment;
+    public $counter_zeroing;
+    public $technical_injection;
 
     /**
      * @return array
@@ -97,6 +101,10 @@ class ImeiData extends \yii\db\ActiveRecord
             'bill_acceptance' => Yii::t('frontend', 'Bill Acceptance'),
             'software_versions' => Yii::t('frontend', 'Software Versions'),
             'actions' => Yii::t('frontend', 'Actions'),
+            'date_last_encashment' => Yii::t('frontend', 'Date Last Encashment'),
+            'counter_last_encashment' => Yii::t('frontend', 'Counter Last Encashment'),
+            'counter_zeroing' => Yii::t('frontend', 'Counter Zeroing'),
+            'technical_injection' => Yii::t('frontend', 'Technical Injection')
         ];
     }
 
@@ -135,12 +143,11 @@ class ImeiData extends \yii\db\ActiveRecord
         } else {
             $fullness = null;
         }
-
-        $result.= '<b>'.$this->attributeLabels()['status'].'</b>:<br>';
-        $result.= '<b>'.$this->attributeLabels()['bill_acceptance_fullness'].'</b>: '.$fullness.'<br>';
-        $result.= '<b>'.$this->attributeLabels()['in_banknotes'].'</b>: '.$this->in_banknotes;
-
-        return $result;
+        
+        return Yii::$app->view->render(
+            '/monitoring/data/billAcceptanceData',
+            ['model' => $this, 'fullness' => $fullness]
+        );
     }
 
     /**
@@ -148,11 +155,11 @@ class ImeiData extends \yii\db\ActiveRecord
      */
     public function getSoftwareVersions()
     {
-        $result ='';
-        $result.= '<b>'.$this->imeiRelation->attributeLabels()['firmware_version'].'</b>: '.
-                  $this->imeiRelation->firmware_version.'<br>';
 
-        return $result;
+        return Yii::$app->view->render(
+            '/monitoring/data/softwareVersions',
+            ['model' => $this]
+        );
     }
 
     /**
@@ -160,15 +167,16 @@ class ImeiData extends \yii\db\ActiveRecord
      */
     public function getModemCard()
     {
-        $result = '<b>'.$this->imeiRelation->attributeLabels()['phone_module_number'].'</b>:'.
-                  ' '.$this->imeiRelation->phone_module_number.'<br>';
 
-        $result.= '<b>'.$this->attributeLabels()['level_signal'].'</b>:'.
-                  ' '.$this->level_signal.'%<br>';
+        return Yii::$app->view->render('/monitoring/data/modemCard', ['model' => $this]);
+    }
 
-        $result.= '<b>'.$this->attributeLabels()['money_in_banknotes'].'</b>:'.
-                  ' '.$this->money_in_banknotes;
+    /**
+     * Gets actions info view
+     */
+    public function getActions()
+    {
 
-        return $result;
+        return Yii::$app->view->render('/monitoring/data/actions', ['model' => $this]);
     }
 }

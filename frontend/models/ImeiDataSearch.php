@@ -15,8 +15,6 @@ use frontend\services\globals\Entity;
  */
 class ImeiDataSearch extends ImeiData
 {
-    const DEVICE_PAGE_SIZE = 5;
-
     /**
      * @inheritdoc
      */
@@ -51,8 +49,6 @@ class ImeiDataSearch extends ImeiData
         $query = $query->andWhere(['status' => Imei::STATUS_ACTIVE]);
         $query = $query->joinWith('imeiData', false, 'INNER JOIN');
 
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
@@ -70,12 +66,12 @@ class ImeiDataSearch extends ImeiData
     public function searchWmMashinesByImeiId($id)
     {
         $query = WmMashine::getMachinesQueryByImeiId($id);
-
-        // add conditions that should always apply here
+        $query = $query->select('id, type_mashine, bill_cash, level_signal, current_status, display, ping');
+        $query = $query->union($this->searchGdMashinesByImeiId($id)->query);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [ 'pageSize' => self::DEVICE_PAGE_SIZE ],
+            'pagination' => false,
         ]);
 
         return $dataProvider;
@@ -90,12 +86,13 @@ class ImeiDataSearch extends ImeiData
     public function searchGdMashinesByImeiId($id)
     {
         $query = GdMashine::getMachinesQueryByImeiId($id);
+        $query = $query->select('id, type_mashine, bill_cash, deleted_at as level_signal, current_status, created_at as display, updated_at as ping');
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [ 'pageSize' => self::DEVICE_PAGE_SIZE ],
+            'pagination' => false,
         ]);
 
         return $dataProvider;
@@ -112,9 +109,6 @@ class ImeiDataSearch extends ImeiData
         $query = self::find();
         $query = $query->andWhere(['imei_id' => $id]);
         $query = $query->orderBy(['date' => SORT_DESC, 'updated_at' => SORT_DESC])->limit(1);
-
-
-        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

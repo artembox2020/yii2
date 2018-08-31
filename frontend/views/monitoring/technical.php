@@ -54,16 +54,6 @@ use frontend\models\ImeiDataSearch;
                 'headerOptions' => ['class' => 'remote-connection all']
             ],
             [
-                'label' => $monitoringShapters['financial'],
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController)
-                {
-                    return $monitoringController->renderFinancialDataByImeiId($model->id);
-                },
-                'contentOptions' => ['class' => 'financial all'],
-                'headerOptions' => ['class' => 'financial all']
-            ],
-            [
                 'label' => $monitoringShapters['devices'],
                 'format' => 'raw',
                 'value' => function($model) use($monitoringController)
