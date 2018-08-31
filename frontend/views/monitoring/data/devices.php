@@ -21,9 +21,9 @@ use yii\widgets\Pjax;
                 'label' => Yii::t('frontend', 'Device'),
                 'format' => 'raw',
                 'attribute' => 'id',
-                'value' => function($model, $index)
+                'value' => function($model, $key, $index)
                 {
-                    return Yii::t('frontend', $model->type_mashine).$index;
+                    return Yii::t('frontend', $model->type_mashine).++$index;
                 },
                 'contentOptions' => ['class' => 'cell-device'],
             ],

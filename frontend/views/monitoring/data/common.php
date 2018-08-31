@@ -11,6 +11,10 @@ use yii\widgets\Pjax;
 <?php
     $query = $dataProvider->query;
     $data = $query->one();
+    global $serialNumber;
+    if (empty($serialNumber)) {
+        $serialNumber = 0;
+    }
 ?>
 <div class="row common-container">
     <div class= "common-header">
@@ -26,7 +30,7 @@ use yii\widgets\Pjax;
     </div>
 
     <div class="col-md-4 col-sm-4 cell">
-        <span><?= $data->imeiRelation->id ?></span>
+        <span><?= ++$serialNumber ?></span>
     </div>
     <div class="col-md-4 col-sm-4 cell">
         <span><?= $data->imeiRelation->balanceHolder->name ?></span>
