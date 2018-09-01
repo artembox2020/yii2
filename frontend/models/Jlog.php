@@ -24,7 +24,9 @@ class Jlog extends ActiveRecord
     const TYPE_PACKET_DATA = 2;
     const TYPE_PACKET_LOG = 3;
     const TYPE_PACKET_PRICE = 4;
-    
+
+    const TYPE_TIME_OFFSET = 10800;
+
     /**
      * @inheritdoc
      */
@@ -89,7 +91,7 @@ class Jlog extends ActiveRecord
                $jlog->$key = $param;
            }
         }
-        $jlog->date = Yii::$app->formatter->asDate(time(), Imei::DATE_TIME_FORMAT);
+        $jlog->date = Yii::$app->formatter->asDate(time() + self::TYPE_TIME_OFFSET, Imei::DATE_TIME_FORMAT);
         $jlog->save();
     }
     

@@ -11,6 +11,10 @@ use yii\widgets\Pjax;
 <?php
     $query = $dataProvider->query;
     $data = $query->one();
+    global $serialNumber;
+    if (empty($serialNumber)) {
+        $serialNumber = 0;
+    }
 ?>
 <div class="row common-container">
     <div class= "common-header">
@@ -25,15 +29,23 @@ use yii\widgets\Pjax;
         </div>
     </div>
 
-    <div class="col-md-4 col-sm-4 cell">
-        <span><?= $data->imeiRelation->id ?></span>
+    <div class="col-md-4 col-sm-4 cell popup-block">
+        <span><?= ++$serialNumber ?></span>
+        <div class = "label">
+            <?= Yii::t('frontend', 'Imei') ?>:
+            <?= $data->imeiRelation->imei ?>
+        </div>
     </div>
     <div class="col-md-4 col-sm-4 cell">
         <span><?= $data->imeiRelation->balanceHolder->name ?></span>
     </div>
-    <div class="col-md-4 col-sm-4 cell">
+    <div class="col-md-4 col-sm-4 cell popup-block">
+        <div class = "label">
+            <?= Yii::t('frontend', 'Address Name') ?>:
+            <?= $data->imeiRelation->address->name ?>
+        </div>
         <span><?= $data->imeiRelation->address->address ?></span>
-        <br/><br/>
+        <br/><br/><!--
         <div class="row common-container-block">
             <div class= "common-header">
                 <div class="header">
@@ -42,6 +54,6 @@ use yii\widgets\Pjax;
             </div>
             <br>
             <span><?= $data->imeiRelation->address->name ?></span>
-        </div>    
+        </div>-->    
     </div>
 </div>

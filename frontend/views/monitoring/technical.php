@@ -29,11 +29,6 @@ use frontend\models\ImeiDataSearch;
         'summary' => '',
         'columns' => [
             [
-                'attribute' => 'imei',
-                'contentOptions' => ['class' => 'imei'],
-                'headerOptions' => ['class' => 'imei header']
-            ],
-            [
                 'label' => $monitoringShapters['common'],
                 'format' => 'raw',
                 'value' => function($model) use($monitoringController)

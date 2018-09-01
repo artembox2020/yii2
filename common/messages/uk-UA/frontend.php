@@ -223,7 +223,7 @@ return [
     'Lost password' => 'Відновити пароль',
     'Modem Card' => 'Карта модема',
     'Money Amount' => 'Кількість грошей, грн',
-    'Money In Banknotes' => 'На рахунку, грн',
+    'Money In Banknotes' => 'В купюроприймачу, грн',
     'Monitoring Shapter' => 'Розділ моніторингу',
     'le water leak' => 'Помилка витік води',
     'Name' => 'Ім\'я',

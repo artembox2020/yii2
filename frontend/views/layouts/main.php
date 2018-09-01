@@ -138,7 +138,7 @@ AppAsset::register($this);
             ],
             [
                 'label' => Yii::t('frontend', 'Dlogs'),
-                'url' => ['/journal'],
+                'url' => ['/journal/index?sort=-date'],
 //            'visible' => Yii::$app->user->can('dlogs'),
             ],
 ];

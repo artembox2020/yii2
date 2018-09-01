@@ -21,9 +21,9 @@ use yii\widgets\Pjax;
                 'label' => Yii::t('frontend', 'Device'),
                 'format' => 'raw',
                 'attribute' => 'id',
-                'value' => function($model, $index)
+                'value' => function($model, $key, $index)
                 {
-                    return Yii::t('frontend', $model->type_mashine).$index;
+                    return Yii::t('frontend', $model->type_mashine).++$index;
                 },
                 'contentOptions' => ['class' => 'cell-device'],
             ],
@@ -33,7 +33,14 @@ use yii\widgets\Pjax;
                 'value' => function($model)
                 {
                     return $model->getLevelSignal();
-                }
+                },
+                'header' => \frontend\services\globals\EntityHelper::makePopupWindow(
+                    [
+                        '/static/img/monitoring/signal_station.png',
+                        '/static/img/monitoring/signal_station2.png',
+                    ],
+                    $searchModel->attributeLabels()['level_signal']
+                )
             ],    
             [
                 'attribute' => 'current_status',
