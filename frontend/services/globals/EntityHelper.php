@@ -293,4 +293,20 @@ class EntityHelper implements EntityHelperInterface
         
         return $params;
     }
+
+    /**
+     * Renders popup window view
+     * 
+     * @param string $imgSrcs
+     * @param string $text
+     * @return string
+     */
+    public static function makePopupWindow($imgSrcs, $text)
+    {
+
+        return Yii::$app->view->render(
+            '/monitoring/data/popupWindow.php',
+            ['imgSrcs' => $imgSrcs, 'text' => $text]
+        );
+    }
 }

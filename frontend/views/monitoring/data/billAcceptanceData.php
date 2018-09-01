@@ -17,7 +17,16 @@
         </tr>
         <tr>
             <td>
-                <b><?= $model->attributeLabels()['in_banknotes'] ?></b>
+                <b>
+                    <?= 
+                        \frontend\services\globals\EntityHelper::makePopupWindow(
+                            [
+                                '/static/img/monitoring/in_banknotes.png',
+                            ],
+                            $model->attributeLabels()['in_banknotes']
+                        )
+                    ?>
+                </b>
                 <br>
                 <?= $model->in_banknotes ?>
                 <br>

@@ -75,8 +75,7 @@ interface EntityHelperInterface
      * @return javascript
      */
     public function removeRedundantGrids($gridSelector);
-    
-        
+
     /**
      * Creates params based on $_GET data
      * 
@@ -84,4 +83,13 @@ interface EntityHelperInterface
      * @return array
      */
     public function makeParamsFromRequest(Array $requiredParams);
+
+    /**
+     * Renders popup window view
+     * 
+     * @param string $imgSrcs
+     * @param string $text
+     * @return string
+     */
+    public static function makePopupWindow($imgSrcs, $text);
 }

@@ -33,7 +33,14 @@ use yii\widgets\Pjax;
                 'value' => function($model)
                 {
                     return $model->getLevelSignal();
-                }
+                },
+                'header' => \frontend\services\globals\EntityHelper::makePopupWindow(
+                    [
+                        '/static/img/monitoring/signal_station.png',
+                        '/static/img/monitoring/signal_station2.png',
+                    ],
+                    $searchModel->attributeLabels()['level_signal']
+                )
             ],    
             [
                 'attribute' => 'current_status',

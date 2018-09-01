@@ -192,7 +192,7 @@ return [
     'le water leak' => 'Ошибка утечка воды',
     'Modem Card' => 'Карта модема',
     'Money Amount' => 'Количество денег, грн',
-    'Money In Banknotes' => 'На счету, грн',
+    'Money In Banknotes' => 'В купюроприемнике, грн',
     'Monitoring Shapter' => 'Раздел мониторинга',
     'Name' => 'Имя',
     'New password saved.' => 'Новый пароль сохранен.',

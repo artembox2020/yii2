@@ -19,7 +19,14 @@
 <tr>
     <td>
         <b>
-            <?= $model->attributeLabels()['level_signal'] ?>
+            <?= 
+                \frontend\services\globals\EntityHelper::makePopupWindow(
+                    [
+                        '/static/img/monitoring/level_signal.png',
+                    ],
+                    $model->attributeLabels()['level_signal']
+                )
+            ?>
         </b>
         <br>
         <?= $model->level_signal ?>
@@ -29,7 +36,14 @@
 <tr class="modem-card-last-row">
     <td>
         <b>
-            <?= $model->attributeLabels()['money_in_banknotes'] ?>
+            <?= 
+                \frontend\services\globals\EntityHelper::makePopupWindow(
+                    [
+                        '/static/img/monitoring/money_in_banknotes.png',
+                    ],
+                    $model->attributeLabels()['money_in_banknotes']
+                )
+            ?>
         </b>
         <br>
         <?= $model->money_in_banknotes ?>
