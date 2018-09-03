@@ -74,6 +74,11 @@ class JlogSearch extends Jlog
             ]
         ]);
 
+        $dataProvider->sort->attributes['date'] = [
+            'asc' => ['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_ASC],
+            'desc' => ['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_DESC],
+        ];
+
         $this->load($params);
 
         // apply filters by id column
