@@ -22,8 +22,8 @@ class CParser implements CParserInterface
 
         $column = [
             'imei',
-            'firmware_version',
             'firmware_version_cpu',
+            'firmware_version',
             'firmware_6lowpan',
             'number_channel',
             'pcb_version',

@@ -32,7 +32,7 @@
         </tr>
         <tr>
             <td>
-                <b><?= $model->imeiRelation->communication_program_version ?></b>
+                <b><?= $model->imeiRelation->firmware_6lowpan.' '.$model->imeiRelation->number_channel ?></b>
                 <br>
             </td>
         </tr>
