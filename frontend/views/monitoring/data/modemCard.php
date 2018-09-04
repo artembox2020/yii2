@@ -7,7 +7,7 @@
     </td>
 </tr>
 <tr>
-    <td>
+    <td class="cell-remote-connection">
         <b>
             <?= $model->imeiRelation->attributeLabels()['phone_module_number'] ?>
         </b>

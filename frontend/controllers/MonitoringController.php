@@ -38,7 +38,6 @@ class MonitoringController extends \yii\web\Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $monitoringShapters = [
             'common' => Yii::t('frontend', 'Common Data'),
-            'remote-connection' => Yii::t('frontend', 'Remote Connnection'),
             'financial' => Yii::t('frontend', 'Financial Data'),
             'devices' => Yii::t('frontend', 'Devices'),
             'terminal' => Yii::t('frontend', 'Terminal'),
@@ -107,7 +106,8 @@ class MonitoringController extends \yii\web\Controller
 
         return $this->renderPartial('/monitoring/data/terminal', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dataProvider,
+            'monitoringController' => $this
         ]);
     }
     
@@ -128,8 +128,27 @@ class MonitoringController extends \yii\web\Controller
     }
 
     /**
+     * Renders financial data + remote connection view by imei id
+     * 
+     * @param int $imeiId
+     * @return string
+     */
+    public function renderFinancialRemoteConnectionDataByImeiId($imeiId)
+    {
+        $searchModel = new ImeiDataSearch();
+        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
+
+        return $this->renderPartial('/monitoring/data/financial_remote_connection', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'monitoringController' => $this,
+        ]);
+    }
+    
+    /**
      * Renders financial data view by imei id
      * 
+     * @param int $imeiId
      * @return string
      */
     public function renderFinancialDataByImeiId($imeiId)
@@ -139,7 +158,7 @@ class MonitoringController extends \yii\web\Controller
 
         return $this->renderPartial('/monitoring/data/financial', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -161,7 +180,7 @@ class MonitoringController extends \yii\web\Controller
             "/monitoring/data/script",
             [
                 'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
-                'numberRedundantHeaders' => 2
+                'numberRedundantHeaders' => 3
             ]
         );
 
@@ -185,7 +204,6 @@ class MonitoringController extends \yii\web\Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $monitoringShapters = [
             'common' => Yii::t('frontend', 'Common Data'),
-            'remote-connection' => Yii::t('frontend', 'Remote Connnection'),
             'devices' => Yii::t('frontend', 'Devices'),
             'terminal' => Yii::t('frontend', 'Terminal'),
             'all' => Yii::t('frontend', 'All')

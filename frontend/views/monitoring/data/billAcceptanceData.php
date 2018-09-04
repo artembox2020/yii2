@@ -9,9 +9,8 @@
         </tr>
         <tr>
             <td>
-                <i><?= $model->attributeLabels()['bill_acceptance_fullness'] ?></i>
+                <b><?= (float)$fullness ?>%</b>
                 <br>
-                <b><?= $fullness ?></b>
                 <br>
             </td>
         </tr>

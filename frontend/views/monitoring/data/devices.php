@@ -27,7 +27,15 @@ use yii\widgets\Pjax;
                 },
                 'contentOptions' => ['class' => 'cell-device'],
             ],
-            'bill_cash',
+            [
+                'attribute' => 'bill_cash',
+                'header' => \frontend\services\globals\EntityHelper::makePopupWindow(
+                    [
+                        '/static/img/monitoring/money_in_banknotes.png',
+                    ],
+                    $searchModel->attributeLabels()['money_in_banknotes']
+                )
+            ],
             [
                 'attribute' => 'level_signal',
                 'value' => function($model)
@@ -36,7 +44,6 @@ use yii\widgets\Pjax;
                 },
                 'header' => \frontend\services\globals\EntityHelper::makePopupWindow(
                     [
-                        '/static/img/monitoring/signal_station.png',
                         '/static/img/monitoring/signal_station2.png',
                     ],
                     $searchModel->attributeLabels()['level_signal']

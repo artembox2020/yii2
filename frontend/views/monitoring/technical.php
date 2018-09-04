@@ -39,16 +39,6 @@ use frontend\models\ImeiDataSearch;
                 'headerOptions' => ['class' => 'common all']
             ],
             [
-                'label' => $monitoringShapters['remote-connection'],
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController)
-                {
-                    return $monitoringController->renderImeiCard($model->id);
-                },
-                'contentOptions' => ['class' => 'remote-connection all'],
-                'headerOptions' => ['class' => 'remote-connection all']
-            ],
-            [
                 'label' => $monitoringShapters['devices'],
                 'format' => 'raw',
                 'value' => function($model) use($monitoringController)

@@ -25,7 +25,13 @@ use yii\widgets\Pjax;
                     return $model->getBillAcceptanceData();
                 },
                 'contentOptions' => ['class' => 'terminal all'],
-                'headerOptions' => ['class' => 'terminal all']
+                'headerOptions' => ['class' => 'terminal all'],
+                'header' => \frontend\services\globals\EntityHelper::makePopupWindow(
+                    [
+                        '/static/img/monitoring/billAcceptance.png',
+                    ],
+                    $searchModel->attributeLabels()['bill_acceptance']
+                )
             ],
             [
                 'attribute' => 'software_versions',
@@ -48,7 +54,17 @@ use yii\widgets\Pjax;
                 },
                 'contentOptions' => ['class' => 'terminal all'],
                 'headerOptions' => ['class' => 'terminal all']
-            ]
+            ],
+            [
+                'label' => Yii::t('frontend', 'Remote Connnection'),
+                'format' => 'raw',
+                'value' => function($model) use($monitoringController)
+                {
+                    return $monitoringController->renderImeiCard($model->imeiRelation->id);
+                },
+                'contentOptions' => ['class' => 'terminal all'],
+                'headerOptions' => ['class' => 'terminal all']
+            ],
         ],
     ]); ?>
     <?php Pjax::end(); ?>

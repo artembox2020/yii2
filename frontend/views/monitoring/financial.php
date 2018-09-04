@@ -43,7 +43,7 @@ use frontend\models\ImeiDataSearch;
                 'format' => 'raw',
                 'value' => function($model) use($monitoringController)
                 {
-                    return $monitoringController->renderFinancialDataByImeiId($model->id);
+                    return $monitoringController->renderFinancialRemoteConnectionDataByImeiId($model->id);
                 },
                 'contentOptions' => ['class' => 'financial all'],
                 'headerOptions' => ['class' => 'financial all']

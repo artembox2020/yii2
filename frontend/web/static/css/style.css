@@ -279,7 +279,7 @@ div.required label:after {
     position: relative;
 }
 .monitoring .common-container .header {
-    height: 40px;
+    height: 41px;
     border-bottom: 2px solid rgb(221, 221, 221);
     border-right: 1px solid rgb(221, 221, 221);
     border-top: 0px solid rgb(221, 221, 221);
@@ -306,7 +306,7 @@ div.required label:after {
 }
 .monitoring .popup-block img {
     height: 18px;
-    width: 35px;
+    width: 36px;
 }
 .monitoring .popup-block > .label {
     position: absolute;
@@ -320,4 +320,20 @@ div.required label:after {
 }
 .monitoring .popup-block:hover > .label {
     visibility: visible;
+}
+.monitoring td.financial table thead th.financial {
+    display: block!important;
+    margin-top: -40px;
+    padding-top: 48px;
+    border-right: 0px solid rgb(221, 221, 221);
+    border-top: 0px solid rgb(221, 221, 221);
+    border-bottom: 0px solid rgb(221, 221, 221);
+}
+.monitoring table:nth-child(1) td {
+    border: 0;
+}
+.monitoring td.devices table td,
+.monitoring td.terminal table td,
+.monitoring td.financial table td {
+    border: 1px solid rgb(221, 221, 221);
 }

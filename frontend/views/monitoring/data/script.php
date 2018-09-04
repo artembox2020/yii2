@@ -69,7 +69,7 @@
                 var commonHeaderStyleObject = window.getComputedStyle(commonHeader);
                 var cells = commonTables[i].querySelectorAll('.cell');
                 var height = parseInt(styleObject.getPropertyValue('height'));
-                height -= 40;
+                height -= 39;
 
                 for (var j = 0; j < cells.length; ++j) {
                     cells[j].style.height = height + 'px';
@@ -92,7 +92,7 @@
                     var modemCardStyleObject = window.getComputedStyle(modemCardTable);
                     var modemCardRowStyleObject = window.getComputedStyle(modemCardTableRows[i]);
                     var height = - parseInt(modemCardStyleObject.getPropertyValue('height'));
-                    height = height + parseInt(closestCellStyleObject.getPropertyValue('height')) - 1;
+                    height = height + parseInt(closestCellStyleObject.getPropertyValue('height'));
                     modemCardTableRows[i].style.height = parseInt(modemCardRowStyleObject.getPropertyValue('height')) + height + 'px';
                 }
             }
@@ -151,6 +151,17 @@
             }
         }
 
+        //adjusts cell height by selector
+        function adjustCellsHeightBySelector(heightAddition, selector, startPosition)
+        {
+            var cells = monitoring.querySelectorAll(selector);
+            for (var i = startPosition; i < cells.length; ++i)
+            {
+                var cellStyleObject = window.getComputedStyle(cells[i]);
+                cells[i].style.height = parseInt(cellStyleObject.getPropertyValue('height')) + heightAddition + 'px';
+            }
+        }
+
         // applies all table processing functions
         adjustCommonTableSize();
         adjustModemCardTableSize();
@@ -161,5 +172,7 @@
         adjustTableSize('terminal', 'cell-actions');
         hideRedundantHeaders();
         hideRedundantCommonHeaders();
+        adjustCellsHeightBySelector(39, '.financial tr.modem-card-last-row', 1);
+        adjustCellsHeightBySelector(39, '.terminal tr.modem-card-last-row', 1);
     }());
 </script>

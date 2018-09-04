@@ -232,6 +232,7 @@ return [
     'Not Actual Ping' => 'Не актуальний пінг',
     'Not Set' => '(не задано)',
     'nulling' => 'Обнулино',
+    'Number' => '№',
     'Number Of Citizens' => 'Кількість жителів',
     'On' => 'Включено',
     'On Point/At Work' => 'На пункті/в роботі',

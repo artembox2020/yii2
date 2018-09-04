@@ -19,7 +19,7 @@ use yii\widgets\Pjax;
 <div class="row common-container">
     <div class= "common-header">
         <div class="col-md-4 col-sm-4 header">
-            <?= Yii::t('frontend', 'ID') ?>
+            <?= Yii::t('frontend', 'Number') ?>
         </div>
         <div class="col-md-4 col-sm-4 header">
             <?= Yii::t('frontend', 'Balance Holder Name') ?>
