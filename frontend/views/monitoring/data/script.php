@@ -172,7 +172,7 @@
         adjustTableSize('terminal', 'cell-actions');
         hideRedundantHeaders();
         hideRedundantCommonHeaders();
-        adjustCellsHeightBySelector(39, '.financial tr.modem-card-last-row', 1);
-        adjustCellsHeightBySelector(39, '.terminal tr.modem-card-last-row', 1);
+        adjustCellsHeightBySelector(40, '.financial tr.modem-card-last-row', 1);
+        adjustCellsHeightBySelector(40, '.terminal tr.modem-card-last-row', 1);
     }());
 </script>
