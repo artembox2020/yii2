@@ -274,6 +274,10 @@ div.required label:after {
 .monitoring .table-bill-acceptance, .monitoring .table-software-versions {
     margin: 0;
 }
+.monitoring .table-bill-acceptance,
+.monitoring td.financial table{
+    z-index: 1001;
+}
 .monitoring .common-container {
     margin: 0;
     position: relative;
