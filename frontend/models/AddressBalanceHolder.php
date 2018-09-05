@@ -182,23 +182,50 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     public function beforeDelete()
     {
         if (!parent::beforeDelete()) {
-            
+
             return false;
         }
-        
+
         // release status of the model to be deleted
         $this->status = AddressBalanceHolder::STATUS_FREE;
-        $this->save();
+        $this->save(false);
 
         $entity = new Entity();
         $imeis = $entity->getUnitsQueryPertainCompany(new Imei())
                         ->andWhere(['address_id' => $this->id, 'status' => Imei::STATUS_ACTIVE])
                         ->all();
-        foreach($imeis as $imei) {        
+        foreach($imeis as $imei) {
             $imei->status = Imei::STATUS_OFF;
             $imei->save();
         }
 
         return true;
+    }
+
+    /**
+     * @param bool $insert
+     * @param array $attr
+     */
+    public function afterSave($insert, $attr)
+    {
+        parent::afterSave($insert, $attr);
+
+        if (!$insert && $this->status == AddressBalanceHolder::STATUS_BUSY) {
+            if (!empty($attr['balance_holder_id']) && $this->balance_holder_id != $attr['balance_holder_id']) {
+                $imei = $this->imei;
+                $imei->balance_holder_id = $this->balance_holder_id;
+                $imei->save(false);
+
+                foreach ($this->washMachines as $washMachine) {
+                    $washMachine->balance_holder_id = $this->balance_holder_id;
+                    $washMachine->save(false);
+                }
+
+                foreach ($this->gelDispenser as $gelDispenser) {
+                    $gelDispenser->balance_holder_id = $this->balance_holder_id;
+                    $gelDispenser->save(false);
+                }
+            }
+        }
     }
 }

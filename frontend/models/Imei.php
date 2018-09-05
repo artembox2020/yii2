@@ -335,7 +335,7 @@ class Imei extends \yii\db\ActiveRecord
     public function getCountImeiBindedToAddress($addressId)
     {
         $query = Imei::find()->andWhere(['address_id' => $addressId, 'status' => Imei::STATUS_ACTIVE]);
-        
+
         return $query->count();                
     }
 
@@ -357,6 +357,32 @@ class Imei extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+
+            return false;
+        }
+
+        $entity = new Entity();
+
+        // retrieve address associated with current instance of imei 
+        $address = $entity->tryUnitPertainCompany(
+            $this->address_id, new AddressBalanceHolder()
+        );
+
+        // update balance_holder_id
+        if (!empty($address)) {
+            $this->balance_holder_id = $address->balance_holder_id;
+        }
+
+        return true;
+    }
+
 //    /**
 //     * @param bool $insert
 //     * @param array $attr
@@ -371,35 +397,66 @@ class Imei extends \yii\db\ActiveRecord
         parent::afterSave($insert, $attr);
 
         $entity = new Entity();
+
+        // retrive address, associated with current imei instance
         $address = $entity->tryUnit(
             $this->address_id, new AddressBalanceHolder()
         );
+
+        // update address status + mashines data if address exists
         if ($address) {
+
+            // update address status if necessary
+            $oldAddressStatus = $address->status;
+
             if ($this->getCountImeiBindedToAddress($this->address_id)) {
                 $address->status = AddressBalanceHolder::STATUS_BUSY;
             } else {
                 $address->status = AddressBalanceHolder::STATUS_FREE;
             }
-            $address->save();
+
+            if ($oldAddressStatus != $address->status) {
+                $address->save(false);
+            }
+
+            // update mashines data for active imei
+            if ($this->status == Imei::STATUS_ACTIVE) {
+                
+                foreach ($this->wmMashine as $washMachine) {
+                    $washMachine->balance_holder_id = $this->balance_holder_id;
+                    $washMachine->address_id = $this->address_id;
+                    $washMachine->save(false);
+                }
+
+                foreach ($this->gdMashine as $gelDispenser) {
+                    $gelDispenser->balance_holder_id = $this->balance_holder_id;
+                    $gelDispenser->address_id = $this->address_id;
+                    $gelDispenser->save(false);
+                }
+            }
         }
-        
+
         // if old address_id exists then update old address status
         if (!empty($attr['address_id'])) {
             $prevAddress = $entity->tryUnit(
                 $attr['address_id'], new AddressBalanceHolder()
             );
-            
+
             if ($prevAddress) {
+                $oldAddressStatus = $prevAddress->status;
                 if ($this->getCountImeiBindedToAddress($attr['address_id'])) {
                     $prevAddress->status = AddressBalanceHolder::STATUS_BUSY;
                 } else {
                     $prevAddress->status = AddressBalanceHolder::STATUS_FREE;
                 }
-                $prevAddress->save();
+
+                if ($oldAddressStatus != $prevAddress->status) {
+                    $prevAddress->save(false);
+                }
             }
         }
     }
-    
+
     /** 
      * @return bool
      * @throws \yii\web\NotFoundHttpException
@@ -419,15 +476,19 @@ class Imei extends \yii\db\ActiveRecord
         $address = $entity->tryUnitPertainCompany(
             $this->address_id, new AddressBalanceHolder()
         );
-        
+
         if ($address) {
             $countBindedImeis = $this->getCountImeiBindedToAddress($address->id);
             if ($countBindedImeis <= 0) {
+                $oldAddressStatus = $address->status;
                 $address->status = AddressBalanceHolder::STATUS_FREE;
-                $address->save();
+
+                if ($oldAddressStatus != $address->status) {
+                    $address->save(false);
+                }
             }
         }
-        
+
         return true;
     }
     
