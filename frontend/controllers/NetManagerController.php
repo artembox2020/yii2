@@ -434,7 +434,7 @@ class NetManagerController extends \yii\web\Controller
             new AddressBalanceHolder(), 
             AddressBalanceHolder::STATUS_FREE,
             ['id' => ['address', 'floor'], ', '],
-            [$imei->address_id]
+            $imei->status == Imei::STATUS_ACTIVE ? [$imei->address_id] : []
         );
         $addresses = ArrayHelper::map($addresses, 'id', 'value');
 
