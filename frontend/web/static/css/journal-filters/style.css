@@ -5,6 +5,10 @@
         padding: 0;
         z-index: 100;
     }
+    .journal-grid-view table th a {
+        color: blue;
+        font-weight: normal;
+    }
     .grid-view-filter .filter-menu {
         position: absolute;
         display: none;
@@ -15,6 +19,7 @@
     }
     .grid-view-filter .glyphicon {
         cursor: pointer;
+        font-size: 13px;
     }
     .grid-view-filter .filter-type .glyphicon.rotate90 {
         transform: rotate(90deg);
