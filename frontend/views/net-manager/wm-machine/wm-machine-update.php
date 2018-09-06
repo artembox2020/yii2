@@ -1,8 +1,5 @@
 <?php
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
-use frontend\services\custom\Debugger;
 /* @var $this yii\web\View */
 /* @var $imei frontend\models\Imei */
 /* @var $address frontend\models\AddressBalanceHolder */
@@ -24,7 +21,7 @@ use frontend\services\custom\Debugger;
 
         <h1><?= Html::encode($this->title) ?></h1>
 
-        <?= $this->render('_form', [
+        <?= $this->render('_update', [
             'model' => $model,
             'company' => $company,
             'imeis' => $imeis

@@ -72,6 +72,7 @@ class WmMashineSearch extends WmMashine
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
             'display' => $this->display,
+            'inventory_number' => $this->inventory_number
         ]);
 
         $query->andFilterWhere(['like', 'type_mashine', $this->type_mashine])

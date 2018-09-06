@@ -10,7 +10,12 @@ use frontend\services\custom\Debugger;
 /* @var $addresses */
 /* @var $wm_machine */
 ?>
-<?php $menu = []; ?>
+<?php $menu = [];
+//Debugger::d($model->date_build);
+
+?>
+
+
 <b>
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
@@ -55,7 +60,7 @@ use frontend\services\custom\Debugger;
             [
                 'label' => Yii::t('frontend', 'Last ping'),
                 'value' => function($model) {
-                return date('[H:i:s] d.m.Y', $model->updated_at);
+                return date('[H:i:s] d.m.Y', $model->ping);
             },
             ],
     ],

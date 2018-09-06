@@ -32,10 +32,10 @@ use yii\web\view;
  * @property int $current_status
  * @property string $model
  * @property string $brand
- * @property int $date_install
- * @property int $date_build
- * @property int $date_purchase
- * @property int $date_connection_monitoring
+ * @property integer $date_install
+ * @property integer $date_build
+ * @property integer $date_purchase
+ * @property integer $date_connection_monitoring
  * @property string $display
  * @property int $ping
  * @property int $inventory_number
@@ -52,6 +52,8 @@ class WmMashine extends \yii\db\ActiveRecord
     const DATE_TIME_FORMAT = 'h:i d.m.Y';
     
     const LEVEL_SIGNAL_MAX = 10000;
+
+    private $model;
 
     public $current_state = [
         '-2' => 'nulling',
@@ -98,7 +100,7 @@ class WmMashine extends \yii\db\ActiveRecord
                     'deleted_at' => time()
                 ],
             ],
-            TimestampBehavior::className()
+            TimestampBehavior::className(),
         ];
     }
 
@@ -116,10 +118,14 @@ class WmMashine extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['date_install', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
+            ['date_build', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
+            ['date_purchase', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
+            ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             [['imei_id', 'status', 'company_id', 'balance_holder_id', 'address_id', 'number_device', 'inventory_number', 'serial_number'], 'required'],
             [['serial_number'], 'unique'],
             [['serial_number'], 'unique', 'targetAttribute' => ['serial_number']],
-            ['inventory_number', 'validateNumberDevice', 'skipOnEmpty' => true, 'skipOnError' => false,
+            ['inventory_number', 'validateInventoryNumberDevice', 'skipOnEmpty' => true, 'skipOnError' => false,
                 'message' => \Yii::t('frontend', 'This Inventory number has already been taken')],
             [['imei_id', 'number_device',
                 'level_signal',
@@ -133,10 +139,6 @@ class WmMashine extends \yii\db\ActiveRecord
                 'deleted_at',
             ], 'integer'],
             [['type_mashine', 'serial_number', 'model', 'brand'], 'string', 'max' => 255],
-            ['date_install', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
-            ['date_build', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
-            ['date_purchase', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
-            ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
             [['display'], 'string' , 'max' => 255],
@@ -176,6 +178,19 @@ class WmMashine extends \yii\db\ActiveRecord
             'ping' => Yii::t('frontend', 'Ping'),
             'inventory_number' => Yii::t('frontend', 'Inventory number'),
         ];
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getModel()
+    {
+        if (!$this->model) {
+            $this->model = new WmMashine();
+        }
+
+        return $this->model;
     }
 
     /**
@@ -250,8 +265,9 @@ class WmMashine extends \yii\db\ActiveRecord
      * @param $attribute
      * @throws \yii\web\NotFoundHttpException
      */
-    public function validateNumberDevice($attribute)
+    public function validateInventoryNumberDevice($attribute)
     {
+        if ($this->isNewRecord) {
         $array = [];
         $entity = new Entity();
 
@@ -259,14 +275,14 @@ class WmMashine extends \yii\db\ActiveRecord
             $result = $entity->getUnitsPertainCompany(new WmMashine());
 
             foreach ($result as $value) {
-                $array[] = $value->inventory_number;
+                    $array[] = $value->inventory_number;
             }
 
             if (in_array($this->$attribute, $array)) {
-                $this->addError($attribute, Yii::t('frontend', 'This Inventory number has already been taken'));
-            }
+                        $this->addError($attribute, Yii::t('frontend', 'This Inventory number has already been taken'));
+                    }
         }
-
+        }
     }
 
     /**

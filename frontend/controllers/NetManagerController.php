@@ -547,10 +547,10 @@ class NetManagerController extends \yii\web\Controller
             $model->balance_holder_id = $ad->balance_holder_id;
             $model->is_deleted = self::ZERO;
             $model->type_mashine = self::TYPE_WM;
-//            $model->save(false);
-            print_r($model->getErrors());
+
             if ($model->validate()) {
-                $model->save();
+//                Debugger::dd($model);
+                $model->save(false);
             } else {
 
                 return $this->render('wm-machine/wm-machine-add', [
@@ -588,18 +588,21 @@ class NetManagerController extends \yii\web\Controller
 
             return $this->redirect('account/sign-in/login');
         }
-
+//        Debugger::dd($model);
         if ($model->load(Yii::$app->request->post())) {
-            $model->save(false);
-            return $this->redirect('osnovnizasoby');
+          if ($model->validate()) {
+//                Debugger::dd($model->date_build);
+                $model->update(false);
+              return $this->redirect('osnovnizasoby');
+            }
+//            Debugger::dd($model->date_build);
+//            return $this->redirect('osnovnizasoby');
         }
 
         return $this->render('wm-machine/wm-machine-update', [
             'model' => $model,
             'company' => $company,
             'imeis' => $imeis,
-//            'address' => $address,
-//            'balanceHolder' => $balanceHolder
         ]);
     }
 
