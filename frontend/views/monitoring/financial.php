@@ -27,6 +27,9 @@ use frontend\models\ImeiDataSearch;
         'dataProvider' => $dataProvider,
         'filterModel' => false,
         'summary' => '',
+        'tableOptions' => [
+            'class' => 'table table-striped table-bordered table-financial'
+        ],
         'columns' => [
             [
                 'label' => $monitoringShapters['common'],

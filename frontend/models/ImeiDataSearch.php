@@ -72,6 +72,7 @@ class ImeiDataSearch extends ImeiData
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
+            'sort' => false
         ]);
 
         return $dataProvider;
@@ -93,6 +94,7 @@ class ImeiDataSearch extends ImeiData
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
+            'sort' => false
         ]);
 
         return $dataProvider;

@@ -40,6 +40,7 @@ body {
 .not-set {
     color: #c55;
     font-style: italic;
+    font-size: 13px;
 }
 
 /* add sorting icons to gridview sort links */
@@ -320,8 +321,10 @@ div.required label:after {
     cursor: pointer;
 }
 .monitoring .popup-block img {
-    height: 18px;
+    height: 28px;
     width: 36px;
+    margin-top: -5px;
+    margin-bottom: -5px;
 }
 .monitoring .popup-block > .label {
     position: absolute;
@@ -351,4 +354,10 @@ div.required label:after {
 .monitoring td.terminal table td,
 .monitoring td.financial table td {
     border: 1px solid rgb(221, 221, 221);
+}
+.monitoring .table-financial {
+    width: auto;
+}
+.monitoring .table-financial td.common {
+    width: 330px;
 }
