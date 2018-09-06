@@ -8,10 +8,8 @@ use frontend\models\WmMashine;
 </div>
 
 <?php if(!empty($mashine->ping)): ?>
-<div class="row">
-    <div class="col-md-6 mashine-state-addons">
-        <div><?= $mashine->display ?></div>
+    <div class="mashine-state mashine-state-addons">
         <?= date(WmMashine::DATE_TIME_FORMAT, $mashine->ping) ?>
+        <?= $mashine->display ?>
     </div>
-</div>
 <?php endif; ?>

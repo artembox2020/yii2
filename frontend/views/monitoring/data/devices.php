@@ -34,7 +34,8 @@ use yii\widgets\Pjax;
                         '/static/img/monitoring/money_in_banknotes.png',
                     ],
                     $searchModel->attributeLabels()['money_in_banknotes']
-                )
+                ),
+                'contentOptions' => ['class' => 'bill-cash']
             ],
             [
                 'attribute' => 'level_signal',
@@ -47,7 +48,8 @@ use yii\widgets\Pjax;
                         '/static/img/monitoring/signal_station2.png',
                     ],
                     $searchModel->attributeLabels()['level_signal']
-                )
+                ),
+                'contentOptions' => ['class' => 'level-signal']
             ],    
             [
                 'attribute' => 'current_status',
@@ -55,7 +57,8 @@ use yii\widgets\Pjax;
                 'value' => function($model)
                 {
                     return $model->getStateView();
-                }
+                },
+                'contentOptions' => ['class' => 'current-status']
             ]
         ],
     ]); ?>

@@ -214,22 +214,17 @@ div.required label:after {
   display: none;
 }
 .monitoring .mashine-state-addons {
-  margin-top: 10px;
-  width: 100%;
-  text-align: left;
   color: #28A157;
-  margin-left: 4px;
-  vertical-align: bottom;
-}
-.monitoring .mashine-state-addons div {
-  float: right;
-  padding-right: 6px;
+  white-space: normal;
 }
 .monitoring table td {
     white-space: nowrap!important;
     text-align: center;
     vertical-align: middle!important;
     padding: 3px!important;
+}
+.monitoring td.devices table td.current-status {
+    white-space: normal!important;
 }
 .monitoring table td.all {
     vertical-align: top!important;
@@ -246,7 +241,7 @@ div.required label:after {
 .monitoring td.common {
     display: inline-block;
     width: auto;
-    min-width: 430px;
+    min-width: 330px;
     white-space: normal!important;
     text-align: center!important;
     padding: 1px!important;
@@ -256,6 +251,20 @@ div.required label:after {
 }
 .monitoring td.devices table td {
     padding: 1px!important;
+}
+.monitoring td.current-status {
+    width: 140px!important;
+    max-width: 140px!important;
+    min-width: 140px!important;
+    white-space: normal!important;
+}
+.monitoring td.level-signal,
+.monitoring td.bill-cash,
+.monitoring td.cell-device {
+    width: 55px!important;
+    min-width: 55px!important;
+    max-width: 55px!important;
+    white-space: normal!important;
 }
 .monitoring table {
     vertical-align: top!important;
@@ -296,6 +305,8 @@ div.required label:after {
     border-bottom: 1px solid rgb(221, 221, 221);
     border-right: 1px solid rgb(221, 221, 221);
     vertical-align: middle;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 .monitoring .common-container .cell span {
     vertical-align: middle;
