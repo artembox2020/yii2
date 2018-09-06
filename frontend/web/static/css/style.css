@@ -211,6 +211,9 @@ div.required label:after {
   height: 25px;
   width: 25px;
 }
+.company-summary-block font {
+    font-weight: 500;
+}
 .monitoring .filters {
   display: none;
 }
