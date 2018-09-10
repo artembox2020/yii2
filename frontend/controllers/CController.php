@@ -369,12 +369,12 @@ class CController extends Controller
         foreach ($data[self::TYPE_WM] as $key => $value) {
             $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
 
-//            if (!WmMashine::find()
-//            ->where(['number_device' => $wm_mashine_dto->number_device])
-//            ->andWhere(['imei_id' => $imei->id])->one()) {
-//                $this->autoCreateWashMachine($wm_mashine_dto, $imei->id);
-//                     echo $wm_mashine_dto->number_device . ' WM created!' . '<br>';
-//            }
+            if (!WmMashine::find()
+            ->where(['number_device' => $wm_mashine_dto->number_device])
+            ->andWhere(['imei_id' => $imei->id])->one()) {
+                $this->autoCreateWashMachine($wm_mashine_dto, $imei->id);
+                     echo $wm_mashine_dto->number_device . ' WM created!' . '<br>';
+            }
 
             if (WmMashine::find()
                 ->where(['number_device' => $wm_mashine_dto->number_device])

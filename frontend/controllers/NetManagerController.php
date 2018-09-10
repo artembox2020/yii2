@@ -26,6 +26,7 @@ use yii\filters\AccessControl;
 use backend\services\mail\MailSender;
 use frontend\services\custom\Debugger;
 use yii\web\NotFoundHttpException;
+use yii\data\ArrayDataProvider;
 
 /**
  * Class NetManagerController
@@ -503,11 +504,23 @@ class NetManagerController extends \yii\web\Controller
         $searchModel = new WmMashineSearch();
         $dataProvider = $searchModel->searchWashMachine(Yii::$app->request->queryParams);
 
-//        Debugger::dd($dataProvider);
+        $model = new WmMashine();
+        $array = $model->modelWm;
+//        Debugger::dd($model->modelWm);
+
+//        $array = new ArrayDataProvider([
+//            'allModels' => $model,
+//            'sort' => [
+////                'attributes' => ['id', 'name'],
+//            ],
+//        ]);
+//        Debugger::dd($array);
 
         return $this->render('wm-machine/osnovni-zasoby', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'model' => $model,
+            'array' => $array
         ]);
     }
 
