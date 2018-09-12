@@ -66,7 +66,7 @@ class ImeiDataSearch extends ImeiData
     public function searchWmMashinesByImeiId($id)
     {
         $query = WmMashine::getMachinesQueryByImeiId($id);
-        $query = $query->select('id, type_mashine, bill_cash, level_signal, current_status, display, ping');
+        $query = $query->select('id, type_mashine, number_device, bill_cash, level_signal, current_status, display, ping');
         $query = $query->union($this->searchGdMashinesByImeiId($id)->query);
 
         $dataProvider = new ActiveDataProvider([
@@ -87,7 +87,7 @@ class ImeiDataSearch extends ImeiData
     public function searchGdMashinesByImeiId($id)
     {
         $query = GdMashine::getMachinesQueryByImeiId($id);
-        $query = $query->select('id, type_mashine, bill_cash, deleted_at as level_signal, current_status, created_at as display, updated_at as ping');
+        $query = $query->select('id, type_mashine, serial_number as number_device, bill_cash, deleted_at as level_signal, current_status, created_at as display, updated_at as ping');
 
         // add conditions that should always apply here
 
@@ -115,6 +115,7 @@ class ImeiDataSearch extends ImeiData
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
+            'sort' => false
         ]);
 
         return $dataProvider;                     

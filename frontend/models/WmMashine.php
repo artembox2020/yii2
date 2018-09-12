@@ -49,11 +49,11 @@ class WmMashine extends \yii\db\ActiveRecord
     const STATUS_UNDER_REPAIR = 2;
     const STATUS_JUNK = 3;
 
-    const DATE_TIME_FORMAT = 'h:i d.m.Y';
+    const DATE_TIME_FORMAT = 'H:i d.m.Y';
     
     const LEVEL_SIGNAL_MAX = 10000;
 
-    private $model;
+    private $wm;
 
     public $current_state = [
         '-2' => 'nulling',
@@ -186,11 +186,11 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public function getModel()
     {
-        if (!$this->model) {
-            $this->model = new WmMashine();
+        if (!$this->wm) {
+            $this->wm = new WmMashine();
         }
 
-        return $this->model;
+        return $this->wm;
     }
 
     /**
@@ -338,5 +338,49 @@ class WmMashine extends \yii\db\ActiveRecord
         }
 
         return $this->level_signal;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getGeneralCount()
+    {
+        $entity = new Entity();
+        $query = WmMashine::find();
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId()]);
+
+        return $query->count();
+    }
+
+    /**
+     * @return array|\yii\db\ActiveRecord[]
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getWmAll()
+    {
+        $mashine = new Entity();
+
+        return $mashine->getUnitsPertainCompany(new WmMashine());
+    }
+
+    /**
+     * @return array
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getModelWm()
+    {
+        $array = [];
+        $res = $this->getWmAll();
+
+        foreach ($res as $val) {
+            $array[] = $val->model;
+        }
+        $result = array_unique($array);
+
+//        $wm = array_unique($res, 'model');
+
+//        Debugger::dd($wm);
+
+        return $result;
     }
 }

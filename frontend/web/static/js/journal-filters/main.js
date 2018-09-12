@@ -17,11 +17,16 @@ function submitForm(formSelector)
  */
 function fillHiddenSelectionFields(form, formElement)
 {
-    var formName = formElement.name;
     var formCaretPos = getCaretPos(formElement);
+    var focused = document.activeElement;
+    if (!focused || focused == document.body) {
+        focused = formElement;
+    } else if (document.querySelector) {
+        focused = document.querySelector(":focus");
+    }
     var formHiddenSelectionName = form.querySelector('input[name=selectionName]');
     var formHiddenSelectionCaretPos = form.querySelector('input[name=selectionCaretPos]');
-    formHiddenSelectionName.value = formElement.name;
+    formHiddenSelectionName.value = focused.name;
     formHiddenSelectionCaretPos.value = formCaretPos; 
 }
 

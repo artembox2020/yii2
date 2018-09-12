@@ -10,6 +10,6 @@ use frontend\models\WmMashine;
 <?php if(!empty($mashine->ping)): ?>
     <div class="mashine-state mashine-state-addons">
         <?= date(WmMashine::DATE_TIME_FORMAT, $mashine->ping) ?>
-        <?= $mashine->display ?>
+        <?= Yii::t('frontend', 'On Display:').' '.$mashine->display ?>
     </div>
 <?php endif; ?>

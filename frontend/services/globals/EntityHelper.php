@@ -191,7 +191,7 @@ class EntityHelper implements EntityHelperInterface
      * @param int $timeDelay
      * @return javascript
      */
-    public function submitFormOnInputEvents($formSelector, Array $eventSelectors, $timeDelay = 2000)
+    public function submitFormOnInputEvents($formSelector, Array $eventSelectors, $timeDelay = 1800)
     {
         $setFocusIfNecessary = new JsExpression(
             "function setFocusIfNecessary(form)
@@ -202,7 +202,7 @@ class EntityHelper implements EntityHelperInterface
                      var input = form.querySelector('input[type=text][name=' + selectionName +']');
                      if (typeof input != 'undefined' && input !== null) {
                          input.focus();
-                         input.selectionStart = selectionCaretPos;
+                         input.selectionStart = input.value.length;
                          var event = document.createEvent('HTMLEvents');
                          event.initEvent('change', false, true);
                          input.dispatchEvent(event);
@@ -227,11 +227,24 @@ class EntityHelper implements EntityHelperInterface
                               if ('{$event}' == 'keyup') {
                                   clearInterval(hKeyUpInterval);
                                   var form = document.querySelector('{$formSelector}');
-                                  fillHiddenSelectionFields(form, this);
+                                  var thisObj = this;
                                   hKeyUpInterval = setInterval(function()
                                   {
-                                      submitForm('{$formSelector}');
-                                      clearInterval(hKeyUpInterval);
+                                      var uiWidgetContents = document.querySelectorAll('.ui-widget-content.ui-autocomplete');
+                                      var signAllHidden = true;
+                                      for (var i = 0; i < uiWidgetContents.length; ++i) {
+                                           var styleObject = window.getComputedStyle(uiWidgetContents[i]);
+                                           if (styleObject.getPropertyValue('display') != 'none') {
+                                               signAllHidden = false;
+                                               break;
+                                           }
+                                      }
+                                      
+                                      if (signAllHidden) {
+                                          fillHiddenSelectionFields(form, thisObj);
+                                          submitForm('{$formSelector}');
+                                          clearInterval(hKeyUpInterval);
+                                      }
                                   }, {$timeDelay});
                               } else {
                                   submitForm('{$formSelector}');

@@ -4,6 +4,7 @@
         var monitoring = document.querySelector('.monitoring');
         var monitoringShapter = monitoring.querySelector('.monitoring-shapter');
         var monitoringDropList = monitoringShapter.querySelector("*[name=monitoring_shapter]");
+        var monitoringDevices = monitoring.querySelectorAll('.devices .cell-device a');
 
         // displays by query selector
         function displayByQuerySelector(selector) {
@@ -32,6 +33,14 @@
 
             for (var i = 0; i < elementsBySelector.length; ++i) {
                 elementsBySelector[i].style.display = 'none';
+            }
+        }
+
+        // open in a new tab on device reference click        
+        for (var i = 0; i < monitoringDevices.length; ++i) {
+            monitoringDevices[i].onclick = function(e) {
+                e.preventDefault();
+                window.open(this.href,  '_blank');
             }
         }
 
@@ -151,7 +160,7 @@
             }
         }
 
-        //adjusts cell height by selector
+        // adjusts cell height by selector
         function adjustCellsHeightBySelector(heightAddition, selector, startPosition)
         {
             var cells = monitoring.querySelectorAll(selector);
