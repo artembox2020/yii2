@@ -364,3 +364,15 @@ div.required label:after {
 .monitoring .table-financial td.common {
     width: 330px;
 }
+.enhanced-z-index {
+    position: relative;
+    z-index: 1020;
+}
+.ping-actual {
+    color: #228B22;
+    font-weight: 600;
+}
+.ping-not-actual {
+    color: #a9a9a9;
+    font-weight: normal;
+}

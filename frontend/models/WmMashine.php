@@ -49,7 +49,7 @@ class WmMashine extends \yii\db\ActiveRecord
     const STATUS_UNDER_REPAIR = 2;
     const STATUS_JUNK = 3;
 
-    const DATE_TIME_FORMAT = 'h:i d.m.Y';
+    const DATE_TIME_FORMAT = 'H:i d.m.Y';
     
     const LEVEL_SIGNAL_MAX = 10000;
 
