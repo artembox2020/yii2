@@ -23,7 +23,7 @@ use yii\widgets\Pjax;
                 'attribute' => 'id',
                 'value' => function($model, $key, $index)
                 {
-                    return Yii::t('frontend', $model->type_mashine).++$index;
+                    return Html::a(Yii::t('frontend', $model->type_mashine).++$index, '/wm-mashine/update?id='.$model->id);
                 },
                 'contentOptions' => ['class' => 'cell-device'],
             ],
