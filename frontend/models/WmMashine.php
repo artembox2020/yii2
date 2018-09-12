@@ -379,7 +379,7 @@ class WmMashine extends \yii\db\ActiveRecord
 
 //        $wm = array_unique($res, 'model');
 
-//        Debugger::dd($wm);
+//        Debugger::dd($result);
 
         return $result;
     }

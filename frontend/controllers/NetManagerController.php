@@ -514,7 +514,7 @@ class NetManagerController extends \yii\web\Controller
 ////                'attributes' => ['id', 'name'],
 //            ],
 //        ]);
-//        Debugger::dd($array);
+//        Debugger::dd($model);
 
         return $this->render('wm-machine/osnovni-zasoby', [
             'dataProvider' => $dataProvider,
