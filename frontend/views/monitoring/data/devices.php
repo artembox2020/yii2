@@ -21,9 +21,14 @@ use yii\widgets\Pjax;
                 'label' => Yii::t('frontend', 'Device'),
                 'format' => 'raw',
                 'attribute' => 'id',
-                'value' => function($model, $key, $index)
+                'value' => function($model)
                 {
-                    return Yii::t('frontend', $model->type_mashine).++$index;
+
+                    return Html::a(
+                        Yii::t('frontend', $model->type_mashine).$model->number_device,
+                        '/'.strtolower($model->type_mashine).'-mashine/view?id='.$model->id,
+                        ['target' => '_blank']
+                    );
                 },
                 'contentOptions' => ['class' => 'cell-device'],
             ],
@@ -56,7 +61,11 @@ use yii\widgets\Pjax;
                 'format' => 'raw',
                 'value' => function($model)
                 {
-                    return $model->getStateView();
+                    return Html::a(
+                        $model->getStateView(),
+                        '/'.strtolower($model->type_mashine).'-mashine/view?id='.$model->id,
+                        ['target' => '_blank']
+                    );
                 },
                 'contentOptions' => ['class' => 'current-status']
             ]

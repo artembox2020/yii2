@@ -7,6 +7,7 @@ use Yii;
 use frontend\models\ImeiData;
 use frontend\models\GdMashine;
 use frontend\models\WmMashine;
+use frontend\models\Jlog;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 use yii\behaviors\TimestampBehavior;
@@ -53,6 +54,7 @@ class Imei extends \yii\db\ActiveRecord
     const STATUS_JUNK = 3;
     const DATE_TIME_FORMAT = 'php:d.m.Y H:i:s';
     const MYSQL_DATE_TIME_FORMAT = '%d.%m.%Y %H:%i:%s';
+    const DATE_PICKER_FORMAT = 'dd.MM.yyyy';
 
     public $current_status = [
         'Off',
@@ -522,14 +524,19 @@ class Imei extends \yii\db\ActiveRecord
             
             return self::checkStatus($this->status);
         }
+        $actualityClass = 'ping-not-actual';
         $getInitResult = $this->getInit();
         if ($getInitResult == 'Ok') {
+            $halfHourBeforeTimestamp = strtotime("-30 minutes") + Jlog::TYPE_TIME_OFFSET;
+            if ($this->ping >= $halfHourBeforeTimestamp) {
+                $actualityClass = 'ping-actual';
+            }
             $formattedDate = Yii::$app->formatter->asDate($this->ping, $dateFormat);
-            
-            return $formattedDate;
+
+            return "<span class='$actualityClass'>".$formattedDate."</span>";
         } else {
-            
-            return $getInitResult;
+
+            return "<span class='$actualityClass'>".$getInitResult."</span>";
         }
     }
 

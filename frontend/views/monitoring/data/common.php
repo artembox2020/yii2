@@ -36,24 +36,28 @@ use yii\widgets\Pjax;
             <?= $data->imeiRelation->imei ?>
         </div>
     </div>
-    <div class="col-md-5 col-sm-5 cell">
-        <span><?= $data->imeiRelation->balanceHolder->name ?></span>
-    </div>
-    <div class="col-md-5 col-sm-5 cell popup-block">
-        <div class = "label">
-            <?= Yii::t('frontend', 'Address Name') ?>:
-            <?= $data->imeiRelation->address->name ?>
+    <a target = "_blank" href = "<?= '/balance-holder/view?id='.$data->imeiRelation->balanceHolder->id ?>">
+        <div class="col-md-5 col-sm-5 cell">
+            <span><?= $data->imeiRelation->balanceHolder->name ?></span>
         </div>
-        <span><?= $data->imeiRelation->address->address ?></span>
-        <br/><br/><!--
-        <div class="row common-container-block">
-            <div class= "common-header">
-                <div class="header">
-                    <?= Yii::t('frontend', 'Address Name') ?>
-                </div>
+    </a>
+    <a target = "_blank" href = "<?= '/address-balance-holder/view?id='. $data->imeiRelation->address->id ?>">
+        <div class="col-md-5 col-sm-5 cell popup-block">
+            <div class = "label">
+                <?= Yii::t('frontend', 'Address Name') ?>:
+                <?= $data->imeiRelation->address->name ?>
             </div>
-            <br>
-            <span><?= $data->imeiRelation->address->name ?></span>
-        </div>-->    
-    </div>
+            <span><?= $data->imeiRelation->address->address ?></span>
+            <br/><br/><!--
+            <div class="row common-container-block">
+                <div class= "common-header">
+                    <div class="header">
+                        <?= Yii::t('frontend', 'Address Name') ?>
+                    </div>
+                </div>
+                <br>
+                <span><?= $data->imeiRelation->address->name ?></span>
+            </div>-->    
+        </div>
+    </a>
 </div>

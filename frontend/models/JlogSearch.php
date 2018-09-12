@@ -6,6 +6,8 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use frontend\models\Jlog;
+use frontend\models\WmMashine;
+use frontend\models\Imei;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 
@@ -41,6 +43,12 @@ class JlogSearch extends Jlog
     const FILTER_CATEGORY_COMMON = 19;
     const FILTER_CATEGORY_DATE = 20;
     const FILTER_CATEGORY_NUMERIC = 21;
+    
+    const INFINITY = 9999999999999999;
+
+    public $from_date;
+    public $to_date;
+    public $mashineNumber;
 
     /**
      * @inheritdoc
@@ -64,7 +72,31 @@ class JlogSearch extends Jlog
         $entity = new Entity();
         $entityHelper = new EntityHelper();
         $query = $entity->getUnitsQueryPertainCompany(new Jlog());
+        
+        $timeFrom = 0;
+        $timeTo = self::INFINITY;
+        
+        if (!empty($this->from_date)) {
+            $this->from_date .= ' 00:00:00';
+            $timeFrom = strtotime($this->from_date);
+        }
+        
+        if (!empty($this->to_date)) {
+            $this->to_date .= ' 23:59:59';
+            $timeTo = strtotime($this->to_date);
+        }
+        
+        $betweenCondition = new \yii\db\conditions\BetweenCondition(
+            "UNIX_TIMESTAMP(STR_TO_DATE(date, '".Imei::MYSQL_DATE_TIME_FORMAT."'))", 
+            'BETWEEN',
+            $timeFrom,
+            $timeTo
+        );
 
+        $query = $query->andWhere($betweenCondition);
+
+        $query = $query->andFilterWhere(['like', 'packet', $this->mashineNumber]);
+        
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -119,6 +151,26 @@ class JlogSearch extends Jlog
         $query->andFilterWhere(['like', 'address', $params['address']]);
 
         return $dataProvider;
+    }
+
+    /**
+     * Creates data provider instance by mashine id
+     *
+     * @param array $params
+     * @param int $id
+     * @return ActiveDataProvider
+     */
+    public function searchByMashine($params, $id)
+    {
+        $wm_mashine = WmMashine::findOne($id);
+        $imei = Imei::findOne($wm_mashine->imei_id);
+        $params['imei'] = $imei->imei;
+        if (empty(Yii::$app->request->queryParams['sort'])) {
+            $extraParams = ['sort' => '-date'];
+            Yii::$app->request->queryParams = array_merge($extraParams, Yii::$app->request->queryParams);
+        }
+
+        return $this->search($params);
     }
 
     /**

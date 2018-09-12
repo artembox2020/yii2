@@ -19,6 +19,7 @@ use frontend\models\dto\ImeiDataDto;
 use frontend\models\dto\ImeiInitDto;
 use frontend\models\Jlog;
 use frontend\services\custom\Debugger;
+use frontend\services\globals\Entity;
 
 /**
  * data processing IMEI, Wash - Machine, Gel - Dispenser
@@ -366,14 +367,17 @@ class CController extends Controller
      */
     public function serviceWashMachine($data, $imei)
     {
+        // will contain all data mashine ids
+        $wm_mashine_ids = [];
         foreach ($data[self::TYPE_WM] as $key => $value) {
             $wm_mashine_dto = new WmDto($this->setWM($data[self::TYPE_WM][$key]));
 
             if (!WmMashine::find()
             ->where(['number_device' => $wm_mashine_dto->number_device])
             ->andWhere(['imei_id' => $imei->id])->one()) {
-                $this->autoCreateWashMachine($wm_mashine_dto, $imei->id);
+                $new_wash_mashine = $this->autoCreateWashMachine($wm_mashine_dto, $imei->id);
                      echo $wm_mashine_dto->number_device . ' WM created!' . '<br>';
+                $wm_mashine_ids[] = $new_wash_mashine->id;
             }
 
             if (WmMashine::find()
@@ -382,6 +386,7 @@ class CController extends Controller
                 $wm_mashine = WmMashine::find()
                     ->where(['number_device' => $wm_mashine_dto->number_device])
                     ->andWhere(['imei_id' => $imei->id])->one();
+                $wm_mashine_ids[] = $wm_mashine->id;    
                 $wm_mashine_data = new WmMashineData();
                 $wm_mashine_data->mashine_id = $wm_mashine->id;
                 $wm_mashine_data->type_mashine = $wm_mashine_dto->type_mashine;
@@ -406,6 +411,9 @@ class CController extends Controller
 
 //            $this->updateWmDeviceNumberNull($wm_mashine_dto, $imei->id);
         }
+
+        // soft deletes mashines, not available to this data packet(except newly created)
+        $this->softDeleteNotAvailableWmMashines($wm_mashine_ids, $imei->id);
     }
 
     /**
@@ -425,6 +433,7 @@ class CController extends Controller
         $wm_mashine->display = $wm_mashine_data->display;
         $wm_mashine_data->is_deleted = false;
         $wm_mashine->ping = $wm_mashine_data->ping;
+        $wm_mashine->is_deleted = false;
         $wm_mashine->update(false);
         echo $wm_mashine->number_device . ' WM updated!' . '<br>';
     }
@@ -449,6 +458,7 @@ class CController extends Controller
         $gd_mashine->bill_cash = $gd_mashine_data->bill_cash;
         $gd_mashine->current_status = $gd_mashine_data->current_status;
         $gd_mashine_data->is_deleted = false;
+        $gd_mashine->is_deleted = false;
         $gd_mashine->update(false);
         echo 'GD updated!' . '<br>';
     }
@@ -461,12 +471,15 @@ class CController extends Controller
      */
     public function serviceGelDispenser($data, $imei_id)
     {
+        // will contain all data mashine ids
+        $gd_mashine_ids = [];
         foreach ($data[self::TYPE_GD] as $key => $value) {
             $gd_mashine_dto = new GdDto($this->setGd($data[self::TYPE_GD][$key]));
 
             if (!GdMashine::find()
                 ->where(['imei_id' => $imei_id])->one()) {
-                $this->autoCreateGelDispenser($gd_mashine_dto, $imei_id);
+                $new_gd_mashine = $this->autoCreateGelDispenser($gd_mashine_dto, $imei_id);
+                $gd_mashine_ids[] = $new_gd_mashine->id;
                 echo 'Gel Dispenser created!' . '<br>';
             }
 
@@ -476,6 +489,7 @@ class CController extends Controller
                     ->where(['imei_id' => $imei_id])->one();
 
                 $gd_mashine_data = new GdMashineData();
+                $gd_mashine_ids[] = $gd_mashine->id;
                 $gd_mashine_data->mashine_id = $gd_mashine->id;
                 $gd_mashine_data->type_mashine = $gd_mashine_dto->type_mashine;
                 $gd_mashine_data->gel_in_tank = $gd_mashine_dto->gel_in_tank;
@@ -491,6 +505,45 @@ class CController extends Controller
                     echo 'Gel Dispenser data Don\'t save' . '<br>';
                 }
             }
+        }
+        
+        // soft deletes mashines, not available to this data packet(except newly created)
+        $this->softDeleteNotAvailableGdMashines($gd_mashine_ids, $imei_id);
+    }
+
+    /**
+     * Soft deletes WmMashines, except ones in the list
+     * 
+     * @param array $wm_mashine_ids
+     * @param int $imei_id 
+     */
+    public function softDeleteNotAvailableWmMashines($wm_mashine_ids, $imei_id)
+    {
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany(new WmMashine());
+        $query = $query->andFilterWhere(['imei_id' => $imei_id]);
+        $query = $query->andFilterWhere(['not in', 'id', $wm_mashine_ids]);
+
+        foreach ($query->all() as $mashine) {
+            $mashine->softDelete();
+        }
+    }
+    
+    /**
+     * Soft deletes GdMashines, except ones in the list
+     * 
+     * @param array $gd_mashine_ids
+     * @param int $imei_id 
+     */
+    public function softDeleteNotAvailableGdMashines($gd_mashine_ids, $imei_id)
+    {
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany(new GdMashine());
+        $query = $query->andFilterWhere(['imei_id' => $imei_id]);
+        $query = $query->andFilterWhere(['not in', 'id', $gd_mashine_ids]);
+
+        foreach ($query->all() as $mashine) {
+            $mashine->softDelete();
         }
     }
 }
