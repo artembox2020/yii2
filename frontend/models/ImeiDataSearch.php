@@ -46,7 +46,6 @@ class ImeiDataSearch extends ImeiData
     {
         $entity = new Entity();
         $query = $entity->getUnitsQueryPertainCompany(new Imei());
-        $query = $query->andWhere(['status' => Imei::STATUS_ACTIVE]);
         $query = $query->joinWith('imeiData', false, 'INNER JOIN');
 
         $dataProvider = new ActiveDataProvider([

@@ -36,18 +36,18 @@ use yii\widgets\Pjax;
             <?= $data->imeiRelation->imei ?>
         </div>
     </div>
-    <a target = "_blank" href = "<?= '/balance-holder/view?id='.$data->imeiRelation->balanceHolder->id ?>">
+    <a target = "_blank" href = "<?= '/net-manager/view-balance-holder?id='.$data->imeiRelation->balanceHolder->id ?>">
         <div class="col-md-5 col-sm-5 cell">
             <span><?= $data->imeiRelation->balanceHolder->name ?></span>
         </div>
     </a>
-    <a target = "_blank" href = "<?= '/address-balance-holder/view?id='. $data->imeiRelation->address->id ?>">
+    <a target = "_blank" href = "<?= '/address-balance-holder/view?id='. $data->imeiRelation->fakeAddress->id ?>">
         <div class="col-md-5 col-sm-5 cell popup-block">
             <div class = "label">
                 <?= Yii::t('frontend', 'Address Name') ?>:
-                <?= $data->imeiRelation->address->name ?>
+                <?= $data->imeiRelation->fakeAddress->name ?>
             </div>
-            <span><?= $data->imeiRelation->address->address ?></span>
+            <span><?= $data->imeiRelation->fakeAddress->address ?></span>
             <br/><br/><!--
             <div class="row common-container-block">
                 <div class= "common-header">
@@ -56,7 +56,7 @@ use yii\widgets\Pjax;
                     </div>
                 </div>
                 <br>
-                <span><?= $data->imeiRelation->address->name ?></span>
+                <span><?= $data->imeiRelation->fakeAddress->name ?></span>
             </div>-->    
         </div>
     </a>

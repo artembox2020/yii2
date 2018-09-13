@@ -127,7 +127,7 @@ class CController extends Controller
 
             $imei = Imei::findOne(['imei' => $imeiDataDto->imei]);
             $imeiData->imei_id = $imei->id;
-            $imeiData->created_at = $imeiDataDto->date;
+            $imeiData->created_at = time() + Jlog::TYPE_TIME_OFFSET;
             $imeiData->imei = $imeiDataDto->imei;
             $imeiData->level_signal = $imeiDataDto->level_signal;
             $imeiData->on_modem_account = $imeiDataDto->on_modem_account;
@@ -139,9 +139,9 @@ class CController extends Controller
 
             $imeiData->save();
             
-            $imei->ping = $imeiDataDto->date;
+            $imei->ping = time() + Jlog::TYPE_TIME_OFFSET;
             $imei->save();
-            
+
             $jlog = new Jlog();
             $jlog->createLogFromImei($imei, $p, Jlog::TYPE_PACKET_DATA);
 
@@ -413,7 +413,7 @@ class CController extends Controller
         }
 
         // soft deletes mashines, not available to this data packet(except newly created)
-        $this->softDeleteNotAvailableWmMashines($wm_mashine_ids, $imei->id);
+        $this->disableNotAvailableWmMashines($wm_mashine_ids, $imei->id);
     }
 
     /**
@@ -434,6 +434,7 @@ class CController extends Controller
         $wm_mashine_data->is_deleted = false;
         $wm_mashine->ping = $wm_mashine_data->ping;
         $wm_mashine->is_deleted = false;
+        $wm_mashine->status = WmMashine::STATUS_ACTIVE;
         $wm_mashine->update(false);
         echo $wm_mashine->number_device . ' WM updated!' . '<br>';
     }
@@ -459,6 +460,7 @@ class CController extends Controller
         $gd_mashine->current_status = $gd_mashine_data->current_status;
         $gd_mashine_data->is_deleted = false;
         $gd_mashine->is_deleted = false;
+        $gd_mashine->status = WmMashine::STATUS_ACTIVE;
         $gd_mashine->update(false);
         echo 'GD updated!' . '<br>';
     }
@@ -508,16 +510,16 @@ class CController extends Controller
         }
         
         // soft deletes mashines, not available to this data packet(except newly created)
-        $this->softDeleteNotAvailableGdMashines($gd_mashine_ids, $imei_id);
+        $this->disableNotAvailableGdMashines($gd_mashine_ids, $imei_id);
     }
 
     /**
-     * Soft deletes WmMashines, except ones in the list
+     * Disables WmMashines, except ones in the list
      * 
      * @param array $wm_mashine_ids
      * @param int $imei_id 
      */
-    public function softDeleteNotAvailableWmMashines($wm_mashine_ids, $imei_id)
+    public function disableNotAvailableWmMashines($wm_mashine_ids, $imei_id)
     {
         $entity = new Entity();
         $query = $entity->getUnitsQueryPertainCompany(new WmMashine());
@@ -525,17 +527,18 @@ class CController extends Controller
         $query = $query->andFilterWhere(['not in', 'id', $wm_mashine_ids]);
 
         foreach ($query->all() as $mashine) {
-            $mashine->softDelete();
+            $mashine->status = WmMashine::STATUS_OFF;
+            $mashine->save(false);
         }
     }
     
     /**
-     * Soft deletes GdMashines, except ones in the list
+     * Disables GdMashines, except ones in the list
      * 
      * @param array $gd_mashine_ids
      * @param int $imei_id 
      */
-    public function softDeleteNotAvailableGdMashines($gd_mashine_ids, $imei_id)
+    public function disableNotAvailableGdMashines($gd_mashine_ids, $imei_id)
     {
         $entity = new Entity();
         $query = $entity->getUnitsQueryPertainCompany(new GdMashine());
@@ -543,7 +546,8 @@ class CController extends Controller
         $query = $query->andFilterWhere(['not in', 'id', $gd_mashine_ids]);
 
         foreach ($query->all() as $mashine) {
-            $mashine->softDelete();
+            $mashine->status = WmMashine::STATUS_OFF;
+            $mashine->save(false);
         }
     }
 }
