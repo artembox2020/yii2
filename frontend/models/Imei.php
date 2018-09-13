@@ -183,7 +183,17 @@ class Imei extends \yii\db\ActiveRecord
         return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id'])
                     ->andWhere(['address_balance_holder.status' => AddressBalanceHolder::STATUS_BUSY]);
     }
-    
+
+    /**
+     * The same as getAddress(), but ignores address status
+     * 
+     * @return null|\yii\db\ActiveQuery
+     */
+    public function getFakeAddress()
+    {
+        return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

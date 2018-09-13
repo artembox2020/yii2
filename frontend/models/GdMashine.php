@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\web\view;
+use frontend\models\WmMashine;
 
 /**
  * This is the model class for table "gd_mashine".
@@ -142,7 +143,7 @@ class GdMashine extends \yii\db\ActiveRecord
      */
     public static function getMachinesQueryByImeiId($imeiId)
     {
-        $query = self::find()->andWhere(['imei_id' => $imeiId]);
+        $query = self::find()->andWhere(['gd_mashine.imei_id' => $imeiId, 'gd_mashine.status' => WmMashine::STATUS_ACTIVE]);
 
         return $query;
     }
