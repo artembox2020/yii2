@@ -83,16 +83,17 @@ $machine_menu = [];
 <?php ob_start(); ?>
 
 <?= GridView::widget([
-    'dataProvider' => $dataProvider,
+    'dataProvider' => $provider,
     'columns' => [
         ['attribute' => 'model',
-            'label' => Yii::t('frontend', 'Model'),
-            'value' => function ($model) {
-                return $model->model;
-            },
+            'label' => Yii::t('frontend', 'By Models'),
+            'value' => 'model',
             'format' => 'raw',
             ],
-//        'ping'
+        [
+            'label' => Yii::t('frontend', 'General Count'),
+//            'value' => $provider->getGeneralCount()
+        ],
     ]
 ]);
 ?>

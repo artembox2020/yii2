@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use common\models\User;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use Yii;
@@ -364,22 +365,14 @@ class WmMashine extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return array
-     * @throws \yii\web\NotFoundHttpException
+     * @return array|\yii\db\ActiveRecord[]
      */
     public function getModelWm()
     {
-        $array = [];
-        $res = $this->getWmAll();
-
-        foreach ($res as $val) {
-            $array[] = $val->model;
-        }
-        $result = array_unique($array);
-
-//        $wm = array_unique($res, 'model');
-
-//        Debugger::dd($wm);
+        $user = User::findOne(Yii::$app->user->id);
+        $result = WmMashine::find()
+            ->select(['model'], 'DISTINCT')
+            ->andWhere(['company_id' => $user->company_id])->all();
 
         return $result;
     }

@@ -506,21 +506,15 @@ class NetManagerController extends \yii\web\Controller
 
         $model = new WmMashine();
         $array = $model->modelWm;
-//        Debugger::dd($model->modelWm);
-
-//        $array = new ArrayDataProvider([
-//            'allModels' => $model,
-//            'sort' => [
-////                'attributes' => ['id', 'name'],
-//            ],
-//        ]);
-//        Debugger::dd($array);
+        $provider = new ArrayDataProvider([
+            'allModels' => $array,
+        ]);
 
         return $this->render('wm-machine/osnovni-zasoby', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'model' => $model,
-            'array' => $array
+            'provider' => $provider
         ]);
     }
 
