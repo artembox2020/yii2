@@ -308,7 +308,7 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public static function getMachinesQueryByImeiId($imeiId)
     {
-        $query = self::find()->andWhere(['wm_mashine.imei_id' => $imeiId]);
+        $query = self::find()->andWhere(['wm_mashine.imei_id' => $imeiId, 'wm_mashine.status' => self::STATUS_ACTIVE]);
 
         return $query;
     }
