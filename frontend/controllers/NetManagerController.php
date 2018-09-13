@@ -506,7 +506,6 @@ class NetManagerController extends \yii\web\Controller
 
         $model = new WmMashine();
         $array = $model->modelWm;
-
         $provider = new ArrayDataProvider([
             'allModels' => $array,
         ]);
@@ -515,7 +514,7 @@ class NetManagerController extends \yii\web\Controller
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'model' => $model,
-            'array' => $array
+            'provider' => $provider
         ]);
     }
 
