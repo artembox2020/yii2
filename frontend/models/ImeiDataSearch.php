@@ -45,9 +45,19 @@ class ImeiDataSearch extends ImeiData
     public function search($params)
     {
         $entity = new Entity();
-        $query = $entity->getUnitsQueryPertainCompany(new Imei());
-        $query = $query->andWhere(['status' => Imei::STATUS_ACTIVE]);
-        $query = $query->joinWith('imeiData', false, 'INNER JOIN');
+        $query = Imei::find()->andWhere(['imei.company_id' => $entity->getCompanyId()]);
+        $query = $query->joinWith('imeiData', false, 'INNER JOIN')
+                       ->innerJoin('address_balance_holder', 'address_balance_holder.id = imei.address_id')
+                       ->andWhere(new \yii\db\conditions\OrCondition([
+                           new \yii\db\conditions\AndCondition([
+                              ['=', 'imei.status', Imei::STATUS_ACTIVE],
+                              ['=', 'address_balance_holder.status', AddressBalanceHolder::STATUS_BUSY]
+                           ]),
+                           new \yii\db\conditions\AndCondition([
+                              ['=', 'imei.status', Imei::STATUS_OFF],
+                              ['=', 'address_balance_holder.status', AddressBalanceHolder::STATUS_FREE]
+                           ])
+                       ]));
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
