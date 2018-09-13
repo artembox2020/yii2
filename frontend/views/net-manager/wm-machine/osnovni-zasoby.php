@@ -87,9 +87,7 @@ $machine_menu = [];
     'columns' => [
         ['attribute' => 'model',
             'label' => Yii::t('frontend', 'Model'),
-            'value' => function ($model) {
-                return $model->model;
-            },
+            'value' => 'model',
             'format' => 'raw',
             ],
 //        'ping'
