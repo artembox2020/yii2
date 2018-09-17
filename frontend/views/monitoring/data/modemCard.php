@@ -2,7 +2,7 @@
             <?= $model->attributeLabels()['imei'] ?>
         </b>
         <br>
-        <?= $model->imei ?>
+        <?= $model->imeiRelation->imei ?>
         <br>
     </td>
 </tr>
