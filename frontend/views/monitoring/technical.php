@@ -31,9 +31,10 @@ use frontend\models\ImeiDataSearch;
             [
                 'label' => $monitoringShapters['common'],
                 'format' => 'raw',
-                'value' => function($model) use($monitoringController)
+                'value' => function($model) use($monitoringController, $searchModel)
                 {
-                    return $monitoringController->renderCommonDataByImeiId($model->id);
+
+                    return $monitoringController->renderCommonDataByImeiId($model->id, $searchModel);
                 },
                 'contentOptions' => ['class' => 'common all'],
                 'headerOptions' => ['class' => 'common all']
@@ -43,6 +44,7 @@ use frontend\models\ImeiDataSearch;
                 'format' => 'raw',
                 'value' => function($model) use($monitoringController)
                 {
+
                     return $monitoringController->renderDevicesByImeiId($model->id);
                 },
                 'contentOptions' => ['class' => 'devices all'],
@@ -51,9 +53,10 @@ use frontend\models\ImeiDataSearch;
             [
                 'label' => $monitoringShapters['terminal'],
                 'format' => 'raw',
-                'value' => function($model) use($monitoringController)
+                'value' => function($model) use($monitoringController, $searchModel)
                 {
-                    return $monitoringController->renderTerminalDataByImeiId($model->id);
+
+                    return $monitoringController->renderTerminalDataByImeiId($model->id, $searchModel);
                 },
                 'contentOptions' => ['class' => 'terminal all'],
                 'headerOptions' => ['class' => 'terminal all']

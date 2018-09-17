@@ -58,9 +58,9 @@ use yii\widgets\Pjax;
             [
                 'label' => Yii::t('frontend', 'Remote Connnection'),
                 'format' => 'raw',
-                'value' => function($model) use($monitoringController)
+                'value' => function($model) use($monitoringController, $searchModel)
                 {
-                    return $monitoringController->renderImeiCard($model->imeiRelation->id);
+                    return $monitoringController->renderImeiCard($model->imeiRelation->id, $searchModel);
                 },
                 'contentOptions' => ['class' => 'terminal all'],
                 'headerOptions' => ['class' => 'terminal all']

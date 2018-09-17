@@ -80,50 +80,56 @@ class MonitoringController extends \yii\web\Controller
 
     /**
      * Renders monitoring imei card (remote connection) by imei id
-     * 
+     *
+     * @param int $imeiId
+     * @param ImeiDataSearch $searchModel
      * @return string
      */
-    public function renderImeiCard($imeiId)
+    public function renderImeiCard($imeiId, $searchModel)
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
+        global $dProvider;
+        $this->setGlobals($imeiId, $searchModel);
 
         return $this->renderPartial('/monitoring/data/card', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dProvider
         ]);
     }
 
     /**
      * Renders monitoring terminal by imei id
      * 
+     * @param $imeiId
+     * @param ImeiDataSearch $searchModel
      * @return string
      */
-    public function renderTerminalDataByImeiId($imeiId)
+    public function renderTerminalDataByImeiId($imeiId, $searchModel)
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
+        global $dProvider;
+        $this->setGlobals($imeiId, $searchModel);
 
         return $this->renderPartial('/monitoring/data/terminal', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dProvider,
             'monitoringController' => $this
         ]);
     }
-    
+
     /**
      * Renders common data view by imei id
-     * 
+     *
+     * @param int $imeiId
+     * @param ImeiDataSearch $searchModel
      * @return string
      */
-    public function renderCommonDataByImeiId($imeiId)
+    public function renderCommonDataByImeiId($imeiId, $searchModel)
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
+        global $dProvider;
+        $this->setGlobals($imeiId, $searchModel);
 
         return $this->renderPartial('/monitoring/data/common', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dProvider
         ]);
     }
 
@@ -131,34 +137,36 @@ class MonitoringController extends \yii\web\Controller
      * Renders financial data + remote connection view by imei id
      * 
      * @param int $imeiId
+     * @param ImeiDataSearch $searchModel
      * @return string
      */
-    public function renderFinancialRemoteConnectionDataByImeiId($imeiId)
+    public function renderFinancialRemoteConnectionDataByImeiId($imeiId, $searchModel)
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
+        global $dProvider;
+        $this->setGlobals($imeiId, $searchModel);
 
         return $this->renderPartial('/monitoring/data/financial_remote_connection', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dProvider,
             'monitoringController' => $this,
         ]);
     }
-    
+
     /**
      * Renders financial data view by imei id
      * 
      * @param int $imeiId
+     * @param ImeiDataSearch $searchModel
      * @return string
      */
-    public function renderFinancialDataByImeiId($imeiId)
+    public function renderFinancialDataByImeiId($imeiId, $searchModel)
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
+        global $dProvider;
+        $this->setGlobals($imeiId, $searchModel);
 
         return $this->renderPartial('/monitoring/data/financial', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dProvider,
         ]);
     }
 
@@ -223,5 +231,22 @@ class MonitoringController extends \yii\web\Controller
             'monitoringShapters' => $monitoringShapters,
             'script' => $script
         ]);
+    }
+
+    /**
+     * Sets global variables $dProvider and $currentImeiId
+     * 
+     * @param int $imeiId
+     * @param ImeiDatasearch $searchModel
+     */
+    private function setGlobals($imeiId, $searchModel)
+    {
+        global $dProvider;
+        global $currentImeiId;
+
+        if (empty($currentImeiId) || $currentImeiId != $imeiId) {
+            $dProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
+            $currentImeiId = $imeiId;
+        }
     }
 }
