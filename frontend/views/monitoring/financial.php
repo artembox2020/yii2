@@ -34,9 +34,10 @@ use frontend\models\ImeiDataSearch;
             [
                 'label' => $monitoringShapters['common'],
                 'format' => 'raw',
-                'value' => function($model) use($monitoringController)
+                'value' => function($model) use($monitoringController, $searchModel)
                 {
-                    return $monitoringController->renderCommonDataByImeiId($model->id);
+
+                    return $monitoringController->renderCommonDataByImeiId($model->id, $searchModel);
                 },
                 'contentOptions' => ['class' => 'common all'],
                 'headerOptions' => ['class' => 'common all']
@@ -44,9 +45,10 @@ use frontend\models\ImeiDataSearch;
             [
                 'label' => $monitoringShapters['financial'],
                 'format' => 'raw',
-                'value' => function($model) use($monitoringController)
+                'value' => function($model) use($monitoringController, $searchModel)
                 {
-                    return $monitoringController->renderFinancialRemoteConnectionDataByImeiId($model->id);
+
+                    return $monitoringController->renderFinancialRemoteConnectionDataByImeiId($model->id, $searchModel);
                 },
                 'contentOptions' => ['class' => 'financial all'],
                 'headerOptions' => ['class' => 'financial all']
