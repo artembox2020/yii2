@@ -90,10 +90,11 @@ $machine_menu = [];
             'value' => 'model',
             'format' => 'raw',
             ],
-        [
-            'label' => Yii::t('frontend', 'General Count'),
-//            'value' => $provider->getGeneralCount()
-        ],
+//        [
+//            'label' => Yii::t('frontend', 'General Count'),
+//            'value' => $model->getModelNameCount($dataProvider->model),
+//            'format' => 'raw',
+//        ],
     ]
 ]);
 ?>
