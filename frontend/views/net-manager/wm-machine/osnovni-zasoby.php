@@ -77,7 +77,7 @@ $machine_menu = [];
 
 <p><u><b><?= Yii::t('frontend','Consolidated technical data') ?></b></u><p/>
 
-<?php //Debugger::d($model->getModelWm()); ?>
+<?php //Debugger::d($provider); ?>
 
 <!-- Summary by models -->
 <?php ob_start(); ?>
@@ -88,13 +88,13 @@ $machine_menu = [];
         ['attribute' => 'model',
             'label' => Yii::t('frontend', 'By Models'),
             'value' => 'model',
-            'format' => 'raw',
             ],
-//        [
-//            'label' => Yii::t('frontend', 'General Count'),
-//            'value' => $model->getModelNameCount($dataProvider->model),
-//            'format' => 'raw',
-//        ],
+        [
+            'label' => Yii::t('frontend', 'General Count'),
+            'value' => function ($provider) {
+                return $provider->getModelNameCount($provider->model);
+            },
+        ],
     ]
 ]);
 ?>
@@ -113,12 +113,12 @@ $machine_menu = [];
             'value' => $modelWm
         ],
         [
-            'label' =>  Yii::t('frontend', 'By Date Production'),
+            'label' =>  Yii::t('frontend', 'By year of production'),
             'format' => 'raw',
             'value' => ''
         ],
         [
-            'label' =>  Yii::t('frontend', 'By Status'),
+            'label' =>  Yii::t('frontend', 'Status'),
             'format' => 'raw',
             'value' => ''
         ],
