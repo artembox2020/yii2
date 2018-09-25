@@ -22,6 +22,10 @@ $config = [
             'charset' => 'utf8',
             'enableSchemaCache' => YII_ENV_PROD,
         ],
+        'formatter' => [
+            'decimalSeparator' => '.',
+            'thousandSeparator' => '',
+        ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
