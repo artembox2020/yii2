@@ -77,11 +77,8 @@ $machine_menu = [];
 
 <p><u><b><?= Yii::t('frontend','Consolidated technical data') ?></b></u><p/>
 
-<?php //Debugger::d($provider); ?>
-
 <!-- Summary by models -->
 <?php ob_start(); ?>
-
 <?= GridView::widget([
     'dataProvider' => $provider,
     'columns' => [
@@ -99,6 +96,56 @@ $machine_menu = [];
 ]);
 ?>
 <?php $modelWm = ob_get_clean(); ?>
+
+<?php ob_start(); ?>
+<?= GridView::widget([
+    'dataProvider' => $dataProvider,
+    'columns' => [
+        [
+            'label' => Yii::t('frontend', 'До 1 року'),
+//            'value' => function ($dataProvider) {
+//                return $dataProvider->getUpTo1year($dataProvider->date_build);
+//            }
+        ],
+//        [
+//            'label' => Yii::t('frontend', 'До 2х років'),
+//            'value' => ''
+//        ],
+//        [
+//            'label' => Yii::t('frontend', 'До 3х років'),
+//            'value' => ''
+//        ],
+//        [
+//            'label' => Yii::t('frontend', 'До 4х років'),
+//            'value' => ''
+//        ],
+//        [
+//            'label' => Yii::t('frontend', 'До 5х років'),
+//            'value' => ''
+//        ],
+//        [
+//            'label' => Yii::t('frontend', 'Старше за 5 років'),
+//            'value' => ''
+//        ],
+//        ['attribute' => 'model',
+//            'label' => Yii::t('frontend', 'До 1 року'),
+//            'value' => 'model',
+//        ],
+//        ['attribute' => 'model',
+//            'label' => Yii::t('frontend', 'До 2х років'),
+//            'value' => 'model',
+//        ],
+//        [
+//            'label' => Yii::t('frontend', 'General Count'),
+//            'value' => function ($model) {
+//                return $model->getByYearProduction($model->date_build);
+//            },
+//        ],
+    ]
+]);
+?>
+<?php $byYearProd = ob_get_clean(); ?>
+
 <!-- Main Detail View -->
 <?= DetailView::widget([
     'model' => $model,
@@ -115,7 +162,7 @@ $machine_menu = [];
         [
             'label' =>  Yii::t('frontend', 'By year of production'),
             'format' => 'raw',
-            'value' => ''
+            'value' => $byYearProd
         ],
         [
             'label' =>  Yii::t('frontend', 'Status'),

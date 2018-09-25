@@ -510,6 +510,8 @@ class NetManagerController extends \yii\web\Controller
             'allModels' => $array,
         ]);
 
+//        $byDateProdution = $model->getByYearProduction();
+
         return $this->render('wm-machine/osnovni-zasoby', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
