@@ -27,9 +27,14 @@ use frontend\services\globals\EntityHelper;
                     ],
                     $searchModel->attributeLabels()['fireproof_residue']
                 ),
+                'value' => function($model)
+                {
+
+                    return \Yii::$app->formatter->asDecimal($model->fireproof_residue, 0);
+                }
             ],
             [
-                'attribute' => 'money_in_banknotes',
+                'attribute' => 'on_modem_account',
                 'format' =>'raw',
                 'header' => EntityHelper::makePopupWindow(
                     [
@@ -37,6 +42,11 @@ use frontend\services\globals\EntityHelper;
                     ],
                     $searchModel->attributeLabels()['money_in_banknotes']
                 ),
+                'value' => function($model)
+                {
+
+                    return \Yii::$app->formatter->asDecimal($model->on_modem_account, 0);
+                }
             ],
             [
                 'attribute' => 'date_last_encashment',
