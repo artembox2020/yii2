@@ -9,6 +9,7 @@ use frontend\models\ImeiData;
 use frontend\models\WmMashine;
 use frontend\models\GdMashine;
 use frontend\services\globals\Entity;
+use yii\helpers\ArrayHelper;
 
 /**
  * ImeiDataSearch represents the model behind the search form of `frontend\models\ImeiData`.
@@ -45,9 +46,10 @@ class ImeiDataSearch extends ImeiData
     public function search($params)
     {
         $entity = new Entity();
-        $query = Imei::find()->andWhere(['imei.company_id' => $entity->getCompanyId()]);
-        $query = $query->joinWith('imeiData', false, 'INNER JOIN')
-                       ->innerJoin('address_balance_holder', 'address_balance_holder.id = imei.address_id')
+        $imeiIds = ImeiData::find()->select('imei_id')->distinct()->all();
+        $imeiIds = ArrayHelper::getColumn($imeiIds, 'imei_id');
+        $query = Imei::find()->andWhere(['imei.company_id' => $entity->getCompanyId(),  'imei.id' => $imeiIds]);
+        $query = $query->innerJoin('address_balance_holder', 'address_balance_holder.id = imei.address_id')
                        ->andWhere(new \yii\db\conditions\OrCondition([
                            new \yii\db\conditions\AndCondition([
                               ['=', 'imei.status', Imei::STATUS_ACTIVE],

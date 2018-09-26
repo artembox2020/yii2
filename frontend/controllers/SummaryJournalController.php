@@ -7,10 +7,10 @@ use frontend\models\BalanceHolderSummarySearch;
 use frontend\models\WmMashine;
 use Yii;
 use yii\filters\AccessControl;
+use frontend\services\globals\EntityHelper;
 
 class SummaryJournalController extends \yii\web\Controller
 {
-    const SMALL_DEVICE_WIDTH = 512;
 
     public function behaviors()
     {
@@ -36,191 +36,282 @@ class SummaryJournalController extends \yii\web\Controller
     {
         $searchModel = new BalanceHolderSummarySearch();
         $dataProvider = $searchModel->baseSearch(Yii::$app->request->queryParams);
-        $monitoringShapters = [
-            'common' => Yii::t('frontend', 'Common Data'),
-            'financial' => Yii::t('frontend', 'Financial Data'),
-            'devices' => Yii::t('frontend', 'Devices'),
-            'terminal' => Yii::t('frontend', 'Terminal'),
-            'all' => Yii::t('frontend', 'All')
-        ];
-        $script = Yii::$app->view->render(
-            "/monitoring/data/script",
+        $oneDataProvider = $searchModel->limitOneBaseSearch(Yii::$app->request->queryParams);
+        $entityHelper = new EntityHelper();
+        $params = $entityHelper->makeParamsFromRequest(
             [
-                'smallDeviceWidth' => 512,//self::SMALL_DEVICE_WIDTH,
-                'numberRedundantHeaders' => 5
+                'month',
+                'year',
+                'selectionName',
+                'selectionCaretPos'
+            ]
+        );
+        $params = $searchModel->setParams($params);
+        $eventSelectors = [
+            'change' => '.summary-journal-form select'
+        ];
+
+        $submitFormOnInputEvents = $entityHelper->submitFormOnInputEvents('.summary-journal-form', $eventSelectors);
+
+        $script = Yii::$app->view->render(
+            "/summary-journal/data/script",
+            [
+                'numberOfDays' => $searchModel->getDaysByMonths($params['year'])[$params['month']],
+                'monthName' => $searchModel->getMonths()[$params['month']],
+                'lastYearIncome' => $searchModel->getIncomeForLastYear($params['month'])
             ]
         );
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'monitoringShapters' => $monitoringShapters,
-            'script' => $script
+            'oneDataProvider' => $oneDataProvider,
+            'script' => $script,
+            'summaryJournalController' => $this,
+            'params' => $params,
+            'months' => $searchModel->getMonths(),
+            'years' => $searchModel->getYears(),
+            'numberOfDays' => $searchModel->getDaysByMonths($params['year'])[$params['month']],
+            'monthName' => $searchModel->getMonths()[$params['month']],
+            'submitFormOnInputEvents' => $submitFormOnInputEvents
         ]);
     }
 
     /**
-     * Renders monitoring of devices by imei id
+     * Renders all balanceholder addresses
      * 
+     * @param BalanceHolderSummarySearch $searchModel
+     * @param ActiveDataProvider $dataProvider
+     * @param array $params
      * @return string
      */
-    public function renderDevicesByImeiId($imeiId)
+    public function renderBalanceAddresses($searchModel, $dataProvider, $params)
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProviderWmMashine = $searchModel->searchWmMashinesByImeiId($imeiId);
-        $dataProviderGdMashine = $searchModel->searchGdMashinesByImeiId($imeiId);
+        $searchModel = new BalanceHolderSummarySearch();
+        list($year, $month) = [$params['year'], $params['month']];
+        $daysNumber = $searchModel->getDaysByMonths($year)[$month];
+        $timestamp =  $searchModel->getTimestampByYearMonthDay($year, $month, $daysNumber, false);
 
-        return $this->renderPartial('/monitoring/data/devices', [
-            'searchModel' => $searchModel,
-            'dataProviderWmMashine' => $dataProviderWmMashine,
-            'dataProviderGdMashine' => $dataProviderGdMashine
-        ]);
-    }
-
-    /**
-     * Renders monitoring imei card (remote connection) by imei id
-     * 
-     * @return string
-     */
-    public function renderImeiCard($imeiId)
-    {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
-
-        return $this->renderPartial('/monitoring/data/card', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
-        ]);
-    }
-
-    /**
-     * Renders monitoring terminal by imei id
-     * 
-     * @return string
-     */
-    public function renderTerminalDataByImeiId($imeiId)
-    {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
-
-        return $this->renderPartial('/monitoring/data/terminal', [
+        return $this->renderPartial('/summary-journal/data/balance-addresses', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'monitoringController' => $this
+            'params' => $params,
+            'timestamp' => $timestamp,
+            'year' => $year,
+            'month' => $month
         ]);
     }
+
+    /**
+     * Renders incomes by addresses
+     * 
+     * @param BalanceHolderSummarySearch $searchModel
+     * @param ActiveDataProvider $dataProvider
+     * @param array $params
+     * @return string
+     */
+    public function renderIncomesByAddresses($searchModel, $dataProvider, $params)
+    {
+        $searchModel = new BalanceHolderSummarySearch();
+        $days = $searchModel->getDaysByMonths($params['year']);
+        list($year, $month) = [$params['year'], $params['month']];
+        $daysNumber = $searchModel->getDaysByMonths($year)[$month];
+        $timestamp =  $searchModel->getTimestampByYearMonthDay($year, $month, $daysNumber, false);
+        $months = $searchModel->getMonths();
+        $data = $searchModel->getIncomesAggregatedData($dataProvider, $year, $month, $daysNumber, $timestamp);
+
+        return $this->renderPartial('/summary-journal/data/incomes-by-addresses', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'params' => $params,
+            'days' => $days[$params['month']],
+            'timestamp' => $timestamp,
+            'year' => $year,
+            'month' => $month,
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * Renders serial column
+     * 
+     * @param int $recordQuantity
+     * @return string
+     */
+    public function renderSerialColumn($recordQuantity)
+    {
+        return $this->renderPartial('/summary-journal/data/serial-column', [
+            'recordQuantity' => $recordQuantity,
+        ]);
+    }
+
+    /**
+     * Renders month days
+     * 
+     * @param array $params
+     * @return string
+     */
+    public function renderMonthDays($params)
+    {
+        $searchModel = new BalanceHolderSummarySearch();
+        $days = $searchModel->getDaysByMonths($params['year']);
+        $months = $searchModel->getMonths();
+        $years = $searchModel->getYears();
+        $monthTimestamps = $searchModel->getTimestampByYearMonth($params['year'], $params['month']);
     
-    /**
-     * Renders common data view by imei id
-     * 
-     * @return string
-     */
-    public function renderCommonDataByImeiId($imeiId)
-    {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
-
-        return $this->renderPartial('/monitoring/data/common', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+        return $this->renderPartial('/summary-journal/data/month-days', [
+            'numberOfDays' => $days[$params['month']],
+            'monthName' => $months[$params['month']],
+            'year' => $years[$params['year']],
+            'timestampStart' => $monthTimestamps['start'],
+            'timestampEnd' => $monthTimestamps['end']
         ]);
     }
 
     /**
-     * Renders financial data + remote connection view by imei id
-     * 
-     * @param int $imeiId
+     * Renders incomes summary by addresses
+     *
      * @return string
      */
-    public function renderFinancialRemoteConnectionDataByImeiId($imeiId)
+    public function renderIncomesSummaryByAddresses()
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
 
-        return $this->renderPartial('/monitoring/data/financial_remote_connection', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'monitoringController' => $this,
-        ]);
-    }
-    
-    /**
-     * Renders financial data view by imei id
-     * 
-     * @param int $imeiId
-     * @return string
-     */
-    public function renderFinancialDataByImeiId($imeiId)
-    {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
-
-        return $this->renderPartial('/monitoring/data/financial', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' => 'table-summary-addresses'
         ]);
     }
 
     /**
-     * Financial monitoring action
-     * 
+     * Renders average summary by addresses
+     *
      * @return string
      */
-    public function actionFinancial()
+    public function renderAverageSummaryByAddresses()
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $monitoringShapters = [
-            'common' => Yii::t('frontend', 'Common Data'),
-            'financial' => Yii::t('frontend', 'Financial Data'),
-            'all' => Yii::t('frontend', 'All')
-        ];
-        $script = Yii::$app->view->render(
-            "/monitoring/data/script",
-            [
-                'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
-                'numberRedundantHeaders' => 3
-            ]
-        );
 
-        return $this->render('financial', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'monitoringController' => $this,
-            'monitoringShapters' => $monitoringShapters,
-            'script' => $script
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' => 'table-average-summary-addresses'
         ]);
     }
 
     /**
-     * Technical monitoring action
-     * 
+     * Renders average mashine summary by addresses
+     *
      * @return string
      */
-    public function actionTechnical()
+    public function renderAverageMashineSummaryByAddresses()
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $monitoringShapters = [
-            'common' => Yii::t('frontend', 'Common Data'),
-            'devices' => Yii::t('frontend', 'Devices'),
-            'terminal' => Yii::t('frontend', 'Terminal'),
-            'all' => Yii::t('frontend', 'All')
-        ];
-        $script = Yii::$app->view->render(
-            "/monitoring/data/script",
-            [
-                'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
-                'numberRedundantHeaders' => 4
-            ]
-        );
 
-        return $this->render('technical', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'monitoringController' => $this,
-            'monitoringShapters' => $monitoringShapters,
-            'script' => $script
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' => 'table-average-mashine-summary-addresses'
+        ]);
+    }
+
+    /**
+     * Renders average citizens summary by addresses
+     *
+     * @return string
+     */
+    public function renderAverageCitizensSummaryByAddresses()
+    {
+
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' => 'table-average-citizens-summary-addresses'
+        ]);
+    }
+
+    /**
+     * Renders consolidated summary by addresses
+     *
+     * @return string
+     */
+    public function renderConsolidatedSummaryByAddresses()
+    {
+
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' => 'table-consolidated-summary-addresses'
+        ]);
+    }
+
+    /**
+     * Renders expectation summary by addresses
+     *
+     * @return string
+     */
+    public function renderExpectation()
+    {
+
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' => 'table-expectation'
+        ]);
+    }
+
+    /**
+     * Renders expectation summary by balanceholders
+     *
+     * @return string
+     */
+    public function renderExpectationByBalanceHoders()
+    {
+
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' => 'table-expectation-by-balance-holders'
+        ]);
+    }
+
+    /**
+     * Renders idle days by addresses
+     *
+     * @return string
+     */
+    public function renderIdleDays()
+    {
+
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' =>  'table-idle-days'
+        ]);
+    }
+
+    /**
+     * Renders idle damages by addresses
+     *
+     * @return string
+     */
+    public function renderIdleDamages()
+    {
+
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' => 'table-idle-damages'
+        ]);
+    }
+
+    /**
+     * Renders summary conclusion by addresses
+     *
+     * @return string
+     */    
+    public function renderSummaryConclusion()
+    {
+
+        return $this->renderPartial('/summary-journal/data/base_table', [
+            'class' => 'table-summary-conclusion'
+        ]);
+    }
+
+    /**
+     * Renders form
+     *
+     * @param array $params
+     * @param array $months
+     * @param array $years
+     * @return string
+     */
+    public function renderForm($params, $months, $years)
+    {
+        return $this->renderPartial('/summary-journal/form', [
+            'params' => $params,
+            'months' => $months,
+            'years' => $years
         ]);
     }
 }

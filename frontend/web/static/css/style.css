@@ -214,7 +214,7 @@ div.required label:after {
 .company-summary-block font {
     font-weight: 500;
 }
-.monitoring .filters {
+.monitoring .filters, .summary-journal .filters {
   display: none;
 }
 .monitoring .mashine-state-addons {
@@ -230,12 +230,12 @@ div.required label:after {
 .monitoring td.devices table td.current-status {
     white-space: normal!important;
 }
-.monitoring table td.all {
+.monitoring table td.all, .summary-journal table td.all {
     vertical-align: top!important;
     margin: 0!important;
     padding: 0!important;
 }
-.monitoring table th {
+.monitoring table th, .summary-journal table th {
     text-align: center;
     vertical-align: middle!important;
 }
@@ -358,7 +358,7 @@ div.required label:after {
 .monitoring td.financial table td {
     border: 1px solid rgb(221, 221, 221);
 }
-.monitoring .table-financial {
+.monitoring .table-financial, .summary-journal table {
     width: auto;
 }
 .monitoring .table-financial td.common {
@@ -375,4 +375,139 @@ div.required label:after {
 .ping-not-actual {
     color: #a9a9a9;
     font-weight: normal;
+}
+.summary-journal table.table-container,
+.summary-journal td.address-container table {
+    height: 100%!important;
+    margin-bottom:  0;
+}
+.summary-journal table td.address-container {
+    padding: 0;
+}
+.summary-journal table td {
+    text-align: center;
+}
+.summary-journal table td.address-container table,
+.summary-journal .table-income,
+.summary-journal .table-summary-addresses,
+.summary-journal .table-average-summary-addresses,
+.summary-journal .table-average-mashine-summary-addresses,
+.summary-journal .table-average-citizens-summary-addresses,
+.summary-journal .table-consolidated-summary-addresses,
+.summary-journal .table-expectation,
+.summary-journal .table-expectation-by-balance-holders,
+.summary-journal .table-idle-days,
+.summary-journal .table-idle-damages,
+.summary-journal .table-summary-conclusion {
+    width: 100%;
+    margin-top: -2px!important;
+    margin-bottom : 0!important;
+    padding: 0!important;
+}
+.summary-journal .table-income
+ {
+    width: 100%;
+    margin-top: -1px!important;
+    margin-bottom : 0!important;
+    padding: 0!important;
+}
+.summary-journal .table-serial-column,
+.summary-journal .table-month {
+    width: 100%;
+    margin-top: 0!important;
+    margin-bottom : 0!important;
+    padding: 0!important;
+}
+.summary-journal .table-month {
+    margin-bottom: -6px!important;
+}
+.summary-journal table td.address-container table td.address {
+    width: 240px!important;
+    min-width: 240px!important;
+    max-width: 240px!important;
+}
+.summary-journal table td.address-container table td.mashine-count,
+.summary-journal .table-container .total-mashines-count {
+    width: 35px!important;
+    min-width: 35px!important;
+    max-width: 35px!important;
+    padding: 5px!important;
+}
+.summary-journal  .main-table th.incomes {
+    padding: 0;
+}
+.summary-journal .table-month td,
+.summary-journal .table-income td {
+    width: 45px!important;
+    min-width: 45px!important;
+    max-width: 45px!important;
+}
+.summary-journal .table-summary-addresses,
+.summary-journal .table-average-summary-addresses,
+.summary-journal .table-average-mashine-summary-addresses,
+.summary-journal .table-average-citizens-summary-addresses,
+.summary-journal .table-consolidated-summary-addresses,
+.summary-journal .table-expectation,
+.summary-journal .table-expectation-by-balance-holders,
+.summary-journal .table-idle-days,
+.summary-journal .table-idle-damages,
+.summary-journal .table-summary-conclusion {
+    margin-top: -1px!important;
+}
+.summary-journal .table-container {
+    font-weight: bold;
+}
+.summary-journal .green-color,
+.summary-journal .timestamp.green-color.light-grey,
+.summary-journal .timestamp.green-color.middle-grey,
+.summary-journal .timestamp.green-color.heavy-grey,
+.summary-journal .timestamp.green-color.dark-grey {
+    background-color: #00C251;
+}
+.summary-journal .red-color,
+.summary-journal .timestamp.red-color.light-grey,
+.summary-journal .timestamp.red-color.middle-grey,
+.summary-journal .timestamp.red-color.heavy-grey,
+.summary-journal .timestamp.red-color.dark-grey {
+    background-color: red;
+}
+.summary-journal .green-color.red-color,
+.summary-journal .timestamp.green-color.red-color.light-grey,
+.summary-journal .timestamp.green-color.red-color.middle-grey,
+.summary-journal .timestamp.green-color.red-color.heavy-grey,
+.summary-journal .timestamp.green-color.red-color.dark-grey {
+    background-color: #ffcc66;
+}
+.summary-journal .timestamp.light-grey {
+    background-color: #d3d3d3;
+}
+.summary-journal .timestamp.middle-grey {
+    background-color: #c0c0c0;
+}
+.summary-journal .timestamp.heavy-grey {
+    background-color: #a9a9a9;
+}
+.summary-journal .timestamp.dark-grey {
+    background-color: #696969;
+}
+.summary-journal .table-income td.timestamp {
+    width: 65px!important;
+    min-width: 65px!important;
+    max-width: 65px!important;
+}
+.summary-journal .table-container .table-mashines-count {
+    width: 209%;
+}
+.summary-journal .table-container .table-mashines-count tr td {
+    border-top: 1px solid rgb(221, 221, 221);
+}
+.summary-journal .table-container .table-mashines-count tr td:nth-child(2) {
+    border-left: 1px solid rgb(221, 221, 221);
+    width: 50px!important;
+    height: 38px!important;
+    text-align: left!important;
+    padding: 3px!important;
+}
+.summary-journal td.cell-device {
+    vertical-align: middle!important;
 }
