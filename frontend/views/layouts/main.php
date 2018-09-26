@@ -133,7 +133,7 @@ AppAsset::register($this);
             ],
             [
                 'label' => Yii::t('frontend', 'Zurnal'),
-                'url' => ['/site/zurnal'],
+                'url' => ['/summary-journal'],
 //            'visible' => Yii::$app->user->can('zurnal'),
             ],
             [

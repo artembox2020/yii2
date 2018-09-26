@@ -9,12 +9,11 @@ use frontend\models\ImeiData;
 use frontend\models\WmMashine;
 use frontend\models\GdMashine;
 use frontend\services\globals\Entity;
-use yii\helpers\ArrayHelper;
 
 /**
- * ImeiDataSearch represents the model behind the search form of `frontend\models\ImeiData`.
+ * ImeiDataSummarySearch represents the model behind the search form of `frontend\models\ImeiData`.
  */
-class ImeiDataSearch extends ImeiData
+class ImeiDataSummarySearch extends ImeiData
 {
     /**
      * @inheritdoc
@@ -46,26 +45,13 @@ class ImeiDataSearch extends ImeiData
     public function search($params)
     {
         $entity = new Entity();
-        $imeiIds = ImeiData::find()->select('imei_id')->distinct()->all();
-        $imeiIds = ArrayHelper::getColumn($imeiIds, 'imei_id');
-
-        $query = Imei::find()->andWhere(['imei.company_id' => $entity->getCompanyId(), 'imei.id' => $imeiIds]);
-
-        $query = $query->innerJoin('address_balance_holder', 'address_balance_holder.id = imei.address_id')
-                       ->andWhere(new \yii\db\conditions\OrCondition([
-                           new \yii\db\conditions\AndCondition([
-                              ['=', 'imei.status', Imei::STATUS_ACTIVE],
-                              ['=', 'address_balance_holder.status', AddressBalanceHolder::STATUS_BUSY]
-                           ]),
-                           new \yii\db\conditions\AndCondition([
-                              ['=', 'imei.status', Imei::STATUS_OFF],
-                              ['=', 'address_balance_holder.status', AddressBalanceHolder::STATUS_FREE]
-                           ])
-                       ]));
+        $query = $entity->getUnitsQueryPertainCompany(new Imei());
+        $query = $query->andWhere(['status' => Imei::STATUS_ACTIVE]);
+        $query = $query->joinWith('imeiData', false, 'INNER JOIN');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => false
+            'pagination' => false,
         ]);
 
         return $dataProvider;
@@ -80,7 +66,7 @@ class ImeiDataSearch extends ImeiData
     public function searchWmMashinesByImeiId($id)
     {
         $query = WmMashine::getMachinesQueryByImeiId($id);
-        $query = $query->select('id, type_mashine, number_device, bill_cash, level_signal, current_status, display, ping');
+        $query = $query->select('id, type_mashine, bill_cash, level_signal, current_status, display, ping');
         $query = $query->union($this->searchGdMashinesByImeiId($id)->query);
 
         $dataProvider = new ActiveDataProvider([
@@ -101,7 +87,7 @@ class ImeiDataSearch extends ImeiData
     public function searchGdMashinesByImeiId($id)
     {
         $query = GdMashine::getMachinesQueryByImeiId($id);
-        $query = $query->select('id, type_mashine, serial_number as number_device, bill_cash, deleted_at as level_signal, current_status, created_at as display, updated_at as ping');
+        $query = $query->select('id, type_mashine, bill_cash, deleted_at as level_signal, current_status, created_at as display, updated_at as ping');
 
         // add conditions that should always apply here
 
@@ -129,7 +115,6 @@ class ImeiDataSearch extends ImeiData
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
-            'sort' => false
         ]);
 
         return $dataProvider;                     
