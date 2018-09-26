@@ -511,3 +511,15 @@ div.required label:after {
 .summary-journal td.cell-device {
     vertical-align: middle!important;
 }
+.summary-journal .table-income tr:nth-last-child(2),
+.summary-journal .table-summary-addresses tr:nth-last-child(2),
+.summary-journal .table-average-summary-addresses tr:nth-last-child(2),
+.summary-journal .table-average-mashine-summary-addresses tr:nth-last-child(2),
+.summary-journal .table-average-citizens-summary-addresses tr:nth-last-child(2),
+.summary-journal .table-expectation tr:nth-last-child(2),
+.summary-journal .table-expectation-by-balance-holders tr:nth-last-child(2), 
+.summary-journal .table-idle-days tr:nth-last-child(2),
+.summary-journal .table-idle-damages tr:nth-last-child(2),
+.summary-journal .table-summary-conclusion tr:nth-last-child(2) {
+    font-weight:  bold;
+}

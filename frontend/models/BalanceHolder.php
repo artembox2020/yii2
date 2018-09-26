@@ -203,15 +203,26 @@ class BalanceHolder extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param timestamp $timestampStart
+     * @param timestamp $timestampEnd
      * @return \yii\db\ActiveQuery
      */
-    public function getAddressBalanceHoldersQueryByTimestamp($timestamp)
+    public function getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)
     {
         $entity = new Entity();
         $query = $entity->getUnitsQueryPertainCompany(new AddressBalanceHolder());
-        $query = $query->andWhere(['balance_holder_id' => $this->id]);
-        $query = $query->andWhere(['<=', 'created_at', $timestamp]);
-        
+        $query = $query->where(['company_id' => $entity->getCompanyId(), 'balance_holder_id' => $this->id]);
+        $query = $query->andWhere(['<=', 'created_at', $timestampEnd]);
+        $query = $query->andWhere(new \yii\db\conditions\OrCondition([
+                            new \yii\db\conditions\AndCondition([
+                              ['=', 'address_balance_holder.is_deleted', false],
+                            ]),
+                            new \yii\db\conditions\AndCondition([
+                              ['=', 'address_balance_holder.is_deleted', true],
+                              ['>', 'address_balance_holder.deleted_at', $timestrampStart]
+                            ])
+                        ]));
+
         return $query;
     }
 }

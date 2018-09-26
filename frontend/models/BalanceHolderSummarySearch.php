@@ -472,20 +472,22 @@ class BalanceHolderSummarySearch extends BalanceHolder
     }
 
     /**
-     * Gets income by the last year and the same month
+     * Gets income by the last year and month
      *
+     * @param int year
      * @param int $month
      * @return decimal
      */ 
-    public function getIncomeForLastYear($month)
+    public function getIncomeForLastYear($year, $month)
     {
-        $year = $this->parseFloat(date('Y'), 0) - 1;
-        $month = date('m');
+        $year = $this->parseFloat($year, 2);
+        --$year;
         $numberOfDays = $this->getDaysByMonths($year)[$month];
         $timestampStart = strtotime($year.'-'.$month.'-01 00:00:00');
         $timestampEnd = strtotime($year.'-'.$month.'-'.$numberOfDays.' 23:59:59');
         $imeis = $this->getAllImeisQueryByTimestamps($timestampStart, $timestampEnd);
         $income = 0;
+
         foreach ($imeis->all() as $imei) {
             $income += $this->parseFloat($this->getIncomeByImeiAndTimestamps($timestampStart, $timestampEnd + 1, $imei), 2);
         }
@@ -507,7 +509,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $idleHours = 0.00;
         $endTimestamp = $start + $stepInterval;
         $selectString = 'created_at, imei_id';
-        for ($timestamp = $start; $timestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
+        for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
             $query = $this->getBaseQueryByImeiAndTimestamps($timestamp, $endTimestamp, $imei, $selectString);
             if ($query->count() > 0) {
                 $item = $query->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
@@ -591,7 +593,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
                 $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
                 $idleHours = $this->getIdleHoursByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
-                //$mashinesAll -= $mashinesDeleted;    
+                //$mashinesAll -= $mashinesDeleted;
 
                 $incomes[$day] = [
                     'income' => $income,
@@ -715,8 +717,10 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $countTotal = 0;
         $data = [];
         $k = 0;
+        $timestampEnd = $this->getTimestampByYearMonthDay($year, $month, $days, false);
+        $timestampStart = $this->getTimestampByYearMonthDay($year, $month, '01', true);
         foreach ($dataProvider->query->all() as $balanceHolder) {
-            foreach ($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestamp)->all() as $address) {
+            foreach ($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->all() as $address) {
                 $data[$k] = [];
                 $incomes = $this->getIncomesByYearMonth($year, $month, $address);
                 $countTotal += $this->getAllMashinesQueryByYearMonth($year, $month, $address)->count();

@@ -418,7 +418,7 @@
 
             td = document.createElement('td');
             td.classList.add('total-mashines-count');
-            td.innerHTML = mashinesCount;
+            td.innerHTML = ' &nbsp;' + mashinesCount;
             tr.appendChild(td);
             table.appendChild(tr);
             table.classList.add('table-mashines-count');
@@ -438,7 +438,7 @@
 
             td = document.createElement('td');
             td.classList.add('total-mashines-count');
-            td.innerHTML = mashinesCount;
+            td.innerHTML = ' &nbsp;' + mashinesCount;
             tr.appendChild(td);
             table.appendChild(tr);
             table.classList.add('table-mashines-count');

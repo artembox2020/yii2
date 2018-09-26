@@ -58,7 +58,7 @@ class SummaryJournalController extends \yii\web\Controller
             [
                 'numberOfDays' => $searchModel->getDaysByMonths($params['year'])[$params['month']],
                 'monthName' => $searchModel->getMonths()[$params['month']],
-                'lastYearIncome' => $searchModel->getIncomeForLastYear($params['month'])
+                'lastYearIncome' => $searchModel->getIncomeForLastYear($params['year'], $params['month'])
             ]
         );
 
@@ -90,13 +90,15 @@ class SummaryJournalController extends \yii\web\Controller
         $searchModel = new BalanceHolderSummarySearch();
         list($year, $month) = [$params['year'], $params['month']];
         $daysNumber = $searchModel->getDaysByMonths($year)[$month];
-        $timestamp =  $searchModel->getTimestampByYearMonthDay($year, $month, $daysNumber, false);
+        $timestampEnd =  $searchModel->getTimestampByYearMonthDay($year, $month, $daysNumber, false);
+        $timestampStart =  $searchModel->getTimestampByYearMonthDay($year, $month, '01', true);
 
         return $this->renderPartial('/summary-journal/data/balance-addresses', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'params' => $params,
-            'timestamp' => $timestamp,
+            'timestampStart' => $timestampStart,
+            'timestampEnd' => $timestampEnd,
             'year' => $year,
             'month' => $month
         ]);

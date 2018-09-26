@@ -22,12 +22,12 @@ use frontend\models\BalanceHolderSummarySearch;
                 </td>
                 <td class="address-container">
                     <table
-                        data-count = "<?= $balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestamp)->count() ?>"
+                        data-count = "<?= $balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->count() ?>"
                         class = "table table-bordered table-address-container"
                     >
                         <tbody>
                         <?php
-                            foreach ($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestamp)->all() as $address):
+                            foreach ($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->all() as $address):
                         ?>
                             <tr>
                                 <td class="address">
