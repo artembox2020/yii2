@@ -7,7 +7,7 @@
 /* @var $timestampEnd timestamp */
 ?>
 <div>
-    <span><?= $monthName.', '.$year ?></span>
+    <div class = "green-color red-color"><?= $monthName.', '.$year ?></div>
     <table data-stamp-start="<?= $timestampStart ?>" data-stamp-end="<?= $timestampEnd ?>" class="table table-bordered table-month">
         <tbody>
             <tr data-key="1">

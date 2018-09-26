@@ -17,7 +17,7 @@ use frontend\models\BalanceHolderSummarySearch;
                 foreach ($dataProvider->query->all() as $balanceHolder):
             ?>
             <tr data-key="<?= $balanceHolder->id ?>">
-                <td>
+                <td class="cell-device">
                     <?= $balanceHolder->name ?>
                 </td>
                 <td class="address-container">
@@ -41,6 +41,12 @@ use frontend\models\BalanceHolderSummarySearch;
                                 </td>
                                 <td class="date-inserted hidden">
                                     <?= $address->created_at ?>
+                                </td>
+                                <td class="is_deleted hidden">
+                                    <?= $address->is_deleted ?>
+                                </td>
+                                <td class="deleted_at hidden">
+                                    <?= $address->deleted_at ?>
                                 </td>
                             </tr>
                         <?php

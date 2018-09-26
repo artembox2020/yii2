@@ -215,11 +215,11 @@ class BalanceHolder extends \yii\db\ActiveRecord
         $query = $query->andWhere(['<=', 'created_at', $timestampEnd]);
         $query = $query->andWhere(new \yii\db\conditions\OrCondition([
                             new \yii\db\conditions\AndCondition([
-                              ['=', 'address_balance_holder.is_deleted', false],
+                                ['=', 'address_balance_holder.is_deleted', false],
                             ]),
                             new \yii\db\conditions\AndCondition([
-                              ['=', 'address_balance_holder.is_deleted', true],
-                              ['>', 'address_balance_holder.deleted_at', $timestrampStart]
+                                ['=', 'address_balance_holder.is_deleted', true],
+                                ['>', 'address_balance_holder.deleted_at', $timestampStart]
                             ])
                         ]));
 
