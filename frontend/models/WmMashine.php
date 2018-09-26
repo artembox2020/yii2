@@ -353,6 +353,15 @@ class WmMashine extends \yii\db\ActiveRecord
         return $query->count();
     }
 
+    public function getModelNameCount($modelName)
+    {
+        $entity = new Entity();
+        $query = WmMashine::find();
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId(), 'model' => $modelName]);
+
+        return $query->count();
+    }
+
     /**
      * @return array|\yii\db\ActiveRecord[]
      * @throws \yii\web\NotFoundHttpException
@@ -374,6 +383,10 @@ class WmMashine extends \yii\db\ActiveRecord
             ->select(['model'], 'DISTINCT')
             ->andWhere(['company_id' => $user->company_id])->all();
 
+//            ->select('model, COUNT(*) AS count')
+//            ->groupBy('model')
+//            ->andWhere(['company_id' => $user->company_id])
+//            ->all();
         return $result;
     }
 }

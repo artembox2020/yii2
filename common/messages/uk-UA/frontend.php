@@ -70,6 +70,7 @@ return [
     'busy' => 'Пристрій зайнято',
     'By Models' => 'По моделях',
     'By Date Production' => 'По даті випуску',
+    'By year of production' => 'По року виробництва',
     'By Location' => 'По місцерозташуванню',
     'By Status' => 'По статусу',
     'Cancel' => 'Відміна',

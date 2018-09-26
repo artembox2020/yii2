@@ -48,7 +48,9 @@ class ImeiDataSearch extends ImeiData
         $entity = new Entity();
         $imeiIds = ImeiData::find()->select('imei_id')->distinct()->all();
         $imeiIds = ArrayHelper::getColumn($imeiIds, 'imei_id');
-        $query = Imei::find()->andWhere(['imei.company_id' => $entity->getCompanyId(),  'imei.id' => $imeiIds]);
+
+        $query = Imei::find()->andWhere(['imei.company_id' => $entity->getCompanyId(), 'imei.id' => $imeiIds]);
+
         $query = $query->innerJoin('address_balance_holder', 'address_balance_holder.id = imei.address_id')
                        ->andWhere(new \yii\db\conditions\OrCondition([
                            new \yii\db\conditions\AndCondition([
@@ -63,7 +65,7 @@ class ImeiDataSearch extends ImeiData
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => false,
+            'pagination' => false
         ]);
 
         return $dataProvider;

@@ -2,7 +2,7 @@
             <?= $model->attributeLabels()['imei'] ?>
         </b>
         <br>
-        <?= $model->imei ?>
+        <?= $model->imeiRelation->imei ?>
         <br>
     </td>
 </tr>
@@ -46,7 +46,7 @@
             ?>
         </b>
         <br>
-        <?= $model->money_in_banknotes ?>
+        <?= \Yii::$app->formatter->asDecimal($model->money_in_banknotes, 0) ?>
         <br>
     </td>
 </tr>

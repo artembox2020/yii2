@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use frontend\models\WmMashine;
 
 /* @var $this yii\web\View */
 /* @var $dataProviderWmMashine yii\data\ActiveDataProvider */
@@ -40,7 +41,12 @@ use yii\widgets\Pjax;
                     ],
                     $searchModel->attributeLabels()['money_in_banknotes']
                 ),
-                'contentOptions' => ['class' => 'bill-cash']
+                'contentOptions' => ['class' => 'bill-cash'],
+                'value' => function($model)
+                {
+
+                    return \Yii::$app->formatter->asDecimal($model->bill_cash, 0);
+                }
             ],
             [
                 'attribute' => 'level_signal',
