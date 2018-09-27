@@ -101,12 +101,12 @@ $machine_menu = [];
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'columns' => [
-        [
-            'label' => Yii::t('frontend', 'До 1 року'),
+//        [
+//            'label' => Yii::t('frontend', 'До 1 року'),
 //            'value' => function ($dataProvider) {
 //                return $dataProvider->getUpTo1year($dataProvider->date_build);
 //            }
-        ],
+//        ],
 //        [
 //            'label' => Yii::t('frontend', 'До 2х років'),
 //            'value' => ''
@@ -162,7 +162,7 @@ $machine_menu = [];
         [
             'label' =>  Yii::t('frontend', 'By year of production'),
             'format' => 'raw',
-            'value' => $byYearProd
+            'value' => '$byYearProd'
         ],
         [
             'label' =>  Yii::t('frontend', 'Status'),

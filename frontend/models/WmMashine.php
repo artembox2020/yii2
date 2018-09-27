@@ -402,7 +402,7 @@ class WmMashine extends \yii\db\ActiveRecord
         if (isset($date)) {
             $res = $this->dateDifference(strtotime($date), $st);
 
-            Debugger::dd($res);
+//            Debugger::dd($res);
             return $res;
         }
 
@@ -420,13 +420,27 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public function dateDifference($date_1, $date_2, $differenceFormat = '%a' )
     {
-//        Debugger::dd($date_1);
-        $datetime1 = date_create($date_1);
-        $datetime2 = date_create($date_2);
+//        $date_1 = date('Y-M-D', $date_1);
+//        $date_2 = date('Y-M-D', $date_2);
+////        Debugger::dd($date_2);
+//        $datetime1 = date_create($date_1);
+//        $datetime2 = date_create($date_2);
+//
+//        $interval = date_diff($datetime1,
+//            $datetime2);
 
-        $interval = date_diff($datetime1, $datetime2);
+//        $date_expire = '2014-08-06 00:00:00';
+        $date = '1935';
+        $old = date('Y')-$date;
+        echo 'Year: ' . $old;
 
-        return $interval->format($differenceFormat);
+        $date = new DateTime($date_2);
+        $now = new DateTime();
+
+//        echo $date->diff($now)->format("%d days, %h hours and %i minuts");
+        echo $now->diff($date)->format("%y Year");
+
+//        return $interval->format($differenceFormat);
 
     }
 }
