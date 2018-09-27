@@ -682,11 +682,11 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
             if (isset($income['active'])) {
                 $percent = ( $income['all'] - (float)$income['active'] ) / $income['all'] * 100;
-                if ($percent < 1) {
+                if ($percent <= 1) {
                     $class .= ' white-color';
-                } elseif ($percent < self::PERCENT_ONE_THIRD) {
+                } elseif ($percent <= self::PERCENT_ONE_THIRD) {
                     $class .= ' light-grey';
-                } elseif ($percent < self::PERCENT_TWO_THIRD) {
+                } elseif ($percent <= self::PERCENT_TWO_THIRD) {
                     $class .= ' middle-grey';
                 } elseif ($percent < 100) {
                     $class .= ' heavy-grey';
