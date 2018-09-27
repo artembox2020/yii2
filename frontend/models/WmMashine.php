@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use common\models\User;
+use DateTime;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use Yii;
@@ -388,5 +389,44 @@ class WmMashine extends \yii\db\ActiveRecord
 //            ->andWhere(['company_id' => $user->company_id])
 //            ->all();
         return $result;
+    }
+
+    /**
+     * @param $date
+     * @return string
+     */
+    public function getUpTo1year($date)
+    {
+        $st = time();
+//        Debugger::dd($st);
+        if (isset($date)) {
+            $res = $this->dateDifference(strtotime($date), $st);
+
+            Debugger::dd($res);
+            return $res;
+        }
+
+        //        Debugger::dd($date);
+        $res = '';
+
+        return $res;
+    }
+
+    /**
+     * @param $date_1
+     * @param $date_2
+     * @param string $differenceFormat
+     * @return string
+     */
+    public function dateDifference($date_1, $date_2, $differenceFormat = '%a' )
+    {
+//        Debugger::dd($date_1);
+        $datetime1 = date_create($date_1);
+        $datetime2 = date_create($date_2);
+
+        $interval = date_diff($datetime1, $datetime2);
+
+        return $interval->format($differenceFormat);
+
     }
 }

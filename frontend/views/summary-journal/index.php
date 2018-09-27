@@ -37,7 +37,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderSerialColumn(BalanceHolderSummarySearch::getTotalAddressesCount() + 2);
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'common all']
+                'headerOptions' => ['class' => 'red-color green-color']
             ],
             [
                 'label' => $monthName,
@@ -47,7 +47,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderBalanceAddresses($searchModel, $dataProvider, $params);
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'common all']
+                'headerOptions' => ['class' => 'common all green-color red-color']
             ],
             [
                 'header' => $summaryJournalController->renderMonthDays($params),
@@ -57,7 +57,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderIncomesByAddresses($searchModel, $dataProvider, $params);
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'incomes all']
+                'headerOptions' => ['class' => 'month-days all']
             ],
             [
                 'label' => Yii::t('frontend', 'Incomes'),
@@ -86,7 +86,7 @@ use yii\widgets\Pjax;
                 {
                     return $summaryJournalController->renderAverageMashineSummaryByAddresses();
                 },
-                'contentOptions' => ['class' => 'common all'],
+                'contentOptions' => ['class' => 'common all by-mashine'],
                 'headerOptions' => ['class' => 'incomes all']
             ],
             [
@@ -117,7 +117,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderExpectation();
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'incomes all']
+                'headerOptions' => ['class' => 'expectation all']
             ],
             [
                 'label' => Yii::t('frontend', 'Expectation By Balance Holders'),
@@ -127,7 +127,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderExpectationByBalanceHoders();
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'incomes all']
+                'headerOptions' => ['class' => 'expectation all']
             ],
             [
                 'label' => Yii::t('frontend', 'Idle Days'),
@@ -137,7 +137,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderIdleDays();
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'incomes all']
+                'headerOptions' => ['class' => 'idle-days all']
             ],
             [
                 'label' => Yii::t('frontend', 'Idle Damages'),
@@ -147,7 +147,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderIdleDamages();
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'incomes all']
+                'headerOptions' => ['class' => 'idle-damages all']
             ],
             [
                 'label' => Yii::t('frontend', 'Month Conclusion'),

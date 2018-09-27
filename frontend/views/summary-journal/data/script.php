@@ -338,7 +338,7 @@
                     }
                     sumTotal += totalIdles;
                 }
-                appendTr(tbody, totalIdles);
+                appendTr(tbody, preciseNumber(totalIdles));
             }
         }
 
@@ -445,7 +445,7 @@
             tableContainer.appendChild(table);
         }
 
-        // updates cell color marking for addresses
+        // updates cell color marking for addresses (green and red mark added or deleted ones)
         function updateCellColorMarking()
         {
             var tableMonth = summaryJournal.querySelector('.table-month');
@@ -456,11 +456,19 @@
             for (var i = 0; i < tableAddressContainerRows.length; ++i) {
                 var row = tableAddressContainerRows[i];
                 var timestampInserted = row.querySelector('td.date-inserted').innerHTML;
+                var booleanIsDeleted = parseInt(row.querySelector('td.is_deleted').innerHTML);
+                var timestampDeletedAt = parseInt(row.querySelector('td.deleted_at').innerHTML);
                 timestampInserted = preciseNumber(timestampInserted);
+                var address = row.querySelector('td.address');
+
                 if (timestampInserted >= timestampStart && timestampInserted <= timestampEnd) {
-                    var address = row.querySelector('td.address');
                     address.classList.add('green-color');
                 }
+
+                if (booleanIsDeleted && timestampDeletedAt > timestampStart && timestampDeletedAt <= timestampEnd) {
+                    address.classList.add('red-color');
+                }
+
             }
         }
 

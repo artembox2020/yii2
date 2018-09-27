@@ -521,5 +521,25 @@ div.required label:after {
 .summary-journal .table-idle-days tr:nth-last-child(2),
 .summary-journal .table-idle-damages tr:nth-last-child(2),
 .summary-journal .table-summary-conclusion tr:nth-last-child(2) {
-    font-weight:  bold;
+    font-weight: bold;
+}
+.summary-journal .main-table th.month-days {
+    background-color: #ffcc66;
+    padding: 0;
+}
+.summary-journal .main-table th.idle-days,
+.summary-journal .main-table th.idle-damages {
+    background-color: #ff0000;
+    padding: 0;
+}
+.summary-journal .main-table th.expectation {
+    background-color: #b28ec3;
+    padding: 0;
+}
+.summary-journal .by-mashine .table-average-mashine-summary-addresses {
+    background-color: #fb585d;
+}
+.summary-journal .by-mashine .table-average-mashine-summary-addresses tr:nth-last-child(2),
+.summary-journal .by-mashine .table-average-mashine-summary-addresses tr:nth-last-child(1) {
+    background-color: #fff;
 }

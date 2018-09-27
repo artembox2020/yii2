@@ -61,7 +61,8 @@ class ImeiDataSearch extends ImeiData
                               ['=', 'imei.status', Imei::STATUS_OFF],
                               ['=', 'address_balance_holder.status', AddressBalanceHolder::STATUS_FREE]
                            ])
-                       ]));
+                       ]))
+                       ->andWhere(['address_balance_holder.is_deleted' => false]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

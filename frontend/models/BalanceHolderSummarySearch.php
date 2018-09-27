@@ -548,10 +548,14 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $imei = $imeiQuery->andWhere(['address_id' => $address->id, 'status' => $address->status])->limit(1)->one();
         $incomes = [];
         $timestamps = $this->getTimestampByYearMonth($year, $month);
-        $totalNumberOfMashines = $this->getAllMashinesQueryByTimestamps(
-            $timestamps['start'], $timestamps['end'], $imei->id
-        );
-        $totalNumberOfMashines = $totalNumberOfMashines->count();
+
+        if ($imei) {
+            $totalNumberOfMashines = $this->getAllMashinesQueryByTimestamps(
+                $timestamps['start'], $timestamps['end'], $imei->id
+            );
+            $totalNumberOfMashines = $totalNumberOfMashines->count();
+        }
+
         $beginningTimestamp = $this->getDayBeginningTimestampByTimestamp($address->created_at);
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time());
         $numberOfDays = $this->getDaysByMonths($year)[$month];
@@ -678,11 +682,11 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
             if (isset($income['active'])) {
                 $percent = ( $income['all'] - (float)$income['active'] ) / $income['all'] * 100;
-                if ($percent < 1) {
+                if ($percent <= 1) {
                     $class .= ' white-color';
-                } elseif ($percent < self::PERCENT_ONE_THIRD) {
+                } elseif ($percent <= self::PERCENT_ONE_THIRD) {
                     $class .= ' light-grey';
-                } elseif ($percent < self::PERCENT_TWO_THIRD) {
+                } elseif ($percent <= self::PERCENT_TWO_THIRD) {
                     $class .= ' middle-grey';
                 } elseif ($percent < 100) {
                     $class .= ' heavy-grey';
@@ -726,12 +730,10 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $countTotal += $this->getAllMashinesQueryByYearMonth($year, $month, $address)->count();
                 for ($i = 1, $j = 0; $i <= $days; ++$i) {
                     $summaryTotal[$i] += $this->parseFloat($incomes[$i]['income'], 2);
-                    $timestampStart = $this->getTimestampByYearMonthDay($year, $month, $i, true);
-                    $timestampEnd = $this->getTimestampByYearMonthDay($year, $month, $i, false);
                     $class = $this->makeClassByIncome($incomes[$i]);
                     $data[$k][$i] = [
-                        'timestampStart' => $timestampStart,
-                        'timestampEnd' => $timestampEnd,
+                        'timestampStart' => $this->getTimestampByYearMonthDay($year, $month, $i, true),
+                        'timestampEnd' => $this->getTimestampByYearMonthDay($year, $month, $i, false),
                         'class' => $class
                     ];
                 }
