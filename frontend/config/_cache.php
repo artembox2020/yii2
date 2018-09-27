@@ -5,7 +5,7 @@ $cache = [
     'cachePath' => '@frontend/runtime/cache',
 ];
 
-if (YII_ENV_DEV) {
+if (YII_ENV_DEV || YII_ENV_PROD) {
     $cache = [
         'class' => 'yii\caching\DummyCache',
     ];
