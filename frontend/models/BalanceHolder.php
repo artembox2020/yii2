@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use common\models\User;
 use frontend\services\custom\Debugger;
+use frontend\services\globals\Entity;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -199,5 +200,29 @@ class BalanceHolder extends \yii\db\ActiveRecord
     public static function find()
     {
         return parent::find()->where(['is_deleted' => false]);
+    }
+
+    /**
+     * @param timestamp $timestampStart
+     * @param timestamp $timestampEnd
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)
+    {
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany(new AddressBalanceHolder());
+        $query = $query->where(['company_id' => $entity->getCompanyId(), 'balance_holder_id' => $this->id]);
+        $query = $query->andWhere(['<=', 'created_at', $timestampEnd]);
+        $query = $query->andWhere(new \yii\db\conditions\OrCondition([
+                            new \yii\db\conditions\AndCondition([
+                                ['=', 'address_balance_holder.is_deleted', false],
+                            ]),
+                            new \yii\db\conditions\AndCondition([
+                                ['=', 'address_balance_holder.is_deleted', true],
+                                ['>', 'address_balance_holder.deleted_at', $timestampStart]
+                            ])
+                        ]));
+
+        return $query;
     }
 }

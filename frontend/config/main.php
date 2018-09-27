@@ -19,6 +19,9 @@ $config = [
         ],
     ],
     'components' => [
+        'formatter' => [
+            'decimalSeparator' => '.',
+        ],
         'request' => [
             'cookieValidationKey' => env('BACKEND_COOKIE_VALIDATION_KEY'),
             'csrfParam' => '_csrf-frontend',
