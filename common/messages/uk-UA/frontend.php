@@ -249,6 +249,7 @@ return [
     'Not Actual Ping' => 'Не актуальний пінг',
     'Not Set' => '(не задано)',
     'nulling' => 'Обнулино',
+    'not connect to WM' => 'немає підключення до WM',
     'Number' => '№',
     'Number Of Citizens' => 'Кількість жителів',
     'On' => 'Включено',

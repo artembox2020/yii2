@@ -86,7 +86,8 @@ class WmMashine extends \yii\db\ActiveRecord
         'oe of overflow',
         'te temp sensor',
         'ue loading cloth',
-        'max error'
+        'max error',
+        'not connect to WM'
     ];
 
     /**
