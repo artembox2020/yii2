@@ -171,7 +171,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
      * @return int
      */   
     public function getYearLastMonth() {
-        $timestamp = time();
+        $timestamp = time() + Jlog::TYPE_TIME_OFFSET;
         $month = date('m', timestamp);
         $year = date('Y', timestamp);
         $timestamp -= $this->getDaysByMonths($year)[$month]*24*3600;
@@ -185,7 +185,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
      * @return int
      */  
     public function getLastMonth() {
-        $timestamp = time();
+        $timestamp = time() + Jlog::TYPE_TIME_OFFSET;
         $month = date('m', timestamp);
         $year = date('Y', timestamp);
         $timestamp -= $this->getDaysByMonths($year)[$month]*24*3600;
@@ -540,7 +540,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
      * @param int $month
      * @param AddressBalanceHolder $address
      * @return array
-     */ 
+     */
     public function getIncomesByYearMonth($year, $month, $address)
     {
         $entity = new Entity();
@@ -557,7 +557,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         }
 
         $beginningTimestamp = $this->getDayBeginningTimestampByTimestamp($address->created_at);
-        $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time());
+        $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
         $numberOfDays = $this->getDaysByMonths($year)[$month];
         if ($imei && $totalNumberOfMashines > 0) {
             $intervalStep = 3600 * 24;
