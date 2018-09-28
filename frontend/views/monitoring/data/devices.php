@@ -39,7 +39,7 @@ use frontend\models\WmMashine;
                     [
                         '/static/img/monitoring/money_in_banknotes.png',
                     ],
-                    $searchModel->attributeLabels()['money_in_banknotes']
+                    Yii::t('frontend', 'On the bill of WM')
                 ),
                 'contentOptions' => ['class' => 'bill-cash'],
                 'value' => function($model)

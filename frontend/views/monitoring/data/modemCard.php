@@ -41,12 +41,12 @@
                     [
                         '/static/img/monitoring/money_in_banknotes.png',
                     ],
-                    $model->attributeLabels()['money_in_banknotes']
+                    Yii::t('frontend', 'On the bill of SIM')
                 )
             ?>
         </b>
         <br>
-        <?= \Yii::$app->formatter->asDecimal($model->money_in_banknotes, 0) ?>
+        <?= \Yii::$app->formatter->asDecimal($model->on_modem_account, 0) ?>
         <br>
     </td>
 </tr>
