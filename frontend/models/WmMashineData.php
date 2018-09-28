@@ -81,10 +81,13 @@ class WmMashineData extends \yii\db\ActiveRecord
                 'class' => SoftDeleteBehavior::className(),
                 'softDeleteAttributeValues' => [
                     'is_deleted' => true,
-                    'deleted_at' => time()
+                    'deleted_at' => time() + Jlog::TYPE_TIME_OFFSET
                 ],
             ],
-            TimestampBehavior::className()
+            [
+                'class' => TimestampBehavior::className(),
+                'value' => time() + Jlog::TYPE_TIME_OFFSET
+            ]
         ];
     }
 
