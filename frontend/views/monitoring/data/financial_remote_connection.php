@@ -34,7 +34,7 @@ use frontend\services\globals\EntityHelper;
                 }
             ],
             [
-                'attribute' => 'on_modem_account',
+                'attribute' => 'money_in_banknotes',
                 'format' =>'raw',
                 'header' => EntityHelper::makePopupWindow(
                     [
@@ -45,7 +45,7 @@ use frontend\services\globals\EntityHelper;
                 'value' => function($model)
                 {
 
-                    return \Yii::$app->formatter->asDecimal($model->on_modem_account, 0);
+                    return \Yii::$app->formatter->asDecimal($model->money_in_banknotes, 0);
                 }
             ],
             [

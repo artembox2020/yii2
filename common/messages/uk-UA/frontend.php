@@ -254,6 +254,8 @@ return [
     'On' => 'Включено',
     'On Display:' => 'на дисплеї:',
     'On Point/At Work' => 'На пункті/в роботі',
+    'On the bill of SIM' => 'На рахунку SIM, грн',
+    'On the bill of WM' => 'На рахунку СМ, грн',
     'Order'  => 'Сортування',
     'Off' => 'Відключено',
     'Other' => 'Інше',
