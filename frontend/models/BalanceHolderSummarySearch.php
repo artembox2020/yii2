@@ -474,6 +474,14 @@ class BalanceHolderSummarySearch extends BalanceHolder
      */ 
     public function getIncomeByImeiAndTimestamps($start, $end, $imei)
     {
+        $jSummary = new Jsummary();
+        $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
+
+        if ($todayTimestamp >= $end && $jSummaryItem = $jSummary->getItem($imei->id, $start, $end)) {
+
+            return $jSummaryItem->income;
+        }
+
         $selectString = 'fireproof_residue, created_at, imei_id';
         $query = $this->getBaseQueryByImeiAndTimestamps($start, $end, $imei, $selectString);
         $queryS1 = $query->orderBy(['created_at' => SORT_ASC]);
@@ -495,6 +503,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
         } else {
             $income = null;
         }
+
+        $jSummary->saveItem($imei->id, $start, $end, ['income' => $income]);
 
         return $income;
     }
@@ -562,6 +572,48 @@ class BalanceHolderSummarySearch extends BalanceHolder
     }
 
     /**
+     * Gets info about mashines by imei and timestamps
+     *
+     * @return array
+     */ 
+    public function getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei)
+    {
+        $jSummary = new Jsummary();
+        $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
+        if (
+            $todayTimestamp >= $timestampEnd 
+            && ($jSummaryItem = $jSummary->getItem($imei->id, $timestamp, $timestampEnd))
+            && !is_null($jSummaryItem->created)
+        ) {
+            list($mashinesCreated, $mashinesDeleted, $mashinesActive, $mashinesAll, $idleHours) = [
+                $jSummaryItem->created, $jSummaryItem->deleted,
+                $jSummaryItem->active, $jSummaryItem->all, $jSummaryItem->idleHours
+            ];
+        } else {
+            $mashinesCreated = $this->getAllAddedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
+            $mashinesDeleted = $this->getAllDeletedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
+            $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
+            $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
+            $idleHours = $this->getIdleHoursByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
+            $jSummary->saveItem($imei->id, $timestamp, $timestampEnd, [
+                'created' => $mashinesCreated,
+                'deleted' => $mashinesDeleted,
+                'active' => $mashinesActive,
+                'all' => $mashinesAll,
+                'idleHours' => $idleHours
+            ]);
+        }
+
+        return [
+            'created' => $mashinesCreated,
+            'deleted' => $mashinesDeleted,
+            'active' => $mashinesActive,
+            'all' => $mashinesAll,
+            'idleHours' => $idleHours
+        ];
+    }
+
+    /**
      * Gets incomes by year, month and address
      *
      * @param int $year
@@ -623,22 +675,9 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 }
 
                 $timestampEnd = $timestamp + $intervalStep;
-                $mashinesCreated = $this->getAllAddedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-                $mashinesDeleted = $this->getAllDeletedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-                $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-                $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-                $idleHours = $this->getIdleHoursByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
-                //$mashinesAll -= $mashinesDeleted;
+                $mashineStatistics = $this->getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
+                $incomes[$day] = array_merge(['income' => $income], $mashineStatistics);
 
-                $incomes[$day] = [
-                    'income' => $income,
-                    'created' => $mashinesCreated,
-                    'active' => $mashinesActive,
-                    'deleted' => $mashinesDeleted,
-                    'all' => $mashinesAll,
-                    'idleHours' => $idleHours
-                ];
-                
                 if ($needToBreak) {
                     break;
                 }
