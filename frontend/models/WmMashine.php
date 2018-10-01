@@ -405,6 +405,7 @@ class WmMashine extends \yii\db\ActiveRecord
         $date = date('Y', $date);
         if (isset($date)) {
             $res = $this->dateDifference($date, $st);
+            if ($res <=1)
             return $res;
         }
         $res = '';
