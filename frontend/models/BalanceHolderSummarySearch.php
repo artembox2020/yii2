@@ -580,7 +580,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
     {
         $jSummary = new Jsummary();
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
-        
+
         if (
             $todayTimestamp >= $timestampEnd 
             && ($jSummaryItem = $jSummary->getItem($imei->id, $timestamp, $timestampEnd))
@@ -590,12 +590,14 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $jSummaryItem->created, $jSummaryItem->deleted,
                 $jSummaryItem->active, $jSummaryItem->all, $jSummaryItem->idleHours
             ];
+            $needToSave = false;
         } else {
             $mashinesCreated = $this->getAllAddedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $mashinesDeleted = $this->getAllDeletedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $idleHours = $this->getIdleHoursByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
+            $needToSave = true;
         }
 
         $mashineStatistics = [
@@ -606,7 +608,9 @@ class BalanceHolderSummarySearch extends BalanceHolder
             'idleHours' => $idleHours
         ];
 
-        $jSummary->saveItem($imei->id, $timestamp, $timestampEnd, $mashineStatistics);
+        if ($needToSave) {
+            $jSummary->saveItem($imei->id, $timestamp, $timestampEnd, $mashineStatistics);
+        }
 
         return $mashineStatistics;
     }
