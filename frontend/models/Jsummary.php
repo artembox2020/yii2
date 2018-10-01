@@ -94,4 +94,39 @@ class Jsummary extends ActiveRecord
 
         return $item;
     }
+
+    /**
+     * Gets incomes by imei id and timestamps
+     *
+     * @param timestamp $startTimestamp
+     * @param timestamp $endTimestamp
+     * @param timestamp $todayTimestamp
+     * @param int $imei_id
+     * @return array
+     */
+    public function getIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $imei_id)
+    {
+        $items = Jsummary::find()->andWhere(['imei_id' => $imei_id])
+                                 ->andWhere(['>=', 'start_timestamp', $startTimestamp])
+                                 ->andWhere(['<', 'start_timestamp', $todayTimestamp])
+                                 ->andWhere(['<', 'end_timestamp', $endTimestamp])
+                                 ->orderBy(['start_timestamp' => SORT_ASC])
+                                 ->all();
+        $incomes = [];
+        $stepInterval = 3600*24;
+        for ($i = 0; $i < count($items); ++$i) {
+            $item = $items[$i];
+            $day = floor(($item->start_timestamp - $startTimestamp) / $stepInterval + 1);
+            $incomes[$day] = [
+                'income' => $item->income,
+                'created' => $item->created,
+                'deleted' => $item->deleted,
+                'active' => $item->active,
+                'all'=> $item->all,
+                'idleHours' => $item->idleHours
+            ];
+        }
+
+        return $incomes;
+    }
 }
