@@ -403,15 +403,10 @@ class WmMashine extends \yii\db\ActiveRecord
     {
         $st = date('Y');
         $date = date('Y', $date);
-//        Debugger::dd($date);
         if (isset($date)) {
             $res = $this->dateDifference($date, $st);
-
-//            Debugger::dd($res);
             return $res;
         }
-
-        //        Debugger::dd($date);
         $res = '';
 
         return $res;
@@ -426,8 +421,6 @@ class WmMashine extends \yii\db\ActiveRecord
     public function dateDifference($date_1, $date_2, $differenceFormat = '%a' )
     {
         $diff = $date_2 - $date_1;
-//        Debugger::d($old);
-//        echo 'Year: ' . $old;
         return $diff;
     }
 }

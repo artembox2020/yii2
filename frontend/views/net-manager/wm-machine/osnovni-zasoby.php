@@ -102,9 +102,37 @@ $machine_menu = [];
     'dataProvider' => $dataProvider,
     'columns' => [
         [
-//            'label' => Yii::t('frontend', 'До 1 року'),
             'value' => function ($dataProvider) {
-                return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . $dataProvider->getUpTo1year($dataProvider->date_build);
+    foreach ($dataProvider->getWmAll() as $val) {
+        $diff = $dataProvider->getUpTo1year($dataProvider->date_build);
+        if ($diff <= 1 and $diff < 2) {
+            $one[] = $diff;
+            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($one);
+        }
+        $one[] = $diff;
+        if ($diff >= 2 and $diff < 3) {
+            $too[] = $diff;
+            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($too);
+        }
+        if ($diff >= 3 and $diff < 4) {
+            $three[] = $diff;
+            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($three);
+        }
+        if ($diff >= 4 and $diff < 5) {
+            $fore[] = $diff;
+            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($fore);
+        }
+        if ($diff >= 5 and $diff < 5) {
+            $five[] = $diff;
+            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($five);
+        }
+        if ($diff > 5) {
+            $six[] = $diff;
+            return 'Старше за 5 років - ' . count($six);
+        }
+    }
+//                if
+//                return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . $dataProvider->getUpTo1year($dataProvider->date_build);
             }
         ],
 //        [
