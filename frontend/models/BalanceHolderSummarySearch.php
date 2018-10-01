@@ -146,6 +146,26 @@ class BalanceHolderSummarySearch extends BalanceHolder
     }
 
     /**
+     * Gets the next month timestamp
+     *
+     * @return timestamp
+     */
+    public function getNextMonthBeginningTimestamp()
+    {
+        $timestamp = time() + Jlog::TYPE_TIME_OFFSET;
+        $month = date('m', $timestamp);
+        $year = date('Y', $timestamp);
+        if ($month == '12') {
+            $month = '01';
+            ++$year;
+        } else {
+            ++$month;
+        }
+
+        return strtotime($year.'-'.$month.'-01 00:00:00');
+    }
+
+    /**
      * Gets timestamp by year and month
      *
      * @param int $year
@@ -172,11 +192,12 @@ class BalanceHolderSummarySearch extends BalanceHolder
      */   
     public function getYearLastMonth() {
         $timestamp = time() + Jlog::TYPE_TIME_OFFSET;
-        $month = date('m', timestamp);
-        $year = date('Y', timestamp);
-        $timestamp -= $this->getDaysByMonths($year)[$month]*24*3600;
-        
-        return date('Y', $timestamp);
+        $year = date('Y', $timestamp);
+        if (date('m', $timestamp) == '01') {
+            --$year;
+        }
+
+        return $year;
     }
 
     /**
@@ -185,12 +206,18 @@ class BalanceHolderSummarySearch extends BalanceHolder
      * @return int
      */  
     public function getLastMonth() {
-        $timestamp = time() + Jlog::TYPE_TIME_OFFSET;
-        $month = date('m', timestamp);
-        $year = date('Y', timestamp);
-        $timestamp -= $this->getDaysByMonths($year)[$month]*24*3600;
+        $timestamp = time()+ Jlog::TYPE_TIME_OFFSET;
+        $month = date('m', $timestamp);
+        if ($month == '01') {
+            $month = '12';
+        } else {
+            --$month;
+            if ($month < 10) {
+                $month = '0'.$month;
+            }
+        }
 
-        return date('m', $timestamp);
+        return $month;
     }
 
     /**
@@ -274,8 +301,9 @@ class BalanceHolderSummarySearch extends BalanceHolder
      */  
     public function setParams($params)
     {
-        $params['month'] = $params['month'] ? $params['month'] : date('m');
-        $params['year'] = $params['year'] ? $params['year'] : date('Y');
+        $timestamp = time() + Jlog::TYPE_TIME_OFFSET;
+        $params['month'] = $params['month'] ? $params['month'] : date('m', $timestamp);
+        $params['year'] = $params['year'] ? $params['year'] : date('Y', $timestamp);
 
         return $params;
     }
@@ -558,6 +586,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
         $beginningTimestamp = $this->getDayBeginningTimestampByTimestamp($address->created_at);
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
+        $nextMonthTimestamp = $this->getNextMonthBeginningTimestamp();
         $numberOfDays = $this->getDaysByMonths($year)[$month];
         if ($imei && $totalNumberOfMashines > 0) {
             $intervalStep = 3600 * 24;
@@ -577,18 +606,15 @@ class BalanceHolderSummarySearch extends BalanceHolder
                     continue;
                 }
 
-                if ($timestamp > $todayTimestamp) {
-                    if ($day == 1 && $todayTimestamp + 3600*24*$numberOfDays >= $timestamp) {
-                        $incomes[$day] = $this->getAverageIncomeByLastMonth($address);
-                    }
-                    break;
-                }
-
                 $income = $this->getIncomeByImeiAndTimestamps($timestamp, $timestamp + $intervalStep, $imei);
 
-                if (is_null($income) && $timestamp == $todayTimestamp && $day == 1) {
+                if (
+                    is_null($income) &&
+                    (($timestamp == $nextMonthTimestamp) || ($timestamp == $todayTimestamp && $day == 1))
+                )
+                {
                     $income = $this->getAverageIncomeByLastMonth($address);
-                    $income = $income['income'];
+                    $needToBreak = true;
                 }
 
                 $timestampEnd = $timestamp + $intervalStep;
@@ -607,6 +633,10 @@ class BalanceHolderSummarySearch extends BalanceHolder
                     'all' => $mashinesAll,
                     'idleHours' => $idleHours
                 ];
+                
+                if ($needToBreak) {
+                    break;
+                }
             }
         }
 
@@ -648,14 +678,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
             $income = $income['income'];
         }
 
-        return [
-            'income' => $income,
-            'created' => 0,
-            'active' => 0,
-            'deleted' => 0,
-            'all' => $all,
-            'idleHours' => 0
-        ];
+        return $income;
     }
 
     /**
