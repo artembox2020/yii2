@@ -136,7 +136,7 @@ $machine_menu = [];
             }
         ],
         [
-            'label' => Yii::t('frontend', 'До 1х року'),
+            'label' => Yii::t('frontend', 'До 1 року'),
             'value' => function ($dataProvider) {
                 return $dataProvider->getUpTo1year($dataProvider->date_build);
             }
