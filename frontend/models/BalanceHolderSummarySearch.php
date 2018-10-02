@@ -580,6 +580,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
     {
         $jSummary = new Jsummary();
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
+
         if (
             $todayTimestamp >= $timestampEnd 
             && ($jSummaryItem = $jSummary->getItem($imei->id, $timestamp, $timestampEnd))
@@ -589,28 +590,29 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $jSummaryItem->created, $jSummaryItem->deleted,
                 $jSummaryItem->active, $jSummaryItem->all, $jSummaryItem->idleHours
             ];
+            $needToSave = false;
         } else {
             $mashinesCreated = $this->getAllAddedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $mashinesDeleted = $this->getAllDeletedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $idleHours = $this->getIdleHoursByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
-            $jSummary->saveItem($imei->id, $timestamp, $timestampEnd, [
-                'created' => $mashinesCreated,
-                'deleted' => $mashinesDeleted,
-                'active' => $mashinesActive,
-                'all' => $mashinesAll,
-                'idleHours' => $idleHours
-            ]);
+            $needToSave = true;
         }
 
-        return [
+        $mashineStatistics = [
             'created' => $mashinesCreated,
             'deleted' => $mashinesDeleted,
             'active' => $mashinesActive,
             'all' => $mashinesAll,
             'idleHours' => $idleHours
         ];
+
+        if ($needToSave) {
+            $jSummary->saveItem($imei->id, $timestamp, $timestampEnd, $mashineStatistics);
+        }
+
+        return $mashineStatistics;
     }
 
     /**
@@ -624,6 +626,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
     public function getIncomesByYearMonth($year, $month, $address)
     {
         $entity = new Entity();
+        $jSummary = new Jsummary();
         $imeiQuery = $entity->getUnitsQueryPertainCompany(new Imei());
         $imei = $imeiQuery->andWhere(['address_id' => $address->id, 'status' => $address->status])->limit(1)->one();
         $incomes = [];
@@ -642,12 +645,18 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $numberOfDays = $this->getDaysByMonths($year)[$month];
         if ($imei && $totalNumberOfMashines > 0) {
             $intervalStep = 3600 * 24;
-            for (
-                $timestamp = $timestamps['start'], $day = 1;
-                $timestamp + $intervalStep <= $timestamps['end'] + 1;
-                $timestamp += $intervalStep, ++$day
-            )
+            $incomesFromHistory = $jSummary->getIncomes($timestamps['start'], $timestamps['end'], $todayTimestamp, $imei->id);
+            $daysArray = [];
+
+            for ($k = 1; $k <= $numberOfDays; ++$k) {
+                $daysArray[] = $k;
+            }
+            $emptyDays = array_diff($daysArray, array_keys($incomesFromHistory));
+
+            for ($i = 0; $i < count($emptyDays); ++$i)
             {
+                $day = $emptyDays[$i];
+                $timestamp = $timestamps['start'] + ($day - 1) *$intervalStep; 
 
                 if ($todayTimestamp < $timestamp) {
                     break;
@@ -682,6 +691,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
                     break;
                 }
             }
+
+            $incomes = $incomes + $incomesFromHistory;
         }
 
         return $incomes;
