@@ -97,74 +97,42 @@ $machine_menu = [];
 ?>
 <?php $modelWm = ob_get_clean(); ?>
 
+<?php //Debugger::dd($model); ?>
+
 <?php ob_start(); ?>
-<?= GridView::widget([
-    'dataProvider' => $dataProvider,
-    'columns' => [
-        [
-            'value' => function ($dataProvider) {
-    foreach ($dataProvider->getWmAll() as $val) {
-        $diff = $dataProvider->getUpTo1year($dataProvider->date_build);
-        if ($diff <= 1 and $diff < 2) {
-            $one[] = $diff;
-            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($one);
-        }
-        $one[] = $diff;
-        if ($diff >= 2 and $diff < 3) {
-            $one[] = $diff;
-            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($one);
-        }
-        if ($diff >= 3 and $diff < 4) {
-            $one[] = $diff;
-            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($one);
-        }
-        if ($diff >= 4 and $diff < 5) {
-            $one[] = $diff;
-            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($one);
-        }
-        if ($diff >= 5 and $diff < 5) {
-            $one[] = $diff;
-            return 'До '. $dataProvider->getUpTo1year($dataProvider->date_build) .' року - ' . count($one);
-        }
-        if ($diff > 5) {
-            $one[] = $diff;
-//            return 'Старше за 5 років - ' . count($six);
-        }
-    }
-//                if
-                return 'До '. $diff .' року - ' . $diff;
-            }
-        ],
+<?= DetailView::widget([
+    'model' => $model,
+    'attributes' => [
         [
             'label' => Yii::t('frontend', 'До 1 року'),
-            'value' => function ($dataProvider) {
-                return $dataProvider->getUpTo1year($dataProvider->date_build);
-            }
+            'format' => 'raw',
+            'value' => $model->getUpTo1Year()
         ],
-//        [
-//            'label' => Yii::t('frontend', 'До 2х років'),
-//            'value' => function ($dataProvider) {
-//                return $dataProvider->getUpTo1year($dataProvider->date_build);
-//            }
-//        ],
-//        [
-//            'label' => Yii::t('frontend', 'До 3х років'),
-//            'value' => function ($dataProvider) {
-//                return $dataProvider->getUpTo1year($dataProvider->date_build);
-//            }
-//        ],
-//        [
-//            'label' => Yii::t('frontend', 'До 4х років'),
-//            'value' => ''
-//        ],
-//        [
-//            'label' => Yii::t('frontend', 'До 5х років'),
-//            'value' => ''
-//        ],
-//        [
-//            'label' => Yii::t('frontend', 'Старше за 5 років'),
-//            'value' => ''
-//        ],
+        [
+            'label' => Yii::t('frontend', 'До 2х років'),
+            'format' => 'raw',
+            'value' => $model->getUpTo2Year()
+        ],
+        [
+            'label' => Yii::t('frontend', 'До 3х років'),
+            'format' => 'raw',
+            'value' => $model->getUpTo3Year()
+        ],
+        [
+            'label' => Yii::t('frontend', 'До 4х років'),
+            'format' => 'raw',
+            'value' => $model->getUpTo4Year()
+        ],
+        [
+            'label' => Yii::t('frontend', 'До 5х років'),
+            'format' => 'raw',
+            'value' => $model->getUpTo5Year()
+        ],
+        [
+            'label' => Yii::t('frontend', 'Старше за 5 років'),
+            'format' => 'raw',
+            'value' => $model->getUp5Year()
+        ],
 //        ['attribute' => 'model',
 //            'label' => Yii::t('frontend', 'До 1 року'),
 //            'value' => 'model',

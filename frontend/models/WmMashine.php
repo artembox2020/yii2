@@ -50,6 +50,11 @@ class WmMashine extends \yii\db\ActiveRecord
     const STATUS_ACTIVE = 1;
     const STATUS_UNDER_REPAIR = 2;
     const STATUS_JUNK = 3;
+    const ONE = 1;
+    const TWO = 2;
+    const THREE = 3;
+    const FOUR = 4;
+    const FIVE = 5;
 
     const DATE_TIME_FORMAT = 'H:i d.m.Y';
     
@@ -392,20 +397,127 @@ class WmMashine extends \yii\db\ActiveRecord
 //            ->groupBy('model')
 //            ->andWhere(['company_id' => $user->company_id])
 //            ->all();
+
         return $result;
+    }
+
+    /**
+     * @return int
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getUpTo1Year()
+    {
+        $array = [];
+
+        foreach ($this->getWmAll() as $item) {
+            if ($this->getUpToYear($item->date_build) <= self::ONE and
+                $this->getUpToYear($item->date_build) < self::TWO) {
+                $array[] = $item;
+            }
+        }
+
+        return count($array);
+    }
+
+    /**
+     * @return int
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getUpTo2Year()
+    {
+        $array = [];
+
+        foreach ($this->getWmAll() as $item) {
+            if ($this->getUpToYear($item->date_build) <= self::TWO and
+                $this->getUpToYear($item->date_build) > self::ONE) {
+                $array[] = $item;
+            }
+        }
+
+        return count($array);
+    }
+
+    /**
+     * @return int
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getUpTo3Year()
+    {
+        $array = [];
+
+        foreach ($this->getWmAll() as $item) {
+            if ($this->getUpToYear($item->date_build) <= self::THREE and
+                $this->getUpToYear($item->date_build) > self::TWO) {
+                $array[] = $item;
+            }
+        }
+
+        return count($array);
+    }
+
+    /**
+     * @return int
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getUpTo4Year()
+    {
+        $array = [];
+
+        foreach ($this->getWmAll() as $item) {
+            if ($this->getUpToYear($item->date_build) <= self::FOUR and
+                $this->getUpToYear($item->date_build) > self::THREE) {
+                $array[] = $item;
+            }
+        }
+
+        return count($array);
+    }
+
+    /**
+     * @return int
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getUpTo5Year()
+    {
+        $array = [];
+
+        foreach ($this->getWmAll() as $item) {
+            if ($this->getUpToYear($item->date_build) <= self::FIVE and
+                $this->getUpToYear($item->date_build) > self::FOUR) {
+                $array[] = $item;
+            }
+        }
+
+        return count($array);
+    }
+
+    /**
+     * @return int
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getUp5Year()
+    {
+        $array = [];
+
+        foreach ($this->getWmAll() as $item) {
+            if ($this->getUpToYear($item->date_build) > self::FIVE) {
+                $array[] = $item;
+            }
+        }
+
+        return count($array);
     }
 
     /**
      * @param $date
      * @return string
      */
-    public function getUpTo1year($date)
+    public function getUpToYear($date)
     {
         $st = date('Y');
         $date = date('Y', $date);
         if (isset($date)) {
             $res = $this->dateDifference($date, $st);
-            if ($res <=1)
             return $res;
         }
         $res = '';
@@ -419,7 +531,7 @@ class WmMashine extends \yii\db\ActiveRecord
      * @param string $differenceFormat
      * @return string
      */
-    public function dateDifference($date_1, $date_2, $differenceFormat = '%a' )
+    public function dateDifference($date_1, $date_2)
     {
         $diff = $date_2 - $date_1;
         return $diff;
