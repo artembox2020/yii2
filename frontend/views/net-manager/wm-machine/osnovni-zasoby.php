@@ -190,11 +190,6 @@ $machine_menu = [];
             'format' => 'raw',
             'value' => $byStatus
         ],
-        [
-            'label' =>  Yii::t('frontend', 'By Location'),
-            'format' => 'raw',
-            'value' => ''
-        ],
     ]
 ]);
 ?>
