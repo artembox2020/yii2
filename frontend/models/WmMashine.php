@@ -363,6 +363,10 @@ class WmMashine extends \yii\db\ActiveRecord
         return $query->count();
     }
 
+    /**
+     * @param $modelName
+     * @return int|string
+     */
     public function getModelNameCount($modelName)
     {
         $entity = new Entity();
@@ -371,6 +375,30 @@ class WmMashine extends \yii\db\ActiveRecord
 
         return $query->count();
     }
+
+    /**
+     * @return int|string
+     */
+    public function getStockCountAll()
+    {
+        $entity = new Entity();
+        $query = WmMashine::find();
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId(), 'status' => self::STATUS_OFF]);
+
+        return $query->count();
+    }
+
+//    /**
+//     * @return int|string
+//     */
+//    public function getStockCountAll()
+//    {
+//        $entity = new Entity();
+//        $query = WmMashine::find();
+//        $query = $query->andWhere(['company_id' => $entity->getCompanyId(), 'status' => self::STATUS_OFF]);
+//
+//        return $query->count();
+//    }
 
     /**
      * @return array|\yii\db\ActiveRecord[]
@@ -528,8 +556,7 @@ class WmMashine extends \yii\db\ActiveRecord
     /**
      * @param $date_1
      * @param $date_2
-     * @param string $differenceFormat
-     * @return string
+     * @return mixed
      */
     public function dateDifference($date_1, $date_2)
     {
