@@ -663,17 +663,16 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $numberOfDays = $this->getDaysByMonths($year)[$month];
         if ($imei && $totalNumberOfMashines > 0) {
             $intervalStep = 3600 * 24;
-            $incomesFromHistory = $jSummary->getIncomes($timestamps['start'], $timestamps['end'], $todayTimestamp, $imei->id);
+            $incomesFromHistory = $jSummary->getIncomes($timestamps['start'], $timestamps['end'] + 1, $todayTimestamp, $imei->id);
             $daysArray = [];
 
             for ($k = 1; $k <= $numberOfDays; ++$k) {
-                $daysArray[] = $k;
+                $daysArray[$k] = $k;
             }
             $emptyDays = array_diff($daysArray, array_keys($incomesFromHistory));
-
-            for ($i = 0; $i < count($emptyDays); ++$i)
+            $needToBreak = false;
+            foreach ($emptyDays as $day)
             {
-                $day = $emptyDays[$i];
                 $timestamp = $timestamps['start'] + ($day - 1) *$intervalStep; 
 
                 if ($todayTimestamp < $timestamp) {
