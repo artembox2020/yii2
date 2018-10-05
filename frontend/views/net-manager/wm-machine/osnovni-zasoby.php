@@ -142,24 +142,24 @@ $machine_menu = [];
     'model' => $model,
     'attributes' => [
         [
-            'label' => Yii::t('frontend', 'Склад/Офис'),
+            'label' => Yii::t('frontend', 'Warehouse/Office'),
             'format' => 'raw',
             'value' => $model->getStockCountAll()
         ],
         [
-            'label' => Yii::t('frontend', 'На пункті'),
+            'label' => Yii::t('frontend', 'At the point'),
             'format' => 'raw',
-            'value' => $model->getUp5Year()
+            'value' => $model->getActiveCountAll()
         ],
         [
-            'label' => Yii::t('frontend', 'Ремонт'),
+            'label' => Yii::t('frontend', 'Repair'),
             'format' => 'raw',
-            'value' => $model->getUp5Year()
+            'value' => $model->getRepairCountAll()
         ],
         [
-            'label' => Yii::t('frontend', 'Утиль'),
+            'label' => Yii::t('frontend', 'Junk'),
             'format' => 'raw',
-            'value' => $model->getUp5Year()
+            'value' => $model->getJunkCountAll()
         ],
     ]
 ]);

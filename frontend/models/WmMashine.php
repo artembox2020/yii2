@@ -388,17 +388,41 @@ class WmMashine extends \yii\db\ActiveRecord
         return $query->count();
     }
 
-//    /**
-//     * @return int|string
-//     */
-//    public function getStockCountAll()
-//    {
-//        $entity = new Entity();
-//        $query = WmMashine::find();
-//        $query = $query->andWhere(['company_id' => $entity->getCompanyId(), 'status' => self::STATUS_OFF]);
-//
-//        return $query->count();
-//    }
+    /**
+     * @return int|string
+     */
+    public function getActiveCountAll()
+    {
+        $entity = new Entity();
+        $query = WmMashine::find();
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId(), 'status' => self::STATUS_ACTIVE]);
+
+        return $query->count();
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getRepairCountAll()
+    {
+        $entity = new Entity();
+        $query = WmMashine::find();
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId(), 'status' => self::STATUS_UNDER_REPAIR]);
+
+        return $query->count();
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getJunkCountAll()
+    {
+        $entity = new Entity();
+        $query = WmMashine::find();
+        $query = $query->andWhere(['company_id' => $entity->getCompanyId(), 'status' => self::STATUS_JUNK]);
+
+        return $query->count();
+    }
 
     /**
      * @return array|\yii\db\ActiveRecord[]
