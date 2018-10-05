@@ -9,6 +9,7 @@ use frontend\models\BalanceHolder;
 use frontend\models\ImeiData;
 use frontend\models\Jlog;
 use frontend\services\globals\Entity;
+use frontend\services\globals\EntityHelper;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -487,18 +488,35 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $queryS1 = $query->orderBy(['created_at' => SORT_ASC]);
         $itemStart = $queryS1->limit(1)->one();
         if (!empty($itemStart)) {
-            $queryS = $this->getBaseQueryByImeiAndTimestamps($imei->created_at, $start, $imei, $selectString);
-            $queryS = $queryS->orderBy(['created_at' => SORT_DESC]);
-            $itemS = $queryS->limit(1)->one();
-            if (!empty($itemS)) {
-                $fireproofStart = $itemS->fireproof_residue;
-            } else {
-                $fireproofStart = $itemStart->fireproof_residue;
+            $entityHelper = new EntityHelper();
+
+            // makes none-zero time intervals
+            $nonZeroIntervals = $entityHelper->makeNonZeroIntervalsByTimestamps(
+                $start,
+                $end,
+                new ImeiData(),
+                $imei,
+                'imei_id',
+                $selectString,
+                'fireproof_residue'
+            );
+            $income = 0;
+            $isFirst = true;
+            
+            //calculation by each non-zero time interval and summing
+            foreach ($nonZeroIntervals as $interval) {
+                $income += $entityHelper->getUnitIncomeByNonZeroTimestamps(
+                    $interval['start'],
+                    $interval['end'],
+                    new ImeiData(),
+                    $imei,
+                    'imei_id',
+                    $selectString,
+                    'fireproof_residue',
+                    $isFirst
+                );
+                $isFirst = false;
             }
-            $queryS2 = $query->orderBy(['created_at' => SORT_DESC]);
-            $itemEnd = $queryS2->limit(1)->one();
-            $fireproofEnd = $itemEnd->fireproof_residue;
-            $income = $fireproofEnd - $fireproofStart;
             $income = $this->parseFloat($income, 2);
         } else {
             $income = null;
