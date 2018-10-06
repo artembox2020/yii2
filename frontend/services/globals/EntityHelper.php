@@ -463,13 +463,17 @@ class EntityHelper implements EntityHelperInterface
             $queryS3 = clone $baseQuery;
             $queryS3 = $queryS3->where(['<', 'created_at', $start])
                                ->andWhere(['>=', 'created_at', $bInst->created_at])
+                               ->andWhere(['>=', 'created_at', ($start - 3600*3)])
                                ->andWhere(['is_deleted' => false])
                                ->andWhere([$fieldInst => $bInst->id])
                                ->orderBy(['created_at' => SORT_DESC])
                                ->limit(1);
 
             if ($queryS3->count() > 0) {
-                $itemStart = $queryS3->one();
+                $item = $queryS3->one();
+                if ($item->$field < $itemStart->$field) {
+                    $itemStart = $item;
+                }
             }
 
         }
