@@ -18,15 +18,23 @@
  */
 return [
     'Activate' => 'Активувати',
+    'Basket' => 'Кошик',
     'Create' => 'Створити',
     'Create user' => 'Створити користувача',
+    'Content' => 'Вміст',
+    'Companies' => 'Компанії',
     'Email' => 'Емейл',
+    'Other' => 'Інший',
     'Password' => 'Пароль',
     'Position' => 'Посада',
     'Roles' => 'Роль',
     'Status' =>'Статус',
+    'Static pages' => 'Статичні сторінки',
+    'System' => 'Система',
     'Update' => 'Редагувати',
     'Update user: {username}' => 'Редагувати користувача: {username}',
     'Username' => 'Ім\'я користувача',
     'Users' => 'Користувачі',
+    'Main' => 'Головна',
+    'Menu' => 'Меню',
 ];

@@ -35,9 +35,9 @@ return [
         '*.php',
     ],
     'format' => 'php',
-    //'db' => 'db',
-    //'sourceMessageTable' => '{{%source_message}}',
-    //'messageTable' => '{{%message}}',
+//    'db' => 'db',
+//    'sourceMessageTable' => '{{%source_message}}',
+//    'messageTable' => '{{%message}}',
     'catalog' => 'messages',
     'ignoreCategories' => [],
 ];

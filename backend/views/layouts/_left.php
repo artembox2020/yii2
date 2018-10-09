@@ -19,11 +19,11 @@ use backend\widgets\Menu;
                     'url' => ['/menu/index'],
                     'icon' => '<i class="fa fa-sitemap"></i>',
                 ],
-                [
-                    'label' => Yii::t('backend', 'Tags'),
-                    'url' => ['/tag/index'],
-                    'icon' => '<i class="fa fa-tags"></i>',
-                ],
+//                [
+//                    'label' => Yii::t('backend', 'Tags'),
+//                    'url' => ['/tag/index'],
+//                    'icon' => '<i class="fa fa-tags"></i>',
+//                ],
                 [
                     'label' => Yii::t('backend', 'Content'),
                     'url' => '#',

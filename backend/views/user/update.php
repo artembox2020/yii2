@@ -5,8 +5,8 @@ use yii\bootstrap\Html;
 use common\models\User;
 use common\models\UserProfile;
 use bs\Flatpickr\FlatpickrWidget;
-use vova07\fileapi\Widget as FileApi;
-
+//use vova07\fileapi\Widget as FileApi;
+use frontend\services\globals\MyFileApi as FileApi;
 /* @var $this yii\web\View */
 /* @var $profile common\models\UserProfile */
 /* @var $user backend\models\UserForm */
