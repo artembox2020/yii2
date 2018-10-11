@@ -99,16 +99,31 @@
 
         //makes serial column
         function makeSerialColumn() {
-            var addressContainers = summaryJournal.querySelectorAll('.main-table-row:nth-child(1) > td:nth-child(2) .address-container table');
+            var addressContainers = summaryJournal.querySelectorAll('td.balance-address-container > table');
             var mashinesCount = 0;
-        
+
             for (var i = 0; i < addressContainers.length; ++i) {
-                mashinesCount += parseInt(addressContainers[i].dataset.count);
+                var count = 0;
+                var mashineNumberCells = addressContainers[i].querySelectorAll('td.mashine-numbers-cell');
+                if (mashineNumberCells.length > 0) {
+                    count = 0;
+                    for (var k = 0; k < mashineNumberCells.length; ++k) {
+                        var mashinesNumber = parseInt(mashineNumberCells[k].dataset.mashinesNumber);
+                        if (mashinesNumber == 0 || isNaN(mashinesNumber)) {
+                            mashinesNumber = 1;
+                        }
+
+                        count += mashinesNumber;
+                    }
+                } else {
+                    count += parseInt(addressContainers[i].dataset.count);
+                }
+                mashinesCount += count;
             }
 
             var serialColumnRows = summaryJournal.querySelectorAll('.table-serial-column tr');
         
-            for (var i = mashinesCount; i < mashinesCount + 2; ++i) {
+            for (var i = mashinesCount; i < mashinesCount + 2 && i < serialColumnRows.length; ++i) {
                 serialColumnRows[i].innerHTML = '<td>&nbsp;&nbsp;</td>';
             }
         
@@ -173,7 +188,7 @@
                     var tds = row.querySelectorAll('td');
                     var totalDays = 0, sum = 0;
                     for (var j = 0; j < tds.length; ++j) {
-                        if (!tds[j].innerHTML.includes('&nbsp;')) {
+                        if (!tds[j].classList.contains('not-set-income')) {
                             ++totalDays;
                             sum += parse(tds[j]);
                         }
@@ -301,6 +316,18 @@
             var totalSum = 0, i = 0;
             for (var j = 0; i < addressContainers.length; ++i) {
                 var count = parseInt(addressContainers[i].dataset.count);
+                var mashineNumberCells = addressContainers[i].querySelectorAll('td.mashine-numbers-cell');
+                if (mashineNumberCells.length > 0) {
+                    count = 0;
+                    for (var k = 0; k < mashineNumberCells.length; ++k) {
+                        var mashinesNumber = parseInt(mashineNumberCells[k].dataset.mashinesNumber);
+                        if (mashinesNumber == 0) {
+                            ++mashinesNumber;
+                        }
+    
+                        count += mashinesNumber;
+                    }
+                }
                 for (var k = j, sum = 0; k < j + count; ++k) {
                     var row = expectationRows[k];
                     var td = row.querySelector('td');
@@ -375,6 +402,18 @@
             var totalSum = 0, i = 0;
             for (var j = 0; i < addressContainers.length; ++i) {
                 var count = parseInt(addressContainers[i].dataset.count);
+                var mashineNumberCells = addressContainers[i].querySelectorAll('td.mashine-numbers-cell');
+                if (mashineNumberCells.length > 0) {
+                    count = 0;
+                    for (var k = 0; k < mashineNumberCells.length; ++k) {
+                        var mashinesNumber = parseInt(mashineNumberCells[k].dataset.mashinesNumber);
+                        if (mashinesNumber == 0) {
+                            ++mashinesNumber;
+                        }
+    
+                        count += mashinesNumber;
+                    }
+                }
                 for (var k = j, sum = 0; k < j + count; ++k) {
                     var row = addressesSummaryRows[k];
                     var td = row.querySelector('td');
@@ -387,9 +426,18 @@
             var percentForLastYear = 100;
             var lastYearIncome = <?= $lastYearIncome ?>;
             if (lastYearIncome != 0) {
-                percentForLastYear = preciseNumber(totalSum / lastYearIncome * 100);
+                percentForLastYear = parseInt(totalSum / lastYearIncome * 100);
             }
-            appendTr(tbody, preciseNumber(totalSum));
+            <?php if ($isDetailed): ?>
+                var lastMonthIncome = <?= $lastMonthIncome ?>;
+                var percentForLastMonth = 100;
+                if (lastMonthIncome != 0) {
+                    percentForLastMonth = parseInt(totalSum / lastMonthIncome * 100);
+                }
+                appendTr(tbody, percentForLastMonth + '%');
+            <?php else: ?>
+                appendTr(tbody, preciseNumber(totalSum));
+            <?php endif; ?>
             appendTr(tbody, percentForLastYear + '%');
         }
 
@@ -451,8 +499,8 @@
             var tableMonth = summaryJournal.querySelector('.table-month');
             var timestampStart = tableMonth.dataset.stampStart;
             var timestampEnd = tableMonth.dataset.stampEnd;
-            
-            var tableAddressContainerRows = summaryJournal.querySelectorAll('.table-address-container tr');
+
+            var tableAddressContainerRows = summaryJournal.querySelectorAll('.table-address-container > tbody > tr');
             for (var i = 0; i < tableAddressContainerRows.length; ++i) {
                 var row = tableAddressContainerRows[i];
                 var timestampInserted = row.querySelector('td.date-inserted').innerHTML;
@@ -473,11 +521,13 @@
         }
 
         // applies all functions
-        makeSerialColumn();
         removeEmptyBalanceHolders();
+        makeSerialColumn();
         makeIncomesSummaryByAddresses();
         makeIncomesAverageSummaryByAddresses();
-        makeIncomesAverageMashineSummaryByAddresses();
+        <?php if (!$isDetailed): ?>
+            makeIncomesAverageMashineSummaryByAddresses();
+        <?php endif; ?>
         makeIncomesAverageCitizensSummaryByAddresses();
         makeConsolidatedSummaryByAddresses();
         makeExpectation();

@@ -322,9 +322,9 @@ class EntityHelper implements EntityHelperInterface
             ['imgSrcs' => $imgSrcs, 'text' => $text]
         );
     }
-    
+
     /**
-     * Gets the base query from -data table (history) 
+     * Gets the base query from -data table (history)
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -337,15 +337,15 @@ class EntityHelper implements EntityHelperInterface
     public function getBaseUnitQueryByTimestamps($start, $end, $instance, $bInstance, $field, $select)
     {
         $baseQuery = $instance::find()->select($select)
-                                     ->andWhere([$field => $bInstance->id])
-                                     ->andWhere(['>=', 'created_at', $start])
-                                     ->andWhere(['<', 'created_at', $end]);
+                                      ->andWhere([$field => $bInstance->id])
+                                      ->andWhere(['>=', 'created_at', $start])
+                                      ->andWhere(['<', 'created_at', $end]);
 
         return $baseQuery;
     }
 
     /**
-     * Makes array of non-zero intervals from -data table (history) 
+     * Makes array of non-zero intervals from -data table (history)
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -429,7 +429,7 @@ class EntityHelper implements EntityHelperInterface
     }
 
     /**
-     * Gets unit income by the ready non-zero time interval from -data table (history)  
+     * Gets unit income by the ready non-zero time interval from -data table (history)
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -443,7 +443,6 @@ class EntityHelper implements EntityHelperInterface
      */
     public function getUnitIncomeByNonZeroTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $field, $isFirst)
     {
-        $selectString = 'id, bill_cash, created_at';
         $baseQuery = $this->getBaseUnitQueryByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select);
         $queryS1 = clone $baseQuery;
         $queryS1 = $queryS1->orderBy(['created_at' => SORT_ASC])->limit(1);
@@ -479,5 +478,46 @@ class EntityHelper implements EntityHelperInterface
         }
 
         return ($itemEnd->$field - $itemStart->$field);
+    }
+
+    /**
+     * Calculates unit idle hours bytimestamps
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param int $timeIdleHours
+     * @return decimal
+     */
+    public function getUnitIdleHoursByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours)
+    {
+        $stepInterval = $timeIdleHours * 3600;
+        $idleHours = 0.00;
+        $endTimestamp = $start + $stepInterval;
+        for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
+            $query = $this->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, $inst, $bInst, $fieldInst, $select);
+            if ($query->count() > 0) {
+                $item = $query->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
+                $timestamp = $item->created_at - $stepInterval + 1;
+                continue;
+            } else {
+                $query = $this->getBaseUnitQueryByTimestamps($endTimestamp, $end, $inst, $bInst, $fieldInst, $select);
+                if ($query->count() == 0) {
+                    $idleHours += ((float)$end - $timestamp) / 3600;
+                    break;
+                } else {
+                    $item = $query->orderBy(['created_at' => SORT_ASC])->limit(1)->one();
+                    $timeDiff = $item->created_at - $endTimestamp;
+                    $idleHours += $timeIdleHours + ((float)$timeDiff / 3600);
+                    $timestamp = $item->created_at - $stepInterval + 1;
+                    continue;
+                }
+            }
+        }
+
+        return $idleHours;
     }
 }
