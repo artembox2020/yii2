@@ -3,7 +3,7 @@
 namespace frontend\modules\account\controllers;
 
 use backend\services\mail\MailSender;
-use backend\models\Company;
+use frontend\models\Company;
 use frontend\services\custom\Debugger;
 use Yii;
 use yii\filters\AccessControl;
@@ -235,10 +235,36 @@ class DefaultController extends Controller
             Yii::t('frontend', 'Access denied')
         );
     }
-    
+
+    /**
+     * @return string
+     */
     public function actionDenied() {
        return $this->render ('/denied/access-denied', [
             $this->accessDenied()
         ]); 
+    }
+
+    /**
+     * @return string
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function actionTt()
+    {
+        $user = User::findOne(Yii::$app->user->id);
+        $model = new Company();
+
+        if ($user->load(Yii::$app->request->post())) {
+            Debugger::dd($user->id);
+//            $company = Company::findOne($model->company);
+            $user->company_id = $model->id;
+            $user->save();
+            return $this->redirect('tt');
+        }
+
+        return $this->render('tt/index', [
+            'user' => $user,
+        ]);
     }
 }
