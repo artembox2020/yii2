@@ -85,7 +85,7 @@ $machine_menu = [];
         ['attribute' => 'model',
             'label' => Yii::t('frontend', 'By Models'),
             'value' => 'model',
-            ],
+        ],
         [
             'label' => Yii::t('frontend', 'General Count'),
             'value' => function ($provider) {
@@ -98,53 +98,74 @@ $machine_menu = [];
 <?php $modelWm = ob_get_clean(); ?>
 
 <?php ob_start(); ?>
-<?= GridView::widget([
-    'dataProvider' => $dataProvider,
-    'columns' => [
+<?= DetailView::widget([
+    'model' => $model,
+    'attributes' => [
         [
-            'label' => Yii::t('frontend', 'До 1 року'),
-//            'value' => function ($dataProvider) {
-//                return $dataProvider->getUpTo1year($dataProvider->date_build);
-//            }
+            'label' => Yii::t('frontend', 'Up to 1 year'),
+            'format' => 'raw',
+            'value' => $model->getUpTo1Year()
         ],
-//        [
-//            'label' => Yii::t('frontend', 'До 2х років'),
-//            'value' => ''
-//        ],
-//        [
-//            'label' => Yii::t('frontend', 'До 3х років'),
-//            'value' => ''
-//        ],
-//        [
-//            'label' => Yii::t('frontend', 'До 4х років'),
-//            'value' => ''
-//        ],
-//        [
-//            'label' => Yii::t('frontend', 'До 5х років'),
-//            'value' => ''
-//        ],
-//        [
-//            'label' => Yii::t('frontend', 'Старше за 5 років'),
-//            'value' => ''
-//        ],
-//        ['attribute' => 'model',
-//            'label' => Yii::t('frontend', 'До 1 року'),
-//            'value' => 'model',
-//        ],
-//        ['attribute' => 'model',
-//            'label' => Yii::t('frontend', 'До 2х років'),
-//            'value' => 'model',
-//        ],
-//        [
-//            'label' => Yii::t('frontend', 'General Count'),
-//            'value' => function ($model) {
-//                return $model->getByYearProduction($model->date_build);
-//            },
-//        ],
+        [
+            'label' => Yii::t('frontend', 'Up to 2 years'),
+            'format' => 'raw',
+            'value' => $model->getUpTo2Year()
+        ],
+        [
+            'label' => Yii::t('frontend', 'Up to 3 years'),
+            'format' => 'raw',
+            'value' => $model->getUpTo3Year()
+        ],
+        [
+            'label' => Yii::t('frontend', 'Up to 4 years'),
+            'format' => 'raw',
+            'value' => $model->getUpTo4Year()
+        ],
+        [
+            'label' => Yii::t('frontend', 'Up to 5 years'),
+            'format' => 'raw',
+            'value' => $model->getUpTo5Year()
+        ],
+        [
+            'label' => Yii::t('frontend', 'Older than 5 years old'),
+            'format' => 'raw',
+            'value' => $model->getUp5Year()
+        ],
     ]
 ]);
 ?>
 <?php $byYearProd = ob_get_clean(); ?>
+
+
+<?php ob_start(); ?>
+<?= DetailView::widget([
+    'model' => $model,
+    'attributes' => [
+        [
+            'label' => Yii::t('frontend', 'Warehouse/Office'),
+            'format' => 'raw',
+            'value' => $model->getStockCountAll()
+        ],
+        [
+            'label' => Yii::t('frontend', 'At the point'),
+            'format' => 'raw',
+            'value' => $model->getActiveCountAll()
+        ],
+        [
+            'label' => Yii::t('frontend', 'Repair'),
+            'format' => 'raw',
+            'value' => $model->getRepairCountAll()
+        ],
+        [
+            'label' => Yii::t('frontend', 'Junk'),
+            'format' => 'raw',
+            'value' => $model->getJunkCountAll()
+        ],
+    ]
+]);
+?>
+<?php $byStatus = ob_get_clean(); ?>
+
 
 <!-- Main Detail View -->
 <?= DetailView::widget([
@@ -167,7 +188,7 @@ $machine_menu = [];
         [
             'label' =>  Yii::t('frontend', 'Status'),
             'format' => 'raw',
-            'value' => ''
+            'value' => $byStatus
         ],
         [
             'label' =>  Yii::t('frontend', 'By Location'),
