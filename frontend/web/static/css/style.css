@@ -381,7 +381,9 @@ div.required label:after {
     height: 100%!important;
     margin-bottom:  0;
 }
-.summary-journal table td.address-container {
+.summary-journal table td.address-container,
+.summary-journal table.table-container table.mashine-numbers,
+.summary-journal table.table-container td.mashine-numbers-cell {
     padding: 0;
 }
 .summary-journal table td {

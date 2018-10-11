@@ -28,12 +28,30 @@ use frontend\models\BalanceHolderSummarySearch;
                         <tbody>
                         <?php
                             foreach ($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->all() as $address):
+                                $mashinesQuery = $searchModel->getAllMashinesQueryByYearMonth($year, $month, $address);
                         ?>
                             <tr>
-                                <td class="address">
+                                <td class = "address">
                                     <?= $address->address ?>
                                 </td>
-                                <td class="mashine-count">
+                                <td class = "mashine-numbers-cell"
+                                    data-mashines-number = "<?= $mashinesQuery->count() ?>"
+                                >
+                                    <table class="table table-bordered mashine-numbers">
+                                    <?php if ($mashinesQuery->count() == 0): ?>
+                                        <tr>
+                                            <td>0</td>
+                                        </tr>
+                                    <?php else: ?>
+                                        <?php foreach($mashinesQuery->all() as $mashine): ?>
+                                        <tr>
+                                            <td> &nbsp;<?= $mashine->number_device ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                    </table>
+                                </td>
+                                <td class="mashine-count hidden">
                                     <?= $searchModel->getAllMashinesQueryByYearMonth($year, $month, $address)->count() ?>
                                 </td>
                                 <td class="number-of-citizens hidden">

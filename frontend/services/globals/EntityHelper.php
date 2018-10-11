@@ -322,4 +322,203 @@ class EntityHelper implements EntityHelperInterface
             ['imgSrcs' => $imgSrcs, 'text' => $text]
         );
     }
+
+    /**
+     * Gets base unit query by timestamps
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $instance
+     * @param Instance $bInstance
+     * @param string $field
+     * @param string $select
+     * @return ActiveDbQuery
+     */
+    public function getBaseUnitQueryByTimestamps($start, $end, $instance, $bInstance, $field, $select)
+    {
+        $baseQuery = $instance::find()->select($select)
+                                      ->andWhere([$field => $bInstance->id])
+                                      ->andWhere(['>=', 'created_at', $start])
+                                      ->andWhere(['<', 'created_at', $end]);
+
+        return $baseQuery;
+    }
+
+    /**
+     * Makes non-zero time intervals to calculate incomes
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $instance
+     * @param Instance $bInstance
+     * @param string $fieldInstance
+     * @param string $select
+     * @param sting $field
+     * @return array
+     */
+    public function makeNonZeroIntervalsByTimestamps($start, $end, $instance, $bInstance, $fieldInstance, $select, $field)
+    {
+        $intervals = [];
+        $baseQuery = $this->getBaseUnitQueryByTimestamps($start, $end, $instance, $bInstance, $fieldInstance, $select);
+        $queryS1 = clone $baseQuery;
+        $queryS1 = $queryS1->andWhere([$field => 0])
+                           ->orderBy(['created_at' => SORT_ASC])
+                           ->limit(1);
+
+        if ($queryS1->count() > 0) {
+            $item = $queryS1->one();
+            if ($item->created_at > $start) {
+                $intervals[] = [
+                    'start' => $start,
+                    'end' => $item->created_at
+                ];
+
+                return array_merge(
+                    $intervals,
+                    $this->makeNonZeroIntervalsByTimestamps($item->created_at, $end, $instance, $bInstance, $fieldInstance, $select, $field)
+                );
+            } else {
+                $queryS2 = clone $baseQuery;
+                $queryS2 = $queryS2->andWhere(['!=', $field, 0])
+                                   ->andWhere(['>=', 'created_at', $item->created_at])
+                                   ->andWhere(['<', 'created_at', $end])
+                                   ->orderBy(['created_at' => SORT_ASC])
+                                   ->limit(1);
+
+                if ($queryS2->count() > 0) {
+                    $item = $queryS2->one();
+                    $queryS3 = clone $baseQuery;
+                    $queryS3 = $queryS3->andWhere(['<', 'created_at', $item->created_at])
+                                       ->orderBy(['created_at' => SORT_DESC])
+                                       ->limit(1);
+                    $item = $queryS3->one();
+                    $newStart = $item->created_at;
+
+                    $queryS4 = clone $baseQuery;
+                    $queryS4 = $queryS4->andWhere(['=', $field, 0])
+                                       ->andWhere(['<', 'created_at', $end])
+                                       ->andWhere(['>', 'created_at', $newStart])
+                                       ->orderBy(['created_at' => SORT_ASC])
+                                       ->limit(1);
+                    $item = $queryS4->one();
+
+                    if (!$item) {
+
+                        return [
+                            0 => ['start' => $newStart, 'end' => $end]
+                        ];
+                    } else {
+                        $intervals[] = ['start' => $newStart, 'end' => $item->created_at];
+                        $intervals = array_merge(
+                            $intervals,
+                            $this->makeNonZeroIntervalsByTimestamps($item->created_at, $end, $instance, $bInstance, $fieldInstance, $select, $field)
+                        );
+
+                        return $intervals;
+                    }
+                }
+            }
+        } else {
+
+            return [
+                0 => ['start' => $start, 'end' => $end]
+            ];
+        }
+
+        return $intervals;
+    }
+
+    /**
+     * Calculates unit incomes by non-zero timestamp intervals
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param sting $field
+     * @param bool $isFirst
+     * @return decimal
+     */
+    public function getUnitIncomeByNonZeroTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $field, $isFirst)
+    {
+        $selectString = 'id, bill_cash, created_at';
+        $baseQuery = $this->getBaseUnitQueryByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select);
+        $queryS1 = clone $baseQuery;
+        $queryS1 = $queryS1->orderBy(['created_at' => SORT_ASC])->limit(1);
+
+        if ($queryS1->count() == 0) {
+
+            return 0;
+        }
+
+        $queryS2 = clone $baseQuery;
+        $queryS2 = $queryS2->orderBy(['created_at' => SORT_DESC])->limit(1);
+
+        $itemStart =  $queryS1->one();
+        $itemEnd = $queryS2->one();
+
+        if ($isFirst && $itemStart->$field != 0) {
+            $queryS3 = clone $baseQuery;
+            $queryS3 = $queryS3->where(['<', 'created_at', $start])
+                               ->andWhere(['>=', 'created_at', $bInst->created_at])
+                               ->andWhere(['>=', 'created_at', ($start - 3600*3)])
+                               ->andWhere(['is_deleted' => false])
+                               ->andWhere([$fieldInst => $bInst->id])
+                               ->orderBy(['created_at' => SORT_DESC])
+                               ->limit(1);
+
+            if ($queryS3->count() > 0) {
+                $item = $queryS3->one();
+                if ($item->$field < $itemStart->$field) {
+                    $itemStart = $item;
+                }
+            }
+
+        }
+
+        return ($itemEnd->$field - $itemStart->$field);
+    }
+
+    /**
+     * Calculates unit idle hours bytimestamps
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param int $timeIdleHours
+     * @return decimal
+     */
+    public function getUnitIdleHoursByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours)
+    {
+        $stepInterval = $timeIdleHours * 3600;
+        $idleHours = 0.00;
+        $endTimestamp = $start + $stepInterval;
+        for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
+            $query = $this->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, $inst, $bInst, $fieldInst, $select);
+            if ($query->count() > 0) {
+                $item = $query->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
+                $timestamp = $item->created_at - $stepInterval + 1;
+                continue;
+            } else {
+                $query = $this->getBaseUnitQueryByTimestamps($endTimestamp, $end, $inst, $bInst, $fieldInst, $select);
+                if ($query->count() == 0) {
+                    $idleHours += ((float)$end - $timestamp) / 3600;
+                    break;
+                } else {
+                    $item = $query->orderBy(['created_at' => SORT_ASC])->limit(1)->one();
+                    $timeDiff = $item->created_at - $endTimestamp;
+                    $idleHours += $timeIdleHours + ((float)$timeDiff / 3600);
+                    $timestamp = $item->created_at - $stepInterval + 1;
+                    continue;
+                }
+            }
+        }
+
+        return $idleHours;
+    }
 }

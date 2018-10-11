@@ -5,6 +5,7 @@ use yii\jui\DatePicker;
 use yii\helpers\Html;
 use frontend\models\Devices;
 use frontend\models\BalanceHolderSummarySearch;
+use frontend\models\BalanceHolderSummaryDetailedSearch;
 use frontend\models\Zlog;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -15,7 +16,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel  frontend\models\BalanceHolderSummarySearch*/
 /* @var $summaryJournalController frontend\controllers\SummaryJournalController */
 ?>
-<h1><?= Yii::t('frontend', 'Summary Journal(General)') ?></h1>
+<h1><?= Yii::t('frontend', 'Summary Journal(Detailed)') ?></h1>
 <?= $summaryJournalController->renderForm($params, $months, $years, $typesOfDisplay) ?>
 <div class="summary-journal">
     <?= GridView::widget([
@@ -34,7 +35,10 @@ use yii\widgets\Pjax;
                 'format' => 'raw',
                 'value' => function($model, $key, $index) use ($summaryJournalController, $dataProvider)
                 {
-                    return $summaryJournalController->renderSerialColumn(BalanceHolderSummarySearch::getTotalAddressesCount() + 2);
+                    return $summaryJournalController->renderSerialColumn(
+                        BalanceHolderSummaryDetailedSearch::getTotalMashinesCount() + 
+                        BalanceHolderSummaryDetailedSearch::getTotalAddressesCount() + 2
+                    );
                 },
                 'contentOptions' => ['class' => 'common all'],
                 'headerOptions' => ['class' => 'red-color green-color']
@@ -44,7 +48,7 @@ use yii\widgets\Pjax;
                 'format' => 'raw',
                 'value' => function($model, $key, $index) use ($summaryJournalController, $searchModel, $dataProvider, $params)
                 {
-                    return $summaryJournalController->renderBalanceAddresses($searchModel, $dataProvider, $params);
+                    return $summaryJournalController->renderBalanceAddressesDetailed($searchModel, $dataProvider, $params);
                 },
                 'contentOptions' => ['class' => 'common all'],
                 'headerOptions' => ['class' => 'common all green-color red-color']
@@ -54,7 +58,7 @@ use yii\widgets\Pjax;
                 'format' => 'raw',
                 'value' => function($model, $key, $index) use ($summaryJournalController, $searchModel, $dataProvider, $params)
                 {
-                    return $summaryJournalController->renderIncomesByAddresses($searchModel, $dataProvider, $params);
+                    return $summaryJournalController->renderIncomesByMashines($searchModel, $dataProvider, $params);
                 },
                 'contentOptions' => ['class' => 'common all'],
                 'headerOptions' => ['class' => 'month-days all']
@@ -78,7 +82,7 @@ use yii\widgets\Pjax;
                 },
                 'contentOptions' => ['class' => 'common all'],
                 'headerOptions' => ['class' => 'incomes all']
-            ],
+            ],/*
             [
                 'label' => Yii::t('frontend', 'Incomes By Mashine'),
                 'format' => 'raw',
@@ -88,7 +92,7 @@ use yii\widgets\Pjax;
                 },
                 'contentOptions' => ['class' => 'common all by-mashine'],
                 'headerOptions' => ['class' => 'incomes all']
-            ],
+            ],*/
             [
                 'label' => Yii::t('frontend', 'Incomes By Citizens'),
                 'format' => 'raw',

@@ -92,4 +92,60 @@ interface EntityHelperInterface
      * @return string
      */
     public static function makePopupWindow($imgSrcs, $text);
+
+    /**
+     * Gets base unit query by timestamps
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $instance
+     * @param Instance $bInstance
+     * @param string $field
+     * @param string $select
+     * @return ActiveDbQuery
+     */
+    public function getBaseUnitQueryByTimestamps($start, $end, $instance, $bInstance, $field, $select);
+
+     /**
+     * Makes non-zero time intervals to calculate incomes
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $instance
+     * @param Instance $bInstance
+     * @param string $fieldInstance
+     * @param string $select
+     * @param sting $field
+     * @return array
+     */
+    public function makeNonZeroIntervalsByTimestamps($start, $end, $instance, $bInstance, $fieldInstance, $select, $field);
+
+    /**
+     * Calculates unit incomes by non-zero timestamp intervals
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param sting $field
+     * @param bool $isFirst
+     * @return decimal
+     */
+    public function getUnitIncomeByNonZeroTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $field, $isFirst);
+
+    /**
+     * Calculates unit idle hours by timestamps
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param int $timeIdleHours
+     * @return decimal
+     */
+    public function getUnitIdleHoursByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours);
 }
