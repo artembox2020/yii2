@@ -94,7 +94,7 @@ interface EntityHelperInterface
     public static function makePopupWindow($imgSrcs, $text);
 
     /**
-     * Gets base unit query by timestamps
+     * Gets the base query from -data table (history) 
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -106,8 +106,8 @@ interface EntityHelperInterface
      */
     public function getBaseUnitQueryByTimestamps($start, $end, $instance, $bInstance, $field, $select);
 
-     /**
-     * Makes non-zero time intervals to calculate incomes
+    /**
+     * Makes array of non-zero intervals from -data table (history) 
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -115,13 +115,13 @@ interface EntityHelperInterface
      * @param Instance $bInstance
      * @param string $fieldInstance
      * @param string $select
-     * @param sting $field
+     * @param string $field
      * @return array
      */
     public function makeNonZeroIntervalsByTimestamps($start, $end, $instance, $bInstance, $fieldInstance, $select, $field);
 
     /**
-     * Calculates unit incomes by non-zero timestamp intervals
+     * Gets unit income by the ready non-zero time interval from -data table (history)
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -129,7 +129,7 @@ interface EntityHelperInterface
      * @param Instance $bInst
      * @param string $fieldInst
      * @param string $select
-     * @param sting $field
+     * @param string $field
      * @param bool $isFirst
      * @return decimal
      */

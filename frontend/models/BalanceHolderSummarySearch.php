@@ -495,6 +495,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $itemStart = $queryS1->limit(1)->one();
         if (!empty($itemStart)) {
             $entityHelper = new EntityHelper();
+
+            // makes none-zero time intervals
             $nonZeroIntervals = $entityHelper->makeNonZeroIntervalsByTimestamps(
                 $start,
                 $end,
@@ -506,6 +508,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
             );
             $income = 0;
             $isFirst = true;
+
+            //calculation by each non-zero time interval and summing
             foreach ($nonZeroIntervals as $interval) {
                 $income += $entityHelper->getUnitIncomeByNonZeroTimestamps(
                     $interval['start'],
@@ -519,6 +523,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 );
                 $isFirst = false;
             }
+            $income = $this->parseFloat($income, 2);
         } else {
             $income = null;
         }
@@ -698,6 +703,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $daysArray[$k] = $k;
             }
             $emptyDays = array_diff($daysArray, array_keys($incomesFromHistory));
+
             foreach ($emptyDays as $day)
             {
                 $timestamp = $timestamps['start'] + ($day - 1) *$intervalStep;

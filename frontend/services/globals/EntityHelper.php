@@ -324,7 +324,7 @@ class EntityHelper implements EntityHelperInterface
     }
 
     /**
-     * Gets base unit query by timestamps
+     * Gets the base query from -data table (history)
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -345,7 +345,7 @@ class EntityHelper implements EntityHelperInterface
     }
 
     /**
-     * Makes non-zero time intervals to calculate incomes
+     * Makes array of non-zero intervals from -data table (history)
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -353,7 +353,7 @@ class EntityHelper implements EntityHelperInterface
      * @param Instance $bInstance
      * @param string $fieldInstance
      * @param string $select
-     * @param sting $field
+     * @param string $field
      * @return array
      */
     public function makeNonZeroIntervalsByTimestamps($start, $end, $instance, $bInstance, $fieldInstance, $select, $field)
@@ -429,7 +429,7 @@ class EntityHelper implements EntityHelperInterface
     }
 
     /**
-     * Calculates unit incomes by non-zero timestamp intervals
+     * Gets unit income by the ready non-zero time interval from -data table (history)
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -437,13 +437,12 @@ class EntityHelper implements EntityHelperInterface
      * @param Instance $bInst
      * @param string $fieldInst
      * @param string $select
-     * @param sting $field
-     * @param bool $isFirst
+     * @param string $field
+     * @param boolean $isFirst
      * @return decimal
      */
     public function getUnitIncomeByNonZeroTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $field, $isFirst)
     {
-        $selectString = 'id, bill_cash, created_at';
         $baseQuery = $this->getBaseUnitQueryByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select);
         $queryS1 = clone $baseQuery;
         $queryS1 = $queryS1->orderBy(['created_at' => SORT_ASC])->limit(1);
