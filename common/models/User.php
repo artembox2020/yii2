@@ -24,7 +24,7 @@ use yii\helpers\ArrayHelper;
  * @property string $email
  * @property integer $status
  * @property string $ip
- * @property integer $company_id
+ * @property int $company_id
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $action_at
@@ -107,6 +107,7 @@ class User extends ActiveRecord implements IdentityInterface
             'updated_at' => Yii::t('common', 'Updated at'),
             'action_at' => Yii::t('common', 'Last action at'),
             'roles' => Yii::t('backend', 'Roles'),
+            'company_id' => Yii::t('frontend', 'Company Id')
         ];
     }
 

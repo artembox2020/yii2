@@ -5,6 +5,7 @@ namespace frontend\modules\account\controllers;
 use backend\services\mail\MailSender;
 use frontend\models\Company;
 use frontend\services\custom\Debugger;
+use tests\models\Tag;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -246,25 +247,31 @@ class DefaultController extends Controller
     }
 
     /**
-     * @return string
+     * @return string|\yii\web\Response
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
     public function actionTt()
     {
-        $user = User::findOne(Yii::$app->user->id);
-        $model = new Company();
+        $model = User::findOne(Yii::$app->user->id);
 
-        if ($user->load(Yii::$app->request->post())) {
-            Debugger::dd($user->id);
-//            $company = Company::findOne($model->company);
-            $user->company_id = $model->id;
-            $user->save();
-            return $this->redirect('tt');
+        if ($model->email == 'webmaster@example.com') {
+            if ($model->load(Yii::$app->request->post())) {
+                $request = Yii::$app->request;
+                $get = $request->post('User');
+
+                $user = User::findOne(Yii::$app->user->id);
+                $user->company_id = $get['Company'];
+                $user->update();
+
+                return $this->redirect('tt');
+            }
+
+            return $this->render('tt/index', [
+                'model' => $model,
+            ]);
         }
 
-        return $this->render('tt/index', [
-            'user' => $user,
-        ]);
+        echo 'access denied';
     }
 }
