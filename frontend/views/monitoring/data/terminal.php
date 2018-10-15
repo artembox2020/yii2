@@ -15,6 +15,9 @@ use yii\widgets\Pjax;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'summary' => '',
+        'tableOptions' => [
+            'class' => 'table table-striped table-bordered table-terminal'
+        ],
         'columns' => [
             [
                 'attribute' => 'bill_acceptance',
@@ -45,22 +48,22 @@ use yii\widgets\Pjax;
                 'headerOptions' => ['class' => 'terminal all']
             ],
             [
+                'label' => Yii::t('frontend', 'Remote Connnection'),
+                'format' => 'raw',
+                'value' => function($model) use($monitoringController, $searchModel)
+                {
+                    return $monitoringController->renderImeiCard($model->imeiRelation->id, $searchModel);
+                },
+                'contentOptions' => ['class' => 'terminal all'],
+                'headerOptions' => ['class' => 'terminal all']
+            ],
+            [
                 'attribute' => 'actions',
                 'format' => 'raw',
                 'value' => function($model)
                 {
 
                    return $model->getActions();
-                },
-                'contentOptions' => ['class' => 'terminal all'],
-                'headerOptions' => ['class' => 'terminal all']
-            ],
-            [
-                'label' => Yii::t('frontend', 'Remote Connnection'),
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController, $searchModel)
-                {
-                    return $monitoringController->renderImeiCard($model->imeiRelation->id, $searchModel);
                 },
                 'contentOptions' => ['class' => 'terminal all'],
                 'headerOptions' => ['class' => 'terminal all']

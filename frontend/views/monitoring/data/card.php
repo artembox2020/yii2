@@ -20,6 +20,7 @@ use yii\widgets\Pjax;
                 'attribute' => 'imei',
                 'label' => Yii::t('frontend', 'Modem Card'),
                 'format' => 'raw',
+                'headerOptions' => ['class' => 'modem-card'],
                 'value' => function($model)
                 {
                     
