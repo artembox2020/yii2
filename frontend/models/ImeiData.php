@@ -209,4 +209,80 @@ class ImeiData extends \yii\db\ActiveRecord
             self::TYPE_ACTION_TIME_SET => Yii::t('frontend', 'Action Time Set')
         ];
     }
+
+    /**
+     * Gets last encashment date  and sum, before timestamp accepted
+     * 
+     * @param int $imeiId
+     * @param timestamp $timestampBefore
+     * @return array
+     */
+    public function getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore)
+    {
+        $query = ImeiData::find()->andWhere(['imei_id' => $imeiId])
+                                 ->andWhere(['money_in_banknotes' => 0])
+                                 ->andWhere(['<', 'created_at', $timestampBefore])
+                                 ->orderBy(['created_at' => SORT_DESC])
+                                 ->limit(1);
+        $item = $query->one();
+
+        if ($item) {
+            $resultQuery = ImeiData::find()->andWhere(['imei_id' => $imeiId])
+                                           ->andWhere(['<', 'created_at', $item->created_at])
+                                           ->andWhere(['!=', 'money_in_banknotes', 0])
+                                           ->orderBy(['created_at' => SORT_DESC])
+                                           ->limit(1);
+            $resultItem = $resultQuery->one();
+
+            if ($resultItem) {
+
+                return [
+                    'created_at' => $resultItem->created_at,
+                    'money_in_banknotes' => $resultItem->money_in_banknotes
+                ];
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets last encashment date  and sum, like string
+     * 
+     * @param int $imeiId
+     * @return string
+     */
+    public function getScalarDateAndSumPreLastEncashmentByImeiId($imeiId)
+    {
+        $timestampBefore = time() + Jlog::TYPE_TIME_OFFSET;
+        $dateSumLastEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
+        if ($dateSumLastEncashment) {
+            $dateSumPreLastEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $dateSumLastEncashment['created_at']);
+            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumPreLastEncashment['created_at'], 'short');
+
+            return  $dateEncashment.'<br>'.$dateSumPreLastEncashment['money_in_banknotes'].' грн';
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets pre-last encashment date  and sum, like string
+     * 
+     * @param int $imeiId
+     * @return string
+     */
+    public function  getScalarDateAndSumLastEncashmentByImeiId($imeiId)
+    {
+        $timestampBefore = time() + Jlog::TYPE_TIME_OFFSET;
+        $dateSumEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
+
+        if ($dateSumEncashment) {
+            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumEncashment['created_at'], 'short');
+
+            return  $dateEncashment.'<br>'.$dateSumEncashment['money_in_banknotes'].' грн';
+        }
+
+        return false;
+    }
 }
