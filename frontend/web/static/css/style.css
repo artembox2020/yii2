@@ -281,8 +281,11 @@ div.required label:after {
     padding-bottom: 34px!important;
 }
 .monitoring #table-software-versions td {
-    padding-top: 16px!important;
-    padding-bottom: 17px!important;
+    white-space: normal!important;
+    min-width: 150px;
+    max-width: 150px;
+    width: 150px;
+    padding: 0;
 }
 .monitoring .table-bill-acceptance, .monitoring .table-software-versions {
     margin: 0;
@@ -363,6 +366,20 @@ div.required label:after {
 }
 .monitoring .table-financial td.common {
     width: 330px;
+}
+.monitoring .table-actions td {
+    white-space: normal!important;
+    min-height: 51px!important;
+    max-height: 51px!important;
+    height: 51px!important;
+    padding-top: 2px!important;
+    padding-bottom: 2px!important;
+}
+.monitoring .table-actions td.small {
+    min-height: 25px!important;
+    max-height: 25px!important;
+    height: 25px!important;
+    font-weight: bold;
 }
 .enhanced-z-index {
     position: relative;

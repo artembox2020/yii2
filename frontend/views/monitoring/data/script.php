@@ -108,7 +108,7 @@
         }
 
         // adjusts last row height of the table to the bottom of parent
-        function adjustTableSize(tableClass, cellClass)
+        function adjustTableSize(tableClass, cellClass, shift)
         {
             var closestCells = monitoring.querySelectorAll('td.' + tableClass);
             if (closestCells != null) {
@@ -125,7 +125,7 @@
                         var tableRowStyleObject = window.getComputedStyle(tableRow);
                         var height = - parseInt(tableStyleObject.getPropertyValue('height'));
                         height = height + parseInt(closestCellStyleObject.getPropertyValue('height')) - 1;
-                        tableRow.style.height = parseInt(tableRowStyleObject.getPropertyValue('height')) + height + 'px';
+                        tableRow.style.height = parseInt(tableRowStyleObject.getPropertyValue('height')) + height + shift + 'px';
                     }
                 }
             }
@@ -143,6 +143,8 @@
                 }
 
                 headers[i].style.visibility = 'hidden';
+                var headerTr = headers[i].querySelector('tr');
+                //headerTr.style.display = 'none';
 
                 headers[i].closest('table').style.position = 'relative';
                 headers[i].closest('table').style.marginTop = "-40px";
@@ -174,11 +176,11 @@
         // applies all table processing functions
         adjustCommonTableSize();
         adjustModemCardTableSize();
-        adjustTableSize('devices', 'cell-device');
-        adjustTableSize('financial', 'cell-financial');
-        adjustTableSize('terminal', 'cell-bill-acceptance');
-        adjustTableSize('terminal', 'cell-software');
-        adjustTableSize('terminal', 'cell-actions');
+        adjustTableSize('devices', 'cell-device', 0);
+        adjustTableSize('financial', 'cell-financial', 0);
+        adjustTableSize('terminal', 'cell-bill-acceptance', 0);
+        adjustTableSize('terminal', 'cell-software', 0);
+        adjustTableSize('terminal', 'cell-actions', 0);
         hideRedundantHeaders();
         hideRedundantCommonHeaders();
         adjustCellsHeightBySelector(40, '.financial tr.modem-card-last-row', 1);
