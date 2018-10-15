@@ -121,7 +121,7 @@ interface EntityHelperInterface
     public function makeNonZeroIntervalsByTimestamps($start, $end, $instance, $bInstance, $fieldInstance, $select, $field);
 
     /**
-     * Gets unit income by the ready non-zero time interval from -data table (history)  
+     * Gets unit income by the ready non-zero time interval from -data table (history)
      * 
      * @param timestamp $start
      * @param timestamp $end
@@ -130,9 +130,22 @@ interface EntityHelperInterface
      * @param string $fieldInst
      * @param string $select
      * @param string $field
-     * @param boolean $isFirst
+     * @param bool $isFirst
      * @return decimal
      */
     public function getUnitIncomeByNonZeroTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $field, $isFirst);
-    
+
+    /**
+     * Calculates unit idle hours by timestamps
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param int $timeIdleHours
+     * @return decimal
+     */
+    public function getUnitIdleHoursByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours);
 }

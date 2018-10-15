@@ -12,7 +12,7 @@ use yii\jui\DatePicker;
 /* @var $years array */
 ?>
 <?php 
-    echo Html::beginForm('', 'get', ['class' => 'summary-journal-form']);
+    echo Html::beginForm('/summary-journal', 'get', ['class' => 'summary-journal-form']);
 ?>
 <div class="col-md-4">
     <div class="form-group">
@@ -36,6 +36,21 @@ use yii\jui\DatePicker;
             'year', 
             $params['year'] ? $params['year'] : date('Y'),
             $years,
+            [
+                'class' => 'form-control'
+            ]
+        );
+        ?>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="form-group">
+        <label for="type"><?= Yii::t('frontend', 'Type Of Display') ?></label>
+        <?= Html::dropDownList(
+            'type', 
+            $params['type'],
+            $typesOfDisplay,
             [
                 'class' => 'form-control'
             ]

@@ -21,6 +21,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
     const PERCENT_ONE_THIRD = 33;
     const PERCENT_TWO_THIRD = 67;
     const IDLE_TIME_HOURS = 8;
+    const TYPE_GENERAL = 0;
+    const TYPE_DETAILED = 1;
 
     /**
      * @inheritdoc
@@ -52,7 +54,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
     public function baseSearch($params)
     {
         $entity = new Entity();
-        $query = $entity->getUnitsQueryPertainCompany(new BalanceHolder());
+        $query = BalanceHolder::find()->where(['balance_holder.is_deleted' => false, 'balance_holder.company_id' => $entity->getCompanyId()]);
+        //$query = $query->innerJoin('address_balance_holder', 'address_balance_holder.balance_holder_id = balance_holder.id');
         
         
         // add conditions that should always apply here
@@ -206,8 +209,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
      *
      * @return int
      */  
-    public function getLastMonth() {
-        $timestamp = time()+ Jlog::TYPE_TIME_OFFSET;
+    public function getLastMonth($timestamp) {
         $month = date('m', $timestamp);
         if ($month == '01') {
             $month = '12';
@@ -305,6 +307,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $timestamp = time() + Jlog::TYPE_TIME_OFFSET;
         $params['month'] = $params['month'] ? $params['month'] : date('m', $timestamp);
         $params['year'] = $params['year'] ? $params['year'] : date('Y', $timestamp);
+        $params['type'] = $params['type'] ? $params['type'] : self::TYPE_GENERAL;
 
         return $params;
     }
@@ -349,7 +352,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
                               ['=', 'wm_mashine.is_deleted', true],
                               ['>', 'wm_mashine.deleted_at', $start]
                             ])
-                        ]));
+                        ]))
+                       ->orderBy(['id' => SORT_ASC]);    
 
         return $query;
     }
@@ -478,9 +482,11 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $jSummary = new Jsummary();
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
 
-        if ($todayTimestamp >= $end && $jSummaryItem = $jSummary->getItem($imei->id, $start, $end)) {
+        if ($todayTimestamp >= $end && ($jSummaryItem = $jSummary->getItem($imei->id, $start, $end))) {
 
-            return $jSummaryItem->income;
+            if (!is_null($jSummaryItem->income)) {
+                return $jSummaryItem->income;
+            }
         }
 
         $selectString = 'fireproof_residue, created_at, imei_id';
@@ -502,7 +508,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
             );
             $income = 0;
             $isFirst = true;
-            
+
             //calculation by each non-zero time interval and summing
             foreach ($nonZeroIntervals as $interval) {
                 $income += $entityHelper->getUnitIncomeByNonZeroTimestamps(
@@ -521,8 +527,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         } else {
             $income = null;
         }
-
-        $jSummary->saveItem($imei->id, $start, $end, ['income' => $income]);
+        $jSummary->saveItem($imei->id, $start, $end, ['income' => $income], false);
 
         return $income;
     }
@@ -533,60 +538,78 @@ class BalanceHolderSummarySearch extends BalanceHolder
      * @param int year
      * @param int $month
      * @return decimal
-     */ 
+     */
     public function getIncomeForLastYear($year, $month)
     {
-        $year = $this->parseFloat($year, 2);
         --$year;
         $numberOfDays = $this->getDaysByMonths($year)[$month];
         $timestampStart = strtotime($year.'-'.$month.'-01 00:00:00');
         $timestampEnd = strtotime($year.'-'.$month.'-'.$numberOfDays.' 23:59:59');
-        $imeis = $this->getAllImeisQueryByTimestamps($timestampStart, $timestampEnd);
-        $income = 0;
-
-        foreach ($imeis->all() as $imei) {
-            $income += $this->parseFloat($this->getIncomeByImeiAndTimestamps($timestampStart, $timestampEnd + 1, $imei), 2);
+        $jSummary = new Jsummary();
+        $totalIncome = $jSummary->getTotalIncomeByTimestamps($timestampStart, $timestampEnd);
+        if (empty($totalIncome)) {
+            $totalIncome = $this->getTotalIncome($year, $month);
         }
 
-        return $income;
+        return $totalIncome;
     }
 
     /**
-     * Gets the number of idle hours by imei and timestamps
+     * Gets total income by the year and month
      *
-     * @param timestamp $start
-     * @param timestamp $end
-     * @param Imei $imei
+     * @param int year
+     * @param int $month
      * @return decimal
-     */ 
-    public function getIdleHoursByImeiAndTimestamps($start, $end, $imei)
+     */
+    public function getTotalIncome($year, $month)
     {
-        $stepInterval = self::IDLE_TIME_HOURS * 3600;
-        $idleHours = 0.00;
-        $endTimestamp = $start + $stepInterval;
-        $selectString = 'created_at, imei_id';
-        for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
-            $query = $this->getBaseQueryByImeiAndTimestamps($timestamp, $endTimestamp, $imei, $selectString);
-            if ($query->count() > 0) {
-                $item = $query->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
-                $timestamp = $item->created_at - $stepInterval + 1;
-                continue;
-            } else {
-                $query = $this->getBaseQueryByImeiAndTimestamps($endTimestamp, $end, $imei, $selectString);
-                if ($query->count() == 0) {
-                    $idleHours += $this->parseFloat(((float)$end - $timestamp) / 3600, 2);
-                    break;
-                } else {
-                    $item = $query->orderBy(['created_at' => SORT_ASC])->limit(1)->one();
-                    $timeDiff = $item->created_at - $endTimestamp;
-                    $idleHours += self::IDLE_TIME_HOURS + $this->parseFloat((float)$timeDiff / 3600, 2);
-                    $timestamp = $item->created_at - $stepInterval + 1;
-                    continue;
+        $numberOfDays = $this->getDaysByMonths($year)[$month];
+        $timestampStart = strtotime($year.'-'.$month.'-01 00:00:00');
+        $timestampEnd = strtotime($year.'-'.$month.'-'.$numberOfDays.' 23:59:59');
+        $imeis = $this->getAllImeisQueryByTimestamps($timestampStart, $timestampEnd);
+        $totalIncome = 0;
+        foreach ($imeis->all() as $imei) {
+            if(!empty($imei->address_id)) {
+                $address = AddressBalanceHolder::findOne($imei->address_id);
+                if ($address && $address->status == $imei->status) {
+                    $incomes = $this->getIncomesByYearMonth($year, $month, $address);
+                    $imeiIncome = 0;
+                    foreach ($incomes as $income) {
+                        $imeiIncome += (float)$income['income'];
+                    }
+                    $imeiIncome = $this->parseFloat($imeiIncome, 2);
+                    $totalIncome = (float)$totalIncome + $imeiIncome;
                 }
             }
         }
 
-        return $idleHours;
+        return $totalIncome;
+    }
+
+    /**
+     * Gets income for the last month
+     *
+     * @return decimal
+     */ 
+    public function getIncomeForLastMonth($year, $month)
+    {
+        $timestamp = strtotime($year.'-'.$month.'-01 00:00:00');
+        $month = $this->getLastMonth($timestamp);
+
+        if ($month == '12') {
+            --$year;
+        }
+
+        $numberOfDays = $this->getDaysByMonths($year)[$month];
+        $timestampStart = strtotime($year.'-'.$month.'-01 00:00:00');
+        $timestampEnd = strtotime($year.'-'.$month.'-'.$numberOfDays.' 23:59:59');
+        $jSummary = new Jsummary();
+        $totalIncome = $jSummary->getTotalIncomeByTimestamps($timestampStart, $timestampEnd);
+        if (empty($totalIncome)) {
+            $totalIncome = $this->getTotalIncome($year, $month);
+        }
+
+        return $totalIncome;
     }
 
     /**
@@ -597,6 +620,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
     public function getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei)
     {
         $jSummary = new Jsummary();
+        $entityHelper = new EntityHelper();
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
 
         if (
@@ -614,7 +638,16 @@ class BalanceHolderSummarySearch extends BalanceHolder
             $mashinesDeleted = $this->getAllDeletedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
             $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-            $idleHours = $this->getIdleHoursByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
+            $idleHours = $entityHelper->getUnitIdleHoursByTimestamps(
+                $timestamp,
+                $timestampEnd,
+                new ImeiData(),
+                $imei,
+                'imei_id',
+                'created_at, imei_id',
+                self::IDLE_TIME_HOURS
+            );
+            $idleHours = $this->parseFloat($idleHours, 2);
             $needToSave = true;
         }
 
@@ -627,7 +660,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         ];
 
         if ($needToSave) {
-            $jSummary->saveItem($imei->id, $timestamp, $timestampEnd, $mashineStatistics);
+            $jSummary->saveItem($imei->id, $timestamp, $timestampEnd, $mashineStatistics, false);
         }
 
         return $mashineStatistics;
@@ -670,10 +703,25 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $daysArray[$k] = $k;
             }
             $emptyDays = array_diff($daysArray, array_keys($incomesFromHistory));
-            $needToBreak = false;
+
             foreach ($emptyDays as $day)
             {
-                $timestamp = $timestamps['start'] + ($day - 1) *$intervalStep; 
+                $timestamp = $timestamps['start'] + ($day - 1) *$intervalStep;
+
+                // make average income for the 1st number of the next month until the first actual results
+                if (
+                    (($timestamp == $nextMonthTimestamp) || ($timestamp == $todayTimestamp && $day == 1))
+                )
+                {
+                    $timestampEnd = $timestamp + $intervalStep;
+                    $income = $this->getIncomeByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
+                    if (is_null($income)) {
+                        $income = $this->getAverageIncomeByLastMonth($year, $month, $timestamp, $todayTimestamp, $day, $address);
+                    }
+                    $mashineStatistics = $this->getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
+                    $incomes[$day] = array_merge(['income' => $income], $mashineStatistics);
+                    break;
+                }
 
                 if ($todayTimestamp < $timestamp) {
                     break;
@@ -691,22 +739,9 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
                 $income = $this->getIncomeByImeiAndTimestamps($timestamp, $timestamp + $intervalStep, $imei);
 
-                if (
-                    is_null($income) &&
-                    (($timestamp == $nextMonthTimestamp) || ($timestamp == $todayTimestamp && $day == 1))
-                )
-                {
-                    $income = $this->getAverageIncomeByLastMonth($address);
-                    $needToBreak = true;
-                }
-
                 $timestampEnd = $timestamp + $intervalStep;
                 $mashineStatistics = $this->getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
                 $incomes[$day] = array_merge(['income' => $income], $mashineStatistics);
-
-                if ($needToBreak) {
-                    break;
-                }
             }
 
             $incomes = $incomes + $incomesFromHistory;
@@ -718,39 +753,30 @@ class BalanceHolderSummarySearch extends BalanceHolder
     /**
      * Gets the average income for the last month
      *
+     * @param int $year
+     * @param int $month
+     * @param timestamp $timestamp
+     * @param timestamp $todayTimestamp
+     * @param int $day
      * @param AddressBalanceHolder $address
-     * @return array
+     * @return decimal
      */ 
-    public function getAverageIncomeByLastMonth($address)
+    public function getAverageIncomeByLastMonth($year, $month, $timestamp, $todayTimestamp, $day, $address)
     {
-        $year = $this->getYearLastMonth();
-        $month = $this->getLastMonth();
+        // switch to previous month if necessary
+        if ($timestamp == $todayTimestamp && $day == 1) {
+            $year = $this->getYearLastMonth();
+            $timestamp = time() + Jlog::TYPE_TIME_OFFSET;
+            $month = $this->getLastMonth($timestamp);
+        } else {
+            $timestamp = time() + Jlog::TYPE_TIME_OFFSET;
+            $year = date('Y', $timestamp);
+            $month = date('m', $timestamp);
+        }
+
         $incomes = $this->getIncomesByYearMonth($year, $month, $address);
-        $totalIncome = 0;
-        $totalDays = 0;
-        $income = 0;
-        $all = 0;
-        foreach ($incomes as $day => $income) {
 
-            if (!is_null($income['income'])) {
-                $totalIncome += $income['income'];
-                ++$totalDays;
-            }
-
-            $all = $income['all'];
-        }
-
-        if ($totalDays != 0) {
-            $income = $totalIncome / $totalDays;
-            $income = $this->parseFloat($income, 2);
-            
-        }
-
-        if (is_array($income)) {
-            $income = $income['income'];
-        }
-
-        return $income;
+        return $this->getAverageIncome($incomes);
     }
 
     /**
@@ -763,14 +789,18 @@ class BalanceHolderSummarySearch extends BalanceHolder
     {
         if (!empty($income)) {
 
-            if (!isset($income['income']) || is_null($income['income'])) {
+            while (is_array($income['income'])) {
+                $income = $income['income'];
+            }
+
+            if (!isset($income['income']) || (empty($income['income']) && $income['income'] != '0')) {
                 $class = 'not-set-income';
             }
-                        
+
             if (!empty($income['created'])) {
                 $class .= ' green-color';
             }
-                        
+        
             if (!empty($income['deleted'])) {
                 $class .= ' red-color';
             }
@@ -795,6 +825,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
             if (!empty($income['idleHours'])) {
                 $class .= ' idle';
             }
+        } else {
+            $class = 'not-set-income';
         }
 
         return $class;
@@ -856,5 +888,48 @@ class BalanceHolderSummarySearch extends BalanceHolder
         }
 
         return $number;
+    }
+
+    /**
+     * Gets display variants: general or detailed summary
+     *
+     * @return decimal
+     */ 
+    public function getTypesOfDisplay()
+    {
+
+        return [
+            self::TYPE_GENERAL => Yii::t('frontend', 'General'),
+            self::TYPE_DETAILED => Yii::t('frontend', 'Detailed')
+        ];
+    }
+
+    /**
+     * Gets day average income by the month incomes
+     *
+     * @param array $incomes
+     * @return decimal
+     */ 
+    public function getAverageIncome($incomes)
+    {
+        $totalIncome = 0;
+        $totalDays = 0;
+        foreach ($incomes as $day => $income) {
+            if (!is_null($income['income']) && $income['income'] != '') {
+                $totalIncome += $income['income'];
+                ++$totalDays;
+            }
+        }
+
+        if ($totalDays != 0) {
+            $income = $totalIncome / $totalDays;
+            $income = $this->parseFloat($income, 1);
+        }
+
+        if (is_array($income)) {
+            $income = $income['income'];
+        }
+
+        return $income;
     }
 }
