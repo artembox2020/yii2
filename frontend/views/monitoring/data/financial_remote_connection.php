@@ -58,6 +58,10 @@ use frontend\services\globals\EntityHelper;
                     ],
                     $searchModel->attributeLabels()['date_sum_pre_last_encashment']
                 ),
+                'value' => function($model) use ($searchModel)
+                {
+                    return $searchModel->getScalarDateAndSumPreLastEncashmentByImeiId($model->imei_id);
+                }
             ],
             [
                 'attribute' => 'date_sum_last_encashment',
@@ -69,6 +73,10 @@ use frontend\services\globals\EntityHelper;
                     ],
                     $searchModel->attributeLabels()['date_sum_last_encashment']
                 ),
+                'value' => function($model) use ($searchModel)
+                {
+                    return $searchModel->getScalarDateAndSumLastEncashmentByImeiId($model->imei_id);
+                }
             ],
             [
                 'attribute' => 'in_banknotes',
