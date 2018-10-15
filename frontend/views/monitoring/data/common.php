@@ -47,7 +47,15 @@ use yii\widgets\Pjax;
                 <?= Yii::t('frontend', 'Address Name') ?>:
                 <?= $data->imeiRelation->fakeAddress->name ?>
             </div>
-            <span><?= $data->imeiRelation->fakeAddress->address ?></span>
+            <span>
+            <?= 
+                $data->imeiRelation->fakeAddress->address.
+                (
+                    !empty(($floor = $data->imeiRelation->fakeAddress->floor)) ?
+                    '<br>('.Yii::t('frontend', 'floor').':'.$floor.')' : ''
+                )
+            ?>
+            </span>
             <br/><br/><!--
             <div class="row common-container-block">
                 <div class= "common-header">

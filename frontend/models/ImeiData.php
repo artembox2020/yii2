@@ -35,9 +35,18 @@ class ImeiData extends \yii\db\ActiveRecord
     public $software_versions;
     public $actions;
     public $date_last_encashment;
+    public $date_sum_last_encashment;
+    public $date_sum_pre_last_encashment;
     public $counter_last_encashment;
     public $counter_zeroing;
     public $technical_injection;
+
+    const TYPE_ACTION_STATE_REQUEST = 1;
+    const TYPE_ACTION_UPDATE_TERMINAL_SOFTWARE = 2;
+    const TYPE_ACTION_CPU_RELOAD = 3;
+    const TYPE_ACTION_ZIGBEE_RELOAD = 4;
+    const TYPE_ACTION_BILL_ACCEPTANCE_RELOAD = 5;
+    const TYPE_ACTION_TIME_SET = 6;
 
     /**
      * @return array
@@ -105,6 +114,8 @@ class ImeiData extends \yii\db\ActiveRecord
             'software_versions' => Yii::t('frontend', 'Software Versions'),
             'actions' => Yii::t('frontend', 'Actions'),
             'date_last_encashment' => Yii::t('frontend', 'Date Last Encashment'),
+            'date_sum_last_encashment' => Yii::t('frontend', 'Date And Sum Last Encashment'),
+            'date_sum_pre_last_encashment' => Yii::t('frontend', 'Date And Sum Pre Last Encashment'),
             'counter_last_encashment' => Yii::t('frontend', 'Counter Last Encashment'),
             'counter_zeroing' => Yii::t('frontend', 'Counter Zeroing'),
             'technical_injection' => Yii::t('frontend', 'Technical Injection')
@@ -180,6 +191,22 @@ class ImeiData extends \yii\db\ActiveRecord
     public function getActions()
     {
 
-        return Yii::$app->view->render('/monitoring/data/actions', ['model' => $this]);
+        return Yii::$app->view->render('/monitoring/data/actions', ['model' => $this, 'actions' => $this->actionsList()]);
+    }
+
+    /**
+     * Gets actions list
+     */
+    public function actionsList()
+    {
+
+        return [
+            self::TYPE_ACTION_STATE_REQUEST => Yii::t('frontend', 'Action State Request'),
+            self::TYPE_ACTION_UPDATE_TERMINAL_SOFTWARE => Yii::t('frontend', 'Action Update Terminal Software'), 
+            self::TYPE_ACTION_CPU_RELOAD => Yii::t('frontend', 'Action Cpu Reload'),
+            self::TYPE_ACTION_ZIGBEE_RELOAD => Yii::t('frontend', 'Action ZigBee Reload'),
+            self::TYPE_ACTION_BILL_ACCEPTANCE_RELOAD => Yii::t('frontend', 'Action Bill Acceptance Reload'),
+            self::TYPE_ACTION_TIME_SET => Yii::t('frontend', 'Action Time Set')
+        ];
     }
 }
