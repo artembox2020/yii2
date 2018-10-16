@@ -27,10 +27,18 @@ use frontend\services\globals\EntityHelper;
                     ],
                     $searchModel->attributeLabels()['fireproof_residue']
                 ),
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
 
-                    return \Yii::$app->formatter->asDecimal($model->fireproof_residue, 0);
+                    return (
+                        \Yii::$app->formatter->asDecimal($model->fireproof_residue, 0).
+                        EntityHelper::makePopupWindow(
+                            [],
+                            $searchModel->attributeLabels()['fireproof_residue'],
+                            'top: -26px',
+                            'height: 8px'
+                        )
+                    );
                 }
             ],
             [
@@ -42,10 +50,18 @@ use frontend\services\globals\EntityHelper;
                     ],
                     $searchModel->attributeLabels()['money_in_banknotes']
                 ),
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
 
-                    return \Yii::$app->formatter->asDecimal($model->money_in_banknotes, 0);
+                    return (
+                        \Yii::$app->formatter->asDecimal($model->money_in_banknotes, 0).
+                        EntityHelper::makePopupWindow(
+                            [],
+                            $searchModel->attributeLabels()['money_in_banknotes'],
+                            'top: -26px',
+                            'height: 8px'
+                        )
+                    );    
                 }
             ],
             [
@@ -60,7 +76,15 @@ use frontend\services\globals\EntityHelper;
                 ),
                 'value' => function($model) use ($searchModel)
                 {
-                    return $searchModel->getScalarDateAndSumPreLastEncashmentByImeiId($model->imei_id);
+                    return (
+                        $searchModel->getScalarDateAndSumPreLastEncashmentByImeiId($model->imei_id).
+                        EntityHelper::makePopupWindow(
+                            [],
+                            $searchModel->attributeLabels()['date_sum_pre_last_encashment'],
+                            'top: -26px',
+                            'height: 8px'
+                        )
+                    );    
                 }
             ],
             [
@@ -75,7 +99,15 @@ use frontend\services\globals\EntityHelper;
                 ),
                 'value' => function($model) use ($searchModel)
                 {
-                    return $searchModel->getScalarDateAndSumLastEncashmentByImeiId($model->imei_id);
+                    return (
+                        $searchModel->getScalarDateAndSumLastEncashmentByImeiId($model->imei_id).
+                        EntityHelper::makePopupWindow(
+                            [],
+                            $searchModel->attributeLabels()['date_sum_last_encashment'],
+                            'top: -26px',
+                            'height: 8px'
+                        )
+                    );
                 }
             ],
             [
@@ -87,6 +119,18 @@ use frontend\services\globals\EntityHelper;
                     ],
                     $searchModel->attributeLabels()['in_banknotes']
                 ),
+                'value' => function($model) use ($searchModel)
+                {
+                    return (
+                        $model->in_banknotes.
+                        EntityHelper::makePopupWindow(
+                            [],
+                            $searchModel->attributeLabels()['in_banknotes'],
+                            'top: -26px',
+                            'height: 8px'
+                        )
+                    );
+                }
             ],
             [
                 'label' => Yii::t('frontend', 'Remote Connnection'),
