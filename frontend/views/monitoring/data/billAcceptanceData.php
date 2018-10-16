@@ -10,6 +10,14 @@
         <tr>
             <td>
                 <b><?= (float)$fullness ?>%</b>
+                <?= 
+                    \frontend\services\globals\EntityHelper::makePopupWindow(
+                        [],
+                        $model->attributeLabels()['bill_acceptance_fullness'],
+                        'top: -5px',
+                        'height: 5px'
+                    )
+                ?>
                 <br>
                 <br>
             </td>
