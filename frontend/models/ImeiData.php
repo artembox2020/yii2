@@ -118,7 +118,7 @@ class ImeiData extends \yii\db\ActiveRecord
             'date_sum_pre_last_encashment' => Yii::t('frontend', 'Date And Sum Pre Last Encashment'),
             'counter_last_encashment' => Yii::t('frontend', 'Counter Last Encashment'),
             'counter_zeroing' => Yii::t('frontend', 'Counter Zeroing'),
-            'technical_injection' => Yii::t('frontend', 'Technical Injection')
+            'technical_injection' => Yii::t('frontend', 'Technical Injection'),
         ];
     }
 

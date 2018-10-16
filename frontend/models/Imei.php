@@ -534,8 +534,8 @@ class Imei extends \yii\db\ActiveRecord
     public function getLastPing($dateFormat = self::DATE_TIME_FORMAT)
     {
         if ($this->status != self::STATUS_ACTIVE) {
-            
-            return self::checkStatus($this->status);
+
+            return "<span class='ping-not-actual'>".self::checkStatus($this->status)."</span>";
         }
         $actualityClass = 'ping-not-actual';
         $getInitResult = $this->getInit();
