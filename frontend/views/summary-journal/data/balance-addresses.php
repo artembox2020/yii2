@@ -20,6 +20,15 @@ use frontend\models\BalanceHolderSummarySearch;
                 <td class="cell-device">
                     <?= $balanceHolder->name ?>
                 </td>
+                <td class="is_deleted hidden">
+                    <?= $balanceHolder->is_deleted ?>
+                </td>
+                <td class="deleted_at hidden">
+                    <?= $balanceHolder->deleted_at ?>
+                </td>
+                <td class="date-inserted hidden">
+                    <?= $balanceHolder->created_at ?>
+                </td>
                 <td class="address-container balance-address-container">
                     <table
                         data-count = "<?= $balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->count() ?>"

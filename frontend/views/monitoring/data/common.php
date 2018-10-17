@@ -36,11 +36,24 @@ use yii\widgets\Pjax;
             <?= $data->imeiRelation->imei ?>
         </div>
     </div>
+    <?php if ($data->imeiRelation->balanceHolder): ?>
     <a target = "_blank" href = "<?= '/net-manager/view-balance-holder?id='.$data->imeiRelation->balanceHolder->id ?>">
         <div class="col-md-5 col-sm-5 cell">
             <span><?= $data->imeiRelation->balanceHolder->name ?></span>
         </div>
     </a>
+    <?php else: ?>
+    <a target = "_blank">
+        <div class="col-md-5 col-sm-5 cell">
+            <span>
+                <?=
+                    (($fakeBalanceHolder = $data->imeiRelation->getFakeBalanceHolder()) ? $fakeBalanceHolder->name : '').
+                    '<br>['.Yii::t('frontend', 'Deleted').']'
+                ?>
+            </span>
+        </div>
+    </a>
+    <?php endif; ?>
     <a target = "_blank" href = "<?= '/address-balance-holder/view?id='. $data->imeiRelation->fakeAddress->id ?>">
         <div class="col-md-5 col-sm-5 cell popup-block">
             <div class = "label">
