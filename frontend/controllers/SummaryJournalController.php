@@ -44,11 +44,8 @@ class SummaryJournalController extends \yii\web\Controller
 
             return $this->redirect($redirectUrl);
         }
-        
-        $searchModel = new BalanceHolderSummarySearch();
 
-        $dataProvider = $searchModel->baseSearch(Yii::$app->request->queryParams);
-        $oneDataProvider = $searchModel->limitOneBaseSearch(Yii::$app->request->queryParams);
+        $searchModel = new BalanceHolderSummarySearch();
         $entityHelper = new EntityHelper();
         $params = $entityHelper->makeParamsFromRequest(
             [
@@ -60,6 +57,10 @@ class SummaryJournalController extends \yii\web\Controller
             ]
         );
         $params = $searchModel->setParams($params);
+
+        $dataProvider = $searchModel->baseSearch($params);
+        $oneDataProvider = $searchModel->limitOneBaseSearch($params);
+
         $eventSelectors = [
             'change' => '.summary-journal-form select'
         ];
@@ -293,9 +294,11 @@ class SummaryJournalController extends \yii\web\Controller
         return $this->renderPartial('/summary-journal/data/month-days', [
             'numberOfDays' => $days[$params['month']],
             'monthName' => $months[$params['month']],
+            'month' => $params['month'],
             'year' => $years[$params['year']],
             'timestampStart' => $monthTimestamps['start'],
-            'timestampEnd' => $monthTimestamps['end']
+            'timestampEnd' => $monthTimestamps['end'],
+            'searchModel' => $searchModel
         ]);
     }
 

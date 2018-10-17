@@ -12,7 +12,10 @@
         <tbody>
             <tr data-key="1">
             <?php for ($i = 1; $i <= $numberOfDays; ++$i): ?>
-                <td class="cell-device"><?= $i ?></td>
+                <?php
+                    $class = $searchModel->isWeekend($year, $month, $i) ? 'rest' : '';
+                ?>
+                <td class="cell-device <?= $class ?>"><?= $i ?></td>
             <?php endfor; ?>
             </tr>
         </tbody>

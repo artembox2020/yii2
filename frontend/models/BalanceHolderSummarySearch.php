@@ -54,7 +54,20 @@ class BalanceHolderSummarySearch extends BalanceHolder
     public function baseSearch($params)
     {
         $entity = new Entity();
-        $query = BalanceHolder::find()->where(['balance_holder.is_deleted' => false, 'balance_holder.company_id' => $entity->getCompanyId()]);
+        $query = BalanceHolder::find()->where(['balance_holder.company_id' => $entity->getCompanyId()]);
+        $numberDays = $this->getDaysByMonths($params['year'])[$params['month']];
+        $timestampStart = strtotime($params['year'].'-'.$params['month'].'-01 00:00:00');
+        $timestampEnd = strtotime($params['year'].'-'.$params['month'].'-'.$numberDays.' 23:59:59');
+        $query = $query->andWhere(['<=', 'created_at', $timestampEnd]);
+        $query = $query->andWhere(new \yii\db\conditions\OrCondition([
+                            new \yii\db\conditions\AndCondition([
+                              ['=', 'balance_holder.is_deleted', false],
+                            ]),
+                            new \yii\db\conditions\AndCondition([
+                              ['=', 'balance_holder.is_deleted', true],
+                              ['>', 'balance_holder.deleted_at', $timestampStart]
+                            ])
+                        ]));
         //$query = $query->innerJoin('address_balance_holder', 'address_balance_holder.balance_holder_id = balance_holder.id');
         
         
@@ -931,5 +944,20 @@ class BalanceHolderSummarySearch extends BalanceHolder
         }
 
         return $income;
+    }
+
+    /**
+     * Check whether day is a weekend
+     *
+     * @param int $year
+     * @param int $month
+     * @param int $day
+     * @return bool
+     */ 
+    public function isWeekend($year, $month, $day)
+    {
+        $timestamp = strtotime($year.'-'.$month.'-'.$day);
+
+        return date('N', $timestamp) >= 6;
     }
 }

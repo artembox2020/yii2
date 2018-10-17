@@ -118,7 +118,7 @@ return [
     'Date Inserted' => 'Дата встановлення',
     'Date connection monitoring' => 'Дата підключення до моніторінгу',
     'Delete' => 'Удалить',
-    'Deleted' => 'Удаленные',
+    'Deleted' => 'Удалено',
     'Delete Balance Holder' => 'Удалить балансодержатель',
     'Delete contact person' => 'Удалить контактное лицо',
     'Detailed' => 'Детально',

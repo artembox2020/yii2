@@ -493,6 +493,22 @@
             tableContainer.appendChild(table);
         }
 
+        // makes cell red | green, depending on timestamps
+        function makeCellColor(booleanIsDeleted, timestampInserted, timestampDeletedAt, cell)
+        {
+            var tableMonth = summaryJournal.querySelector('.table-month');
+            var timestampStart = tableMonth.dataset.stampStart;
+            var timestampEnd = tableMonth.dataset.stampEnd;
+            
+            if (timestampInserted >= timestampStart && timestampInserted <= timestampEnd) {
+                cell.classList.add('green-color');
+            }
+
+            if (booleanIsDeleted && timestampDeletedAt > timestampStart && timestampDeletedAt <= timestampEnd) {
+                cell.classList.add('red-color');
+            }
+        }
+
         // updates cell color marking for addresses (green and red mark added or deleted ones)
         function updateCellColorMarking()
         {
@@ -502,21 +518,20 @@
 
             var tableAddressContainerRows = summaryJournal.querySelectorAll('.table-address-container > tbody > tr');
             for (var i = 0; i < tableAddressContainerRows.length; ++i) {
+                // update address status (added, deleted)
                 var row = tableAddressContainerRows[i];
                 var timestampInserted = row.querySelector('td.date-inserted').innerHTML;
                 var booleanIsDeleted = parseInt(row.querySelector('td.is_deleted').innerHTML);
                 var timestampDeletedAt = parseInt(row.querySelector('td.deleted_at').innerHTML);
                 timestampInserted = preciseNumber(timestampInserted);
-                var address = row.querySelector('td.address');
+                makeCellColor(booleanIsDeleted, timestampInserted, timestampDeletedAt, row.querySelector('td.address'));
 
-                if (timestampInserted >= timestampStart && timestampInserted <= timestampEnd) {
-                    address.classList.add('green-color');
-                }
-
-                if (booleanIsDeleted && timestampDeletedAt > timestampStart && timestampDeletedAt <= timestampEnd) {
-                    address.classList.add('red-color');
-                }
-
+                // update balance holder status (added,  deleted)
+                var balanceHolderTr = tableAddressContainerRows[i].closest('.balance-address-container').closest('tr');
+                var booleanIsDeleted = parseInt(balanceHolderTr.querySelector('td.is_deleted').innerHTML);
+                var timestampDeletedAt = parseInt(balanceHolderTr.querySelector('td.deleted_at').innerHTML);
+                var timestampInserted = preciseNumber(balanceHolderTr.querySelector('td.date-inserted').innerHTML);
+                makeCellColor(booleanIsDeleted, timestampInserted, timestampDeletedAt, balanceHolderTr.querySelector('.cell-device'));
             }
         }
 

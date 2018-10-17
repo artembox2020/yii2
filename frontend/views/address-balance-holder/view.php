@@ -41,28 +41,39 @@ $dateFormat = "d.m.Y";
             ],
             
             'number_of_citizens',
-            
+
             [
                 'label' => Yii::t('frontend','Balance Holder'),
-                'value' => $model->balanceHolder->name
+                'format' => 'raw',
+                'value' => function($model)
+                {
+
+                    return (
+                        ($balanceHolder = $model->balanceHolder) ? $balanceHolder->name :
+                        (
+                            (($fakeBalanceHolder = $model->getFakeBalanceHolder()) ? $fakeBalanceHolder->name : '').
+                            '<br>['.Yii::t('frontend', 'Deleted').']'
+                        )
+                    );    
+                }
             ],
-            
+
             [    
                 'label' => Yii::t('frontend','Date Inserted'),
                 'value' => date($dateFormat, $model->date_inserted)
             ],
-            
+
             [
                 'label' => Yii::t('frontend','Date Monitoring'),
                 'value' => date($dateFormat, $model->date_connection_monitoring)
             ],
-            
+
             'number_of_floors',
-            
+
             'countWashMachine',
-            
+
             'countGelDispenser',
-            
+
         ],
     ])
 ?>

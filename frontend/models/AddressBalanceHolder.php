@@ -112,6 +112,14 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return BalanceHolder
+     */
+    public function getFakeBalanceHolder()
+    {
+        return BalanceHolder::find()->where(['id' => $this->balance_holder_id])->one();
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getCompany()

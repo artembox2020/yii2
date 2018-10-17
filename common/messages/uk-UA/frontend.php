@@ -140,7 +140,7 @@ return [
     'Delete' => 'Видалити',
     'Delete Balance Holder' => 'Видалити балансотримач',
     'Delete contact person' => 'Видалити контактну особу',
-    'Deleted' => 'Видалені',
+    'Deleted' => 'Видалено',
     'DevManager' => 'Менеджер автоматів',
     'Devices Logs' => 'Список автоматів',
     'Dashboard' => 'Події',
