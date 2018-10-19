@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\dto\CentralBoardDto;
 use frontend\services\custom\Debugger;
 use yii\web\Controller;
 
@@ -10,12 +11,12 @@ class LcController extends Controller
     public function actionIndex($p)
     {
         $result = $this->iParse($p);
-        $centralBoardDto =
-        Debugger::dd($result);
+        $centralBoardDto = new CentralBoardDto($result);
+        Debugger::dd($centralBoardDto);
     }
 
     /**
-     * Parsers the packet type data of TYPE PACKET LOGS
+     * Parsers the packet type data of TYPE PACKET LOG Central Board
      *
      * @param $p
      * @return array
