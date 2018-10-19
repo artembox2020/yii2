@@ -2,17 +2,47 @@
 
 namespace frontend\controllers;
 
+use frontend\models\CbLog;
 use frontend\models\dto\CentralBoardDto;
+use frontend\models\Imei;
 use frontend\services\custom\Debugger;
 use yii\web\Controller;
 
 class LcController extends Controller
 {
+    const ONE_CONST = 1;
+
     public function actionIndex($p)
     {
         $result = $this->iParse($p);
         $centralBoardDto = new CentralBoardDto($result);
-        Debugger::dd($centralBoardDto);
+
+        if (Imei::findOne(['imei' => $centralBoardDto->imei])) {
+            $imei = Imei::findOne(['imei' => $centralBoardDto->imei]);
+
+            if (Imei::getStatus($imei) == self::ONE_CONST) {
+                $cbl = new CbLog();
+                $cbl->date = $centralBoardDto->date;
+                $cbl->imei = $centralBoardDto->imei;
+                $cbl->unix_time_offset = $centralBoardDto->unix_time_offset;
+                $cbl->status = $centralBoardDto->status;
+                $cbl->fireproof_counter_hrn = $centralBoardDto->fireproof_counter_hrn;
+                $cbl->fireproof_counter_card = $centralBoardDto->fireproof_counter_card;
+                $cbl->collection_counter = $centralBoardDto->collection_counter;
+                $cbl->notes_billiards_pcs = $centralBoardDto->notes_billiards_pcs;
+                $cbl->rate = $centralBoardDto->rate;
+                $cbl->refill_amount = $centralBoardDto->refill_amount;
+                $cbl->is_deleted = false;
+                $cbl->save();
+                echo 'cbl data save!';exit;
+                Debugger::d($centralBoardDto);
+                Debugger::dd($cbl);
+            } else {
+                echo 'Imei not Active';exit;
+            }
+        } else {
+            echo 'Imei not exists';exit;
+        }
     }
 
     /**
