@@ -228,4 +228,46 @@ class BalanceHolder extends \yii\db\ActiveRecord
 
         return $query;
     }
+
+    /**
+     * Gets balance holder info (addresses, wm-mashines)
+     * 
+     * @param int $cellHeight
+     * @return array
+     */
+    public function getBalanceHolderData($cellHeight)
+    {
+        $balanceHoldersData = [];
+        foreach ($this->addressBalanceHolders as $address) {
+
+            if (!$address->imei) {
+                $balanceHoldersData[] = [
+                    'address' => $address,
+                    'mashines' => [],
+                    'mashinesCount' => 0,
+                    'height' => $cellHeight.'px'
+                ];
+                continue;
+            }
+
+            $numberMashines = $address->imei->getMachineStatus()->orderBy('number_device DESC')->addOrderBy('number_device')->count();
+            $height = $numberMashines * $cellHeight;
+
+            if ($height == 0) {
+                $height = $cellHeight.'px';
+            } else {
+                $height .= 'px';
+            }
+
+            $mashines = $address->imei->getMachineStatus()->orderBy('number_device DESC')->addOrderBy('number_device')->all();
+            $balanceHoldersData[] = [
+                'address' => $address,
+                'mashines' => $mashines,
+                'mashinesCount' => $numberMashines,
+                'height' => $height
+            ];
+        }
+
+        return $balanceHoldersData;
+    }
 }

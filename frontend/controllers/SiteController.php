@@ -15,6 +15,7 @@ use frontend\models\ImeiDataSummarySearch;
 use frontend\models\Zlog;
 use frontend\models\Com;
 use frontend\models\Org;
+use common\models\UserSearch;
 use vova07\fileapi\actions\UploadAction as FileAPIUpload;
 
 /**
@@ -22,6 +23,7 @@ use vova07\fileapi\actions\UploadAction as FileAPIUpload;
  */
 class SiteController extends Controller
 {
+    const CELL_HEIGHT = 39;
 
     public function behaviors()
     {
@@ -72,14 +74,18 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $user = User::findOne(Yii::$app->user->id);
+        $searchModel = new UserSearch();
+        $dataProvider = $searchModel->searchEmployees(Yii::$app->request->queryParams);
 
-            if (!empty($user->company)) {
-                $users = $user->company->users;
-                $model = $user->company;
-                $balanceHolders = $model->balanceHolders;
-                // $address = $balanceHolders->addressBalanceHolders;
-                // Debugger::dd($address);
-            } else {
+        if (!empty($user->company)) {
+            $users = $user->company->users;
+            $model = $user->company;
+            $balanceHolders = $model->balanceHolders;
+            $balanceHoldersData = [];
+            foreach ($balanceHolders as $balanceHolder ) {
+                $balanceHoldersData[$balanceHolder->id] = $balanceHolder->getBalanceHolderData(self::CELL_HEIGHT);
+            }
+        } else {
 
             return $this->redirect('account/sign-in/login');
         }
@@ -88,6 +94,9 @@ class SiteController extends Controller
             'model' => $model,
             'users' => $users,
             'balanceHolders' => $balanceHolders,
+            'balanceHoldersData' => $balanceHoldersData,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
         ]);
     }
 

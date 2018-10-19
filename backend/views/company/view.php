@@ -37,6 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Html::img(Yii::getAlias('@storageUrl/logos/'. $data['img'],['max-width' => '80px']));
                 },
             ],
+            'phone',
             'description:ntext',
             'website',
             [

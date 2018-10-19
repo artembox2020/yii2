@@ -26,6 +26,8 @@ use vova07\fileapi\Widget as FileApi;
             'cropResizeHeight' => 100,
         ]) ?>
 
+    <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'website')->textInput(['maxlength' => true]) ?>

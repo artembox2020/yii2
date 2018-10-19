@@ -37,6 +37,8 @@ foreach ($balanceHolders as $company) {
 
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'date_start_cooperation')->widget(FlatpickrWidget::className(), [
         'locale' => strtolower(substr(Yii::$app->language, 0, 2)),
         'groupBtnShow' => true,

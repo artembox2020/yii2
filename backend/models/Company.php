@@ -13,6 +13,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property string $name
  * @property string $img
  * @property string $description
+ * @property string $phone
  * @property string $website
  * @property string $sub_admin
  * @property integer $created_at
@@ -66,7 +67,7 @@ class Company extends \yii\db\ActiveRecord
     {
         return [
             [['description'], 'string'],
-            [['name', 'sub_admin'], 'string', 'max' => 100],
+            [['name', 'sub_admin', 'phone'], 'string', 'max' => 100],
             [['img', 'website'], 'string', 'max' => 255],
             ['website', 'url', 'defaultScheme' => 'http', 'validSchemes' => ['http', 'https']],
         ];

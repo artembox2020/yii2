@@ -214,7 +214,8 @@ div.required label:after {
 .company-summary-block font {
     font-weight: 500;
 }
-.monitoring .filters, .summary-journal .filters {
+.monitoring .filters, .summary-journal .filters,
+.employees-list .filters {
   display: none;
 }
 .monitoring .mashine-state-addons {
@@ -564,4 +565,23 @@ div.required label:after {
 }
 .summary-journal td.rest {
     background-color: red;
+}
+.main-page-model table {
+    margin: 0;
+    width: 100%;
+}
+.main-page-model table .device-status-row {
+    text-align: left;
+}
+.main-page-model table .device-statuses {
+    vertical-align: top!important;
+}
+.main-page-model > table > tbody > tr > td.cell-device {
+    padding: 0;
+}
+.main-page-model > table td.cell-device {
+    vertical-align: middle;
+    text-align: center;
+    margin: auto;
+    white-space: nowrap;
 }

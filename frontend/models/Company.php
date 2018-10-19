@@ -15,6 +15,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property string $name
  * @property string $img
  * @property string $description
+ * @property string $phone
  * @property string $website
  * @property string $sub_admin
  * @property bool $is_deleted
@@ -74,7 +75,7 @@ class Company extends ActiveRecord
     {
         return [
             [['description', 'address'], 'string'],
-            [['name', 'sub_admin'], 'string', 'max' => 100],
+            [['name', 'sub_admin', 'phone'], 'string', 'max' => 100],
             [['img', 'website'], 'string', 'max' => 255],
             ['website', 'url', 'defaultScheme' => 'http', 'validSchemes' => ['http', 'https']],
         ];
@@ -89,6 +90,7 @@ class Company extends ActiveRecord
             'id' => Yii::t('frontend', 'ID'),
             'name' => Yii::t('frontend', 'Name Company'),
             'img' => Yii::t('frontend', 'Img'),
+            'phone' => Yii::t('frontend', 'Phone'),
             'description' => Yii::t('frontend', 'Description'),
             'website' => Yii::t('frontend', 'Website'),
             'sub_admin' => Yii::t('frontend', 'Sub Admin'),

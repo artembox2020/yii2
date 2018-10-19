@@ -55,6 +55,7 @@ return [
     'September' => 'Вересень',
     'Server Rights' => 'Права на сервері',
     'Status' => 'Статус',
+    'Tel.' => 'тел.',
     'Type address' => 'введіть адресу',
     'Type imei' => 'введіть імей',
     'Worker Card' => 'Картка співробітника',
