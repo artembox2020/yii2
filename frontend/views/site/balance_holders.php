@@ -76,9 +76,18 @@
                                 <?= Yii::t('frontend', 'WM').' '.$mashine->number_device ?>
                                 <?= '(status:'.Yii::t('frontend', $mashine->getState()).')' ?>
                             </td>
-                        </tr>    
+                        </tr>
                     <?php
                             endforeach;
+                            if (count($balanceHolderData['mashines']) == 0):
+                    ?>
+                         <tr class="device-status-row">
+                            <td>
+                                ---
+                            </td>
+                        </tr>
+                    <?php
+                            endif;
                         endforeach;
                     ?>
                     </table>

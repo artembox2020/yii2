@@ -75,9 +75,9 @@ class SiteController extends Controller
     {
         $user = User::findOne(Yii::$app->user->id);
         $searchModel = new UserSearch();
-        $dataProvider = $searchModel->searchEmployees(Yii::$app->request->queryParams);
 
         if (!empty($user->company)) {
+            $dataProvider = $searchModel->searchEmployees(Yii::$app->request->queryParams);
             $users = $user->company->users;
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
