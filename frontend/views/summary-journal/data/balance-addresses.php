@@ -40,7 +40,8 @@ use frontend\models\BalanceHolderSummarySearch;
                         ?>
                             <tr>
                                 <td class="address">
-                                    <?= $address->address ?>
+                                    <?= $address->address ?>,
+                                    <?= $address->floor ? $address->floor : ' &nbsp;' ?>
                                 </td>
                                 <td class="mashine-count">
                                     <?= $searchModel->getAllMashinesQueryByYearMonth($year, $month, $address)->count() ?>

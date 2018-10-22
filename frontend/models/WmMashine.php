@@ -57,6 +57,8 @@ class WmMashine extends \yii\db\ActiveRecord
     const FIVE = 5;
 
     const DATE_TIME_FORMAT = 'H:i d.m.Y';
+
+    const PHP_DATE_TIME_FORMAT = 'php:H:i d.m.Y';
     
     const LEVEL_SIGNAL_MAX = 10000;
 
@@ -586,5 +588,24 @@ class WmMashine extends \yii\db\ActiveRecord
     {
         $diff = $date_2 - $date_1;
         return $diff;
+    }
+
+    /**
+     * Returns last ping date time, formatted
+     * 
+     * @return string
+     */
+    public function getLastPing()
+    {
+        $actualityClass = 'ping-not-actual';
+        $halfHourBeforeTimestamp = strtotime("-30 minutes") + Jlog::TYPE_TIME_OFFSET;
+
+        if ($this->ping >= $halfHourBeforeTimestamp) {
+            $actualityClass = 'ping-actual';
+        }
+
+        $formattedDate = Yii::$app->formatter->asDate($this->ping, self::PHP_DATE_TIME_FORMAT);
+
+        return "<span class='$actualityClass'>".$formattedDate."</span>";
     }
 }
