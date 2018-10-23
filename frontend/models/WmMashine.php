@@ -597,6 +597,31 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public function getLastPing()
     {
+        $actualityClass = $this->getActualityClass();
+        $formattedDate = Yii::$app->formatter->asDate($this->ping, self::PHP_DATE_TIME_FORMAT);
+
+        return "<span class='$actualityClass'>".$formattedDate."</span>";
+    }
+
+    /**
+     * Returns display value view
+     * 
+     * @return string
+     */
+    public function getOnDisplay()
+    {
+        $actualityClass = $this->getActualityClass();
+
+        return "<span class='$actualityClass'>".Yii::t('frontend', 'On Display:').' '.$this->display."</span>";
+    }
+
+    /**
+     * Returns whether ping is actual
+     * 
+     * @return string
+     */
+    public function getActualityClass()
+    {
         $actualityClass = 'ping-not-actual';
         $halfHourBeforeTimestamp = strtotime("-30 minutes") + Jlog::TYPE_TIME_OFFSET;
 
@@ -604,8 +629,6 @@ class WmMashine extends \yii\db\ActiveRecord
             $actualityClass = 'ping-actual';
         }
 
-        $formattedDate = Yii::$app->formatter->asDate($this->ping, self::PHP_DATE_TIME_FORMAT);
-
-        return "<span class='$actualityClass'>".$formattedDate."</span>";
+        return $actualityClass;
     }
 }

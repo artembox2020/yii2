@@ -10,6 +10,6 @@ use frontend\models\WmMashine;
 <?php if (!empty($mashine->ping)): ?>
     <div class="mashine-state mashine-state-addons">
         <?= $mashine->getLastPing() ?>
-        <?= Yii::t('frontend', 'On Display:').' '.$mashine->display ?>
+        <?= $mashine->getOnDisplay() ?>
     </div>
 <?php endif; ?>
