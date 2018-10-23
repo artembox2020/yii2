@@ -2,12 +2,12 @@
 
 /* @var $this yii\web\View */
 ?>
-<a href="/net-manager/index">[Компанія]</a>
-<a href="/net-manager/employees">[Співробітники]</a>
-<a href="/net-manager/balance-holders">[Балансотримачи]</a>
-<a href="/net-manager/addresses">[Адреси]</a>
+<a href="/net-manager/index">[<?= Yii::t('frontend', 'Company') ?>]</a>
+<a href="/net-manager/employees">[<?= Yii::t('frontend', 'Employees') ?>]</a>
+<a href="/net-manager/balance-holders">[<?= Yii::t('frontend', 'Balance Holders') ?>]</a>
+<a href="/net-manager/addresses">[<?= Yii::t('frontend', 'Addresses') ?>]</a>
 <a href="/net-manager/washpay">[WashPay]</a>
-<a href="/net-manager/osnovnizasoby">[Основні засоби]</a>
+<a href="/net-manager/osnovnizasoby">[<?= Yii::t('frontend', 'Fixed Assets') ?>]</a>
 <!--<a href="/net-manager/fixed-assets">[Відключені]</a>-->
 <?php
 $url = \yii\helpers\BaseUrl::current();

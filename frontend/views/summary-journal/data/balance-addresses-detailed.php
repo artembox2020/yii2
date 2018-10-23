@@ -41,7 +41,8 @@ use frontend\models\BalanceHolderSummarySearch;
                         ?>
                             <tr>
                                 <td class = "address">
-                                    <?= $address->address ?>
+                                    <?= $address->address ?>,
+                                    <?= $address->floor ? $address->floor : ' &nbsp;' ?>
                                 </td>
                                 <td class = "mashine-numbers-cell"
                                     data-mashines-number = "<?= $mashinesQuery->count() ?>"

@@ -25,7 +25,7 @@ use frontend\models\BalanceHolderSummarySearch;
                     data-idle-hours = "<?= $data[$j]['incomes'][$i]['idleHours'] ?>"
                     data-is-deleted = "<?= $data[$j]['incomes'][$i]['isDeleted'] ?>"
                     data-is-created = "<?= $data[$j]['incomes'][$i]['isCreated'] ?>"
-                    class = "timestamp <?= $data[$j][$i]['class'] ?>"
+                    class = " timestamp <?= $data[$j][$i]['class'] ?>"
                 >
                 <?php
                     echo isset($data[$j]['incomes'][$i]['income']) ? $data[$j]['incomes'][$i]['income'] : ' &nbsp;';

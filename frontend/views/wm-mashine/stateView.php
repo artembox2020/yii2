@@ -7,9 +7,9 @@ use frontend\models\WmMashine;
     <?= Yii::t('frontend', $mashine->getState()) ?>
 </div>
 
-<?php if(!empty($mashine->ping)): ?>
+<?php if (!empty($mashine->ping)): ?>
     <div class="mashine-state mashine-state-addons">
-        <?= date(WmMashine::DATE_TIME_FORMAT, $mashine->ping) ?>
+        <?= $mashine->getLastPing() ?>
         <?= Yii::t('frontend', 'On Display:').' '.$mashine->display ?>
     </div>
 <?php endif; ?>
