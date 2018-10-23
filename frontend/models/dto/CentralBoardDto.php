@@ -3,7 +3,8 @@
 namespace frontend\models\dto;
 
 /**
- * Imei initialization Dto
+ * Class CentralBoardDto
+ * @package frontend\models\dto
  */
 class CentralBoardDto
 {
@@ -19,7 +20,7 @@ class CentralBoardDto
     public $refill_amount;
 
     /**
-     * map string to ImeiInitDto
+     * map string to CentralBoardDto
      *
      * @param [type] $data
      */

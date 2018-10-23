@@ -8,10 +8,17 @@ use frontend\models\Imei;
 use frontend\services\custom\Debugger;
 use yii\web\Controller;
 
+/**
+ * Class LcController
+ * @package frontend\controllers
+ */
 class LcController extends Controller
 {
     const ONE_CONST = 1;
 
+    /**
+     * @param $p
+     */
     public function actionIndex($p)
     {
         $result = $this->iParse($p);
