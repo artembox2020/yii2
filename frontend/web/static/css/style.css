@@ -222,6 +222,15 @@ div.required label:after {
   color: #28A157;
   white-space: normal;
 }
+.monitoring .address-serial-number {
+    width: 100%;
+    background: transparent;
+    border-width: 1px;
+    text-align: center;
+}
+.monitoring .address-serial-number:hover {
+    border-width: 2px;
+}
 .monitoring table td {
     white-space: nowrap!important;
     text-align: center;
@@ -584,4 +593,8 @@ div.required label:after {
     text-align: center;
     margin: auto;
     white-space: nowrap;
+}
+.ui-widget-content {
+    position: relative;
+    z-index: 10000;
 }

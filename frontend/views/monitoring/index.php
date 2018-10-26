@@ -3,76 +3,98 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use frontend\models\ImeiDataSearch;
+use \yii\jui\AutoComplete;
+use yii\widgets\Pjax;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $searchModel  frontend\models\ImeiDataSearch*/
 /* @var $monitoringController frontend\controllers\MonitoringController */
+/* @var $addresses array */
+
 ?>
 <h1><?= Yii::t('frontend', 'Monitoring') ?></h1>
+
 <div class="monitoring">
-    <div class="form-group monitoring-shapter">
-        <label for="type_packet"><?= Yii::t('frontend', 'Monitoring Shapter') ?></label>
-        <?= Html::dropDownList(
-                'monitoring_shapter', 
-                'all',
-                $monitoringShapters,
+    <?=
+        Yii::$app->view->render('data/filter_form', [
+            'params' => $params,
+            'addresses' => $addresses,
+            'imeis' => $imeis,
+            'monitoringShapters' => $monitoringShapters,
+            'sortOrders' => $sortOrders
+        ]);
+    ?>
+    <br><br>
+
+    <?php
+        Pjax::begin(['id' => 'monitoring-pjax-grid-container']);
+    ?>
+
+    <div class="table-responsives monitoring-grid-view">
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => false,
+            'summary' => '',
+            'rowOptions' => [
+                'class' => 'rows'
+            ],
+            'columns' => [
                 [
-                    'class' => 'form-control'
-                ]
-            );
+                    'label' => $monitoringShapters['common'],
+                    'format' => 'raw',
+                    'value' => function($model) use($monitoringController, $searchModel)
+                    {
+
+                        return $monitoringController->renderCommonDataByImeiId($model->id, $searchModel);
+                    },
+                    'contentOptions' => ['class' => 'common all'],
+                    'headerOptions' => ['class' => 'common all']
+                ],
+                [
+                    'label' => $monitoringShapters['financial'],
+                    'format' => 'raw',
+                    'value' => function($model) use($monitoringController, $searchModel)
+                    {
+
+                        return $monitoringController->renderFinancialDataByImeiId($model->id, $searchModel);
+                    },
+                    'contentOptions' => ['class' => 'financial all'],
+                    'headerOptions' => ['class' => 'financial all']
+                ],
+                [
+                    'label' => $monitoringShapters['devices'],
+                    'format' => 'raw',
+                    'value' => function($model) use($monitoringController)
+                    {
+
+                        return $monitoringController->renderDevicesByImeiId($model->id);
+                    },
+                    'contentOptions' => ['class' => 'devices all'],
+                    'headerOptions' => ['class' => 'devices all']
+                ],
+                [
+                    'label' => $monitoringShapters['terminal'],
+                    'format' => 'raw',
+                    'value' => function($model) use($monitoringController, $searchModel)
+                    {
+
+                        return $monitoringController->renderTerminalDataByImeiId($model->id, $searchModel);
+                    },
+                    'contentOptions' => ['class' => 'terminal all'],
+                    'headerOptions' => ['class' => 'terminal all']
+                ],
+            ],
+        ]);
         ?>
     </div>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => false,
-        'summary' => '',
-        'columns' => [
-            [
-                'label' => $monitoringShapters['common'],
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController, $searchModel)
-                {
 
-                    return $monitoringController->renderCommonDataByImeiId($model->id, $searchModel);
-                },
-                'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'common all']
-            ],
-            [
-                'label' => $monitoringShapters['financial'],
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController, $searchModel)
-                {
-
-                    return $monitoringController->renderFinancialDataByImeiId($model->id, $searchModel);
-                },
-                'contentOptions' => ['class' => 'financial all'],
-                'headerOptions' => ['class' => 'financial all']
-            ],
-            [
-                'label' => $monitoringShapters['devices'],
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController)
-                {
-
-                    return $monitoringController->renderDevicesByImeiId($model->id);
-                },
-                'contentOptions' => ['class' => 'devices all'],
-                'headerOptions' => ['class' => 'devices all']
-            ],
-            [
-                'label' => $monitoringShapters['terminal'],
-                'format' => 'raw',
-                'value' => function($model) use($monitoringController, $searchModel)
-                {
-
-                    return $monitoringController->renderTerminalDataByImeiId($model->id, $searchModel);
-                },
-                'contentOptions' => ['class' => 'terminal all'],
-                'headerOptions' => ['class' => 'terminal all']
-            ],
-        ],
-    ]); ?>
+    <?=
+        Yii::$app->view->render('data/pjax_form', ['params' => $params]);
+    ?>
 </div>
-<?php echo $script; ?>
+<?php
+    echo $script;
+    Pjax::end();
+?>

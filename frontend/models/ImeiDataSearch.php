@@ -10,6 +10,7 @@ use frontend\models\WmMashine;
 use frontend\models\GdMashine;
 use frontend\services\globals\Entity;
 use yii\helpers\ArrayHelper;
+use frontend\controllers\MonitoringController;
 
 /**
  * ImeiDataSearch represents the model behind the search form of `frontend\models\ImeiData`.
@@ -40,10 +41,10 @@ class ImeiDataSearch extends ImeiData
      * Creates data provider instance with search query applied
      *
      * @param array $params
-     *
+     * @param array $postParams
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $postParams)
     {
         $entity = new Entity();
         $imeiIds = ImeiData::find()->select('imei_id')->distinct()->all();
@@ -63,6 +64,12 @@ class ImeiDataSearch extends ImeiData
                            ])
                        ]))
                        ->andWhere(['address_balance_holder.is_deleted' => false]);
+
+        if (isset($postParams['sortOrder']) && $postParams['sortOrder'] == MonitoringController::SORT_BY_SERIAL) {
+            $query = $query->orderBy(['address_balance_holder.serial_column' => SORT_ASC]);
+        } else {
+            $query = $query->orderBy(['address_balance_holder.address' => SORT_ASC]);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -134,5 +141,70 @@ class ImeiDataSearch extends ImeiData
         ]);
 
         return $dataProvider;                     
+    }
+
+    /**
+     * Gets the list of addresses, mapped for AutoComplete 
+     * 
+     * @param ActiveDbQuery $dbQuery
+     * @return array
+     */
+    public function getAddressesMapped($dbQuery)
+    {
+        $items = $dbQuery->all();
+        $addressesMapped = [];
+        $counter = 1;
+        foreach($items as $item) {
+
+            if (!$item->fakeAddress) {
+                continue;
+            }
+
+            $value = $item->fakeAddress->address;
+            $value .= $item->fakeAddress->floor ? ', '.$item->fakeAddress->floor : '';
+            $addressesMapped[] = (object)['id' => $item->fakeAddress->id, 'value' => $value];
+        }
+
+        return $addressesMapped;
+    }
+
+    /**
+     * Gets the list of imeis, mapped for AutoComplete 
+     * 
+     * @param ActiveDbQuery $dbQuery 
+     * @return array
+     */
+    public function getImeisMapped($dbQuery)
+    {
+        $items = $dbQuery->all();
+        $imeisMapped = [];
+        $counter = 1;
+        foreach($items as $item) {
+
+            if (!$item->imei) {
+                continue;
+            }
+
+            $value = $item->imei;
+            $imeisMapped[] = (object)['id' => $counter++, 'value' => $value]; 
+        }
+
+        return $imeisMapped;
+    }
+
+    /**
+     * Assigns serial number to certain address 
+     * 
+     * @param array $params
+     */
+    public function setSerialNumber($params)
+    {
+        if (!empty($params['addressId']) && !empty($params['serialNumber'])) {
+            $address = AddressBalanceHolder::findOne($params['addressId']);
+            if ($address) {
+                $address->serial_column = $params['serialNumber'];
+                $address->save();
+            }
+        }
     }
 }

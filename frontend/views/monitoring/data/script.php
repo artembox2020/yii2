@@ -5,6 +5,11 @@
         var monitoringShapter = monitoring.querySelector('.monitoring-shapter');
         var monitoringDropList = monitoringShapter.querySelector("*[name=monitoring_shapter]");
         var monitoringDevices = monitoring.querySelectorAll('.devices .cell-device a');
+        var monitoringForm = monitoring.querySelector('.monitoring-filter-form');
+        var monitoringFormAddress = monitoringForm.querySelector('input[name=address]');
+        var monitoringFormImei = monitoringForm.querySelector('input[name=imei]');
+        var monitoringFormSortOrder = monitoringForm.querySelector('select[name=sortOrder]');
+        var monitoringSerialNumbers = monitoring.querySelectorAll('input.address-serial-number');
 
         // displays by query selector
         function displayByQuerySelector(selector) {
@@ -59,7 +64,7 @@
             var optionNode = monitoringDropList.querySelector('option[value=all]');
             optionNode.parentNode.removeChild(optionNode);
         } else {
-            monitoringShapter.style.display = 'block';
+            //monitoringShapter.style.display = 'block';
             displayByQuerySelector('.common, .remote-connection, .devices, .terminal, .financial');
         }
 
@@ -142,9 +147,7 @@
                     headers[i].style.display = 'none';
                 }
 
-                headers[i].style.visibility = 'hidden';
                 var headerTr = headers[i].querySelector('tr');
-                //headerTr.style.display = 'none';
 
                 headers[i].closest('table').style.position = 'relative';
                 headers[i].closest('table').style.marginTop = "-40px";
@@ -172,6 +175,34 @@
                 cells[i].style.height = parseInt(cellStyleObject.getPropertyValue('height')) + heightAddition + 'px';
             }
         }
+        
+        // applies filter by value 
+        function applyFilterByValue(value, inputSelector)
+        {
+            if (typeof value != 'undefined' && value != null && value.trim() != '') {
+                var inputSearch = monitoring.querySelector('input'+ inputSelector+'[value="' + value + '"]');
+                if (typeof inputSearch != 'undefined' && inputSearch != null) {
+                    var tr = inputSearch.closest('tr.rows');
+                    var table = tr.closest('table');
+                    var tableRows = table.querySelectorAll('tr.rows');
+
+                    for (var i = 0; i < tableRows.length; ++i) {
+                        if (tableRows[i].dataset.key != tr.dataset.key) {
+                            tableRows[i].style.display = 'none';
+                        } else {
+                            tableRows[i].style.display = 'table-row';
+                        }
+                    }
+                }
+            } else {
+                var gridView = monitoring.querySelector('.monitoring-grid-view');
+                var table = gridView.querySelector('table');
+                var tableRows = table.querySelectorAll('tr.rows');
+                for (var i = 0; i < tableRows.length; ++i) {
+                    tableRows[i].style.display = 'table-row';
+                }
+            }
+        }
 
         // applies all table processing functions
         adjustCommonTableSize();
@@ -185,5 +216,69 @@
         hideRedundantCommonHeaders();
         adjustCellsHeightBySelector(40, '.financial tr.modem-card-last-row', 1);
         adjustCellsHeightBySelector(40, '.terminal tr.modem-card-last-row', 1);
+
+        // monitoring form address change function
+        monitoringFormAddress.onchange = function()
+        {
+            applyFilterByValue(this.value, '.search-address-value');
+            var monitoringFormInputs = monitoringForm.querySelectorAll('input[name=imei]');
+
+            for (var i = 0; i < monitoringFormInputs.length; ++i) {
+                monitoringFormInputs[i].value = '';
+            }
+        }
+
+        // monitoring form imei change function
+        monitoringFormImei.onchange = function()
+        {
+            applyFilterByValue(this.value, '.search-imei-value');
+            var monitoringFormInputs = monitoringForm.querySelectorAll('input[name=address]');
+
+            for (var i = 0; i < monitoringFormInputs.length; ++i) {
+                monitoringFormInputs[i].value = '';
+            }
+        }
+        
+        // monitoring form sort order change function
+        monitoringFormSortOrder.onchange = function()
+        {
+            var form = monitoring.querySelector('.monitoring-pjax-form');
+            var sortOrder = form.querySelector('input[name=sortOrder]');
+            sortOrder.value = this.value;
+            var monitoringFormInputs = monitoringForm.querySelectorAll('input');
+            
+            for (var i = 0; i < monitoringFormInputs.length; ++i) {
+                monitoringFormInputs[i].value = '';
+            }
+            
+            form.querySelector('button[type=submit]').click();
+        }
+
+        // monitoring serial number change
+        for (var i = 0; i < monitoringSerialNumbers.length; ++i) {
+            monitoringSerialNumbers[i].onchange = function()
+            {
+                var serialNumber = this.value;
+                var addressId = this.closest('tr').querySelector('.address-id').value;
+                var pjaxForm = monitoring.querySelector('.monitoring-pjax-form');
+                var address = pjaxForm.querySelector('input[name=addressId]');
+                var number = pjaxForm.querySelector('input[name=serialNumber]');
+                address.value = addressId;
+                number.value = serialNumber;
+
+                var monitoringFormInputs = monitoringForm.querySelectorAll('input');
+
+                for (var i = 0; i < monitoringFormInputs.length; ++i) {
+                    monitoringFormInputs[i].value = '';
+                }
+
+                var sortOrder = pjaxForm.querySelector('input[name=sortOrder]');
+                var monitoringFormSortOrder = monitoringForm.querySelector('select[name=sortOrder]');
+                sortOrder.value =  monitoringFormSortOrder.value;
+
+                pjaxForm.querySelector('button[type=submit]').click();
+            }
+        }
+
     }());
 </script>
