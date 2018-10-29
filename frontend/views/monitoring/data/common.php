@@ -30,7 +30,7 @@ use yii\widgets\Pjax;
     </div>
 
     <div class="col-md-2 col-sm-2 cell popup-block">
-        <span><?= ++$serialNumber ?></span>
+        <input class = "address-serial-number" type="text" value="<?= $data->imeiRelation->fakeAddress->serial_column ?>" />
         <div class = "label">
             <?= Yii::t('frontend', 'Imei') ?>:
             <?= $data->imeiRelation->imei ?>
@@ -69,6 +69,22 @@ use yii\widgets\Pjax;
                 )
             ?>
             </span>
+            <input 
+                type = "hidden" 
+                class = "search-address-value"
+                value = 
+                "<?= 
+                    $data->imeiRelation->fakeAddress->address.(
+                        !empty(($floor = $data->imeiRelation->fakeAddress->floor)) ? 
+                        ', '.$data->imeiRelation->fakeAddress->floor : ''
+                    );
+                ?>"
+            />
+            <input
+                type = "hidden"
+                class = "address-id"
+                value = "<?= $data->imeiRelation->fakeAddress->id ?>"
+            />    
             <br/><br/><!--
             <div class="row common-container-block">
                 <div class= "common-header">

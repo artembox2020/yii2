@@ -323,6 +323,8 @@ return [
     'Site' => 'Сайт',
     'Software Versions' => 'Версії ПЗ',
     'Sorry, we are unable to reset password for the provided email address.' => 'Вибачте, ми не можемо скинути пароль на вказану адресу електронної пошти.',
+    'Sort By Address' => 'Сортувати за адресою',
+    'Sort BY Serial Number' => 'Сортувати за номером',
     'Start Timestamp' => 'Мітка початку',
     'Status Packages' => 'Стан',
     'Subject' => 'Тема',

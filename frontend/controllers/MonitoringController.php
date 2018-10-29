@@ -5,12 +5,15 @@ namespace frontend\controllers;
 use common\models\User;
 use frontend\models\ImeiDataSearch;
 use frontend\models\WmMashine;
+use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\filters\AccessControl;
 
 class MonitoringController extends \yii\web\Controller
 {
     const SMALL_DEVICE_WIDTH = 512;
+    const SORT_BY_ADDRESS = 0;
+    const SORT_BY_SERIAL = 1;
 
     public function behaviors()
     {
@@ -35,13 +38,27 @@ class MonitoringController extends \yii\web\Controller
     public function actionIndex()
     {
         $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel->setSerialNumber(Yii::$app->request->post());
+        $entityHelper = new EntityHelper();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Yii::$app->request->post());
+        $addresses = $searchModel->getAddressesMapped($dataProvider->query);
+        $imeis = $searchModel->getImeisMapped($dataProvider->query);
+        $params = $entityHelper->makeParamsFromRequest(
+            [
+                'address', 'imei', 'id', 'sortOrder'
+            ]
+        );
+
         $monitoringShapters = [
             'common' => Yii::t('frontend', 'Common Data'),
             'financial' => Yii::t('frontend', 'Financial Data'),
             'devices' => Yii::t('frontend', 'Devices'),
             'terminal' => Yii::t('frontend', 'Terminal'),
             'all' => Yii::t('frontend', 'All')
+        ];
+        $sortOrders = [
+            self::SORT_BY_ADDRESS => Yii::t('frontend', 'Sort By Address'),
+            self::SORT_BY_SERIAL => Yii::t('frontend', 'Sort BY Serial Number')
         ];
         $script = Yii::$app->view->render(
             "/monitoring/data/script",
@@ -56,7 +73,11 @@ class MonitoringController extends \yii\web\Controller
             'dataProvider' => $dataProvider,
             'monitoringController' => $this,
             'monitoringShapters' => $monitoringShapters,
-            'script' => $script
+            'script' => $script,
+            'addresses' => $addresses,
+            'imeis' => $imeis,
+            'params' => $params,
+            'sortOrders' => $sortOrders,
         ]);
     }
 
@@ -178,11 +199,24 @@ class MonitoringController extends \yii\web\Controller
     public function actionFinancial()
     {
         $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $entityHelper = new EntityHelper();
+        $searchModel->setSerialNumber(Yii::$app->request->post());
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Yii::$app->request->post());
+        $addresses = $searchModel->getAddressesMapped($dataProvider->query);
+        $imeis = $searchModel->getImeisMapped($dataProvider->query);
+        $params = $entityHelper->makeParamsFromRequest(
+            [
+                'address', 'imei', 'id', 'sortOrder'
+            ]
+        );
         $monitoringShapters = [
             'common' => Yii::t('frontend', 'Common Data'),
             'financial' => Yii::t('frontend', 'Financial Data'),
             'all' => Yii::t('frontend', 'All')
+        ];
+        $sortOrders = [
+            self::SORT_BY_ADDRESS => Yii::t('frontend', 'Sort By Address'),
+            self::SORT_BY_SERIAL => Yii::t('frontend', 'Sort BY Serial Number')
         ];
         $script = Yii::$app->view->render(
             "/monitoring/data/script",
@@ -197,7 +231,11 @@ class MonitoringController extends \yii\web\Controller
             'dataProvider' => $dataProvider,
             'monitoringController' => $this,
             'monitoringShapters' => $monitoringShapters,
-            'script' => $script
+            'script' => $script,
+            'addresses' => $addresses,
+            'imeis' => $imeis,
+            'params' => $params,
+            'sortOrders' => $sortOrders,
         ]);
     }
 
@@ -209,12 +247,25 @@ class MonitoringController extends \yii\web\Controller
     public function actionTechnical()
     {
         $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $entityHelper = new EntityHelper();
+        $searchModel->setSerialNumber(Yii::$app->request->post());
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Yii::$app->request->post());
+        $addresses = $searchModel->getAddressesMapped($dataProvider->query);
+        $imeis = $searchModel->getImeisMapped($dataProvider->query);
+        $params = $entityHelper->makeParamsFromRequest(
+            [
+                'address', 'imei', 'id', 'sortOrder'
+            ]
+        );
         $monitoringShapters = [
             'common' => Yii::t('frontend', 'Common Data'),
             'devices' => Yii::t('frontend', 'Devices'),
             'terminal' => Yii::t('frontend', 'Terminal'),
             'all' => Yii::t('frontend', 'All')
+        ];
+        $sortOrders = [
+            self::SORT_BY_ADDRESS => Yii::t('frontend', 'Sort By Address'),
+            self::SORT_BY_SERIAL => Yii::t('frontend', 'Sort BY Serial Number')
         ];
         $script = Yii::$app->view->render(
             "/monitoring/data/script",
@@ -229,7 +280,11 @@ class MonitoringController extends \yii\web\Controller
             'dataProvider' => $dataProvider,
             'monitoringController' => $this,
             'monitoringShapters' => $monitoringShapters,
-            'script' => $script
+            'script' => $script,
+            'addresses' => $addresses,
+            'imeis' => $imeis,
+            'params' => $params,
+            'sortOrders' => $sortOrders,
         ]);
     }
 

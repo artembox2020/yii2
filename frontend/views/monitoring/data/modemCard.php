@@ -3,6 +3,11 @@
         </b>
         <br>
         <?= $model->imeiRelation->imei ?>
+        <input
+            type="hidden" 
+            class="search-imei-value" 
+            value="<?= $model->imeiRelation->imei ?>"
+        />
         <br>
     </td>
 </tr>

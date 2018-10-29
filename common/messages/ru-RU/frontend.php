@@ -283,6 +283,8 @@ return [
     'Site' => 'Сайт',
     'Software Versions' => 'Версии ПЗ',
     'Sorry, we are unable to reset password for the provided email address.' => 'Извините, мы не можем сбросить пароль на указанный адрес электронной почты.',
+    'Sort By Address' => 'Сортувати за адресою',
+    'Sort BY Serial Number' => 'Сортувати за номером',
     'Start Timestamp' => 'Метка начала',
     'Status Off' => 'Отключен',
     'Status Packages' => 'Состояние',
