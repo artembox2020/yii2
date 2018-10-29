@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use frontend\models\CbLog;
+use frontend\models\WmLog;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 use Yii;
@@ -169,6 +171,20 @@ class JournalController extends Controller
             'submitFormOnInputEvents' => $submitFormOnInputEvents,
             'removeRedundantGrids' => $removeRedundantGrids,
             'columnFilterScript' => $columnFilterScript,
+        ]);
+    }
+
+    public function actionLog()
+    {
+//        $wm_log = WmLog::find()->all();
+//        $cb_log = CbLog::find()->all();
+
+        $wm_log = new WmLog();
+        $models = $wm_log->
+
+        $this->render('log/index', [
+            'wm_log' => $wm_log,
+            'cb_log' => $cb_log
         ]);
     }
 }
