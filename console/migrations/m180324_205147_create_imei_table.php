@@ -19,7 +19,7 @@ class m180324_205147_create_imei_table extends Migration
             'id' => $this->primaryKey(),
             'imei' => $this->string(50),
             'company_id' => $this->integer()->notNull(),
-            'balance_holder_id' => $this->integer()->notNull(),
+            'address_balance_holder_id' => $this->integer()->notNull(),
             'address_id' => $this->integer()->notNull(),
             'status' => $this->integer()->notNull(),
             'type_packet' => $this->string(),

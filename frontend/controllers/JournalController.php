@@ -3,7 +3,9 @@
 namespace frontend\controllers;
 
 use frontend\models\CbLog;
+use frontend\models\CbLogSearch;
 use frontend\models\WmLog;
+use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 use Yii;
@@ -13,6 +15,7 @@ use frontend\models\GdMashine;
 use frontend\models\JlogSearch;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\Imei;
+use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
@@ -42,7 +45,7 @@ class JournalController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {   
+    {
         $searchModel = new JlogSearch();
         $entityHelper = new EntityHelper();
         $params = $entityHelper->makeParamsFromRequest(
@@ -96,7 +99,7 @@ class JournalController extends Controller
 
     /**
      * Lists all Jlog models by mashine id
-     * 
+     *
      * @param int $id
      * @param bool $mashineRedirectAction
      * @return mixed
@@ -142,8 +145,8 @@ class JournalController extends Controller
         $typePackets = Jlog::getTypePackets();
         $typePackets[''] = Yii::t('frontend', 'All');
         $eventSelectors = [
-            'change' => 
-                '.journal-filter-form select,'. 
+            'change' =>
+                '.journal-filter-form select,'.
                 '.journal-filter-form input#mashine-from-date,'.
                 '.journal-filter-form input#mashine-to-date'
         ];
@@ -174,17 +177,14 @@ class JournalController extends Controller
         ]);
     }
 
-    public function actionLog()
+    public function actionLogs()
     {
-//        $wm_log = WmLog::find()->all();
-//        $cb_log = CbLog::find()->all();
+        $searchModel = new CbLogSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $wm_log = new WmLog();
-        $models = $wm_log->
-
-        $this->render('log/index', [
-            'wm_log' => $wm_log,
-            'cb_log' => $cb_log
+        return $this->render('log/logs', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
         ]);
     }
 }

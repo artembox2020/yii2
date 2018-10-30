@@ -2,14 +2,15 @@
 
 namespace frontend\models;
 
+use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * Class CbLog
  * @package frontend\models
  * @property int $id
+ * @property int $imei_id
  * @property integer $date
  * @property integer $imei
  * @property integer $unix_time_offset
@@ -22,7 +23,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property float $refill_amount
  * @property boolean $is_deleted
  */
-class CbLog extends ActiveRecord
+class CbLog extends \yii\db\ActiveRecord
 {
     /** @var array $current_state */
     public $current_state = [
@@ -57,6 +58,17 @@ class CbLog extends ActiveRecord
         'put_money'
         ];
 
+    /** @var $model */
+    private $model;
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'cb_log';
+    }
+
     /**
      * @return array
      */
@@ -74,5 +86,51 @@ class CbLog extends ActiveRecord
                 'class' => TimestampBehavior::className()
             ]
         ];
+    }
+
+    public function rules() {
+        return [
+            /* your other rules */
+            [['created_at', 'updated_at', 'deleted_at'], 'integer'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('frontend', 'ID'),
+            'imei' => Yii::t('frontend', 'Imei'),
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getModel()
+    {
+        if (!$this->model) {
+            $this->model = new Imei();
+        }
+
+        return $this->model;
+    }
+
+    /**
+     * @return $this|\yii\db\ActiveQuery
+     */
+    public static function find()
+    {
+        return parent::find()->where(['cb_log.is_deleted' => false]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImei()
+    {
+        return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
     }
 }
