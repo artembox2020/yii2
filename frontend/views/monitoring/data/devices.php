@@ -37,7 +37,8 @@ use frontend\services\globals\EntityHelper;
                             Yii::t('frontend', 'Device'),
                             'top: -5px',
                             'height: 5px'
-                        )
+                        ).
+                        '<input type="hidden" class="device-id" value="'.$model->id.'" />'
                     );
                 },
                 'contentOptions' => ['class' => 'cell-device'],

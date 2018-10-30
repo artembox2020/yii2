@@ -79,4 +79,20 @@ class WmMashineDataSearch extends WmMashineData
 
         return $dataProvider;
     }
+
+    /**
+     * Check monitoring for updates
+     *
+     * @param string $deviceIds
+     * @param timestamp $timestamp
+     * @return int
+     */
+    public function checkMonitoringWmUpdate($deviceIds, $timestamp)
+    {
+        $arrayDeviceIds = explode(",", $deviceIds);
+        $query = WmMashineData::find()->andWhere(['mashine_id' => $arrayDeviceIds])
+                                      ->andWhere(['>=', 'created_at', $timestamp]);
+
+        return $query->count();
+    }
 }
