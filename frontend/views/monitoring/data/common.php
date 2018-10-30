@@ -74,9 +74,9 @@ use yii\widgets\Pjax;
                 class = "search-address-value"
                 value = 
                 "<?= 
-                    $data->imeiRelation->fakeAddress->address.(
+                    mb_strtolower($data->imeiRelation->fakeAddress->address).(
                         !empty(($floor = $data->imeiRelation->fakeAddress->floor)) ? 
-                        ', '.$data->imeiRelation->fakeAddress->floor : ''
+                        ', '.mb_strtolower($data->imeiRelation->fakeAddress->floor) : ''
                     );
                 ?>"
             />

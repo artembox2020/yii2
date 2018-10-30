@@ -6,7 +6,7 @@
         <input
             type="hidden" 
             class="search-imei-value" 
-            value="<?= $model->imeiRelation->imei ?>"
+            value="<?= mb_strtolower($model->imeiRelation->imei) ?>"
         />
         <br>
     </td>

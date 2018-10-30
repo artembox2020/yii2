@@ -179,27 +179,32 @@
         // applies filter by value 
         function applyFilterByValue(value, inputSelector)
         {
+            var gridView = monitoring.querySelector('.grid-view');
+            var table = gridView.querySelector('table');
+            var tableRows = table.querySelectorAll('tr.rows');
             if (typeof value != 'undefined' && value != null && value.trim() != '') {
-                var inputSearch = monitoring.querySelector('input'+ inputSelector+'[value="' + value + '"]');
-                if (typeof inputSearch != 'undefined' && inputSearch != null) {
-                    var tr = inputSearch.closest('tr.rows');
+                value = value.toLowerCase();
+                var inputSearch = monitoring.querySelectorAll('input'+ inputSelector+'[value*="' + value + '"]');
+
+                for (var j = 0; j < tableRows.length; ++j) {
+                    tableRows[j].style.display = 'none';
+                }
+
+                for (var i = 0; i < inputSearch.length; ++i) {
+                    var tr = inputSearch[i].closest('tr.rows');
                     var table = tr.closest('table');
                     var tableRows = table.querySelectorAll('tr.rows');
 
-                    for (var i = 0; i < tableRows.length; ++i) {
-                        if (tableRows[i].dataset.key != tr.dataset.key) {
-                            tableRows[i].style.display = 'none';
-                        } else {
-                            tableRows[i].style.display = 'table-row';
+                    for (var j = 0; j < tableRows.length; ++j) {
+                        if (tableRows[j].dataset.key == tr.dataset.key) {
+                            tableRows[j].style.display = 'table-row';
                         }
                     }
                 }
             } else {
-                var gridView = monitoring.querySelector('.monitoring-grid-view');
-                var table = gridView.querySelector('table');
-                var tableRows = table.querySelectorAll('tr.rows');
-                for (var i = 0; i < tableRows.length; ++i) {
-                    tableRows[i].style.display = 'table-row';
+
+                for (var j = 0; j < tableRows.length; ++j) {
+                    tableRows[j].style.display = 'table-row';
                 }
             }
         }
@@ -280,5 +285,7 @@
             }
         }
 
+        // update page script
+        <?= Yii::$app->view->render('/monitoring/data/ajax_update_handler', ['timestamp' => $timestamp, 'timeOut' => $timeOut]) ?>
     }());
 </script>

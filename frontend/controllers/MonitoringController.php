@@ -4,7 +4,9 @@ namespace frontend\controllers;
 
 use common\models\User;
 use frontend\models\ImeiDataSearch;
+use frontend\models\WmMashineDataSearch;
 use frontend\models\WmMashine;
+use frontend\models\Jlog;
 use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\filters\AccessControl;
@@ -14,6 +16,7 @@ class MonitoringController extends \yii\web\Controller
     const SMALL_DEVICE_WIDTH = 512;
     const SORT_BY_ADDRESS = 0;
     const SORT_BY_SERIAL = 1;
+    const TYPE_TIMEOUT = 300;
 
     public function behaviors()
     {
@@ -64,7 +67,9 @@ class MonitoringController extends \yii\web\Controller
             "/monitoring/data/script",
             [
                 'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
-                'numberRedundantHeaders' => 5
+                'numberRedundantHeaders' => 5,
+                'timestamp' => time() + Jlog::TYPE_TIME_OFFSET,
+                'timeOut' => self::TYPE_TIMEOUT
             ]
         );
 
@@ -222,7 +227,9 @@ class MonitoringController extends \yii\web\Controller
             "/monitoring/data/script",
             [
                 'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
-                'numberRedundantHeaders' => 3
+                'numberRedundantHeaders' => 3,
+                'timestamp' => time() + Jlog::TYPE_TIME_OFFSET,
+                'timeOut' => self::TYPE_TIMEOUT
             ]
         );
 
@@ -271,7 +278,9 @@ class MonitoringController extends \yii\web\Controller
             "/monitoring/data/script",
             [
                 'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
-                'numberRedundantHeaders' => 4
+                'numberRedundantHeaders' => 4,
+                'timestamp' => time() + Jlog::TYPE_TIME_OFFSET,
+                'timeOut' => self::TYPE_TIMEOUT
             ]
         );
 
@@ -303,5 +312,23 @@ class MonitoringController extends \yii\web\Controller
             $dProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
             $currentImeiId = $imeiId;
         }
+    }
+
+    /**
+     * Check whether monitoring data has been changed  
+     * 
+     * @param string $deviceIds
+     * @param timestamp $timestamp
+     * @return json
+     */
+    public function actionCheckMonitoringWmUpdate($deviceIds, $timestamp)
+    {
+        $searchModel = new WmMashineDataSearch();
+        $checkResult = $searchModel->checkMonitoringWmUpdate($deviceIds, $timestamp);
+
+        $responseResult = array();
+        $responseResult['status'] = $checkResult;
+
+        return json_encode($responseResult);
     }
 }

@@ -31,6 +31,9 @@ use yii\widgets\Pjax;
         'dataProvider' => $dataProvider,
         'filterModel' => false,
         'summary' => '',
+        'tableOptions' => [
+            'class' => 'table table-striped table-bordered table-financial'
+        ],
         'rowOptions' => [
             'class' => 'rows'
         ],
