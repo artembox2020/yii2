@@ -25,7 +25,7 @@ class Jlog extends ActiveRecord
     const TYPE_PACKET_LOG = 3;
     const TYPE_PACKET_PRICE = 4;
 
-    const TYPE_TIME_OFFSET = 10800;
+    const TYPE_TIME_OFFSET = 7200;
 
     /**
      * @inheritdoc
