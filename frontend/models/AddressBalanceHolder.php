@@ -148,6 +148,14 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getFakeImei()
+    {
+        return $this->hasOne(Imei::className(), ['address_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getWashMachines()
     {
         return $this->hasMany(WmMashine::className(), ['address_id' => 'id']);

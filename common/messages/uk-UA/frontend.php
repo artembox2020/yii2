@@ -45,6 +45,7 @@ return [
     'AddressBalanceHolders' => 'Адреса балансоутримувача',
     'Address Balance Holders' => 'Адреса балансоутримувача',
     'Address' => 'Адреса',
+    'Address ID' => 'ID адреси',
     'Addresses' => 'Адреси',
     'Address Card' => 'Картка адреси',
     'Address Install' => 'Адреса установки',

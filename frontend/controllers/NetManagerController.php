@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\UserProfile;
 use frontend\models\AddressBalanceHolder;
+use frontend\models\AddressImeiData;
 use frontend\models\AddressBalanceHolderSearch;
 use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
@@ -341,6 +342,9 @@ class NetManagerController extends \yii\web\Controller
         $imei = $entity->getUnitPertainCompany($foreignId, new Imei());
         $imei->bindToAddress($id);
         
+        $addressImeiData = new AddressImeiData();
+        $addressImeiData->createLog($imei->id, $id);
+
         $redirectUrl = array_merge(['addresses'], Yii::$app->request->queryParams);
         
         return $this->redirect($redirectUrl);
@@ -383,6 +387,10 @@ class NetManagerController extends \yii\web\Controller
         $entity = new Entity();
         $imei = $entity->getUnitPertainCompany($id, new Imei());
         $imei->bindToAddress($foreignId);
+        
+        $addressImeiData = new AddressImeiData();
+        $addressImeiData->createLog($imei->id, $foreignId);
+
         $redirectUrl = array_merge(['washpay'], Yii::$app->request->queryParams);
 
         return $this->redirect($redirectUrl);
@@ -446,7 +454,11 @@ class NetManagerController extends \yii\web\Controller
             $imei->is_deleted = false;
             $imei->bindToAddressIfActive($imei->address_id);
             $imei->save();
-                
+            
+            $addressImeiData = new AddressImeiData();
+            $addressImeiData->createLog($imei->id, $imei->address_id);
+            
+
             $this->redirect(['/net-manager/washpay']);
         }
 
@@ -485,7 +497,10 @@ class NetManagerController extends \yii\web\Controller
             $imei->is_deleted = false;
             $imei->bindToAddressIfActive($imei->address_id);
             $imei->save();
-                
+
+            $addressImeiData = new AddressImeiData();
+            $addressImeiData->createLog($imei->id, $imei->address_id);
+
             $this->redirect(['/net-manager/washpay']);
         }
 

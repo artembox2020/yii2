@@ -8,6 +8,7 @@ use frontend\services\globals\Entity;
 use Yii;
 use frontend\models\BalanceHolder;
 use frontend\models\AddressBalanceHolder;
+use frontend\models\AddressImeiData;
 use frontend\models\AddressBalanceHolderSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -131,6 +132,13 @@ class AddressBalanceHolderController extends Controller
      */
     public function actionDelete($id)
     {
+        $address = AddressBalanceHolder::findOne($id);
+
+        if ($address->fakeImei) {
+            $addressImeiData = new AddressImeiData();
+            $addressImeiData->createLog($address->fakeImei->id, 0);
+        }
+
         $this->findModel($id)->softDelete();
 
         return $this->redirect(['/net-manager/addresses']);

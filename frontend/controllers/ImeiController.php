@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\User;
 use frontend\models\AddressBalanceHolder;
+use frontend\models\AddressImeiData;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use Yii;
@@ -146,9 +147,15 @@ class ImeiController extends Controller
         ]);
     }
 
-
     public function actionDelete($id)
     {
+        $imei = Imei::findOne($id);
+
+        if ($imei->fakeAddress) {
+            $addressImeiData = new AddressImeiData();
+            $addressImeiData->createLog(0, $imei->fakeAddress->id);
+        }
+
         $this->findModel($id)->softDelete();
 
         return $this->redirect(['/net-manager/washpay']);
