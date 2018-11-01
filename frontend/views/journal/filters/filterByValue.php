@@ -1,6 +1,8 @@
 <?php
 
 use yii\helpers\Html;
+use yii\jui\DatePicker;
+use frontend\models\Imei;
 
 ?>
 <div class="filter-value-container">
@@ -15,15 +17,32 @@ use yii\helpers\Html;
                     <?php echo Html::a(Yii::t('frontend', 'Clear'), null, ['class' => 'd-inline']); ?>
                 </div>    
                 <br/>
-                <?= Html::input("text",  "inputValue[{$columnName}]", 
+                <?php if ($columnName != 'date'): ?>
+                <?= 
+                    Html::input("text",  "inputValue[{$columnName}]", 
                         $params['inputValue'][$columnName],
                         [
                             'class' => 'form-control inputValue',
-                            'placeholder' => Yii::t('frontend', 'Value')
+                            'placeholder' => Yii::t('frontend', 'Value'),
                         ]
                     )
                 ?>
+                <?php else: ?>
+                <?=
+                    DatePicker::widget([
+                        'model' => $searchModel,
+                        'attribute' => "inputValue[{$columnName}]",
+                        'dateFormat' => Imei::DATE_PICKER_FORMAT,
+                        'options' => [
+                            'placeholder' => Yii::t('frontend', 'Enter Date From'),
+                            'class' => 'form-control inputValue',
+                            'autocomplete' => 'off',
+                            'name' => "inputValue[{$columnName}]",
+                        ],
+                    ]);
+                ?>
+                <?php endif; ?>
             </div>
-        </div>    
+        </div>
     </div>
 </div>

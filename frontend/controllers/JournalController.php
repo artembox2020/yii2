@@ -50,7 +50,11 @@ class JournalController extends Controller
                 'val1' => ['date', 'type_packet', 'address', 'imei', 'id'],
                 'val2' => ['date', 'type_packet', 'address', 'imei', 'id'],
                 'inputValue' => ['date', 'type_packet', 'address', 'imei', 'id'],
-                'sort'
+                'sort',
+                'JlogSearch' => [
+                    'inputValue' => ['date'],
+                    'val2' => ['date']
+                ]
             ]
         );
         $addresses = $searchModel->getAddressesMapped();
@@ -58,6 +62,8 @@ class JournalController extends Controller
         $dataProvider = $searchModel->search($params);
         $typePackets = Jlog::getTypePackets();
         $typePackets[''] = Yii::t('frontend', 'All');
+        $searchModel->inputValue['date'] = $params['inputValue']['date'];
+        $searchModel->val2['date'] = $params['val2']['date'];
         $eventSelectors = [
             'keyup' => '.journal-filter-form input[name=imei], .journal-filter-form input[name=address]',
             'change' => '.journal-filter-form select, .journal-filter-form input[name=address], .journal-filter-form input[name=imei]'
@@ -130,12 +136,18 @@ class JournalController extends Controller
                 'val2' => ['date', 'type_packet', 'address', 'imei', 'id'],
                 'inputValue' => ['date', 'type_packet', 'address', 'imei', 'id'],
                 'sort',
-                'JlogSearch' => ['from_date', 'to_date']
+                'JlogSearch' => [
+                    'from_date', 'to_date',
+                    'inputValue' => ['date'],
+                    'val2' => ['date']
+                ]
             ]
         );
         $searchModel->from_date = $params['JlogSearch']['from_date'];
         $searchModel->to_date = $params['JlogSearch']['to_date'];
         $searchModel->mashineNumber = '_'.$mashine->type_mashine.'*'.$mashine->number_device;
+        $searchModel->inputValue['date'] = $params['inputValue']['date'];
+        $searchModel->val2['date'] = $params['val2']['date'];
         $dataProvider = $searchModel->searchByMashine($params, $mashine->id);
         $typePackets = Jlog::getTypePackets();
         $typePackets[''] = Yii::t('frontend', 'All');

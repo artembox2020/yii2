@@ -49,6 +49,8 @@ class JlogSearch extends Jlog
     public $from_date;
     public $to_date;
     public $mashineNumber;
+    public $inputValue = ['date'];
+    public $val2 = ['date'];
 
     /**
      * @inheritdoc
@@ -78,12 +80,12 @@ class JlogSearch extends Jlog
         
         if (!empty($this->from_date)) {
             $this->from_date .= ' 00:00:00';
-            $timeFrom = strtotime($this->from_date);
+            $timeFrom = strtotime($this->from_date) - Jlog::TYPE_TIME_OFFSET;
         }
         
         if (!empty($this->to_date)) {
             $this->to_date .= ' 23:59:59';
-            $timeTo = strtotime($this->to_date);
+            $timeTo = strtotime($this->to_date) - Jlog::TYPE_TIME_OFFSET;
         }
         
         $betweenCondition = new \yii\db\conditions\BetweenCondition(

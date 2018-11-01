@@ -297,13 +297,17 @@ class EntityHelper implements EntityHelperInterface
                 foreach ($param as $p) {
                     if (!isset($params[$key])){
                         $params[$key] = null;
-                    } elseif (!isset($params[$key][$p])) {
-                        $params[$key][$p] = null;
+                    } else {
+                        if (!is_array($p)) {
+                            if (!isset($params[$key][$p])) {
+                                $params[$key][$p] = null;
+                            }
+                        }
                     }
                 }
             }
         }
-        
+
         return $params;
     }
 

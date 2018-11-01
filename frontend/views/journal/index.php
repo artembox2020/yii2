@@ -114,7 +114,7 @@ $this->title = Yii::t('frontend', 'Events Journal');
                     ],
                     [
                         'attribute' => 'date',
-                        'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params]),
+                        'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
                     ],
                     [
                         'attribute' => 'imei',

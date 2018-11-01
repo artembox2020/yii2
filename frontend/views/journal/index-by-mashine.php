@@ -14,6 +14,7 @@ use yii\jui\DatePicker;
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\JlogSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+
 ?>
 <div class="jlog-index">
     <h1><?= Yii::t('frontend', 'Mashine Logs') ?></h1>
@@ -32,7 +33,7 @@ use yii\jui\DatePicker;
             );
         ?>
     </div>
-    
+
     <div class="form-group enhanced-z-index">
         <label for="type_packet"><?= Yii::t('frontend', 'Date From') ?></label>
         <?php
@@ -48,7 +49,7 @@ use yii\jui\DatePicker;
             ]);
         ?>
     </div>
-    
+
     <div class="form-group enhanced-z-index">
         <label for="type_packet"><?= Yii::t('frontend', 'Date To') ?></label>
         <?php
@@ -83,7 +84,6 @@ use yii\jui\DatePicker;
     ?>
     <br>
     <div class="table-responsives">
-
         <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
@@ -106,7 +106,7 @@ use yii\jui\DatePicker;
                     ],
                     [
                         'attribute' => 'date',
-                        'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params]),
+                        'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
                     ],
                     [
                         'attribute' => 'imei',

@@ -2,6 +2,8 @@
 
 use frontend\models\JlogSearch;
 use yii\helpers\Html;
+use yii\jui\DatePicker;
+use frontend\models\Imei;
 
 $filterConditions = JlogSearch::getAccessibleFiltersByColumnName($columnName);
 ?>
@@ -29,14 +31,31 @@ $filterConditions = JlogSearch::getAccessibleFiltersByColumnName($columnName);
                 ?>
             </div>
             <div class="form-group">
-                <?= Html::input("text",  "val2[{$columnName}]", 
-                        $params['val2'][$columnName],
+                <?php if ($columnName != 'date'): ?>
+                <?= 
+                    Html::input("text",  "val2[{$columnName}]", 
+                        $params['inputValue'][$columnName],
                         [
                             'class' => 'form-control input-val2',
-                            'placeholder' => Yii::t('frontend', 'Argument 2')
+                            'placeholder' => Yii::t('frontend', 'Argument 2'),
                         ]
                     )
                 ?>
+                <?php else: ?>
+                <?=
+                    DatePicker::widget([
+                        'model' => $searchModel,
+                        'attribute' => "val2[{$columnName}]",
+                        'dateFormat' => Imei::DATE_PICKER_FORMAT,
+                        'options' => [
+                            'placeholder' => Yii::t('frontend', 'Argument 2'),
+                            'class' => 'form-control input-val2',
+                            'autocomplete' => 'off',
+                            'name' => "val2[{$columnName}]",
+                        ],
+                    ]);
+                ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>

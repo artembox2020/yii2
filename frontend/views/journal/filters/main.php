@@ -1,6 +1,11 @@
 <?php
 
 use yii\helpers\Html;
+use frontend\models\JlogSearch;
+
+if (empty($searchModel)) {
+   $searchModel = new JlogSearch();
+}
 
 echo Html::beginForm('', 'get', ['class' => 'grid-view-filter-form', 'data-pjax' => '']);
 
@@ -26,12 +31,12 @@ if (empty($sortType)) {
             </small>
         </p>
         <?= $this->render('/journal/filters/filterByCondition',
-                ['name'=> $filterTypeCondition, 'columnName' => $name, 'params' => $params]
+                ['name'=> $filterTypeCondition, 'columnName' => $name, 'params' => $params, 'searchModel' => $searchModel]
             );
         ?>
         <br/>
         <?= $this->render('/journal/filters/filterByValue',
-                ['name'=> $filterTypeValue, 'columnName' => $name, 'params' => $params]
+                ['name'=> $filterTypeValue, 'columnName' => $name, 'params' => $params, 'searchModel' => $searchModel]
             );
         ?>
 

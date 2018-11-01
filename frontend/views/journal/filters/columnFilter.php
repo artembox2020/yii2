@@ -178,6 +178,10 @@
     var filterValueContainers =  document.querySelectorAll(".grid-view-filter-form .filter-value-container");
     var filterHyperlinks = document.querySelectorAll(".grid-view-filter-form .left-hyperlink a");
     var dateFilterSelects  = document.querySelectorAll(".grid-view-filter-form .filter-menu .filter-group select[name='filterCondition[date]']");
+    var dateFilterInputs  = document.querySelectorAll(
+        ".grid-view-filter-form .filter-menu input[name='inputValue[date]']," +
+        ".grid-view-filter-form .filter-menu input[name='val2[date]']"
+    );
     var cancelButtons = document.querySelectorAll(".grid-view-filter-form .btn-cancel");
     var orderArrows = document.querySelectorAll(".grid-view-filter-form .filter-menu .order");
 
@@ -198,6 +202,14 @@
             filterDateSelectClickFunction(this, "<?= $params['val1']['date']  ?>");
         };
         dateFilterSelects[i].onchange();
+    }
+    
+    for (var i = 0; i < dateFilterInputs.length; ++i)
+    {
+        dateFilterInputs[i].onchange = function(event)
+        {
+            preventDefaultBehavior(event);
+        };
     }
 
     for (var i = 0; i < filterHyperlinks.length; ++i)
