@@ -29,6 +29,7 @@ class LcController extends Controller
 
             if (Imei::getStatus($imei) == self::ONE_CONST) {
                 $cbl = new CbLog();
+                $cbl->imei_id = $imei->id;
                 $cbl->date = $centralBoardDto->date;
                 $cbl->imei = $centralBoardDto->imei;
                 $cbl->unix_time_offset = $centralBoardDto->unix_time_offset;

@@ -14,6 +14,7 @@ class m181019_194906_create_cb_log_table extends Migration
     {
         $this->createTable('cb_log', [
             'id' => $this->primaryKey(),
+            'imei_id' => $this->integer()->notNull(),
             'date' => $this->integer(),
             'imei' => $this->string(50),
             'unix_time_offset' => $this->integer(),
@@ -29,6 +30,22 @@ class m181019_194906_create_cb_log_table extends Migration
             'is_deleted' => $this->boolean(),
             'deleted_at' => $this->integer()
         ]);
+
+        // creates index for column `company_id`
+        $this->createIndex(
+            'idx-cb_log-imei_id',
+            'cb_log',
+            'imei_id'
+        );
+
+        // add foreign key for table `company`
+        $this->addForeignKey(
+            'fk-cb_log-imei_id',
+            'cb_log',
+            'imei_id',
+            'imei',
+            'id'
+        );
     }
 
     /**
@@ -36,6 +53,17 @@ class m181019_194906_create_cb_log_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey(
+            'fk-imei-id',
+            'imei'
+        );
+
+        // drops index for column `address_id`
+        $this->dropIndex(
+            'idx-imei-imei_id',
+            'imei'
+        );
+
         $this->dropTable('cb_log');
     }
 }

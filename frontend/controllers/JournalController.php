@@ -2,6 +2,10 @@
 
 namespace frontend\controllers;
 
+use frontend\models\CbLog;
+use frontend\models\CbLogSearch;
+use frontend\models\WmLog;
+use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 use Yii;
@@ -11,6 +15,7 @@ use frontend\models\GdMashine;
 use frontend\models\JlogSearch;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\Imei;
+use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
@@ -40,7 +45,7 @@ class JournalController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {   
+    {
         $searchModel = new JlogSearch();
         $entityHelper = new EntityHelper();
         $params = $entityHelper->makeParamsFromRequest(
@@ -100,7 +105,7 @@ class JournalController extends Controller
 
     /**
      * Lists all Jlog models by mashine id
-     * 
+     *
      * @param int $id
      * @param bool $mashineRedirectAction
      * @return mixed
@@ -152,8 +157,8 @@ class JournalController extends Controller
         $typePackets = Jlog::getTypePackets();
         $typePackets[''] = Yii::t('frontend', 'All');
         $eventSelectors = [
-            'change' => 
-                '.journal-filter-form select,'. 
+            'change' =>
+                '.journal-filter-form select,'.
                 '.journal-filter-form input#mashine-from-date,'.
                 '.journal-filter-form input#mashine-to-date'
         ];
@@ -181,6 +186,17 @@ class JournalController extends Controller
             'submitFormOnInputEvents' => $submitFormOnInputEvents,
             'removeRedundantGrids' => $removeRedundantGrids,
             'columnFilterScript' => $columnFilterScript,
+        ]);
+    }
+
+    public function actionLogs()
+    {
+        $searchModel = new CbLogSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('logs/index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
         ]);
     }
 }

@@ -234,6 +234,7 @@ return [
     'Hello {username}, follow the link below to reset your password:' => 'Вітання {username}, по посиланню нижче, щоб підтвердити ваш пароль:',
     'he heater' => 'Помилка нагрівача (hE)',
     'History' => 'Історія',
+    'Hour that date' => 'Час та дата',
     'ID' => 'Номер',
     'Idle Damages' => 'Сума збитків',
     'Idle Days' => 'Кількість днів простою',

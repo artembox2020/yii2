@@ -48,8 +48,6 @@ class LwController extends Controller
                 $wml->is_deleted = false;
                 $wml->save();
                 echo 'wml data save!';
-                Debugger::d($LwmDto);
-                Debugger::dd($wml);
             } else {
                 echo 'Imei not Active';exit;
             }
