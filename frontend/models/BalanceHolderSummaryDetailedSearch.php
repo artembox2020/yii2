@@ -247,13 +247,28 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 ($startTimestamp == $nextMonthTimestamp) || ($startTimestamp == $todayTimestamp && $i == 1)
             )
             {
-                $income = $this->getMashineIncomeValueByTimestamps($startTimestamp, $endTimestamp, $mashine);
+                // if timestamp refers to the next month set income to null
+                if ($startTimestamp == $nextMonthTimestamp) {
+                    $income = null;
+                } else {
+                    $income = $this->getMashineIncomeValueByTimestamps($startTimestamp, $endTimestamp, $mashine);
+                }
+
                 if (is_null($income)) {
-                    $lastMonth = $this->getLastMonth($nextMonthTimestamp);
+
+                    // if timestamp is today and it is 1st day make correct last month
+                    if ($startTimestamp == $todayTimestamp && $i == 1) {
+                        $lastMonth = $this->getLastMonth($nextMonthTimestamp - 1);
+                    } else {
+                        $lastMonth = $this->getLastMonth($nextMonthTimestamp);
+                    }
+
+                    // get last month year
                     $year = date('Y', $nextMonthTimestamp);
                     if ($lastMonth == '12') {
                         --$year;
                     }
+
                     $numberOfDays = $this->getDaysByMonths($year)[$lastMonth];
                     $startStamp = strtotime($year.'-'.$lastMonth.'-01 00:00:00');
                     $endStamp = $start + $stepInterval*$numberOfDays;
