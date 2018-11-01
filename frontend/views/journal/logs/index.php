@@ -17,12 +17,18 @@ use yii\grid\GridView;
     'filterModel' => $searchModel,
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
-        'date:date',
+        ['attribute' => 'address',
+            'label' => Yii::t('frontend', 'Address'),
+            'value' => 'address.name'
+        ],
+        ['attribute' => 'date',
+            'label' => Yii::t('frontend', 'Hour that date'),
+            'value' => function($dataProvider) {
+                return date('H:i:s d.m.Y', $dataProvider->date);
+            },
+        ],
         'imei',
-//            'created_at',
-//            'updated_at',
-//            'is_deleted',
-//            'deleted_at',
+//        'price',
 
         ['class' => 'yii\grid\ActionColumn'],
     ],

@@ -597,15 +597,11 @@ class NetManagerController extends \yii\web\Controller
 
             return $this->redirect('account/sign-in/login');
         }
-//        Debugger::dd($model);
         if ($model->load(Yii::$app->request->post())) {
           if ($model->validate()) {
-//                Debugger::dd($model->date_build);
                 $model->update(false);
               return $this->redirect('osnovnizasoby');
             }
-//            Debugger::dd($model->date_build);
-//            return $this->redirect('osnovnizasoby');
         }
 
         return $this->render('wm-machine/wm-machine-update', [

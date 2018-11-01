@@ -182,7 +182,7 @@ class JournalController extends Controller
         $searchModel = new CbLogSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('log/logs', [
+        return $this->render('logs/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider
         ]);

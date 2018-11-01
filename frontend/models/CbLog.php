@@ -133,4 +133,9 @@ class CbLog extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
     }
+
+    public function getAddress()
+    {
+        return $this->hasOne(AddressBalanceHolder::className(), ['id' => $this->getImei()]);
+    }
 }
