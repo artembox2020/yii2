@@ -29,7 +29,7 @@ use frontend\services\globals\EntityHelper;
                     return (
                         Html::a(
                             Yii::t('frontend', $model->type_mashine).$model->number_device,
-                            '/'.strtolower($model->type_mashine).'-mashine/view?id='.$model->id,
+                            '/net-manager/'.strtolower($model->type_mashine).'-machine-view?id='.$model->id,
                             ['target' => '_blank']
                         ).
                         EntityHelper::makePopupWindow(
@@ -98,7 +98,7 @@ use frontend\services\globals\EntityHelper;
                 {
                     return Html::a(
                         $model->getStateView(),
-                        '/'.strtolower($model->type_mashine).'-mashine/view?id='.$model->id,
+                        '/net-manager/'.strtolower($model->type_mashine).'-machine-view?id='.$model->id,
                         ['target' => '_blank']
                     );
                 },

@@ -44,10 +44,4 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'deleted_at',
         ],
     ]) ?>
-    
-    <?php echo Yii::$app->runAction(
-        '/journal/index-by-mashine',
-        ['id' => $model->id, 'mashineRedirectAction' => 'wm-mashine/view']
-    ); ?>
-
 </div>

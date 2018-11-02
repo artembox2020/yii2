@@ -3,6 +3,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
 use frontend\services\custom\Debugger;
+use frontend\models\Imei;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\WmMashine */
 /* @var $users common\models\User */
@@ -51,7 +52,7 @@ use frontend\services\custom\Debugger;
             ],
             [
                 'label' => Yii::t('frontend', 'Address Install'),
-                'value' => $model->address->address,
+                'value' => !empty($address = $model->address) ? $address->address : null,
             ],
             [
                 'label' => Yii::t('frontend', 'Device number'),
@@ -82,3 +83,13 @@ use frontend\services\custom\Debugger;
     <b><u>Фінансові дані</u></b><br>
     ....
 </div>
+
+<?php
+    if (Imei::findOne($model->imei_id)) {
+
+        echo Yii::$app->runAction(
+            '/journal/index-by-mashine',
+            ['id' => $model->id, 'mashineRedirectAction' => '/net-manager/wm-machine-view']
+        );
+    }
+?>
