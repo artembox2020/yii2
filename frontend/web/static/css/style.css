@@ -266,6 +266,9 @@ div.required label:after {
 .monitoring td.devices table td {
     padding: 1px!important;
 }
+.monitoring td.cell-financial {
+    width: 70px;
+}
 .monitoring td.current-status {
     width: 140px!important;
     max-width: 140px!important;

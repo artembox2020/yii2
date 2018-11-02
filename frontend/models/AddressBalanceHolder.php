@@ -32,7 +32,9 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
 {
     const STATUS_FREE = 0;
     const STATUS_BUSY = 1;
-    
+
+    const INFINITY = 99999999;
+
     /**
      * @inheritdoc
      */
@@ -245,6 +247,33 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
                     $gelDispenser->save(false);
                 }
             }
+        }
+    }
+
+    /**
+     * Displays serial number (e.g. for views)
+     * 
+     * @return int|string
+     */
+    public function displaySerialNumber()
+    {
+        if ($this->serial_column == AddressBalanceHolder::INFINITY) {
+
+            return '';
+        }
+
+        return $this->serial_column;
+    }
+
+    /**
+     * Initializes serial number
+     *
+     */
+    public function initSerialNumber()
+    {
+        if (empty($this->serial_column)) {
+            $this->serial_column = self::INFINITY;
+            $this->save(false);
         }
     }
 }

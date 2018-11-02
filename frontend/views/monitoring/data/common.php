@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use frontend\models\AddressBalanceHolder;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -11,9 +12,9 @@ use yii\widgets\Pjax;
 <?php
     $query = $dataProvider->query;
     $data = $query->one();
-    global $serialNumber;
-    if (empty($serialNumber)) {
-        $serialNumber = 0;
+
+    if ($data->imeiRelation->fakeAddress) {
+        $data->imeiRelation->fakeAddress->initSerialNumber();
     }
 ?>
 <div class="row common-container">
@@ -30,7 +31,11 @@ use yii\widgets\Pjax;
     </div>
 
     <div class="col-md-2 col-sm-2 cell popup-block">
-        <input class = "address-serial-number" type="text" value="<?= $data->imeiRelation->fakeAddress->serial_column ?>" />
+        <input 
+            class = "address-serial-number"
+            type = "text" 
+            value = "<?= $data->imeiRelation->fakeAddress->displaySerialNumber() ?>"
+        />
         <div class = "label">
             <?= Yii::t('frontend', 'Imei') ?>:
             <?= $data->imeiRelation->imei ?>

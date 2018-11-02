@@ -2,6 +2,13 @@
     <tbody>
         <tr>
             <td>
+                <b><?= Yii::t('frontend', 'Indicator') ?>:</b>
+                <br>
+                <b>ErrFlash</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <b><?= $model->imeiRelation->attributeLabels()['firmware_version'] ?></b>
                 <br>
                 <b><?= $model->imeiRelation->firmware_version ?></b>

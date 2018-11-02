@@ -203,7 +203,7 @@ class ImeiDataSearch extends ImeiData
             $address = AddressBalanceHolder::findOne($params['addressId']);
             if ($address) {
                 $address->serial_column = $params['serialNumber'];
-                $address->save();
+                $address->save(false);
             }
         }
     }
