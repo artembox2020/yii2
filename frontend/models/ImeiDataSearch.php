@@ -94,8 +94,10 @@ class ImeiDataSearch extends ImeiData
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
-            'sort' => false
         ]);
+
+        $rawSql = $dataProvider->query->createCommand()->rawSql;
+        $dataProvider->query->sql = $rawSql.' ORDER BY number_device ASC';
 
         return $dataProvider;
     }
