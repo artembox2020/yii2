@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -134,8 +135,16 @@ class CbLog extends \yii\db\ActiveRecord
         return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
     }
 
+    /**
+     * @return array|null|\yii\db\ActiveRecord
+     */
     public function getAddress()
     {
-        return $this->hasOne(AddressBalanceHolder::className(), ['id' => $this->getImei()]);
+        return AddressBalanceHolder::find(['id' => $this->imei_id])->one();
+    }
+
+    public function getWmLog()
+    {
+        return $this->hasOne(WmLog::className(), ['id' => $this->imei_id])->one();
     }
 }

@@ -43,7 +43,16 @@ class CbLogSearch extends CbLog
      */
     public function search($params)
     {
-        $query = CbLog::find();
+        /**
+         *
+         * Select date, imei, status, created_at, fireproof_counter_hrn, fireproof_counter_card from cb_log
+        WHERE imei = imei
+        Union all
+        Select date, imei, number, created_at, Null as fireproof_counter_hrn, Null as fireproof_counter_card from wm_log
+        ORDER by created_at
+         */
+        $query = CbLog::find()
+            ->joinWith('WmLog');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

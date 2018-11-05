@@ -19,7 +19,7 @@ use yii\grid\GridView;
         ['class' => 'yii\grid\SerialColumn'],
         ['attribute' => 'address',
             'label' => Yii::t('frontend', 'Address'),
-            'value' => 'address.name'
+            'value' => 'address.address'
         ],
         ['attribute' => 'date',
             'label' => Yii::t('frontend', 'Hour that date'),
