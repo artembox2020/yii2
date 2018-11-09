@@ -113,20 +113,22 @@ class Jsummary extends ActiveRecord
      * Save item by imei id and timestamps
      * 
      * @param int $imei_id
+     * @param int $address_id
      * @param timestamp $startTimestamp
      * @param timestamp $endTimestamp
      * @param array $params
      * @param bool|string $incomeByMashines
      */
-    public function saveItem($imei_id, $startTimestamp, $endTimestamp, $params, $incomeByMashines)
+    public function saveItem($imei_id, $address_id, $startTimestamp, $endTimestamp, $params, $incomeByMashines)
     {
         $item = Jsummary::findOne(
-            ['imei_id' => $imei_id, 'start_timestamp' => $startTimestamp, 'end_timestamp' => $endTimestamp]
+            ['address_id' => $address_id, 'imei_id' => $imei_id, 'start_timestamp' => $startTimestamp, 'end_timestamp' => $endTimestamp]
         );
 
         if (!$item) {
             $item = new Jsummary();
             $item->imei_id = $imei_id;
+            $item->address_id = $address_id;
             $item->start_timestamp = $startTimestamp;
             $item->end_timestamp = $endTimestamp;
         }
@@ -150,7 +152,7 @@ class Jsummary extends ActiveRecord
             }
         }
 
-        $item->save();
+        $item->save(false);
     }
 
     /**
@@ -179,16 +181,18 @@ class Jsummary extends ActiveRecord
      * @param int $imei_id
      * @return array
      */
-    public function getIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $imei_id)
+    public function getIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $address_id, $imei_id)
     {
-        $items = Jsummary::find()->andWhere(['imei_id' => $imei_id])
+        $stepInterval = 3600*24;
+        $items = [];
+
+        $items = Jsummary::find()->andWhere(['address_id' => $address_id])
                                  ->andWhere(['>=', 'start_timestamp', $startTimestamp])
                                  ->andWhere(['<', 'start_timestamp', $todayTimestamp])
                                  ->andWhere(['<=', 'end_timestamp', $endTimestamp])
                                  ->orderBy(['start_timestamp' => SORT_ASC])
                                  ->all();
         $incomes = [];
-        $stepInterval = 3600*24;
         for ($i = 0; $i < count($items); ++$i, ++$day) {
             $item = $items[$i];
             $day = floor(($item->start_timestamp - $startTimestamp) / $stepInterval + 1);
@@ -219,7 +223,7 @@ class Jsummary extends ActiveRecord
      */
     public function getDetailedIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $mashine)
     {
-        $incomes = $this->getIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $mashine->imei_id);
+        $incomes = $this->getIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $mashine->address_id, $mashine->imei_id);
         $detailedIncomes = [];
         foreach ($incomes as $day => $income) {
             $incomeByMashines = $income['income_by_mashines'];

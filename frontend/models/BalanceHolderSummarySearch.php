@@ -109,24 +109,6 @@ class BalanceHolderSummarySearch extends BalanceHolder
     }
 
     /**
-     * Gets income by address, year, month and day
-     *
-     * @param int $address_id
-     * @param int $year
-     * @param int $month
-     * @param int $day
-     * @return decimal
-     */
-    public function getIncomeByYearMonthDay($address_id, $year, $month, $day)
-    {
-        $timestampStart = $this->getTimestampByYearMonthDay($year, $month, $day, true);
-        $timestampEnd = $this->getTimestampByYearMonthDay($year, $month, $day, false);
-        $income = $this->getIncomeByAddressId($address_id, $timestampStart, $timestampEnd);
-
-        return $income;
-    }
-
-    /**
      * Gets timestamp by year, month, day
      *
      * @param int $year
@@ -338,7 +320,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $query = WmMashineData::find()->select('mashine_id')->distinct()->andWhere(['>=', 'created_at', $start]);
         $query = $query->andWhere(['<=', 'created_at', $end]);
         $mashineIds = ArrayHelper::getColumn($query->all(), 'mashine_id');
-        $query = WmMashine::find()->select('id')->distinct()->andWhere(['imei_id' => $imeiId, 'id' => $mashineIds]);
+        $query = WmMashine::find()->select('id')->distinct()->where(['imei_id' => $imeiId, 'id' => $mashineIds]);
 
         return $query;
     }
@@ -366,7 +348,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
                               ['>', 'wm_mashine.deleted_at', $start]
                             ])
                         ]))
-                       ->orderBy(['id' => SORT_ASC]);    
+                       ->orderBy(['id' => SORT_ASC]);
 
         return $query;
     }
@@ -488,9 +470,10 @@ class BalanceHolderSummarySearch extends BalanceHolder
      * @param timestamp $start
      * @param timestamp $end
      * @param Imei $imei
+     * @param Address $address
      * @return decimal
      */ 
-    public function getIncomeByImeiAndTimestamps($start, $end, $imei)
+    public function getIncomeByImeiAndTimestamps($start, $end, $imei, $address)
     {
         $jSummary = new Jsummary();
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
@@ -540,7 +523,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         } else {
             $income = null;
         }
-        $jSummary->saveItem($imei->id, $start, $end, ['income' => $income], false);
+        $jSummary->saveItem($imei->id, $address->id, $start, $end, ['income' => $income], false);
 
         return $income;
     }
@@ -630,7 +613,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
      *
      * @return array
      */ 
-    public function getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei)
+    public function getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei, $address)
     {
         $jSummary = new Jsummary();
         $entityHelper = new EntityHelper();
@@ -673,10 +656,53 @@ class BalanceHolderSummarySearch extends BalanceHolder
         ];
 
         if ($needToSave) {
-            $jSummary->saveItem($imei->id, $timestamp, $timestampEnd, $mashineStatistics, false);
+            $jSummary->saveItem($imei->id, $address->id, $timestamp, $timestampEnd, $mashineStatistics, false);
         }
 
         return $mashineStatistics;
+    }
+
+    /**
+     * Makes imei binding info as array by address and timestamp 
+     *
+     * @param AddressImeiData $addressImeiData
+     * @param Address $address
+     * @param timestamp $timestamp
+     * @return array
+     */
+    public function makeImeiInfo($addressImeiData, $address, $timestamp)
+    {
+        $imeiInfo = $addressImeiData->getNextImeiIdByAddressAndTimestamp($address->id, $timestamp);
+
+        return $this->makeImeiInfoByData($addressImeiData, $address, $imeiInfo, [], 0);
+    }
+
+    /**
+     * Makes imei info by data ($imeiInfo, $nextImeiInfo, $nextBindingTimestamp)
+     *
+     * @param AddressImeiData $addressImeiData
+     * @param Address $address
+     * @param array $imeiInfo
+     * @param array $nextImeiInfo
+     * @param timestamp $nextBindingTimestamp
+     * @return array
+     */
+    public function makeImeiInfoByData($addressImeiData, $address, $imeiInfo, $nextImeiInfo, $nextBindingTimestamp)
+    {
+        if (!empty($imeiInfo) && !empty($imeiInfo['imei_id'])) {
+            $nextImeiInfo = $addressImeiData->getNextImeiIdByAddressAndTimestamp($address->id, $imeiInfo['created_at']);
+            if (empty($nextImeiInfo)) {
+                $nextBindingTimestamp = AddressImeiData::INFINITY;
+            } else {
+                $nextBindingTimestamp = $nextImeiInfo['created_at'];
+            }
+        }
+
+        return [
+            'imeiInfo' => $imeiInfo,
+            'nextImeiInfo' => $nextImeiInfo,
+            'nextBindingTimestamp' => $nextBindingTimestamp
+        ];
     }
 
     /**
@@ -691,74 +717,115 @@ class BalanceHolderSummarySearch extends BalanceHolder
     {
         $entity = new Entity();
         $jSummary = new Jsummary();
+        $addressImeiData = new AddressImeiData();
         $imeiQuery = $entity->getUnitsQueryPertainCompany(new Imei());
-        $imei = $imeiQuery->andWhere(['address_id' => $address->id, 'status' => $address->status])->limit(1)->one();
+        $imei = $addressImeiData->getCurrentImeiIdByAddress($address->id, $address->status);
         $incomes = [];
         $timestamps = $this->getTimestampByYearMonth($year, $month);
-
-        if ($imei) {
-            $totalNumberOfMashines = $this->getAllMashinesQueryByTimestamps(
-                $timestamps['start'], $timestamps['end'], $imei->id
-            );
-            $totalNumberOfMashines = $totalNumberOfMashines->count();
-        }
 
         $beginningTimestamp = $this->getDayBeginningTimestampByTimestamp($address->created_at);
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
         $nextMonthTimestamp = $this->getNextMonthBeginningTimestamp();
         $numberOfDays = $this->getDaysByMonths($year)[$month];
-        if ($imei && $totalNumberOfMashines > 0) {
-            $intervalStep = 3600 * 24;
-            $incomesFromHistory = $jSummary->getIncomes($timestamps['start'], $timestamps['end'] + 1, $todayTimestamp, $imei->id);
-            $daysArray = [];
+        $intervalStep = 3600 * 24;
 
-            for ($k = 1; $k <= $numberOfDays; ++$k) {
-                $daysArray[$k] = $k;
-            }
-            $emptyDays = array_diff($daysArray, array_keys($incomesFromHistory));
-
-            foreach ($emptyDays as $day)
-            {
-                $timestamp = $timestamps['start'] + ($day - 1) *$intervalStep;
-
-                // make average income for the 1st number of the next month until the first actual results
-                if (
-                    (($timestamp == $nextMonthTimestamp) || ($timestamp == $todayTimestamp && $day == 1))
-                )
-                {
-                    $timestampEnd = $timestamp + $intervalStep;
-                    $income = $this->getIncomeByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
-                    if (is_null($income)) {
-                        $income = $this->getAverageIncomeByLastMonth($year, $month, $timestamp, $todayTimestamp, $day, $address);
-                    }
-                    $mashineStatistics = $this->getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
-                    $incomes[$day] = array_merge(['income' => $income], $mashineStatistics);
-                    break;
-                }
-
-                if ($todayTimestamp < $timestamp) {
-                    break;
-                }
-
-                $timestampDiff = $timestamp - $beginningTimestamp;
-                $numberOfMashines = $this->getAllMashinesQueryByTimestamps(
-                    $timestamp, $timestamp + $intervalStep - 1, $imei->id
-                );
-                $numberOfMashines = $numberOfMashines->count();
-
-                if ($timestampDiff < 0 || $numberOfMashines == 0) {
-                    continue;
-                }
-
-                $income = $this->getIncomeByImeiAndTimestamps($timestamp, $timestamp + $intervalStep, $imei);
-
-                $timestampEnd = $timestamp + $intervalStep;
-                $mashineStatistics = $this->getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei);
-                $incomes[$day] = array_merge(['income' => $income], $mashineStatistics);
-            }
-
-            $incomes = $incomes + $incomesFromHistory;
+        if (!empty($imei)) {
+            $incomesFromHistory = $jSummary->getIncomes($timestamps['start'], $timestamps['end'] + 1, $todayTimestamp, $address->id, $imei->id);
+        } else {
+            $incomesFromHistory = [];
         }
+
+        $daysArray = [];
+
+        for ($k = 1; $k <= $numberOfDays; ++$k) {
+            $daysArray[$k] = $k;
+        }
+        $emptyDays = array_diff($daysArray, array_keys($incomesFromHistory));
+        $bindingHistoryBeginning = $addressImeiData->getHistoryBeginning($address->id);
+
+        $imeiInfoData = $this->makeImeiInfo($addressImeiData, $address, $timestamps['start']);
+        list ($imeiInfo, $nextImeiInfo, $nextBindingTimestamp) = [
+            $imeiInfoData['imeiInfo'], $imeiInfoData['nextImeiInfo'], $imeiInfoData['nextBindingTimestamp']
+        ];
+
+        foreach ($emptyDays as $day)
+        {
+            $timestamp = $timestamps['start'] + ($day - 1) *$intervalStep;
+
+            if ($todayTimestamp < $timestamp) {
+                break;
+            }
+
+            // determine the appropriate imei
+            if (
+                !empty($imeiInfo) &&
+                ((empty($imei)) || $imei->id != $imeiInfo['imei_id']) &&
+                $imeiInfo['created_at'] < $timestamp + $intervalStep && 
+                $nextBindingTimestamp >= $timestamp + $intervalStep
+            )
+            {
+                $imei = Imei::find()->where(['id' => $imeiInfo['imei_id']])->one();
+            }
+            elseif (
+                !empty($imeiInfo) && $nextBindingTimestamp < $timestamp + $intervalStep
+            )
+            {
+                while (!empty($imeiInfo) && $nextBindingTimestamp < $timestamp + $intervalStep) {
+                    $imeiInfo = $nextImeiInfo;
+
+                    if (!empty($imeiInfo)) {
+                        $nextImeiInfo = $addressImeiData->getNextImeiIdByAddressAndTimestamp($address->id, $imeiInfo['created_at']);
+                        if (empty($nextImeiInfo)) {
+                            $nextBindingTimestamp = AddressImeiData::INFINITY;
+                        } else {
+                            $nextBindingTimestamp = $nextImeiInfo['created_at'];
+                        }
+                    }
+                }
+
+                if (!empty($imeiInfo)) {
+                    $imei = Imei::find()->where(['id' => $imeiInfo['imei_id']])->one();
+                }
+            }
+
+            if (empty($imei)) {
+
+                continue;
+            }
+
+            // make average income for the 1st number of the next month until the first actual results
+            if (
+                (($timestamp == $nextMonthTimestamp) || ($timestamp == $todayTimestamp && $day == 1))
+            )
+            {
+                $timestampEnd = $timestamp + $intervalStep;
+                $income = $this->getIncomeByImeiAndTimestamps($timestamp, $timestampEnd, $imei, $address);
+                if (is_null($income)) {
+                    $income = $this->getAverageIncomeByLastMonth($year, $month, $timestamp, $todayTimestamp, $day, $address);
+                }
+                $mashineStatistics = $this->getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei, $address);
+                $incomes[$day] = array_merge(['income' => $income], $mashineStatistics);
+                break;
+            }
+
+            $timestampDiff = $timestamp - $beginningTimestamp;
+            $numberOfMashines = $this->getAllMashinesQueryByTimestamps(
+                $timestamp, $timestamp + $intervalStep - 1, $imei->id
+            );
+            $numberOfMashines = $numberOfMashines->count();
+
+            if ($timestampDiff < 0 || $numberOfMashines == 0) {
+                continue;
+            }
+
+            $income = $this->getIncomeByImeiAndTimestamps($timestamp, $timestamp + $intervalStep, $imei, $address);
+
+            $timestampEnd = $timestamp + $intervalStep;
+            $mashineStatistics = $this->getMashineStatisticsByImeiAndTimestamps($timestamp, $timestampEnd, $imei, $address);
+            $incomes[$day] = array_merge(['income' => $income], $mashineStatistics);
+        }
+
+        $incomes = $incomes + $incomesFromHistory;
 
         return $incomes;
     }

@@ -6,6 +6,7 @@ use common\models\User;
 use frontend\models\BalanceHolderSummarySearch;
 use frontend\models\BalanceHolderSummaryDetailedSearch;
 use frontend\models\WmMashine;
+use frontend\models\AddressImeiData;
 use Yii;
 use yii\filters\AccessControl;
 use frontend\services\globals\EntityHelper;
@@ -37,7 +38,7 @@ class SummaryJournalController extends \yii\web\Controller
     {
         $get = Yii::$app->request->get();
         if (
-            isset(Yii::$app->request->get()['type']) 
+            isset(Yii::$app->request->get()['type'])
             && Yii::$app->request->get()['type'] == BalanceHolderSummarySearch::TYPE_DETAILED
         ) {
             $redirectUrl = array_merge(['index-detailed'], Yii::$app->request->queryParams);
@@ -172,10 +173,11 @@ class SummaryJournalController extends \yii\web\Controller
             'timestampStart' => $timestampStart,
             'timestampEnd' => $timestampEnd,
             'year' => $year,
-            'month' => $month
+            'month' => $month,
+            'addressImeiData' => new AddressImeiData()
         ]);
     }
-    
+
      /**
      * Renders all balanceholder addresses
      * 

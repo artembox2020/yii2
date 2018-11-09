@@ -330,7 +330,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         }
 
         // write history
-        $this->saveDetailedHistory($incomes, $mashine->imei_id, $mashine->id, $start, $days);
+        $this->saveDetailedHistory($incomes, $mashine->address_id, $mashine->imei_id, $mashine->id, $start, $days);
 
         return $incomes;
     }
@@ -403,7 +403,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
      * @param timestamp $start
      * @param int $days
      */ 
-    public function saveDetailedHistory($incomes, $imeiId, $mashineId, $start, $days)
+    public function saveDetailedHistory($incomes, $addressId, $imeiId, $mashineId, $start, $days)
     {
         $jSummary = new Jsummary();
         $stepInterval = 3600 * 24;
@@ -419,7 +419,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 .$incomes[$i]['idleHours'].
                 '`';
 
-            $jSummary->saveItem($imeiId, $startTimestamp,  $endTimestamp, [], $incomeByMashines);
+            $jSummary->saveItem($imeiId, $addressId, $startTimestamp,  $endTimestamp, [], $incomeByMashines);
         }
     }
 }

@@ -386,9 +386,15 @@ class NetManagerController extends \yii\web\Controller
     {
         $entity = new Entity();
         $imei = $entity->getUnitPertainCompany($id, new Imei());
+        $oldAddressId = $imei->address_id;
         $imei->bindToAddress($foreignId);
-        
+
         $addressImeiData = new AddressImeiData();
+
+        if ($foreignId != $oldAddressId) {
+            $addressImeiData->createLog(0, $oldAddressId);
+        }
+
         $addressImeiData->createLog($imei->id, $foreignId);
 
         $redirectUrl = array_merge(['washpay'], Yii::$app->request->queryParams);
@@ -436,9 +442,10 @@ class NetManagerController extends \yii\web\Controller
     {
         $user = User::findOne(Yii::$app->user->id);
         $entityHelper = new EntityHelper();
-        
+
         $imei = $this->findModel($id, new Imei());
-        
+        $oldAddressId = $imei->address_id;
+
         $addresses = $entityHelper->tryFilteredStatusDataMapped(
             new AddressBalanceHolder(), 
             AddressBalanceHolder::STATUS_FREE,
@@ -456,8 +463,12 @@ class NetManagerController extends \yii\web\Controller
             $imei->save();
             
             $addressImeiData = new AddressImeiData();
+
+            if ($imei->address_id != $oldAddressId) {
+                $addressImeiData->createLog(0, $oldAddressId);
+            }
+
             $addressImeiData->createLog($imei->id, $imei->address_id);
-            
 
             $this->redirect(['/net-manager/washpay']);
         }
