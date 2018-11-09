@@ -44,7 +44,7 @@ use frontend\models\BalanceHolderSummarySearch;
                                     <?= $address->floor ? $address->floor : ' &nbsp;' ?>
                                 </td>
                                 <td class="mashine-count">
-                                    <?= $searchModel->getAllMashinesQueryByYearMonth($year, $month, $address)->count() ?>
+                                    <?= $addressImeiData->getWmMashinesCountByYearMonth($year, $month, $address) ?>
                                 </td>
                                 <td class="number-of-citizens hidden">
                                     <?= $address->number_of_citizens ?>

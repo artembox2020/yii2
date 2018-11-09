@@ -212,7 +212,8 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
             'income' => null,
             'isDeleted' => false,
             'isCreated' => false,
-            'idleHours' => 0
+            'idleHours' => 0,
+            'imei' => false
         ];
     }
 
@@ -237,7 +238,8 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         $beginningTimestamp = $this->getDayBeginningTimestampByTimestamp($address->created_at);
         $historyIncomes = $jSummary->getDetailedIncomes($start, $end - 1, $todayTimestamp, $mashine);
         $historyDays = array_keys($historyIncomes);
-        
+        $imei = Imei::find()->where(['id' => $mashine->imei_id])->one();
+
         for ($i = 1; $i <= $days; ++$i) {
             $startTimestamp = $start + ($i - 1) * $stepInterval;
             $endTimestamp = $startTimestamp + $stepInterval;
@@ -284,7 +286,8 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     'income' => $income,
                     'isDeleted' => $is_deleted,
                     'isCreated' => $is_created,
-                    'idleHours' => $idleHours
+                    'idleHours' => $idleHours,
+                    'imei' => !empty($imei) ? $imei->imei : false
                 ];
                 continue;
             }
@@ -325,12 +328,13 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 'income' => $income,
                 'isDeleted' => $is_deleted,
                 'isCreated' => $is_created,
-                'idleHours' => $idleHours
+                'idleHours' => $idleHours,
+                'imei' => !empty($imei) ? $imei->imei : false 
             ];
         }
 
         // write history
-        $this->saveDetailedHistory($incomes, $mashine->imei_id, $mashine->id, $start, $days);
+        $this->saveDetailedHistory($incomes, $mashine->address_id, $mashine->imei_id, $mashine->id, $start, $days);
 
         return $incomes;
     }
@@ -403,7 +407,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
      * @param timestamp $start
      * @param int $days
      */ 
-    public function saveDetailedHistory($incomes, $imeiId, $mashineId, $start, $days)
+    public function saveDetailedHistory($incomes, $addressId, $imeiId, $mashineId, $start, $days)
     {
         $jSummary = new Jsummary();
         $stepInterval = 3600 * 24;
@@ -419,7 +423,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 .$incomes[$i]['idleHours'].
                 '`';
 
-            $jSummary->saveItem($imeiId, $startTimestamp,  $endTimestamp, [], $incomeByMashines);
+            $jSummary->saveItem($imeiId, $addressId, $startTimestamp,  $endTimestamp, [], $incomeByMashines);
         }
     }
 }

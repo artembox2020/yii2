@@ -136,8 +136,14 @@ class ImeiController extends Controller
             }
         }
 
-
+        $oldAddressId = $model->address_id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            if ($model->fakeAddress && ($model->fakeAddress->id != $oldAddressId)) {
+                $addressImeiData = new AddressImeiData();
+                $addressImeiData->createLog(0, $oldAddressId);
+                $addressImeiData->createLog($model->id, $model->address_id);
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use frontend\models\BalanceHolderSummarySearch;
+use frontend\services\globals\EntityHelper;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -28,7 +29,15 @@ use frontend\models\BalanceHolderSummarySearch;
                     class = "timestamp <?= $data[$j][$i]['class'] ?>"
                 >
                 <?php
-                    echo isset($data[$j]['incomes'][$i]['income']) ? $data[$j]['incomes'][$i]['income'] : ' &nbsp;';
+                    echo (
+                        isset($data[$j]['incomes'][$i]['income']) ? $data[$j]['incomes'][$i]['income'] : ' &nbsp;'
+                    ).
+                    EntityHelper::makePopupWindow(
+                        [],
+                        $summaryJournalController->renderPopupLabel($data[$j]['incomes'][$i]),
+                        'color: black; text-align: left;',
+                        'height: 10px; position: absolute;'
+                    );
                 ?>
                 </td>
             <?php

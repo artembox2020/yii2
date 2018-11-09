@@ -6,6 +6,7 @@ use common\models\User;
 use frontend\models\BalanceHolderSummarySearch;
 use frontend\models\BalanceHolderSummaryDetailedSearch;
 use frontend\models\WmMashine;
+use frontend\models\AddressImeiData;
 use Yii;
 use yii\filters\AccessControl;
 use frontend\services\globals\EntityHelper;
@@ -37,7 +38,7 @@ class SummaryJournalController extends \yii\web\Controller
     {
         $get = Yii::$app->request->get();
         if (
-            isset(Yii::$app->request->get()['type']) 
+            isset(Yii::$app->request->get()['type'])
             && Yii::$app->request->get()['type'] == BalanceHolderSummarySearch::TYPE_DETAILED
         ) {
             $redirectUrl = array_merge(['index-detailed'], Yii::$app->request->queryParams);
@@ -172,10 +173,11 @@ class SummaryJournalController extends \yii\web\Controller
             'timestampStart' => $timestampStart,
             'timestampEnd' => $timestampEnd,
             'year' => $year,
-            'month' => $month
+            'month' => $month,
+            'addressImeiData' => new AddressImeiData()
         ]);
     }
-    
+
      /**
      * Renders all balanceholder addresses
      * 
@@ -229,7 +231,8 @@ class SummaryJournalController extends \yii\web\Controller
             'timestamp' => $timestamp,
             'year' => $year,
             'month' => $month,
-            'data' => $data
+            'data' => $data,
+            'summaryJournalController' => $this,
         ]);
     }
     
@@ -259,7 +262,8 @@ class SummaryJournalController extends \yii\web\Controller
             'timestamp' => $timestamp,
             'year' => $year,
             'month' => $month,
-            'data' => $data
+            'data' => $data,
+            'summaryJournalController' => $this,
         ]);
     }
 
@@ -448,6 +452,32 @@ class SummaryJournalController extends \yii\web\Controller
             'months' => $months,
             'years' => $years,
             'typesOfDisplay' => $typesOfDisplay
+        ]);
+    }
+
+    /**
+     * Renders popup label for a summary cell
+     *
+     * @param array $params
+     * @return string
+     */
+    public function renderPopupLabel($params)
+    {
+        return $this->renderPartial('/summary-journal/popup-label', [
+            'params' => $params,
+        ]);
+    }
+
+    /**
+     * Renders popup label for a detailed summary cell
+     *
+     * @param array $params
+     * @return string
+     */
+    public function renderPopupLabelDetailed($params)
+    {
+        return $this->renderPartial('/summary-journal/popup-label-detailed', [
+            'params' => $params,
         ]);
     }
 }
