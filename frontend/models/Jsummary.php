@@ -195,6 +195,7 @@ class Jsummary extends ActiveRecord
         $incomes = [];
         for ($i = 0; $i < count($items); ++$i, ++$day) {
             $item = $items[$i];
+            $imei = Imei::find()->where(['id' => $item->imei_id])->one();
             $day = floor(($item->start_timestamp - $startTimestamp) / $stepInterval + 1);
             if (!is_null($item->idleHours)) {
                 $incomes[$day] = [
@@ -204,6 +205,7 @@ class Jsummary extends ActiveRecord
                     'active' => $item->active,
                     'all'=> $item->all,
                     'idleHours' => $item->idleHours,
+                    'imei' => !empty($imei) ? $imei->imei : Yii::t('frontend', 'Undefined'),
                     'income_by_mashines' => $item->income_by_mashines 
                 ];
             }

@@ -620,7 +620,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
 
         if (
-            $todayTimestamp >= $timestampEnd 
+            $todayTimestamp >= $timestampEnd
             && ($jSummaryItem = $jSummary->getItem($imei->id, $timestamp, $timestampEnd))
             && !is_null($jSummaryItem->created)
         ) {
@@ -652,7 +652,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
             'deleted' => $mashinesDeleted,
             'active' => $mashinesActive,
             'all' => $mashinesAll,
-            'idleHours' => $idleHours
+            'idleHours' => $idleHours,
+            'imei' => $imei->imei
         ];
 
         if ($needToSave) {

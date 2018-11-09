@@ -335,17 +335,20 @@ div.required label:after {
     border-top: 2px solid rgb(221, 221, 221);
     border-left: 1px solid rgb(221, 221, 221);
 }
-.monitoring .popup-block {
+.monitoring .popup-block,
+.summary-journal .popup-block {
     position:  relative;
     cursor: pointer;
 }
-.monitoring .popup-block img {
+.monitoring .popup-block img,
+.summary-journal .popup-block img {
     height: 28px;
     width: 36px;
     margin-top: -5px;
     margin-bottom: -5px;
 }
-.monitoring .popup-block > .label {
+.monitoring .popup-block > .label,
+.summary-journal .popup-block > .label{
     position: absolute;
     background: #fff;
     color: black;
@@ -355,8 +358,14 @@ div.required label:after {
     z-index: 1000;
     visibility: hidden;
 }
-.monitoring .popup-block:hover > .label {
+.monitoring .popup-block:hover > .label,
+.summary-journal .timestamp.white-color:not([class*=not-set-income]):hover .label,
+.summary-journal .timestamp.light-grey:hover .label,
+.summary-journal .timestamp.middle-grey:hover .label,
+.summary-journal .timestamp.heavy-grey:hover .label,
+.summary-journal .timestamp.dark-grey:hover .label {
     visibility: visible;
+    cursor: pointer;
 }
 .monitoring td.financial table thead th.financial {
     display: block!important;

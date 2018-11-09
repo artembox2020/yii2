@@ -231,7 +231,8 @@ class SummaryJournalController extends \yii\web\Controller
             'timestamp' => $timestamp,
             'year' => $year,
             'month' => $month,
-            'data' => $data
+            'data' => $data,
+            'summaryJournalController' => $this,
         ]);
     }
     
@@ -261,7 +262,8 @@ class SummaryJournalController extends \yii\web\Controller
             'timestamp' => $timestamp,
             'year' => $year,
             'month' => $month,
-            'data' => $data
+            'data' => $data,
+            'summaryJournalController' => $this,
         ]);
     }
 
@@ -450,6 +452,32 @@ class SummaryJournalController extends \yii\web\Controller
             'months' => $months,
             'years' => $years,
             'typesOfDisplay' => $typesOfDisplay
+        ]);
+    }
+
+    /**
+     * Renders popup label for a summary cell
+     *
+     * @param array $params
+     * @return string
+     */
+    public function renderPopupLabel($params)
+    {
+        return $this->renderPartial('/summary-journal/popup-label', [
+            'params' => $params,
+        ]);
+    }
+
+    /**
+     * Renders popup label for a detailed summary cell
+     *
+     * @param array $params
+     * @return string
+     */
+    public function renderPopupLabelDetailed($params)
+    {
+        return $this->renderPartial('/summary-journal/popup-label-detailed', [
+            'params' => $params,
         ]);
     }
 }
