@@ -10,6 +10,9 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * Class WmLog
  * @package frontend\models
  * @property int $id
+ * @property int $company_id
+ * @property int $address_id
+ * @property int $imei_id
  * @property integer $date
  * @property integer $imei
  * @property integer $unix_time_offset

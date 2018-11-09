@@ -14,6 +14,8 @@ class m181019_194906_create_cb_log_table extends Migration
     {
         $this->createTable('cb_log', [
             'id' => $this->primaryKey(),
+            'company_id' => $this->integer()->notNull(),
+            'address_id' => $this->integer()->notNull(),
             'imei_id' => $this->integer()->notNull(),
             'date' => $this->integer(),
             'imei' => $this->string(50),
@@ -31,20 +33,55 @@ class m181019_194906_create_cb_log_table extends Migration
             'deleted_at' => $this->integer()
         ]);
 
-        // creates index for column `company_id`
+        // creates index for column `imei_id`
         $this->createIndex(
             'idx-cb_log-imei_id',
             'cb_log',
             'imei_id'
         );
 
-        // add foreign key for table `company`
+        // add foreign key for table `imei`
         $this->addForeignKey(
             'fk-cb_log-imei_id',
             'cb_log',
             'imei_id',
             'imei',
-            'id'
+            'id',
+            'CASCADE'
+        );
+
+        // creates index for column `company_id`
+        $this->createIndex(
+            'idx-cb_log-company_id',
+            'cb_log',
+            'company_id'
+        );
+
+        // add foreign key for table `company`
+        $this->addForeignKey(
+            'fk-cb_log-company_id',
+            'cb_log',
+            'company_id',
+            'company',
+            'id',
+            'CASCADE'
+        );
+
+        // creates index for column `address_id`
+        $this->createIndex(
+            'idx-cb_log-address_id',
+            'cb_log',
+            'address_id'
+        );
+
+        // add foreign key for table `cb_log`
+        $this->addForeignKey(
+            'fk-cb_log-address_id',
+            'cb_log',
+            'address_id',
+            'address_balance_holder',
+            'id',
+            'CASCADE'
         );
     }
 
@@ -54,14 +91,26 @@ class m181019_194906_create_cb_log_table extends Migration
     public function safeDown()
     {
         $this->dropForeignKey(
-            'fk-imei-id',
-            'imei'
+            'fk-cb_log-address_id',
+            'cb_log'
         );
 
         // drops index for column `address_id`
         $this->dropIndex(
-            'idx-imei-imei_id',
-            'imei'
+            'idx-cb_log-address_id',
+            'cb_log'
+        );
+
+        // drops foreign key for table `imei`
+        $this->dropForeignKey(
+            'fk-cb_log-imei_id',
+            'cb_log'
+        );
+
+        // drops index for column `imei_id`
+        $this->dropIndex(
+            'idx-cb_log-imei_id',
+            'cb_log'
         );
 
         $this->dropTable('cb_log');

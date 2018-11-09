@@ -25,10 +25,12 @@ class LcController extends Controller
         $centralBoardDto = new CentralBoardDto($result);
 
         if (Imei::findOne(['imei' => $centralBoardDto->imei])) {
-            $imei = Imei::findOne(['imei' => $centralBoardDto->imei]);
+            $imei = $this->getImei($centralBoardDto->imei);
 
             if (Imei::getStatus($imei) == self::ONE_CONST) {
                 $cbl = new CbLog();
+                $cbl->company_id = $imei->company_id;
+                $cbl->address_id = $imei->address_id;
                 $cbl->imei_id = $imei->id;
                 $cbl->date = $centralBoardDto->date;
                 $cbl->imei = $centralBoardDto->imei;
@@ -43,8 +45,8 @@ class LcController extends Controller
                 $cbl->is_deleted = false;
                 $cbl->save();
                 echo 'cbl data save!';exit;
-                Debugger::d($centralBoardDto);
-                Debugger::dd($cbl);
+//                Debugger::d($centralBoardDto);
+//                Debugger::dd($cbl);
             } else {
                 echo 'Imei not Active';exit;
             }
@@ -85,5 +87,14 @@ class LcController extends Controller
         $result = array_combine($column, $arrOut);
 
         return $result;
+    }
+
+    /**
+     * @param $imei
+     * @return Imei|null
+     */
+    public function getImei($imei)
+    {
+        return Imei::findOne(['imei' => $imei]);
     }
 }

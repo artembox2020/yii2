@@ -354,7 +354,7 @@ class CController extends Controller
      */
     public function getImei($imei_id)
     {
-        $imei = Imei::findOne(['id' => $imei_id ]);
+        $imei = Imei::findOne(['id' => $imei_id]);
 
         return $imei;
     }

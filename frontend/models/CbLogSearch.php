@@ -51,8 +51,19 @@ class CbLogSearch extends CbLog
         Select date, imei, number, created_at, Null as fireproof_counter_hrn, Null as fireproof_counter_card from wm_log
         ORDER by created_at
          */
-        $query = CbLog::find()
-            ->joinWith('WmLog');
+//        $query = CbLog::find()
+//            ->joinWith('WmLog');
+        $query1 = (new \yii\db\Query())
+            ->select("date, imei")
+            ->from('cb_log')
+            ->limit(10);
+
+        $query2 = (new \yii\db\Query())
+            ->select('date, imei')
+            ->from('wm_log')
+            ->limit(10);
+
+        $query = $query1->union($query2);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

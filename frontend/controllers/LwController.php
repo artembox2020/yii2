@@ -27,10 +27,13 @@ class LwController extends Controller
         $LwmDto = new LwmDto($result);
 
         if (Imei::findOne(['imei' => $LwmDto->imei])) {
-            $imei = Imei::findOne(['imei' => $LwmDto->imei]);
+            $imei = $this->getImei($LwmDto->imei);
 
             if (Imei::getStatus($imei) == self::ONE_CONST) {
                 $wml = new WmLog();
+                $wml->company_id = $imei->company_id;
+                $wml->address_id = $imei->address_id;
+                $wml->imei_id = $imei->id;
                 $wml->date = $LwmDto->date;
                 $wml->imei = $LwmDto->imei;
                 $wml->unix_time_offset = $LwmDto->unix_time_offset;
@@ -92,5 +95,14 @@ class LwController extends Controller
         $result = array_combine($column, $arrOut);
 
         return $result;
+    }
+
+    /**
+     * @param $imei
+     * @return Imei|null
+     */
+    public function getImei($imei)
+    {
+        return Imei::findOne(['imei' => $imei]);
     }
 }
