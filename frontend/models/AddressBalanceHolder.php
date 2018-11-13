@@ -198,6 +198,16 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public static function findAllByCompany()
+    {
+        $entity = new Entity();
+
+        return parent::find()->where(['company_id' => $entity->getCompanyId()]);
+    }
+
+    /**
      * @return true|false
      */
     public function beforeDelete()

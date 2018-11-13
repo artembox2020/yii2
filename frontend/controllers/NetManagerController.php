@@ -10,6 +10,7 @@ use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
 use frontend\models\ImeiSearch;
+use frontend\models\ImeiDataSearch;
 use frontend\models\WmMashine;
 use frontend\models\OtherContactPerson;
 use frontend\models\WmMashineSearch;
@@ -17,6 +18,7 @@ use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use common\models\User;
 use common\models\UserSearch;
 use backend\models\UserForm;
@@ -27,7 +29,6 @@ use yii\filters\AccessControl;
 use backend\services\mail\MailSender;
 use frontend\services\custom\Debugger;
 use yii\web\NotFoundHttpException;
-use yii\data\ArrayDataProvider;
 
 /**
  * Class NetManagerController
@@ -46,6 +47,8 @@ class NetManagerController extends \yii\web\Controller
 
     /** @var string  */
     const TYPE_WM = 'WM';
+    
+    const DATA_MODEM_HISTORY_FORMAT = 'H:i:s d.m.y';
     
     public function behaviors()
     {
@@ -726,6 +729,69 @@ class NetManagerController extends \yii\web\Controller
             'wm_machine' => $wm_machine,
             'balanceHolders' => $balanceHolders,
             'balanceHolder' => $balanceHolder
+        ]);
+    }
+
+    /**
+     * Gets modem history data by params or timestamp
+     * 
+     * @return array
+     */
+    public function getModemHistoryData($params, $timestamp)
+    {
+        $historyData = [];
+        $addressImeiData = new AddressImeiData();
+
+        if (!empty($params['imeiId'])) {
+
+            $imei = Imei::find()->where(['id' => $params['imeiId']])->one();
+            $historyData = $addressImeiData->getAddressHistoryByImei($imei);
+        } elseif (!empty($params['addressId'])) {
+
+            $address = AddressBalanceHolder::find()->where(['id' => $params['addressId']])->one();
+            $historyData = $addressImeiData->getImeiHistoryByAddress($address);
+        } elseif (!empty($params['timestamp'])) {
+
+            $historyData = $addressImeiData->getHistoryByTimestamp($timestamp);
+        }
+
+        return $historyData;
+    }
+    
+    public function actionModemHistory()
+    {
+        $searchModel = new ImeiDataSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Yii::$app->request->post());
+        $imeis = $searchModel->getImeisMapped(Imei::findAllByCompany());
+        $addresses = $searchModel->getAllAddressesMapped(AddressBalanceHolder::findAllByCompany());
+        $entity = new Entity();
+        $entityHelper = new EntityHelper();
+        $params = $entityHelper->makeParamsFromRequest(
+            [
+                'imei', 'address', 'imeiId', 'addressId', 'timestamp'
+            ]
+        );
+        $searchModel->timestamp = !empty($params['timestamp']) ? strtotime($params['timestamp']) : null;
+
+        $historyData = $this->getModemHistoryData($params, $searchModel->timestamp);        
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $historyData,
+            'pagination' => [
+                'pageSize' => self::PAGE_SIZE,
+            ],
+            'sort' => [
+                'attributes' => ['created_at'],
+            ],
+        ]);
+
+        return $this->render('modem-history', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'imeis' => $imeis,
+            'addresses' => $addresses,
+            'params' => $params,
+            'dateFormat' => self::DATA_MODEM_HISTORY_FORMAT
         ]);
     }
 }

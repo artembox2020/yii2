@@ -17,6 +17,8 @@ use frontend\controllers\MonitoringController;
  */
 class ImeiDataSearch extends ImeiData
 {
+    public $timestamp;
+
     /**
      * @inheritdoc
      */
@@ -180,7 +182,6 @@ class ImeiDataSearch extends ImeiData
     {
         $items = $dbQuery->all();
         $imeisMapped = [];
-        $counter = 1;
         foreach($items as $item) {
 
             if (!$item->imei) {
@@ -188,10 +189,33 @@ class ImeiDataSearch extends ImeiData
             }
 
             $value = $item->imei;
-            $imeisMapped[] = (object)['id' => $counter++, 'value' => $value]; 
+            $imeisMapped[] = (object)['id' => $item->id, 'value' => $value]; 
         }
 
         return $imeisMapped;
+    }
+
+    /**
+     * Gets the list of all addresses, mapped for AutoComplete 
+     * 
+     * @param ActiveDbQuery $dbQuery 
+     * @return array
+     */
+    public function getAllAddressesMapped($query)
+    {
+        $items = $query->all();
+        $addressesMapped = [];
+        foreach($items as $item) {
+
+            if (!$item->address) {
+                continue;
+            }
+
+            $value = $item->address.(!empty($item->floor) ? ', '.$item->floor : '');
+            $addressesMapped[] = (object)['id' => $item->id, 'value' => $value]; 
+        }
+
+        return $addressesMapped;
     }
 
     /**
