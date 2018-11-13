@@ -137,6 +137,7 @@ class AddressBalanceHolderController extends Controller
         if ($address->fakeImei) {
             $addressImeiData = new AddressImeiData();
             $addressImeiData->createLog($address->fakeImei->id, 0);
+            $addressImeiData->createLog(0, $id);
         }
 
         $this->findModel($id)->softDelete();

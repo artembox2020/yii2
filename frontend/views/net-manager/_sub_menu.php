@@ -7,6 +7,7 @@
 <a href="/net-manager/balance-holders">[<?= Yii::t('frontend', 'Balance Holders') ?>]</a>
 <a href="/net-manager/addresses">[<?= Yii::t('frontend', 'Addresses') ?>]</a>
 <a href="/net-manager/washpay">[WashPay]</a>
+<a href="/net-manager/modem-history">[<?= Yii::t('frontend', 'Modem History') ?>]</a>
 <a href="/net-manager/osnovnizasoby">[<?= Yii::t('frontend', 'Fixed Assets') ?>]</a>
 <!--<a href="/net-manager/fixed-assets">[Відключені]</a>-->
 <?php

@@ -610,3 +610,7 @@ div.required label:after {
     position: relative;
     z-index: 10000;
 }
+
+.modem-history .modem-history-form-container{
+    text-align: center;
+}

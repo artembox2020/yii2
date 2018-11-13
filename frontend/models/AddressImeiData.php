@@ -77,6 +77,24 @@ class AddressImeiData extends ActiveRecord
     }
 
     /**
+     * Writes log to table
+     * 
+     * @param int $imeiId
+     * @param int $addressId
+     * @return int
+     */
+    public function makeLog($imeiId, $addressId)
+    {
+        $addressImei = new AddressImeiData();
+        $addressImei->address_id = $addressId;
+        $addressImei->imei_id = $imeiId;
+        $addressImei->is_deleted = false;
+        $addressImei->save();
+
+        return $addressImei->id;
+    }
+
+    /**
      * Writes item to the table and  returns its id
      * 
      * @param int $imeiId
@@ -85,20 +103,22 @@ class AddressImeiData extends ActiveRecord
      */
     public function createLog($imeiId, $addressId)
     {
+        // if empty imei then bind anyway
+        if (empty($imeiId)) {
+
+            return $this->makeLog($imeiId, $addressId);
+        }
+
         $query = AddressImeiData::find();
         $addressImeiItem = $query->andWhere(['imei_id' => $imeiId])
                                  ->orderBy(['created_at' => SORT_DESC])
                                  ->limit(1)
                                  ->one();
 
+        // check whether imei has no already the same address binding
         if (!$addressImeiItem || $addressImeiItem->address_id != $addressId) {
-            $addressImei = new AddressImeiData();
-            $addressImei->address_id = $addressId;
-            $addressImei->imei_id = $imeiId;
-            $addressImei->is_deleted = false;
-            $addressImei->save();
 
-            return $addressImei->id;
+            return $this->makeLog($imeiId, $addressId);
         }
 
         return 0;
@@ -157,6 +177,64 @@ class AddressImeiData extends ActiveRecord
 
         return [
             'imei_id' => $item->imei_id,
+            'created_at' => $item->created_at,
+            'id' => $item->id
+        ];
+    }
+    
+    /**
+     * Gets next address id by imei_id and timestamp (find last binding of the day)
+     * 
+     * @param int $imeiId
+     * @param int $timestamp
+     * @return array
+     */
+    public function getNextAddressIdByImeiAndTimestamp($imeiId, $timestamp)
+    {
+        $query = AddressImeiData::find();
+        $item = $query->andWhere(['imei_id' => $imeiId])
+                      ->andWhere(['>', 'created_at', $timestamp])
+                      ->orderBy(['created_at' => SORT_ASC])
+                      ->limit(1)
+                      ->one();
+
+        if (!$item) {
+
+            return [];
+        }
+
+        $nextDayTimestamp = $this->getNextDayBeginningByTimestamp($item->created_at);
+
+        $query = AddressImeiData::find();
+        $item = $query->andWhere(['imei_id' => $imeiId])
+                      ->andWhere(['<', 'created_at', $nextDayTimestamp])
+                      ->orderBy(['created_at' => SORT_DESC])
+                      ->limit(1)
+                      ->one();
+
+        if ($item->address_id == 0) {
+
+            return [
+                'address_id' => $item->address_id,
+                'created_at' => $item->created_at,
+                'id' => $item->id
+            ];
+        }
+
+        $query = AddressImeiData::find();
+        $itemImei = $query->andWhere(['address_id' => $item->address_id])
+                      ->andWhere(['<', 'created_at', $nextDayTimestamp])
+                      ->orderBy(['created_at' => SORT_DESC])
+                      ->limit(1)
+                      ->one();
+
+        if ($itemImei->id != $item->id) {
+
+            return $this->getNextAddressIdByImeiAndTimestamp($imeiId, $item->created_at);
+        }
+
+        return [
+            'address_id' => $item->address_id,
             'created_at' => $item->created_at,
             'id' => $item->id
         ];
@@ -316,5 +394,128 @@ class AddressImeiData extends ActiveRecord
     public static function find()
     {
         return parent::find()->where(['address_imei_data.is_deleted' => false]);
+    }
+    
+    /**
+     * @return array
+     */
+    public function getAddressHistoryByImei($imei)
+    {
+        if (empty($imei)) {
+            
+            return [];
+        }
+
+        $timestamp = 0;
+        $historyInfo = [];
+        $addressInfo = $this->getNextAddressIdByImeiAndTimestamp($imei->id, $timestamp);
+        
+        while (!empty($addressInfo)) {
+            $address = AddressBalanceHolder::find()->where(['id' => $addressInfo['address_id']])->one();
+            $historyInfo[] = [
+                'address_id' => $addressInfo['address_id'],
+                'created_at' => $addressInfo['created_at'],
+                'address_name' => !empty($address) ? $address->address : false,
+                'imei' => $imei->imei
+            ];
+            $timestamp = $addressInfo['created_at'];
+            $addressInfo = $this->getNextAddressIdByImeiAndTimestamp($imei->id, $timestamp);
+        }
+
+        ArrayHelper::multisort($historyInfo, ['created_at'], [SORT_DESC]);
+
+        return $historyInfo;
+    }
+
+    /**
+     * @return array
+     */
+    public function getImeiHistoryByAddress($address)
+    {
+        if (empty($address)) {
+
+            return [];
+        }
+
+        $timestamp = 0;
+        $historyInfo = [];
+        $imeiInfo = $this->getNextImeiIdByAddressAndTimestamp($address->id, $timestamp);
+
+        while (!empty($imeiInfo)) {
+            $imei = Imei::find()->where(['id' => $imeiInfo['imei_id']])->one();
+            $historyInfo[] = [
+                'imei_id' => $imeiInfo['imei_id'],
+                'created_at' => $imeiInfo['created_at'],
+                'imei' => !empty($imei) ? $imei->imei : false,
+                'address_name' => $address->address
+            ];
+            $timestamp = $imeiInfo['created_at'];
+            $imeiInfo = $this->getNextImeiIdByAddressAndTimestamp($address->id, $timestamp);
+        }
+
+        ArrayHelper::multisort($historyInfo, ['created_at'], [SORT_DESC]);
+
+        return $historyInfo;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHistoryByTimestamp($timestamp)
+    {
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        $startTimestamp = $bhSummarySearch->getDayBeginningTimestampByTimestamp($timestamp);
+        $endTimestamp = $startTimestamp + 3600*24;
+        $query = AddressImeiData::find();
+        $items = $query->andWhere(['>=', 'created_at', $startTimestamp])
+                       ->andWhere(['<', 'created_at', $endTimestamp])
+                       ->orderBy(['created_at' => SORT_DESC])
+                       ->all();
+        
+        $historyInfo = [];
+        $imeiIds = [];
+        $zeroAddressIds = [];
+        $addressIds = [];
+
+        foreach ($items as $item) {
+
+            $imei = Imei::find()->where(['id' => $item->imei_id])->one();
+            $address = AddressBalanceHolder::find()->where(['id' => $item->address_id])->one();
+
+            // check whether binding for address already set
+            if (in_array($item->address_id, $addressIds) && !empty($item->address_id)) {
+
+                continue;
+            }
+
+            // check whether binding for imei already set
+            if (in_array($item->imei_id, $imeiIds)) {
+                if (empty($item->imei_id)) {
+                    if (in_array($item->address_id, $zeroAddressIds)) {
+
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
+            }
+
+            $historyInfo[] = [
+                'imei_id' => $item['imei_id'],
+                'created_at' => $item['created_at'],
+                'imei' => !empty($imei) ? $imei->imei : false,
+                'address_name' => !empty($address) ? $address->address : false
+            ];
+
+            $imeiIds[] = $item->imei_id;
+
+            if (empty($item->imei_id)) {
+                $zeroAddressIds[] = $item->address_id;
+            }
+
+            $addressIds[] = $item->address_id;
+        }
+
+        return $historyInfo;
     }
 }

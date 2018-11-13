@@ -160,6 +160,7 @@ class ImeiController extends Controller
         if ($imei->fakeAddress) {
             $addressImeiData = new AddressImeiData();
             $addressImeiData->createLog(0, $imei->fakeAddress->id);
+            $addressImeiData->createLog($id, 0);
         }
 
         $this->findModel($id)->softDelete();
