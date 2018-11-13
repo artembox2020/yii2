@@ -18,6 +18,8 @@ class LwController extends Controller
     /** @var int ONE_CONST */
     const ONE_CONST = 1;
 
+    public $type_packet = 'wash machine';
+
     /**
      * @param $p
      */

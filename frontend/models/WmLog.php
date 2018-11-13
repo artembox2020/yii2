@@ -65,6 +65,9 @@ class WmLog extends ActiveRecord
         'max_washer_event'
     ];
 
+    /** @var $model */
+    private $model;
+
     /**
      * @return array
      */
@@ -83,4 +86,32 @@ class WmLog extends ActiveRecord
             ]
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getModel()
+    {
+        if (!$this->model) {
+            $this->model = new Imei();
+        }
+
+        return $this->model;
+    }
+
+    /**
+     * @return $this|\yii\db\ActiveQuery
+     */
+    public static function find()
+    {
+        return parent::find()->where(['cb_log.is_deleted' => false]);
+    }
+
+//    /**
+//     * @return array|null|\yii\db\ActiveRecord
+//     */
+//    public function getAddress()
+//    {
+//        return AddressBalanceHolder::find(['id' => $this->imei_id])->one();
+//    }
 }

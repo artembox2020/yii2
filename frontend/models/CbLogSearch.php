@@ -23,7 +23,7 @@ class CbLogSearch extends CbLog
     public function rules()
     {
         return [
-            [['id', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['id', 'status', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
             [['date','imei', 'address', 'is_deleted'], 'safe'],
         ];
     }
@@ -48,22 +48,31 @@ class CbLogSearch extends CbLog
          * Select date, imei, status, created_at, fireproof_counter_hrn, fireproof_counter_card from cb_log
         WHERE imei = imei
         Union all
-        Select date, imei, number, created_at, Null as fireproof_counter_hrn, Null as fireproof_counter_card from wm_log
+        Select date, imei, status, created_at, Null as fireproof_counter_hrn, Null as fireproof_counter_card from wm_log
         ORDER by created_at
          */
 //        $query = CbLog::find()
 //            ->joinWith('WmLog');
+
+        $null = 'Null';
+
+//        $query1 = (new \yii\db\Query())
+//            ->select('date, address_id, imei, status, created_at, fireproof_counter_hrn, fireproof_counter_card')
+//            ->from('cb_log');
+//
+//        $query2 = (new \yii\db\Query())
+//            ->select("date, address_id, imei, status, created_at, price AS fireproof_counter_hrn, spin_type AS fireproof_counter_card")
+//            ->from('wm_log');
+
         $query1 = (new \yii\db\Query())
-            ->select("date, imei")
-            ->from('cb_log')
-            ->limit(10);
+            ->select('date, address_id, imei, rate, fireproof_counter_hrn, fireproof_counter_card')
+            ->from('cb_log');
 
         $query2 = (new \yii\db\Query())
-            ->select('date, imei')
-            ->from('wm_log')
-            ->limit(10);
+            ->select("date, address_id, imei, price AS rate, price AS fireproof_counter_hrn, spin_type AS fireproof_counter_card")
+            ->from('wm_log');
 
-        $query = $query1->union($query2);
+        $query = $query1->union($query2, false);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -84,12 +93,20 @@ class CbLogSearch extends CbLog
         $query->andFilterWhere([
             'date' => $this->date,
             'imei' => $this->imei,
+            'status' => $this->status
         ]);
 
         $query->andFilterWhere(['like', 'date', $this->date])
             ->andFilterWhere(['like', 'imei', $this->imei]);
 
         return $dataProvider;
-
     }
+
+//    /**
+//     * @return array|null|\yii\db\ActiveRecord
+//     */
+//    public function getAddress($id)
+//    {
+//        return AddressBalanceHolder::find(['id' => $id])->one();
+//    }
 }

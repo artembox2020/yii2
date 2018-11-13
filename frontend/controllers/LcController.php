@@ -16,6 +16,8 @@ class LcController extends Controller
 {
     const ONE_CONST = 1;
 
+    public $type_packet = 'central board';
+
     /**
      * @param $p
      */
@@ -26,7 +28,6 @@ class LcController extends Controller
 
         if (Imei::findOne(['imei' => $centralBoardDto->imei])) {
             $imei = $this->getImei($centralBoardDto->imei);
-
             if (Imei::getStatus($imei) == self::ONE_CONST) {
                 $cbl = new CbLog();
                 $cbl->company_id = $imei->company_id;
@@ -96,5 +97,10 @@ class LcController extends Controller
     public function getImei($imei)
     {
         return Imei::findOne(['imei' => $imei]);
+    }
+
+    public function tempPars($p)
+    {
+
     }
 }

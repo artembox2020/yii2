@@ -106,6 +106,7 @@ class CbLog extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('frontend', 'ID'),
             'imei' => Yii::t('frontend', 'Imei'),
+            'rate' => Yii::t('logs', 'Rate')
         ];
     }
 

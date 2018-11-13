@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\models\CbLog;
 use frontend\models\CbLogSearch;
+use frontend\models\TempLog;
 use frontend\models\WmLog;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
