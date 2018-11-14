@@ -42,6 +42,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $capacity_bill_acceptance
  * @property float $number_channel
  * @property  float $pcb_version
+ * @property integer $level_signal
  *
  * @property AddressBalanceHolder $address
  * @property Machine[] $machines

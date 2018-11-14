@@ -65,11 +65,11 @@ class CbLogSearch extends CbLog
 //            ->from('wm_log');
 
         $query1 = (new \yii\db\Query())
-            ->select('date, address_id, imei, rate, fireproof_counter_hrn, fireproof_counter_card')
+            ->select('*')
             ->from('cb_log');
 
         $query2 = (new \yii\db\Query())
-            ->select("date, address_id, imei, price AS rate, price AS fireproof_counter_hrn, spin_type AS fireproof_counter_card")
+            ->select('*')
             ->from('wm_log');
 
         $query = $query1->union($query2, false);

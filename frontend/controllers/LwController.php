@@ -18,7 +18,7 @@ class LwController extends Controller
     /** @var int ONE_CONST */
     const ONE_CONST = 1;
 
-    public $type_packet = 'wash machine';
+    public $type_packet = 'wm';
 
     /**
      * @param $p
@@ -38,6 +38,8 @@ class LwController extends Controller
                 $wml->imei_id = $imei->id;
                 $wml->date = $LwmDto->date;
                 $wml->imei = $LwmDto->imei;
+                $wml->device = $this->type_packet;
+                $wml->signal = $imei->level_signal;
                 $wml->unix_time_offset = $LwmDto->unix_time_offset;
                 $wml->number = $LwmDto->number;
                 $wml->signal = $LwmDto->signal;

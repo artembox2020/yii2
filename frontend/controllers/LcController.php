@@ -16,7 +16,7 @@ class LcController extends Controller
 {
     const ONE_CONST = 1;
 
-    public $type_packet = 'central board';
+    public $type_packet = 'cb';
 
     /**
      * @param $p
@@ -35,6 +35,8 @@ class LcController extends Controller
                 $cbl->imei_id = $imei->id;
                 $cbl->date = $centralBoardDto->date;
                 $cbl->imei = $centralBoardDto->imei;
+                $cbl->device = $this->type_packet;
+                $cbl->signal = $imei->level_signal;
                 $cbl->unix_time_offset = $centralBoardDto->unix_time_offset;
                 $cbl->status = $centralBoardDto->status;
                 $cbl->fireproof_counter_hrn = $centralBoardDto->fireproof_counter_hrn;

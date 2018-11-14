@@ -137,6 +137,9 @@ class CController extends Controller
             $imeiData->price_regim = $imeiDataDto->price_regim;
             $imeiData->is_deleted = false;
 
+            $imei->level_signal = $imeiData->level_signal;
+            $imei->update();
+
             $imeiData->save();
             
             $imei->ping = time() + Jlog::TYPE_TIME_OFFSET;

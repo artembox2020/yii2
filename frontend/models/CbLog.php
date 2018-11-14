@@ -16,6 +16,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $imei_id
  * @property integer $date
  * @property integer $imei
+ * @property string $device
+ * @property integer $signal
  * @property integer $unix_time_offset
  * @property integer $status
  * @property float $fireproof_counter_hrn
