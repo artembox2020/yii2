@@ -81,6 +81,7 @@ return [
     'By Status' => 'По статусу',
     'busy' => 'Занята',
     'Cancel' => 'Отмена',
+    'Cancel Statistics' => 'Отменить статистику',
     'Capacity Bill Acceptance' => 'Вместительность купюроприемника, шт',
     'Certain' => 'конкретная дата',
     'Change password' => 'Сменить пароль',

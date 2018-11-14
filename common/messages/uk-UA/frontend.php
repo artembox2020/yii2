@@ -86,6 +86,7 @@ return [
     'By Location' => 'По місцерозташуванню',
     'By Status' => 'По статусу',
     'Cancel' => 'Відміна',
+    'Cancel Statistics' => 'Відмінити статистику',
     'Capacity Bill Acceptance' => 'Місткість купюроприймача, шт',
     'Certain' => 'конкретна дата',
     'Change password' => 'Змінити пароль',

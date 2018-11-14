@@ -75,7 +75,8 @@ class Jsummary extends ActiveRecord
         $index = strrpos($incomeByMashines, '`'.$mashineId.'**');
         if ($index !== FALSE) {
             $subStr = substr($incomeByMashines, $index);
-            $length = strpos(substr($subStr, 1), '`') - $index + 2;
+            $length = strpos(substr($subStr, 1), '`') + 2;
+
             if ($isString) {
 
                 return substr($incomeByMashines, $index, $length);
@@ -96,10 +97,10 @@ class Jsummary extends ActiveRecord
     public function parseIncomeString($incomeString)
     {
         $parts = explode('**', $incomeString);
-        $isCreated = !is_null($parts[1]) ? $parts[1] : false;
-        $isDeleted = !is_null($parts[2]) ? $parts[2] : false;
-        $income = !is_null($parts[3]) ? $parts[3] : null;
-        $idleHours = !is_null($parts[4]) ? substr($parts[4], 0, -1) : null;
+        $isCreated = isset($parts[1]) ? $parts[1] : false;
+        $isDeleted = isset($parts[2]) ? $parts[2] : false;
+        $income = isset($parts[3]) ? $parts[3] : null;
+        $idleHours = isset($parts[4]) ? substr($parts[4], 0, -1) : null;
 
         return [
             'isCreated' => $isCreated,
@@ -117,9 +118,9 @@ class Jsummary extends ActiveRecord
      * @param timestamp $startTimestamp
      * @param timestamp $endTimestamp
      * @param array $params
-     * @param bool|string $incomeByMashines
+     * @return int
      */
-    public function saveItem($imei_id, $address_id, $startTimestamp, $endTimestamp, $params, $incomeByMashines)
+    public function saveItem($imei_id, $address_id, $startTimestamp, $endTimestamp, $params)
     {
         $item = Jsummary::findOne(
             ['address_id' => $address_id, 'imei_id' => $imei_id, 'start_timestamp' => $startTimestamp, 'end_timestamp' => $endTimestamp]
@@ -134,6 +135,36 @@ class Jsummary extends ActiveRecord
         }
 
         $item->attributes = $params;
+
+        $item->save(false);
+
+        return $item->id;
+    }
+
+    /**
+     * Saves detailed item by imei id, address_id, params, mashine incomes and timestamps
+     *
+     * @param int $imei_id
+     * @param int $address_id
+     * @param timestamp $startTimestamp
+     * @param timestamp $endTimestamp
+     * @param timestamp $params
+     * @param string $incomeByMashines
+     * @return int
+     */
+    public function saveItemDetailed($imei_id, $address_id, $startTimestamp, $endTimestamp, $params, $incomeByMashines)
+    {
+        $item = Jsummary::findOne(
+            ['address_id' => $address_id, 'imei_id' => $imei_id, 'start_timestamp' => $startTimestamp, 'end_timestamp' => $endTimestamp]
+        );
+
+        if (empty($item)) {
+            $item = new Jsummary();
+            $item->imei_id = $imei_id;
+            $item->address_id = $address_id;
+            $item->start_timestamp = $startTimestamp;
+            $item->end_timestamp = $endTimestamp;
+        }
 
         if ($incomeByMashines) {
             if (!empty($item->income_by_mashines)) {
@@ -153,61 +184,78 @@ class Jsummary extends ActiveRecord
         }
 
         $item->save(false);
+
+        return $item->id;
     }
 
     /**
-     * Get item by imei id and timestamps
-     *
-     * @param int $imei_id
-     * @param timestamp $startTimestamp
-     * @param timestamp $endTimestamp
-     * @return Jsummary
-     */
-    public function getItem($imei_id, $startTimestamp, $endTimestamp)
-    {
-        $item = Jsummary::findOne(
-            ['imei_id' => $imei_id, 'start_timestamp' => $startTimestamp, 'end_timestamp' => $endTimestamp]
-        );
-
-        return $item;
-    }
-
-    /**
-     * Gets incomes by imei id and timestamps
+     * Gets incomes by imei id, address_id and timestamps
      *
      * @param timestamp $startTimestamp
      * @param timestamp $endTimestamp
      * @param timestamp $todayTimestamp
+     * @param int $address_id
      * @param int $imei_id
      * @return array
      */
-    public function getIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $address_id, $imei_id)
+    public function getIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $address_id, $imei_id = false)
     {
         $stepInterval = 3600*24;
         $items = [];
 
-        $items = Jsummary::find()->andWhere(['address_id' => $address_id])
+        $itemsQuery = Jsummary::find()->andWhere(['address_id' => $address_id])
                                  ->andWhere(['>=', 'start_timestamp', $startTimestamp])
                                  ->andWhere(['<', 'start_timestamp', $todayTimestamp])
-                                 ->andWhere(['<=', 'end_timestamp', $endTimestamp])
-                                 ->orderBy(['start_timestamp' => SORT_ASC])
-                                 ->all();
+                                 ->andWhere(['<=', 'end_timestamp', $endTimestamp]);
+
+        if (!empty($imei_id)) {
+            $itemsQuery = $itemsQuery->andWhere(['imei_id' => $imei_id]);
+        }
+
+        $items = $itemsQuery->orderBy(['start_timestamp' => SORT_ASC])
+                            ->all();
+
         $incomes = [];
-        for ($i = 0; $i < count($items); ++$i, ++$day) {
+
+        for ($i = 0; $i < count($items); ++$i) {
             $item = $items[$i];
             $imei = Imei::find()->where(['id' => $item->imei_id])->one();
             $day = floor(($item->start_timestamp - $startTimestamp) / $stepInterval + 1);
             if (!is_null($item->idleHours)) {
-                $incomes[$day] = [
-                    'income' => $item->income,
-                    'created' => $item->created,
-                    'deleted' => $item->deleted,
-                    'active' => $item->active,
-                    'all'=> $item->all,
-                    'idleHours' => $item->idleHours,
-                    'imei' => !empty($imei) ? $imei->imei : Yii::t('frontend', 'Undefined'),
-                    'income_by_mashines' => $item->income_by_mashines 
-                ];
+                
+                if (!empty($item->is_cancelled)) {
+                    $incomes[$day] = [
+                        'income' => null,
+                        'created' => 0,
+                        'active' => 0,
+                        'deleted' => 0,
+                        'all' => 0,
+                        'idleHours' => 0,
+                        'imei' => !empty($imei) ? $imei->imei : Yii::t('frontend', 'Undefined'),
+                        'imei_id' => !empty($imei) ? $imei->id : 0,
+                        'address_id' => $address_id,
+                        'is_cancelled' => $item->is_cancelled,
+                        'income_by_mashines' => null,
+                        'id' => $item->id,
+                        'full_income_by_mashines' => $item->income_by_mashines
+                    ];
+                } else {
+                    $incomes[$day] = [
+                        'income' => $item->income,
+                        'created' => $item->created,
+                        'deleted' => $item->deleted,
+                        'active' => $item->active,
+                        'all'=> $item->all,
+                        'idleHours' => $item->idleHours,
+                        'imei' => !empty($imei) ? $imei->imei : Yii::t('frontend', 'Undefined'),
+                        'imei_id' => !empty($imei) ? $imei->id : 0,
+                        'address_id' => $address_id,
+                        'is_cancelled' => $item->is_cancelled,
+                        'income_by_mashines' => $item->income_by_mashines,
+                        'id' => $item->id,
+                        'full_income_by_mashines' => $item->income_by_mashines
+                    ];
+                }
             }
         }
 
@@ -226,13 +274,26 @@ class Jsummary extends ActiveRecord
     public function getDetailedIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $mashine)
     {
         $incomes = $this->getIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $mashine->address_id, $mashine->imei_id);
+
         $detailedIncomes = [];
         foreach ($incomes as $day => $income) {
+
+            $fullIncomeByMashines = $income['full_income_by_mashines'];
             $incomeByMashines = $income['income_by_mashines'];
+            $fullIncomeString = $this->getIncomeStringByMashine($fullIncomeByMashines, $mashine->id, true);
             $incomeString = $this->getIncomeStringByMashine($incomeByMashines, $mashine->id, true);
 
-            if (!empty($incomeString)) {
-                $detailedIncomes[$day] = $this->parseIncomeString($incomeString);
+            // if is cancelled or data by mashine id exists then make income
+            if (!empty($fullIncomeString) || !empty($income['is_cancelled'])) {
+                $detailedIncomes[$day] = array_merge(
+                    $this->parseIncomeString($incomeString),
+                    [
+                        'is_cancelled' => $income['is_cancelled'],
+                        'imei' => $income['imei'],
+                        'imei_id' => $income['imei_id'],
+                        'address_id' => $income['address_id'],
+                    ]
+                );
             }
         }
 
@@ -255,5 +316,34 @@ class Jsummary extends ActiveRecord
                                   ->sum('income');
 
         return $income;
+    }
+
+    /**
+     * Sets record cancellation by params (timestamps, imei_id, address_id)
+     *
+     * @param array $params
+     * @return boolean
+     */
+    public function setIncomeCancellation($params)
+    {
+        $keys = ['addressId', 'imeiId', 'start', 'end', 'isCancelled'];
+        if (count(array_diff($keys, array_keys($params)))) {
+
+            return false;
+        }
+
+        $query = Jsummary::find()->andWhere([
+            'address_id' => $params['addressId'],
+            'imei_id' => $params['imeiId'],
+            'start_timestamp' => $params['start'],
+            'end_timestamp' => $params['end']
+        ]);
+
+        foreach ($query->all() as $item) {
+            $item->is_cancelled = empty($params['isCancelled']) ? true : false;
+            $item->save(false);
+        }
+
+        return true;
     }
 }

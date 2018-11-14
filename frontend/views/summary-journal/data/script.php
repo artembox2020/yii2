@@ -553,5 +553,8 @@
         makeTotalSummary();
         makeTotalAverage();
         updateCellColorMarking();
+
+        // update cancel income
+        <?= Yii::$app->view->render('/summary-journal/data/update-income-cancel', []) ?>
     }());
 </script>

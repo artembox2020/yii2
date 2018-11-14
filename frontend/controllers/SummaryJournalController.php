@@ -7,6 +7,8 @@ use frontend\models\BalanceHolderSummarySearch;
 use frontend\models\BalanceHolderSummaryDetailedSearch;
 use frontend\models\WmMashine;
 use frontend\models\AddressImeiData;
+use frontend\models\AddressBalanceHolder;
+use frontend\models\Jsummary;
 use Yii;
 use yii\filters\AccessControl;
 use frontend\services\globals\EntityHelper;
@@ -48,13 +50,16 @@ class SummaryJournalController extends \yii\web\Controller
 
         $searchModel = new BalanceHolderSummarySearch();
         $entityHelper = new EntityHelper();
+        $jSummary = new Jsummary();
+        $jSummary->setIncomeCancellation(Yii::$app->request->post());
         $params = $entityHelper->makeParamsFromRequest(
             [
                 'month',
                 'year',
                 'type',
                 'selectionName',
-                'selectionCaretPos'
+                'selectionCaretPos',
+                'imeiId', 'addressId', 'isCancelled', 'start', 'end'
             ]
         );
         $params = $searchModel->setParams($params);
@@ -106,6 +111,8 @@ class SummaryJournalController extends \yii\web\Controller
         $dataProvider = $searchModel->baseSearch(Yii::$app->request->queryParams);
         $oneDataProvider = $searchModel->limitOneBaseSearch(Yii::$app->request->queryParams);
         $entityHelper = new EntityHelper();
+        $jSummary = new Jsummary();
+        $jSummary->setIncomeCancellation(Yii::$app->request->post());
         $params = $entityHelper->makeParamsFromRequest(
             [
                 'month',
@@ -459,12 +466,17 @@ class SummaryJournalController extends \yii\web\Controller
      * Renders popup label for a summary cell
      *
      * @param array $params
+     * @param timestamp $timestampStart
+     * @param timestamp $timestampEnd
      * @return string
      */
-    public function renderPopupLabel($params)
+    public function renderPopupLabel($params, $timestampStart, $timestampEnd)
     {
         return $this->renderPartial('/summary-journal/popup-label', [
             'params' => $params,
+            'start' => $timestampStart,
+            'end' => $timestampEnd,
+            'random' => rand()
         ]);
     }
 
@@ -472,12 +484,17 @@ class SummaryJournalController extends \yii\web\Controller
      * Renders popup label for a detailed summary cell
      *
      * @param array $params
+     * @param timestamp $timestampStart
+     * @param timestamp $timestampEnd
      * @return string
      */
-    public function renderPopupLabelDetailed($params)
+    public function renderPopupLabelDetailed($params, $timestampStart, $timestampEnd)
     {
         return $this->renderPartial('/summary-journal/popup-label-detailed', [
             'params' => $params,
+            'start' => $timestampStart,
+            'end' => $timestampEnd,
+            'random' => rand()
         ]);
     }
 }
