@@ -20,8 +20,7 @@ use yii\helpers\ArrayHelper;
  */
 class AddressImeiData extends ActiveRecord
 {
-
-    const INFINITY = 99999999999999;
+    const INFINITY = 999999999999;
 
     /**
      * @inheritdoc
@@ -546,6 +545,12 @@ class AddressImeiData extends ActiveRecord
     {
         $bhSummarySearch = new BalanceHolderSummarySearch();
         $timestamp = $this->getAbsoluteHistoryBeginning();
+
+        if ($timestamp == self::INFINITY) {
+
+            return [];
+        }
+
         $timestamp = $bhSummarySearch->getDayBeginningTimestampByTimestamp($timestamp);
         $stepInterval = 3600 * 24;
         $historyInfo = [];
