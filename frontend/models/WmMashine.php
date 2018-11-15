@@ -64,6 +64,7 @@ class WmMashine extends \yii\db\ActiveRecord
 
     private $wm;
 
+    /** @var array current state */
     public $current_state = [
         '-2' => 'nulling',
         '-1' => 'refill',
@@ -132,6 +133,38 @@ class WmMashine extends \yii\db\ActiveRecord
         '9' => 'CONNECT_MCD',
         '10' => 'SUB_BY_WORK',
         '11' => 'MAX_WASHER_EVENT',
+    ];
+
+    /** @var array washing_mode code */
+    public $washing_mode = [
+        '-1' => 'IDLEWASH',
+        '0' => 'COTTON',
+        '1' => 'SYNTHETICS',
+        '2' => 'HANDHELD_WOOL',
+        '3' => 'FAST_CHILD',
+        '4' => 'RISING_EXTRAC',
+        '5' => 'EXTRAC',
+        '6' => 'OUTERWEAR',
+        '7' => 'INTENSIVE',
+        '8' => 'DELAYED_WASHING',
+    ];
+
+    /** @var array wash temperature code */
+    public $wash_temperature = [
+        '-1' => 'NOLEDTEMP',
+        '0' => 'TEMP30',
+        '1' => 'TEMP40',
+        '2' => 'TEMP60',
+        '3' => 'TEMP95',
+    ];
+
+    /** @var array spine type code */
+    public $spin_type = [
+        '-1' => 'NOLEDEXTRAC',
+        '0' => 'NOEXTRAC',
+        '1' => 'EXTRAC400',
+        '2' => 'EXTRAC800',
+        '3' => 'EXTRAC800_PLUS',
     ];
 
     /**

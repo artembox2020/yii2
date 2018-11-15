@@ -57,7 +57,10 @@ use \frontend\models\AddressBalanceHolder;
                         return Yii::t('logs', $machine->log_state[$model['status']]);
                     }
                 }
-                return $model['status'];
+                $cbLog = new \frontend\models\CbLog();
+                if (array_key_exists($model['status'], $cbLog->current_state)) {
+                    return Yii::t('logs', $cbLog->current_state[$model['status']]);
+                }
             },
         ],
         ['attribute' => 'device',
@@ -96,18 +99,36 @@ use \frontend\models\AddressBalanceHolder;
         ['attribute' => 'washing_mode',
             'label' => Yii::t('logs', 'Washing mode (SM) or Gel issued (DH), ml.'),
             'value'=> function ($model) {
+                if ($model['device'] == 'wm') {
+                    $machine = new \frontend\models\WmMashine();
+                    if (array_key_exists($model['washing_mode'], $machine->washing_mode)) {
+                        return Yii::t('logs', $machine->washing_mode[$model['washing_mode']]);
+                    }
+                }
                 return $model['washing_mode'];
             },
         ],
         ['attribute' => 'wash_temperature',
             'label' => Yii::t('logs', 'Washing temperature or gel residue, ml.'),
             'value'=> function ($model) {
+                if ($model['device'] == 'wm') {
+                    $machine = new \frontend\models\WmMashine();
+                    if (array_key_exists($model['wash_temperature'], $machine->wash_temperature)) {
+                        return Yii::t('logs', $machine->wash_temperature[$model['wash_temperature']]);
+                    }
+                }
                 return $model['wash_temperature'];
             },
         ],
         ['attribute' => 'spin_type',
             'label' => Yii::t('logs', 'Spin type'),
             'value'=> function ($model) {
+                if ($model['device'] == 'wm') {
+                    $machine = new \frontend\models\WmMashine();
+                    if (array_key_exists($model['spin_type'], $machine->spin_type)) {
+                        return Yii::t('logs', $machine->spin_type[$model['spin_type']]);
+                    }
+                }
                 return $model['spin_type'];
             },
         ],
@@ -115,6 +136,9 @@ use \frontend\models\AddressBalanceHolder;
             'label' => Yii::t('logs', 'Additional Washing Options'),
             'value'=> function ($model) {
     if ($model['prewash']) {
+        if ($model['device'] == 'wm') {
+            return $model['prewash'] . ' ' . $model['rinsing'] . ' ' . $model['intensive_wash'];
+        }
         return $model['prewash'];
     }
 //    if ($model['rinsing']) {

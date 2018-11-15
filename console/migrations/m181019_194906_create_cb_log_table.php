@@ -36,7 +36,7 @@ class m181019_194906_create_cb_log_table extends Migration
             'spin_type' => $this->integer(),
             'notes_billiards_pcs' => $this->double(),
             'prewash' => $this->double(),
-            'rising' => $this->double(),
+            'rinsing' => $this->double(),
             'intensive_wash' => $this->double(),
             'created_at' => $this->integer(),
             'updated_at' => $this->integer(),
