@@ -476,7 +476,8 @@ class SummaryJournalController extends \yii\web\Controller
             'params' => $params,
             'start' => $timestampStart,
             'end' => $timestampEnd,
-            'random' => rand()
+            'random' => rand(),
+            'searchModel' => new BalanceHolderSummarySearch()
         ]);
     }
 
@@ -494,7 +495,8 @@ class SummaryJournalController extends \yii\web\Controller
             'params' => $params,
             'start' => $timestampStart,
             'end' => $timestampEnd,
-            'random' => rand()
+            'random' => rand(),
+            'searchModel' => new BalanceHolderSummaryDetailedSearch()
         ]);
     }
 }

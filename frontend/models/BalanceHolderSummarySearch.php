@@ -1006,4 +1006,31 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
         return date('N', $timestamp) >= 6;
     }
+
+    /**
+     * Makes events string 
+     *
+     * @param array $incomeData
+     * @return string
+     */ 
+    public function getEventsAsString($incomeData)
+    {
+        $eventsString = '';
+
+        if (!empty($incomeData['created'])) {
+            $eventsString .= Yii::t('frontend', 'Addition').', ';
+        }
+
+        if (!empty($incomeData['deleted'])) {
+            $eventsString .= Yii::t('frontend', 'Deletion').', ';
+        }
+
+        $eventsString = trim($eventsString);
+
+        if (!empty($eventsString)) {
+            $eventsString = mb_substr($eventsString, 0, mb_strlen($eventsString) - 1);
+        }
+
+        return $eventsString;
+    }
 }

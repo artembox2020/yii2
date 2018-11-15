@@ -13,6 +13,8 @@
 
 <?= Yii::t('frontend', 'Imei') ?>: <?= $params['imei'] ?><br>
 
+<?= Yii::t('frontend', 'Events') ?>: <?= $searchModel->getEventsAsString($params) ?><br>
+
 <input 
     type="checkbox"
     name="cancel-income"
