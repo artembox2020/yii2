@@ -63,6 +63,12 @@ class JournalController extends Controller
                 ]
             ]
         );
+
+        if ($params['type_packet'] == Jlog::TYPE_PACKET_LOG) {
+
+            return $this->redirect(['/journal/logs']);
+        }
+
         $addresses = $searchModel->getAddressesMapped();
         $imeis = $searchModel->getImeisMapped();
         $dataProvider = $searchModel->search($params);
@@ -149,6 +155,12 @@ class JournalController extends Controller
                 ]
             ]
         );
+
+        if ($params['type_packet'] == Jlog::TYPE_PACKET_LOG) {
+
+            return $this->redirect(['/journal/logs']);
+        }
+
         $searchModel->from_date = $params['JlogSearch']['from_date'];
         $searchModel->to_date = $params['JlogSearch']['to_date'];
         $searchModel->mashineNumber = '_'.$mashine->type_mashine.'*'.$mashine->number_device;
@@ -193,11 +205,44 @@ class JournalController extends Controller
     public function actionLogs()
     {
         $searchModel = new CbLogSearch();
+        $jLogSearchModel = new JlogSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $entityHelper = new EntityHelper();
+        $params = $entityHelper->makeParamsFromRequest(
+            [
+                'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
+                'filterCondition' => ['date', 'type_packet', 'address', 'imei', 'id'],
+                'val1' => ['date', 'type_packet', 'address', 'imei', 'id'],
+                'val2' => ['date', 'type_packet', 'address', 'imei', 'id'],
+                'inputValue' => ['date', 'type_packet', 'address', 'imei', 'id'],
+                'sort',
+                'JlogSearch' => [
+                    'inputValue' => ['date'],
+                    'val2' => ['date']
+                ]
+            ]
+        );
+
+        $columnFilterScript = Yii::$app->view->render(
+            "/journal/filters/columnFilter",
+            [
+                'today' => Yii::t('frontend', 'Today'),
+                'tomorrow' => Yii::t('frontend', 'Tomorrow'),
+                'yesterday' => Yii::t('frontend', 'Yesterday'),
+                'lastweek' => Yii::t('frontend', 'Lastweek'),
+                'lastmonth' => Yii::t('frontend', 'Lastmonth'),
+                'lastyear' => Yii::t('frontend', 'Lastyear'),
+                'certain' => Yii::t('frontend', 'Certain'),
+                'params' => $params
+            ]
+        );
 
         return $this->render('logs/index', [
+            'jLogSearchModel' => $jLogSearchModel,
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dataProvider,
+            'params' => $params,
+            'columnFilterScript' => $columnFilterScript,
         ]);
     }
 }
