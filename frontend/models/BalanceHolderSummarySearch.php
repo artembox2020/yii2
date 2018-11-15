@@ -477,14 +477,6 @@ class BalanceHolderSummarySearch extends BalanceHolder
     {
         $jSummary = new Jsummary();
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
-
-        if ($todayTimestamp >= $end && ($jSummaryItem = $jSummary->getItem($imei->id, $start, $end))) {
-
-            if (!is_null($jSummaryItem->income)) {
-                return $jSummaryItem->income;
-            }
-        }
-
         $selectString = 'fireproof_residue, created_at, imei_id';
         $query = $this->getBaseQueryByImeiAndTimestamps($start, $end, $imei, $selectString);
         $queryS1 = $query->orderBy(['created_at' => SORT_ASC]);
@@ -523,6 +515,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         } else {
             $income = null;
         }
+
         $jSummary->saveItem($imei->id, $address->id, $start, $end, ['income' => $income], false);
 
         return $income;
@@ -619,46 +612,33 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $entityHelper = new EntityHelper();
         $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
 
-        if (
-            $todayTimestamp >= $timestampEnd
-            && ($jSummaryItem = $jSummary->getItem($imei->id, $timestamp, $timestampEnd))
-            && !is_null($jSummaryItem->created)
-        ) {
-            list($mashinesCreated, $mashinesDeleted, $mashinesActive, $mashinesAll, $idleHours) = [
-                $jSummaryItem->created, $jSummaryItem->deleted,
-                $jSummaryItem->active, $jSummaryItem->all, $jSummaryItem->idleHours
-            ];
-            $needToSave = false;
-        } else {
-            $mashinesCreated = $this->getAllAddedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-            $mashinesDeleted = $this->getAllDeletedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-            $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-            $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-            $idleHours = $entityHelper->getUnitIdleHoursByTimestamps(
-                $timestamp,
-                $timestampEnd,
-                new ImeiData(),
-                $imei,
-                'imei_id',
-                'created_at, imei_id',
-                self::IDLE_TIME_HOURS
-            );
-            $idleHours = $this->parseFloat($idleHours, 2);
-            $needToSave = true;
-        }
+        $mashinesCreated = $this->getAllAddedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
+        $mashinesDeleted = $this->getAllDeletedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
+        $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
+        $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
+        $idleHours = $entityHelper->getUnitIdleHoursByTimestamps(
+            $timestamp,
+            $timestampEnd,
+            new ImeiData(),
+            $imei,
+            'imei_id',
+            'created_at, imei_id',
+            self::IDLE_TIME_HOURS
+        );
+        $idleHours = $this->parseFloat($idleHours, 2);
 
         $mashineStatistics = [
             'created' => $mashinesCreated,
             'deleted' => $mashinesDeleted,
             'active' => $mashinesActive,
             'all' => $mashinesAll,
-            'idleHours' => $idleHours,
-            'imei' => $imei->imei
+            'idleHours' => !is_null($idleHours) ? $idleHours : 24,
+            'imei' => $imei->imei,
+            'imei_id' => $imei->id,
+            'address_id' => $address->id
         ];
 
-        if ($needToSave) {
-            $jSummary->saveItem($imei->id, $address->id, $timestamp, $timestampEnd, $mashineStatistics, false);
-        }
+        $jSummary->saveItem($imei->id, $address->id, $timestamp, $timestampEnd, $mashineStatistics, false);
 
         return $mashineStatistics;
     }
@@ -730,18 +710,16 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $numberOfDays = $this->getDaysByMonths($year)[$month];
         $intervalStep = 3600 * 24;
 
-        if (!empty($imei)) {
-            $incomesFromHistory = $jSummary->getIncomes($timestamps['start'], $timestamps['end'] + 1, $todayTimestamp, $address->id, $imei->id);
-        } else {
-            $incomesFromHistory = [];
-        }
+        $incomesFromHistory = $jSummary->getIncomes($timestamps['start'], $timestamps['end'] + 1, $todayTimestamp, $address->id);
 
         $daysArray = [];
 
         for ($k = 1; $k <= $numberOfDays; ++$k) {
             $daysArray[$k] = $k;
         }
+
         $emptyDays = array_diff($daysArray, array_keys($incomesFromHistory));
+
         $bindingHistoryBeginning = $addressImeiData->getHistoryBeginning($address->id);
 
         $imeiInfoData = $this->makeImeiInfo($addressImeiData, $address, $timestamps['start']);
@@ -1027,5 +1005,32 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $timestamp = strtotime($year.'-'.$month.'-'.$day);
 
         return date('N', $timestamp) >= 6;
+    }
+
+    /**
+     * Makes events string 
+     *
+     * @param array $incomeData
+     * @return string
+     */ 
+    public function getEventsAsString($incomeData)
+    {
+        $eventsString = '';
+
+        if (!empty($incomeData['created'])) {
+            $eventsString .= Yii::t('frontend', 'Addition').', ';
+        }
+
+        if (!empty($incomeData['deleted'])) {
+            $eventsString .= Yii::t('frontend', 'Deletion').', ';
+        }
+
+        $eventsString = trim($eventsString);
+
+        if (!empty($eventsString)) {
+            $eventsString = mb_substr($eventsString, 0, mb_strlen($eventsString) - 1);
+        }
+
+        return $eventsString;
     }
 }

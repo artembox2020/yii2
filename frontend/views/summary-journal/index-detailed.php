@@ -17,6 +17,9 @@ use yii\widgets\Pjax;
 /* @var $summaryJournalController frontend\controllers\SummaryJournalController */
 ?>
 <h1><?= Yii::t('frontend', 'Summary Journal(Detailed)') ?></h1>
+<?php
+    Pjax::begin(['id' => 'monitoring-pjax-grid-container']);
+?>
 <?= $summaryJournalController->renderForm($params, $months, $years, $typesOfDisplay) ?>
 <div class="summary-journal">
     <?= GridView::widget([
@@ -170,4 +173,5 @@ use yii\widgets\Pjax;
 <?php
     echo $submitFormOnInputEvents;
     echo Html::endForm();
+    Pjax::end();
 ?>

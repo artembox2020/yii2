@@ -34,7 +34,7 @@ use frontend\services\globals\EntityHelper;
                     ).
                     EntityHelper::makePopupWindow(
                         [],
-                        $summaryJournalController->renderPopupLabelDetailed($data[$j]['incomes'][$i]),
+                        $summaryJournalController->renderPopupLabelDetailed($data[$j]['incomes'][$i], $data[$j][$i]['timestampStart'], $data[$j][$i]['timestampEnd']),
                         'color: black; text-align: left;',
                         'height: 10px; position: absolute;'
                     );

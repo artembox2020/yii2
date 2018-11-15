@@ -208,6 +208,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
      */ 
     public function getEmptyIncome()
     {
+
         return [
             'income' => null,
             'isDeleted' => false,
@@ -289,6 +290,11 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     'idleHours' => $idleHours,
                     'imei' => !empty($imei) ? $imei->imei : false
                 ];
+
+                $this->saveDetailedHistoryItem(
+                    $incomes[$i], $mashine->address_id, $mashine->imei_id, $mashine->id, $startTimestamp, $endTimestamp
+                );
+
                 continue;
             }
 
@@ -329,12 +335,15 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 'isDeleted' => $is_deleted,
                 'isCreated' => $is_created,
                 'idleHours' => $idleHours,
-                'imei' => !empty($imei) ? $imei->imei : false 
+                'imei' => !empty($imei) ? $imei->imei : false,
+                'address_id' => $mashine->address_id,
+                'imei_id' => $mashine->imei_id
             ];
-        }
 
-        // write history
-        $this->saveDetailedHistory($incomes, $mashine->address_id, $mashine->imei_id, $mashine->id, $start, $days);
+            $this->saveDetailedHistoryItem(
+                $incomes[$i], $mashine->address_id, $mashine->imei_id, $mashine->id, $startTimestamp, $endTimestamp
+            );
+        }
 
         return $incomes;
     }
@@ -399,31 +408,55 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
     }
 
     /**
-     * Save detailed history items to `j_summary` table
+     * Save detailed history item to `j_summary` table
      *
      * @param array $incomes
+     * @param int $addressId
      * @param int $imeiId
      * @param int $mashineId
      * @param timestamp $start
-     * @param int $days
+     * @param timestamp $end
      */ 
-    public function saveDetailedHistory($incomes, $addressId, $imeiId, $mashineId, $start, $days)
+    public function saveDetailedHistoryItem($incomes, $addressId, $imeiId, $mashineId, $start, $end)
     {
         $jSummary = new Jsummary();
         $stepInterval = 3600 * 24;
-        for ($i = 1; $i <= $days; ++$i) {
-            $startTimestamp = $start + ($i - 1) * $stepInterval;
-            $endTimestamp = $startTimestamp + $stepInterval;
-            $incomeByMashines = 
+
+        $incomeByMashines = 
                 '`'
                 .$mashineId.'**'
-                .$incomes[$i]['isCreated'].'**'
-                .$incomes[$i]['isDeleted'].'**'
-                .$incomes[$i]['income'].'**'
-                .$incomes[$i]['idleHours'].
+                .$incomes['isCreated'].'**'
+                .$incomes['isDeleted'].'**'
+                .$incomes['income'].'**'
+                .$incomes['idleHours'].
                 '`';
+        $jSummary->saveItemDetailed($imeiId, $addressId, $start,  $end, [], $incomeByMashines);
+    }
+    
+    /**
+     * Makes events string 
+     *
+     * @param array $incomeData
+     * @return string
+     */ 
+    public function getEventsAsString($incomeData)
+    {
+        $eventsString = '';
 
-            $jSummary->saveItem($imeiId, $addressId, $startTimestamp,  $endTimestamp, [], $incomeByMashines);
+        if (!empty($incomeData['isCreated'])) {
+            $eventsString .= Yii::t('frontend', 'Addition').', ';
         }
+
+        if (!empty($incomeData['isDeleted'])) {
+            $eventsString .= Yii::t('frontend', 'Deletion').', ';
+        }
+
+        $eventsString = trim($eventsString);
+
+        if (!empty($eventsString)) {
+            $eventsString = mb_substr($eventsString, 0, mb_strlen($eventsString) - 1);
+        }
+
+        return $eventsString;
     }
 }

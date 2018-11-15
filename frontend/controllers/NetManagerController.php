@@ -753,6 +753,9 @@ class NetManagerController extends \yii\web\Controller
         } elseif (!empty($params['timestamp'])) {
 
             $historyData = $addressImeiData->getHistoryByTimestamp($timestamp);
+        } else {
+
+            $historyData = $addressImeiData->getHistory();
         }
 
         return $historyData;
