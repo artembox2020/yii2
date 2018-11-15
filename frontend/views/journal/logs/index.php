@@ -33,7 +33,12 @@ use \frontend\models\AddressBalanceHolder;
         'imei',
         ['attribute' => 'rate',
             'label' => Yii::t('logs', 'Rate'),
-            'value' => 'rate',
+            'value'=> function ($model) {
+                if ($model['device'] == 'wm') {
+                    return $model['price'] ;
+                }
+                return $model['rate'];
+            }
         ],
         ['attribute' => 'device',
             'label' => Yii::t('logs', 'Device'),
@@ -41,7 +46,7 @@ use \frontend\models\AddressBalanceHolder;
             if ($model['device'] == 'wm') {
                 return $model['device'] .' ' . $model['number'];
             }
-                        return $model['device'];
+            return $model['device'];
             },
         ],
         ['attribute' => 'signal',
@@ -137,7 +142,12 @@ use \frontend\models\AddressBalanceHolder;
             'value'=> function ($model) {
     if ($model['prewash']) {
         if ($model['device'] == 'wm') {
-            return $model['prewash'] . ' ' . $model['rinsing'] . ' ' . $model['intensive_wash'];
+            if ($model['prewash'] == 1) {$prewash = 'prewash';} else {$prewash = '';}
+            if ($model['rinsing'] == 1) {$rinsing = 'rinsing';} else {$rinsing = '';}
+            if($model['intensive_wash'] == 1) {$intensive_wash = 'intensive_wash';} else {$intensive_wash = '';}
+            return Yii::t('logs', $prewash) . ' 
+            ' . Yii::t('logs', $rinsing) . ' 
+            ' . Yii::t('logs', $intensive_wash);
         }
         return $model['prewash'];
     }

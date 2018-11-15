@@ -91,6 +91,10 @@ return [
     'EXTRAC400' => '400 об',
     'EXTRAC800' => '800 об',
     'EXTRAC800_PLUS' => '800+ об',
+    /** overhead options */
+    'prewash' => 'предварительная стирка',
+    'rinsing' => 'полоскание (+)',
+    'intensive_wash' => 'интенсивная стирка'
 
 ];
 

@@ -54,7 +54,7 @@ class CbLogSearch extends CbLog
             ->from('wm_log')->where(['company_id' => $entity->getCompanyId()]);
 
         $query = (new \yii\db\Query())
-            ->from(['dummy_name' => $query1->union($query2)])
+            ->from(['cb_log' => $query1->union($query2)])
             ->orderBy(['date' => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
