@@ -97,6 +97,43 @@ class WmMashine extends \yii\db\ActiveRecord
         'not connect to WM'
     ];
 
+    /** @var array
+     * Code for log wm
+     */
+    public $log_state = [
+        '-19' => 'ERROR_UE',
+        '-18' => 'ERROR_tE',
+        '-17' => 'ERROR_OE_OF',
+        '-16' => 'ERROR_LE',
+        '-15' => 'ERROR_HE',
+        '-14' => 'ERROR_FE',
+        '-13' => 'ERROR_dE',
+        '-12' => 'ERROR_CE',
+        '-11' => 'ERROR_bE',
+        '-10' => 'ERROR_AE',
+        '-9' => 'ERROR_9E_Uc',
+        '-8' => 'ERROR_8E',
+        '-7' => 'ERROR_5E',
+        '-6' => 'ERROR_4E',
+        '-5' => 'ERROR_3E',
+        '-4' => 'ERROR_1E',
+        '-3' => 'ZERO_WORK',
+        '-2' => 'FREEZE_WITH_WATER',
+        '-1' => 'NO_CONNECT_MCD',
+        '0' => 'NO_POWER',
+        '1' => 'POWER_ON_WASHER',
+        '2' => 'REFILL_WASHER',
+        '3' => 'WASHING_DRESS',
+        '4' => 'RISING_DRESS',
+        '5' => 'EXTRACTION_DRESS',
+        '6' => 'WASHING_END',
+        '7' => 'WASHER_FREE',
+        '8' => 'NULLING_WASHER',
+        '9' => 'CONNECT_MCD',
+        '10' => 'SUB_BY_WORK',
+        '11' => 'MAX_WASHER_EVENT',
+    ];
+
     /**
      * @return array
      */

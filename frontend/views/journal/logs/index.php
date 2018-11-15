@@ -50,7 +50,15 @@ use \frontend\models\AddressBalanceHolder;
         ],
         ['attribute' => 'status',
             'label' => Yii::t('logs', 'Event'),
-            'value' => 'status',
+            'value'=> function ($model) {
+                if ($model['device'] == 'wm') {
+                    $machine = new \frontend\models\WmMashine();
+                    if (array_key_exists($model['status'], $machine->log_state)) {
+                        return Yii::t('logs', $machine->log_state[$model['status']]);
+                    }
+                }
+                return $model['status'];
+            },
         ],
         ['attribute' => 'device',
             'label' => Yii::t('logs', 'Amount of replenishment, UAH (Securities) or Price of service, UAH (PM, GD)'),

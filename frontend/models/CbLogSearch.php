@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use frontend\services\custom\Debugger;
+use frontend\services\globals\Entity;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -43,36 +44,18 @@ class CbLogSearch extends CbLog
      */
     public function search($params)
     {
-        /**
-         *
-         * Select date, imei, status, created_at, fireproof_counter_hrn, fireproof_counter_card from cb_log
-        WHERE imei = imei
-        Union all
-        Select date, imei, status, created_at, Null as fireproof_counter_hrn, Null as fireproof_counter_card from wm_log
-        ORDER by created_at
-         */
-//        $query = CbLog::find()
-//            ->joinWith('WmLog');
-
-        $null = 'Null';
-
-//        $query1 = (new \yii\db\Query())
-//            ->select('date, address_id, imei, status, created_at, fireproof_counter_hrn, fireproof_counter_card')
-//            ->from('cb_log');
-//
-//        $query2 = (new \yii\db\Query())
-//            ->select("date, address_id, imei, status, created_at, price AS fireproof_counter_hrn, spin_type AS fireproof_counter_card")
-//            ->from('wm_log');
-
+        $entity = new Entity();
         $query1 = (new \yii\db\Query())
             ->select('*')
-            ->from('cb_log');
+            ->from('cb_log')->where(['company_id' => $entity->getCompanyId()]);
 
         $query2 = (new \yii\db\Query())
             ->select('*')
-            ->from('wm_log');
+            ->from('wm_log')->where(['company_id' => $entity->getCompanyId()]);
 
-        $query = $query1->union($query2, false);
+        $query = (new \yii\db\Query())
+            ->from(['dummy_name' => $query1->union($query2)])
+            ->orderBy(['date' => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
