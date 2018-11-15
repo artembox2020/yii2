@@ -457,21 +457,9 @@ class AddressImeiData extends ActiveRecord
 
         return $historyInfo;
     }
-
-    /**
-     * @return array
-     */
-    public function getHistoryByTimestamp($timestamp)
+    
+    public function makeHistoryFromItems($items)
     {
-        $bhSummarySearch = new BalanceHolderSummarySearch();
-        $startTimestamp = $bhSummarySearch->getDayBeginningTimestampByTimestamp($timestamp);
-        $endTimestamp = $startTimestamp + 3600*24;
-        $query = AddressImeiData::find();
-        $items = $query->andWhere(['>=', 'created_at', $startTimestamp])
-                       ->andWhere(['<', 'created_at', $endTimestamp])
-                       ->orderBy(['created_at' => SORT_DESC])
-                       ->all();
-        
         $historyInfo = [];
         $imeiIds = [];
         $zeroAddressIds = [];
@@ -515,6 +503,59 @@ class AddressImeiData extends ActiveRecord
 
             $addressIds[] = $item->address_id;
         }
+
+        return $historyInfo;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHistoryByTimestamp($timestamp)
+    {
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        $startTimestamp = $bhSummarySearch->getDayBeginningTimestampByTimestamp($timestamp);
+        $endTimestamp = $startTimestamp + 3600*24;
+        $query = AddressImeiData::find();
+        $items = $query->andWhere(['>=', 'created_at', $startTimestamp])
+                       ->andWhere(['<', 'created_at', $endTimestamp])
+                       ->orderBy(['created_at' => SORT_DESC])
+                       ->all();
+
+        return $this->makeHistoryFromItems($items);
+    }
+
+    /**
+     * @return timestamp
+     */
+    public function getAbsoluteHistoryBeginning()
+    {
+        $item = AddressImeiData::find()->orderBy(['created_at' => SORT_ASC])->limit(1)->one();
+
+        if (empty($item)) {
+
+            return self::INFINITY;
+        }
+
+        return $item->created_at;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHistory()
+    {
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        $timestamp = $this->getAbsoluteHistoryBeginning();
+        $timestamp = $bhSummarySearch->getDayBeginningTimestampByTimestamp($timestamp);
+        $stepInterval = 3600 * 24;
+        $historyInfo = [];
+
+        while ($timestamp < time() + Jlog::TYPE_TIME_OFFSET) {
+            $historyInfo = array_merge($historyInfo, $this->getHistoryByTimestamp($timestamp));
+            $timestamp += $stepInterval; 
+        }
+
+        ArrayHelper::multisort($historyInfo, ['created_at'], [SORT_DESC]);
 
         return $historyInfo;
     }
