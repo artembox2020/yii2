@@ -865,6 +865,13 @@ class BalanceHolderSummarySearch extends BalanceHolder
             }
 
             if (isset($income['active'])) {
+
+                if (empty($income['active'])) {
+                    $class .= ' not-set-income dark-grey';
+
+                    return $class;
+                }
+
                 $percent = ( $income['all'] - (float)$income['active'] ) / $income['all'] * 100;
                 if ($percent <= 1) {
                     $class .= ' white-color';
