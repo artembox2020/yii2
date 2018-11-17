@@ -24,6 +24,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $is_deleted
  * @property int $deleted_at
  * @property int $status
+ * @property string $packet
+ * @property string $cb_version
  *
 // * @property Imei $imei
  * @property WmMashine[] $wmMashines
@@ -47,6 +49,16 @@ class ImeiData extends \yii\db\ActiveRecord
     const TYPE_ACTION_ZIGBEE_RELOAD = 4;
     const TYPE_ACTION_BILL_ACCEPTANCE_RELOAD = 5;
     const TYPE_ACTION_TIME_SET = 6;
+
+    public $eventCentalBoard = [
+        '1' => 'ErrFram',
+        '2' => 'ErrFlash',
+        '3' => 'ErrLogImage',
+        '4' => 'ErrLogFormat',
+        '5' => 'ErrSettings',
+        '6' => 'Err6LowPan',
+        '7' => 'OK'
+    ];
 
     /**
      * @return array
