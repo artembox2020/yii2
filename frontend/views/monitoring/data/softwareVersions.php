@@ -4,7 +4,7 @@
             <td>
                 <b><?= Yii::t('frontend', 'Indicator') ?>:</b>
                 <br>
-                <b>ErrFlash</b>
+                <b><?= $model->getCPStatus() ?></b>
             </td>
         </tr>
         <tr>
