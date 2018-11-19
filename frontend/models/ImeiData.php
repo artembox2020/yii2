@@ -297,4 +297,23 @@ class ImeiData extends \yii\db\ActiveRecord
 
         return false;
     }
+
+    /**
+     * Gets CP status
+     *
+     * @return string|bool
+     */
+    public function getCPStatus()
+    {
+        $packet = $this->packet;
+        if (!empty($packet)) {
+            $centalBoardId = explode('*', $packet)[0];
+            if (in_array($centalBoardId, array_keys($this->eventCentalBoard))) {
+
+                return Yii::t('imeiData', $this->eventCentalBoard[$centalBoardId]);
+            }
+        }
+
+        return false;
+    }
 }
