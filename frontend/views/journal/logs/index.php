@@ -48,7 +48,7 @@ use \frontend\models\AddressBalanceHolder;
             if ($model['device'] == 'wm') {
                 return $model['device'] .' ' . $model['number'];
             }
-                        return $model['device'];
+            return $model['device'];
             },
             'filter' => $this->render('/journal/filters/main', ['name'=> 'device', 'params' => $params]),
         ],
@@ -150,7 +150,12 @@ use \frontend\models\AddressBalanceHolder;
             'value'=> function ($model) {
     if ($model['prewash']) {
         if ($model['device'] == 'wm') {
-            return $model['prewash'] . ' ' . $model['rinsing'] . ' ' . $model['intensive_wash'];
+            if ($model['prewash'] == 1) {$prewash = 'prewash';} else {$prewash = '';}
+            if ($model['rinsing'] == 1) {$rinsing = 'rinsing';} else {$rinsing = '';}
+            if($model['intensive_wash'] == 1) {$intensive_wash = 'intensive_wash';} else {$intensive_wash = '';}
+            return Yii::t('logs', $prewash) . ' 
+            ' . Yii::t('logs', $rinsing) . ' 
+            ' . Yii::t('logs', $intensive_wash);
         }
         return $model['prewash'];
     }

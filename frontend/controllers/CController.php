@@ -118,6 +118,20 @@ class CController extends Controller
             }
         }
 
+        /** new version for imei */
+        $diff = '';
+        foreach ($imeiData as $key => $value) {
+            if ($key > 7) {
+                $diff .= $value . '*';
+                unset ($imeiData[$key]);
+            }
+        }
+
+        $packet = substr($diff, 0, -1);
+
+//        Debugger::d($packet);
+//        Debugger::dd($imeiData);
+
         $result = $this->setImeiData($imeiData);
 
         $imeiDataDto = new ImeiDataDto($result);
@@ -138,6 +152,8 @@ class CController extends Controller
             $imeiData->is_deleted = false;
 
             $imei->level_signal = $imeiData->level_signal;
+            $imeiData->cb_version = $imei->firmware_version;
+            $imeiData->packet = $packet;
             $imei->update();
 
             $imeiData->save();

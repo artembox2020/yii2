@@ -69,28 +69,32 @@ return [
     'open_door' => 'Відкрита дверця ПМ',
     'put_money' => 'Зачисленні гроші',
     /** wash mode code */
-    'IDLEWASH' => 'не выбран',
-    'COTTON' => 'коттон',
-    'SYNTHETICS' => 'синтетика',
-    'HANDHELD_WOOL' => 'шерсть деликатная',
-    'FAST_CHILD' => 'быстрая стирка',
-    'RISING_EXTRAC' => 'полоскание и отжим',
-    'EXTRAC' => 'отжим',
-    'OUTERWEAR' => 'верхняя одежда',
-    'INTENSIVE' => 'интенсив',
-    'DELAYED_WASHING' => 'задержка стирки',
+    'IDLEWASH' => 'Не обраний',
+    'COTTON' => 'Бавовна',
+    'SYNTHETICS' => 'Синтетика',
+    'HANDHELD_WOOL' => 'Вовна',
+    'FAST_CHILD' => 'Швидке(нов)/Дитяча(стар)',
+    'RISING_EXTRAC' => 'Полоскання+відж.',
+    'EXTRAC' => 'Віджим',
+    'OUTERWEAR' => 'Верхній одяг(нов)/Швидке(стар)',
+    'INTENSIVE' => 'Інтенсивна',
+    'DELAYED_WASHING' => 'Відкладене пряння',
     /** wash temperature */
-    'NOLEDTEMP' => 'не выбран',
+    'NOLEDTEMP' => 'Не обраний',
     'TEMP30' => '30°C',
     'TEMP40' => '40°C',
     'TEMP60' => '60°C',
     'TEMP95' => '95°C',
     /** spine type */
-    'NOLEDEXTRAC' => 'не выбран',
-    'NOEXTRAC' => 'без отжима',
+    'NOLEDEXTRAC' => 'Не обраний',
+    'NOEXTRAC' => 'Без віджиму',
     'EXTRAC400' => '400 об',
     'EXTRAC800' => '800 об',
     'EXTRAC800_PLUS' => '800+ об',
+    /** overhead options */
+    'prewash' => 'предварительная стирка',
+    'rinsing' => 'полоскание (+)',
+    'intensive_wash' => 'интенсивная стирка'
 
 ];
 
