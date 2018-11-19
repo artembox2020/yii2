@@ -88,6 +88,10 @@ a.desc:after {
     min-width: 50px;
 }
 
+.grid-view-filter-form .filter-prompt {
+    min-width: 70px;
+}
+
 .hint-block {
     display: block;
     margin-top: 5px;
@@ -613,4 +617,8 @@ div.required label:after {
 
 .modem-history .modem-history-form-container{
     text-align: center;
+}
+
+.logs-index .text-muted.order {
+    display: none;
 }

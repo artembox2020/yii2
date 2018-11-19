@@ -9,10 +9,11 @@ use \frontend\models\AddressBalanceHolder;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 ?>
 <?php
+
 //$this->title = Yii::t('frontend', 'Events Journal');
 //$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="address-balance-holder-index">
+<div class="address-balance-holder-index logs-index">
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
@@ -21,7 +22,7 @@ use \frontend\models\AddressBalanceHolder;
         ['attribute' => 'address',
             'label' => Yii::t('frontend', 'Address'),
             'value'=> function ($model) {
-                $address = AddressBalanceHolder::find(['id' => $model['address_id']])->one();
+                $address = AddressBalanceHolder::findOne(['id' => $model['address_id']]);
                 return $address->address;
             },
             'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
@@ -30,16 +31,16 @@ use \frontend\models\AddressBalanceHolder;
             'label' => Yii::t('frontend', 'Hour that date'),
             'value' => 'date',
             'format' => ['date', 'php:H:i:s d.m.Y'],
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $jLogSearchModel]),
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
         ],
         [
             'attribute' => 'imei',
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'imei', 'params' => $params]),
         ],
         ['attribute' => 'rate',
             'label' => Yii::t('logs', 'Rate'),
             'value' => 'rate',
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'rate', 'params' => $params]),
         ],
         ['attribute' => 'device',
             'label' => Yii::t('logs', 'Device'),
@@ -49,12 +50,12 @@ use \frontend\models\AddressBalanceHolder;
             }
                         return $model['device'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'device', 'params' => $params]),
         ],
         ['attribute' => 'signal',
             'label' => Yii::t('logs', 'Signal level'),
             'value' => 'signal',
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'signal', 'params' => $params]),
         ],
         ['attribute' => 'status',
             'label' => Yii::t('logs', 'Event'),
@@ -70,7 +71,7 @@ use \frontend\models\AddressBalanceHolder;
                     return Yii::t('logs', $cbLog->current_state[$model['status']]);
                 }
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => false
         ],
         ['attribute' => 'device',
             'label' => Yii::t('logs', 'Amount of replenishment, UAH (Securities) or Price of service, UAH (PM, GD)'),
@@ -80,7 +81,6 @@ use \frontend\models\AddressBalanceHolder;
                 }
                 return $model['refill_amount'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
         ],
         ['attribute' => 'fireproof_counter_hrn',
             'label' => Yii::t('logs', 'Non-inflationary balance (CP), UAH or amount of money on the account (PM), UAH'),
@@ -90,7 +90,7 @@ use \frontend\models\AddressBalanceHolder;
                 }
                 return $model['fireproof_counter_hrn'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'fireproof_counter_hrn', 'params' => $params]),
         ],
         ['attribute' => 'collection_counter',
             'label' => Yii::t('logs', 'Collection (Securities), UAH or amount of replenishment (SM), UAH'),
@@ -100,14 +100,14 @@ use \frontend\models\AddressBalanceHolder;
                 }
                 return $model['collection_counter'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'collection_counter', 'params' => $params]),
         ],
         ['attribute' => 'notes_billiards_pcs',
             'label' => Yii::t('logs', 'Bonds in bills'),
             'value'=> function ($model) {
                 return $model['notes_billiards_pcs'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'notes_billiards_pcs', 'params' => $params]),
         ],
         ['attribute' => 'washing_mode',
             'label' => Yii::t('logs', 'Washing mode (SM) or Gel issued (DH), ml.'),
@@ -120,7 +120,6 @@ use \frontend\models\AddressBalanceHolder;
                 }
                 return $model['washing_mode'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
         ],
         ['attribute' => 'wash_temperature',
             'label' => Yii::t('logs', 'Washing temperature or gel residue, ml.'),
@@ -133,7 +132,6 @@ use \frontend\models\AddressBalanceHolder;
                 }
                 return $model['wash_temperature'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
         ],
         ['attribute' => 'spin_type',
             'label' => Yii::t('logs', 'Spin type'),
@@ -146,7 +144,6 @@ use \frontend\models\AddressBalanceHolder;
                 }
                 return $model['spin_type'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
         ],
         ['attribute' => 'Additional washing options',
             'label' => Yii::t('logs', 'Additional Washing Options'),
@@ -164,7 +161,6 @@ use \frontend\models\AddressBalanceHolder;
 //        return $model['intensive_wash'];
 //    }
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
         ],
 //        ['class' => 'yii\grid\ActionColumn'],
     ],

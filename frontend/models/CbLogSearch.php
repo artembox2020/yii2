@@ -18,6 +18,9 @@ class CbLogSearch extends CbLog
 
     public $address;
 
+    public $inputValue = ['date'];
+    public $val2 = ['date'];
+
     /**
      * @inheritdoc
      */
@@ -45,6 +48,8 @@ class CbLogSearch extends CbLog
     public function search($params)
     {
         $entity = new Entity();
+        $searchFilter = new CbLogSearchFilter();
+
         $query1 = (new \yii\db\Query())
             ->select('*')
             ->from('cb_log')->where(['company_id' => $entity->getCompanyId()]);
@@ -57,11 +62,41 @@ class CbLogSearch extends CbLog
             ->from(['dummy_name' => $query1->union($query2)])
             ->orderBy(['date' => SORT_DESC]);
 
+        $query = $searchFilter->applyFilterByValueMethod($query, 'address', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'address', $params, CbLogSearchFilter::FILTER_CATEGORY_COMMON);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'date', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'date', $params, CbLogSearchFilter::FILTER_CATEGORY_DATE);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'imei', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'imei', $params, CbLogSearchFilter::FILTER_CATEGORY_COMMON);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'rate', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'rate', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'device', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'device', $params, CbLogSearchFilter::FILTER_CATEGORY_COMMON);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'signal', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'signal', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'fireproof_counter_hrn', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'fireproof_counter_hrn', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'collection_counter', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'collection_counter', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'notes_billiards_pcs', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'notes_billiards_pcs', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'wash_temperature', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'wash_temperature', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC);
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
                 'pageSize' => self::PAGE_SIZE
-            ]
+            ],
         ]);
 
         $this->load($params);

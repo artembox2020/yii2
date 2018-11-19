@@ -242,10 +242,17 @@ class JlogSearch extends Jlog
         
         return [
             'id' => self::getNumericFilters(),
+            'rate' => self::getNumericFilters(),
             'type_packet' => self::getCommonFilters(),
             'date' => self::getDateFilters(),
             'imei' => self::getCommonFilters(),
-            'address' => self::getCommonFilters()
+            'address' => self::getCommonFilters(),
+            'device' => self::getCommonFilters(),
+            'signal' => self::getNumericFilters(),
+            'fireproof_counter_hrn' => self::getNumericFilters(),
+            'collection_counter' => self::getNumericFilters(),
+            'notes_billiards_pcs' => self::getNumericFilters(),
+            'wash_temperature' => self::getNumericFilters()
         ];
     }
 
@@ -407,7 +414,7 @@ class JlogSearch extends Jlog
      * @param array $params
      * @return array
      */
-    private function getTimestampIntervals($dateParam, $columnName, $params)
+    protected function getTimestampIntervals($dateParam, $columnName, $params)
     {
         switch($dateParam) {
             case 'today':

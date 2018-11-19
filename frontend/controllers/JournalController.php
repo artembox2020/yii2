@@ -205,23 +205,41 @@ class JournalController extends Controller
     public function actionLogs()
     {
         $searchModel = new CbLogSearch();
-        $jLogSearchModel = new JlogSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $entityHelper = new EntityHelper();
         $params = $entityHelper->makeParamsFromRequest(
             [
                 'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
-                'filterCondition' => ['date', 'type_packet', 'address', 'imei', 'id'],
-                'val1' => ['date', 'type_packet', 'address', 'imei', 'id'],
-                'val2' => ['date', 'type_packet', 'address', 'imei', 'id'],
-                'inputValue' => ['date', 'type_packet', 'address', 'imei', 'id'],
+                'filterCondition' => [
+                    'date', 'type_packet', 'address', 'imei', 'id', 'rate', 'device', 'signal',  'fireproof_counter_hrn', 'collection_counter',
+                    'notes_billiards_pcs',
+                    'wash_temperature'
+                ],
+                'val1' => [
+                    'date', 'type_packet', 'address', 'imei', 'id', 'rate', 'device', 'signal', 'fireproof_counter_hrn', 'collection_counter',
+                    'notes_billiards_pcs',
+                    'wash_temperature'
+                ],
+                'val2' => [
+                    'date', 'type_packet', 'address', 'imei', 'id', 'rate', 'device', 'signal', 'fireproof_counter_hrn', 'collection_counter',
+                    'notes_billiards_pcs',
+                    'wash_temperature'
+                ],
+                'inputValue' => [
+                    'date', 'type_packet', 'address', 'imei', 'id', 'rate', 'device', 'signal', 'fireproof_counter_hrn', 'collection_counter',
+                    'notes_billiards_pcs',
+                    'wash_temperature'
+                ],
                 'sort',
-                'JlogSearch' => [
+                'CbLogSearch' => [
                     'inputValue' => ['date'],
                     'val2' => ['date']
                 ]
             ]
         );
+
+        $searchModel->inputValue['date'] = $params['inputValue']['date'];
+        $searchModel->val2['date'] = $params['val2']['date'];
 
         $columnFilterScript = Yii::$app->view->render(
             "/journal/filters/columnFilter",
@@ -238,7 +256,6 @@ class JournalController extends Controller
         );
 
         return $this->render('logs/index', [
-            'jLogSearchModel' => $jLogSearchModel,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'params' => $params,
