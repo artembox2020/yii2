@@ -137,6 +137,11 @@ AppAsset::register($this);
 //            'visible' => Yii::$app->user->can('zurnal'),
             ],
             [
+                'label' => Yii::t('nav-items', 'Collection Journal'),
+                'url' => ['/collection-journal'],
+//            'visible' => Yii::$app->user->can('zurnal'),
+            ],
+            [
                 'label' => Yii::t('frontend', 'Dlogs'),
                 'url' => ['/journal/index?sort=-date'],
 //            'visible' => Yii::$app->user->can('dlogs'),
@@ -176,7 +181,8 @@ AppAsset::register($this);
     }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => ArrayHelper::merge(NavItem::getMenuItems(), $menuItems),
+        'items' => $menuItems,
+//        'items' => ArrayHelper::merge(NavItem::getMenuItems(), $menuItems),
     ]);
     NavBar::end() ?>
 
