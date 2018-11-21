@@ -56,6 +56,7 @@ return [
     'Add Washpay' => 'Додати WASHPAY',
     'Add WM Machine' => 'Додати СМ',
     'Add GD Machine' => 'Додати GD',
+    'All Hours' => 'Годин усього',
     'At the point' => 'На пункті',
     'Active' => 'В работе',
     'Addition' => 'додавання',

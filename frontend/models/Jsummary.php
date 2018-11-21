@@ -38,7 +38,7 @@ class Jsummary extends ActiveRecord
         return [
             [['imei_id', 'start_timestamp', 'end_timestamp'], 'required'],
             [['imei_id', 'created', 'active', 'deleted', 'all'], 'integer'],
-            [['income', 'idleHours'] , 'double']
+            [['income', 'idleHours', 'allHours'] , 'double']
         ];
     }
 
@@ -97,16 +97,18 @@ class Jsummary extends ActiveRecord
     public function parseIncomeString($incomeString)
     {
         $parts = explode('**', $incomeString);
-        $isCreated = isset($parts[1]) ? $parts[1] : false;
-        $isDeleted = isset($parts[2]) ? $parts[2] : false;
+        $created = isset($parts[1]) ? $parts[1] : false;
+        $deleted = isset($parts[2]) ? $parts[2] : false;
         $income = isset($parts[3]) ? $parts[3] : null;
-        $idleHours = isset($parts[4]) ? substr($parts[4], 0, -1) : null;
+        $idleHours = isset($parts[4]) ? $parts[4] : null;
+        $allHours = isset($parts[5]) ? explode("`", $parts[5])[0] : null;
 
         return [
-            'isCreated' => $isCreated,
-            'isDeleted' => $isDeleted,
+            'created' => $created,
+            'deleted' => $deleted,
             'income' => $income,
-            'idleHours' => $idleHours
+            'idleHours' => $idleHours,
+            'allHours' => $allHours
         ];
     }
 
@@ -222,7 +224,7 @@ class Jsummary extends ActiveRecord
             $imei = Imei::find()->where(['id' => $item->imei_id])->one();
             $day = floor(($item->start_timestamp - $startTimestamp) / $stepInterval + 1);
             if (!is_null($item->idleHours)) {
-                
+
                 if (!empty($item->is_cancelled)) {
                     $incomes[$day] = [
                         'income' => null,
@@ -230,7 +232,8 @@ class Jsummary extends ActiveRecord
                         'active' => 0,
                         'deleted' => 0,
                         'all' => 0,
-                        'idleHours' => 0,
+                        'idleHours' => null,
+                        'allHours' => null,
                         'imei' => !empty($imei) ? $imei->imei : Yii::t('frontend', 'Undefined'),
                         'imei_id' => !empty($imei) ? $imei->id : 0,
                         'address_id' => $address_id,
@@ -247,6 +250,7 @@ class Jsummary extends ActiveRecord
                         'active' => $item->active,
                         'all'=> $item->all,
                         'idleHours' => $item->idleHours,
+                        'allHours' => $item->allHours,
                         'imei' => !empty($imei) ? $imei->imei : Yii::t('frontend', 'Undefined'),
                         'imei_id' => !empty($imei) ? $imei->id : 0,
                         'address_id' => $address_id,
@@ -292,6 +296,7 @@ class Jsummary extends ActiveRecord
                         'imei' => $income['imei'],
                         'imei_id' => $income['imei_id'],
                         'address_id' => $income['address_id'],
+                        'mashine_id' => $mashine->id
                     ]
                 );
             }

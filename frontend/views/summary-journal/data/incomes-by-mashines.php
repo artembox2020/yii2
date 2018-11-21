@@ -24,8 +24,10 @@ use frontend\services\globals\EntityHelper;
                     data-timestamp-start = "<?= $data[$j][$i]['timestampStart'] ?>"
                     data-timestamp-end = "<?= $data[$j][$i]['timestampEnd'] ?>"
                     data-idle-hours = "<?= $data[$j]['incomes'][$i]['idleHours'] ?>"
-                    data-is-deleted = "<?= $data[$j]['incomes'][$i]['isDeleted'] ?>"
-                    data-is-created = "<?= $data[$j]['incomes'][$i]['isCreated'] ?>"
+                    data-all-hours = "<?= $data[$j]['incomes'][$i]['allHours'] ?>"
+                    data-is-deleted = "<?= $data[$j]['incomes'][$i]['deleted'] ?>"
+                    data-is-created = "<?= $data[$j]['incomes'][$i]['created'] ?>"
+                    data-address-id = "<?= $data[$j]['incomes'][$i]['mashine_id'] ?>"
                     class = " timestamp <?= $data[$j][$i]['class'] ?>"
                 >
                 <?php

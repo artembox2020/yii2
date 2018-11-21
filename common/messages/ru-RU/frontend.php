@@ -56,6 +56,7 @@ return [
     'Add WM Machine' => 'Добавить СМ',
     'Add GD Machine' => 'Добавить GD',
     'All' => 'Все',
+    'All Hours' => 'Часов всего',
     'Argument 1' => 'аргумент 1',
     'Argument 2' => 'аргумент 2',
     'Average Currency Amount' => 'Среднее количество купюр на день',

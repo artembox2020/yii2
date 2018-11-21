@@ -616,23 +616,36 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $mashinesDeleted = $this->getAllDeletedMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
         $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
         $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
-        $idleHours = $entityHelper->getUnitIdleHoursByTimestamps(
-            $timestamp,
-            $timestampEnd,
-            new ImeiData(),
-            $imei,
-            'imei_id',
-            'created_at, imei_id',
-            self::IDLE_TIME_HOURS
-        );
-        $idleHours = $this->parseFloat($idleHours, 2);
+        $mashines = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->all();
+        $totalIdleHours = 0;
+        $totalHours = 0;
+        foreach ($mashines as $mashine) {
+            $idleHoursInfo = $entityHelper->getUnitIdleHoursByTimestamps(
+                $timestamp,
+                $timestampEnd,
+                new WmMashineData(),
+                $mashine,
+                'mashine_id',
+                'created_at, mashine_id',
+                self::IDLE_TIME_HOURS
+            );
+            list($idleHours, $allHours) = [$idleHoursInfo['idleHours'], $idleHoursInfo['allHours']];
+
+            if ($idleHours >= self::IDLE_TIME_HOURS) {
+                $totalIdleHours += $idleHours;
+            }
+            $totalHours += $allHours;
+        }
+        $totalIdleHours = $this->parseFloat($totalIdleHours, 2);
+        $totalHours = $this->parseFloat($totalHours, 2);
 
         $mashineStatistics = [
             'created' => $mashinesCreated,
             'deleted' => $mashinesDeleted,
             'active' => $mashinesActive,
             'all' => $mashinesAll,
-            'idleHours' => !is_null($idleHours) ? $idleHours : 24,
+            'idleHours' => !is_null($totalIdleHours) ? $totalIdleHours : 24,
+            'allHours' => $totalHours,
             'imei' => $imei->imei,
             'imei_id' => $imei->id,
             'address_id' => $address->id
@@ -846,14 +859,14 @@ class BalanceHolderSummarySearch extends BalanceHolder
      */ 
     public function makeClassByIncome($income)
     {
-        if (!empty($income)) {
+        if (!is_null($income)) {
 
             while (is_array($income['income'])) {
                 $income = $income['income'];
             }
 
             if (!isset($income['income']) || (empty($income['income']) && $income['income'] != '0')) {
-                $class = 'not-set-income';
+                //$class = ' not-set-income';
             }
 
             if (!empty($income['created'])) {
@@ -864,35 +877,30 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $class .= ' red-color';
             }
 
-            if (isset($income['active'])) {
+            if (empty($income['allHours'])) {
 
-                if (empty($income['active'])) {
-                    $class .= ' not-set-income dark-grey';
-
-                    return $class;
+                $class = ' not-set-income';
+                if (!empty($income['is_cancelled'])) {
+                    $class .= ' cancelled';
                 }
 
-                $percent = ( $income['all'] - (float)$income['active'] ) / $income['all'] * 100;
-                if ($percent <= 1) {
+            } else {
+                $idlePercentage = (float)$income['idleHours'] / (float)$income['allHours'] * 100;
+
+                if ($idlePercentage <= 20) {
                     $class .= ' white-color';
-                } elseif ($percent <= self::PERCENT_ONE_THIRD) {
+                } elseif ($idlePercentage <= 40) {
                     $class .= ' light-grey';
-                } elseif ($percent <= self::PERCENT_TWO_THIRD) {
+                } elseif ($idlePercentage <= 60) {
                     $class .= ' middle-grey';
-                } elseif ($percent < 100) {
+                } elseif ($idlePercentage <= 80) {
                     $class .= ' heavy-grey';
                 } else {
                     $class .= ' dark-grey';
                 }
-            } elseif (!empty($income['all'])) {
-                $class .= ' dark-grey';
-            }
-
-            if (!empty($income['idleHours'])) {
-                $class .= ' idle';
             }
         } else {
-            $class = 'not-set-income';
+            $class = ' not-set-income';
         }
 
         return $class;

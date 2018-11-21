@@ -48,7 +48,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     $data[$k] = [];    
                     for ($j = 1; $j <= $days; ++$j) {
                         $summaryTotal[$j] += $this->parseFloat($income[$j]['income'], 2);
-                        $class = $this->makeClassDetailedByIncome($income[$j]);
+                        $class = $this->makeClassByIncome($income[$j]);
                         $data[$k][$j] = [
                             'timestampStart' => $this->getTimestampByYearMonthDay($year, $month, $j, true),
                             'timestampEnd' => $this->getTimestampByYearMonthDay($year, $month, $j, false),
@@ -82,7 +82,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         $timestampStart = $this->getTimestampByYearMonthDay($year, $month, '01', true);
         if ($mashinesQuery->count() == 0) {
             for ($i = 1; $i <= $days; ++$i) {
-                $arrs[$i] = [ 'income' => null, 'isDeleted' => false, 'isCreated' => false, 'idleHours' => 0];
+                $arrs[$i] = [ 'income' => null, 'deleted' => false, 'created' => false, 'idleHours' => 0];
             }
             $incomes[0] = $arrs;
 
@@ -160,7 +160,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
     public function getMashineDetailedStatisticsByTimestamps($startTimestamp, $endTimestamp, $mashine)
     {
         $entityHelper = new EntityHelper();
-        $idleHours = $entityHelper->getUnitIdleHoursByTimestamps(
+        $idleHoursInfo = $entityHelper->getUnitIdleHoursByTimestamps(
             $startTimestamp,
             $endTimestamp,
             new WmMashineData(),
@@ -169,7 +169,12 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
             'created_at, mashine_id',
             self::IDLE_TIME_HOURS
         );
+        list($idleHours, $allHours) = [$idleHoursInfo['idleHours'], $idleHoursInfo['allHours']];
         $idleHours = $this->parseFloat($idleHours, 2);
+
+        if ($idleHours < self::IDLE_TIME_HOURS) {
+            $idleHours = 0;
+        }
 
         $deleted_at = $mashine->is_deleted ? $mashine->deleted_at : 0;
         if ($deleted_at < $endTimestamp && $deleted_at >= $startTimestamp) {
@@ -184,8 +189,8 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         } else {
             $is_created = false;
         }
-        
-        return [$idleHours, $is_deleted, $is_created];
+
+        return [$idleHours, $allHours, $is_deleted, $is_created];
     }
 
     /**
@@ -211,8 +216,8 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
 
         return [
             'income' => null,
-            'isDeleted' => false,
-            'isCreated' => false,
+            'deleted' => false,
+            'created' => false,
             'idleHours' => 0,
             'imei' => false
         ];
@@ -279,16 +284,18 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     $income = $this->getAverageIncome($lastMonthIncomes);
                 }
 
-                list($idleHours, $is_deleted, $is_created) = $this->getMashineDetailedStatisticsByTimestamps(
+                list($idleHours, $allHours, $is_deleted, $is_created) = $this->getMashineDetailedStatisticsByTimestamps(
                     $startTimestamp, $endTimestamp, $mashine
                 );
 
                 $incomes[$i] = [
                     'income' => $income,
-                    'isDeleted' => $is_deleted,
-                    'isCreated' => $is_created,
+                    'deleted' => $is_deleted,
+                    'created' => $is_created,
                     'idleHours' => $idleHours,
-                    'imei' => !empty($imei) ? $imei->imei : false
+                    'allHours' => $allHours,
+                    'imei' => !empty($imei) ? $imei->imei : false,
+                    'mashine_id' => $mashine->id
                 ];
 
                 $this->saveDetailedHistoryItem(
@@ -326,18 +333,20 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
 
             $income = $this->getMashineIncomeValueByTimestamps($startTimestamp, $endTimestamp, $mashine);
 
-            list($idleHours, $is_deleted, $is_created) = $this->getMashineDetailedStatisticsByTimestamps(
+            list($idleHours, $allHours, $is_deleted, $is_created) = $this->getMashineDetailedStatisticsByTimestamps(
                 $startTimestamp, $endTimestamp, $mashine
             );
 
             $incomes[$i] = [
                 'income' => $income,
-                'isDeleted' => $is_deleted,
-                'isCreated' => $is_created,
+                'deleted' => $is_deleted,
+                'created' => $is_created,
                 'idleHours' => $idleHours,
+                'allHours' => $allHours,
                 'imei' => !empty($imei) ? $imei->imei : false,
                 'address_id' => $mashine->address_id,
-                'imei_id' => $mashine->imei_id
+                'imei_id' => $mashine->imei_id,
+                'mashine_id' => $mashine->id
             ];
 
             $this->saveDetailedHistoryItem(
@@ -361,53 +370,6 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
     }
 
     /**
-     * Gets class label by incomes
-     *
-     * @param array $income
-     * @return string
-     */ 
-    public function makeClassDetailedByIncome($income)
-    {
-        if (!empty($income)) {
-
-            while (is_array($income['income'])) {
-                $income = $income['income'];
-            }
-
-            if (!isset($income['income']) || (empty($income['income']) && $income['income'] != '0')) {
-                $class = 'not-set-income';
-            }
-
-            if (!empty($income['isCreated'])) {
-                $class .= ' green-color';
-            }
-
-            if (!empty($income['isDeleted'])) {
-                $class .= ' red-color';
-            }
-
-            $percent = (float)$income['idleHours'] / 24 * 100;
-            if ($percent <= 1) {
-                $class .= ' white-color';
-            } elseif ($percent <= self::PERCENT_ONE_THIRD) {
-                $class .= ' light-grey';
-            } elseif ($percent <= self::PERCENT_TWO_THIRD) {
-                $class .= ' middle-grey';
-            } elseif ($percent < 100) {
-                $class .= ' heavy-grey';
-            } else {
-                $class .= ' dark-grey';
-            }
-
-            if (!empty($income['idleHours'])) {
-                $class .= ' idle';
-            }
-        }
-
-        return $class;
-    }
-
-    /**
      * Save detailed history item to `j_summary` table
      *
      * @param array $incomes
@@ -425,14 +387,15 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         $incomeByMashines = 
                 '`'
                 .$mashineId.'**'
-                .$incomes['isCreated'].'**'
-                .$incomes['isDeleted'].'**'
+                .$incomes['created'].'**'
+                .$incomes['deleted'].'**'
                 .$incomes['income'].'**'
-                .$incomes['idleHours'].
-                '`';
+                .$incomes['idleHours'].'**'
+                .$incomes['allHours']
+                .'`';
         $jSummary->saveItemDetailed($imeiId, $addressId, $start,  $end, [], $incomeByMashines);
     }
-    
+
     /**
      * Makes events string 
      *
@@ -443,11 +406,11 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
     {
         $eventsString = '';
 
-        if (!empty($incomeData['isCreated'])) {
+        if (!empty($incomeData['created'])) {
             $eventsString .= Yii::t('frontend', 'Addition').', ';
         }
 
-        if (!empty($incomeData['isDeleted'])) {
+        if (!empty($incomeData['deleted'])) {
             $eventsString .= Yii::t('frontend', 'Deletion').', ';
         }
 

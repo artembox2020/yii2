@@ -55,7 +55,7 @@ use frontend\models\BalanceHolderSummarySearch;
                                     <?php else: ?>
                                         <?php foreach($mashinesQuery->all() as $mashine): ?>
                                         <tr>
-                                            <td> &nbsp;<?= $mashine->number_device ?></td>
+                                            <td class="address-id-<?= $mashine->id ?>"> &nbsp;<?= $mashine->number_device ?></td>
                                         </tr>
                                         <?php endforeach; ?>
                                     <?php endif; ?>
