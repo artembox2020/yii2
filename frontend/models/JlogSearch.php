@@ -30,6 +30,7 @@ class JlogSearch extends Jlog
     const FILTER_DATE = 8;
     const FILTER_DATE_BEFORE = 9;
     const FILTER_DATE_AFTER = 10;
+    const FILTER_DATE_FROM = 22;
 
     const FILTER_MORE = 11;
     const FILTER_MORE_EQUAL = 12;
@@ -207,7 +208,8 @@ class JlogSearch extends Jlog
             self::FILTER_NOT_SET => Yii::t('frontend', 'FILTER NOT SET'),
             self::FILTER_DATE => Yii::t('frontend', 'FILTER DATE'),
             self::FILTER_DATE_BEFORE => Yii::t('frontend', 'FILTER DATE BEFORE'),
-            self::FILTER_DATE_AFTER => Yii::t('frontend', 'FILTER DATE AFTER')
+            self::FILTER_DATE_AFTER => Yii::t('frontend', 'FILTER DATE AFTER'),
+            self::FILTER_DATE_FROM => Yii::t('frontend', 'FILTER DATE FROM')
         ];
     }
 
@@ -564,10 +566,19 @@ class JlogSearch extends Jlog
                 $query = $query->andWhere(
                     [">=", "UNIX_TIMESTAMP(STR_TO_DATE({$columnName}, '".Imei::MYSQL_DATE_TIME_FORMAT."'))", $max]
                 );
-                
+
+                break;
+            case self::FILTER_DATE_FROM:
+                $bhSummarySearch = new BalanceHolderSummarySearch();
+                $start = $bhSummarySearch->getDayBeginningTimestampByTimestamp($min);
+
+                $query = $query->andWhere(
+                    [">=", "UNIX_TIMESTAMP(STR_TO_DATE({$columnName}, '".Imei::MYSQL_DATE_TIME_FORMAT."'))", $start]
+                );
+
                 break;
         }
-        
+
         return $query;
     }
 

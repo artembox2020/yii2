@@ -173,6 +173,7 @@ return [
     'FILTER DATE' => 'дата',
     'FILTER DATE AFTER' => 'дата после',
     'FILTER DATE BEFORE' => 'дата до',
+    'FILTER DATE FROM' => 'дата от',
     'FILTER EQUAL' => 'равно',
     'FILTER LESS' => 'меньше',
     'FILTER LESS EQUAL' => 'меньше равно',
