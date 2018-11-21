@@ -43,7 +43,7 @@ use frontend\models\BalanceHolderSummarySearch;
                                     <?= $address->address ?>,
                                     <?= $address->floor ? $address->floor : ' &nbsp;' ?>
                                 </td>
-                                <td class="mashine-count">
+                                <td class="mashine-count address-id-<?= $address->id ?>">
                                     <?= $addressImeiData->getWmMashinesCountByYearMonth($year, $month, $address) ?>
                                 </td>
                                 <td class="number-of-citizens hidden">

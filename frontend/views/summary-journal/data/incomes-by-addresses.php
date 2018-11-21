@@ -26,6 +26,8 @@ use frontend\services\globals\EntityHelper;
                     data-timestamp-start = "<?= $data[$j][$i]['timestampStart'] ?>"
                     data-timestamp-end = "<?= $data[$j][$i]['timestampEnd'] ?>"
                     data-idle-hours = "<?= $data[$j]['incomes'][$i]['idleHours'] ?>"
+                    data-all-hours = "<?= $data[$j]['incomes'][$i]['allHours'] ?>"
+                    data-address-id = "<?= $data[$j]['incomes'][$i]['address_id'] ?>"
                     class = "timestamp <?= $data[$j][$i]['class'] ?>"
                 >
                 <?php

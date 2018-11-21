@@ -20,7 +20,7 @@ use yii\helpers\ArrayHelper;
  */
 class AddressImeiData extends ActiveRecord
 {
-    const INFINITY = 999999999999;
+    const INFINITY = 4000000000;
 
     /**
      * @inheritdoc

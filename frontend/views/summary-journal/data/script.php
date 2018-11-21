@@ -359,7 +359,7 @@
                     var tds = row.querySelectorAll('td');
                     var totalIdles = 0;
                     for (var j = 0; j < tds.length; ++j) {
-                        if (tds[j].classList.contains('idle')) {
+                        if (!tds[j].classList.contains('not-set-income')) {
                             totalIdles += preciseNumber(parseFloat(tds[j].dataset.idleHours) / 24);
                         }
                     }
@@ -535,6 +535,25 @@
             }
         }
 
+        // updates cell color marking for mashines number (green and red mark added or deleted ones)
+        function numberMashinesCellColorMarking()
+        {
+            var cells = summaryJournal.querySelectorAll('.timestamp.green-color, .timestamp.red-color');
+            for (var i = 0; i < cells.length; ++i) {
+                var addressId = cells[i].dataset.addressId;
+                var addressCell = summaryJournal.querySelector('.address-id-' + addressId);
+
+                if (cells[i].classList.contains('green-color')) {
+                    addressCell.classList.add('green-color');
+                }
+                
+                if (cells[i].classList.contains('red-color')) {
+                    addressCell.classList.add('red-color');
+                }
+                
+            }
+        }
+
         // applies all functions
         removeEmptyBalanceHolders();
         makeSerialColumn();
@@ -553,6 +572,7 @@
         makeTotalSummary();
         makeTotalAverage();
         updateCellColorMarking();
+        numberMashinesCellColorMarking();
 
         // update cancel income
         <?= Yii::$app->view->render('/summary-journal/data/update-income-cancel', []) ?>

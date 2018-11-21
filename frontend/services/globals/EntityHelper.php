@@ -3,6 +3,9 @@
 namespace frontend\services\globals;
 
 use common\models\User;
+use frontend\models\Jlog;
+use frontend\models\AddressImeiData;
+use frontend\models\BalanceHolderSummarySearch;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use Yii;
@@ -502,7 +505,41 @@ class EntityHelper implements EntityHelperInterface
     {
         $stepInterval = $timeIdleHours * 3600;
         $idleHours = 0.00;
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+
+        $nowTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
+        $unitCreationTimestamp = $this->getUnitCreationTimestamp($bInst);
+        $unitDeletionTimestamp = $this->getUnitDeletionTimestamp($bInst);
+
+        if ($start < $unitCreationTimestamp) {
+            $start = $unitCreationTimestamp;
+        }
+
         $endTimestamp = $start + $stepInterval;
+
+        if ($end > $nowTimestamp) {
+            $end = $nowTimestamp;
+        }
+
+        if ($endTimestamp > $nowTimestamp) {
+            $endTimestamp = $nowTimestamp;
+        }
+
+        if ($endTimestamp > $unitDeletionTimestamp) {
+            $endTimestamp = $unitDeletionTimestamp;
+        }
+
+        if ($end > $unitDeletionTimestamp) {
+            $end = $unitDeletionTimestamp;
+        }
+
+        $allHours = $bhSummarySearch->parseFloat(($end - $start) / 3600, 2);
+
+        if ($start + $stepInterval > $end) {
+
+            return ['idleHours' => 0, 'allHours' => $allHours];
+        }
+
         for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
             $query = $this->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, $inst, $bInst, $fieldInst, $select);
             if ($query->count() > 0) {
@@ -516,7 +553,7 @@ class EntityHelper implements EntityHelperInterface
                     break;
                 } else {
                     $item = $query->orderBy(['created_at' => SORT_ASC])->limit(1)->one();
-                    $timeDiff = $item->created_at - $endTimestamp;
+                    $timeDiff = ($item->created_at < $end ? $item->created_at : $end) - $endTimestamp;
                     $idleHours += $timeIdleHours + ((float)$timeDiff / 3600);
                     $timestamp = $item->created_at - $stepInterval + 1;
                     continue;
@@ -524,6 +561,23 @@ class EntityHelper implements EntityHelperInterface
             }
         }
 
-        return $idleHours;
+        //$allHours = $bhSummarySearch->parseFloat(($end - $start) / 3600, 2);
+
+        return ['idleHours' => $idleHours, 'allHours' => $allHours];
+    }
+
+    public function getUnitDeletionTimestamp($bInst)
+    {
+        if (empty($bInst->is_deleted)) {
+
+            return AddressImeiData::INFINITY;
+        }
+
+        return $bInst->deleted_at;
+    }
+
+    public function getUnitCreationTimestamp($bInst) {
+
+        return $bInst->created_at;
     }
 }

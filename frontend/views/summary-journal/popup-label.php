@@ -11,6 +11,8 @@
 
 <?= Yii::t('frontend', 'Idle Hours') ?>: <?= $params['idleHours'] ?><br>
 
+<?= Yii::t('frontend', 'All Hours') ?>: <?= $params['allHours'] ?><br>
+
 <?= Yii::t('frontend', 'Imei') ?>: <?= $params['imei'] ?><br>
 
 <?= Yii::t('frontend', 'Events') ?>: <?= $searchModel->getEventsAsString($params) ?><br>

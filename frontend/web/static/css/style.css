@@ -367,7 +367,8 @@ div.required label:after {
 .summary-journal .timestamp.light-grey:hover .label,
 .summary-journal .timestamp.middle-grey:hover .label,
 .summary-journal .timestamp.heavy-grey:hover .label,
-.summary-journal .timestamp.dark-grey:hover .label {
+.summary-journal .timestamp.dark-grey:hover .label,
+.summary-journal .timestamp.cancelled:hover .label {
     visibility: visible;
     cursor: pointer;
 }

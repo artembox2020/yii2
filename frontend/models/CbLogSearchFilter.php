@@ -185,9 +185,14 @@ class CbLogSearchFilter extends JlogSearch
                 $query = $query->andWhere(['>=', $columnName, $max]);
 
                 break;
+            case self::FILTER_DATE_FROM:
+                $bhSummarySearch = new BalanceHolderSummarySearch();
+                $start = $bhSummarySearch->getDayBeginningTimestampByTimestamp($min);
+                $query = $query->andWhere(['>=', $columnName, $start]);
+
+                break;
         }
 
         return $query;
     }
-
 }

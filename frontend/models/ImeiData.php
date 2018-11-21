@@ -309,8 +309,14 @@ class ImeiData extends \yii\db\ActiveRecord
         if (!empty($packet)) {
             $centalBoardId = explode('*', $packet)[0];
             if (in_array($centalBoardId, array_keys($this->eventCentalBoard))) {
+                $currentTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
+                if ($currentTimestamp - $this->created_at <= 1800) {
 
-                return Yii::t('imeiData', $this->eventCentalBoard[$centalBoardId]);
+                    return Yii::t('imeiData', $this->eventCentalBoard[$centalBoardId]);
+                } else {
+
+                    return Yii::t('imeiData', 'ErrTerminal');
+                }
             }
         }
 
