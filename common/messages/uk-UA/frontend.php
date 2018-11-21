@@ -200,6 +200,7 @@ return [
     'FILTER DATE' => 'дата',
     'FILTER DATE AFTER' => 'дата після',
     'FILTER DATE BEFORE' => 'дата до',
+    'FILTER DATE FROM' => 'дата від',
     'FILTER EQUAL' => 'дорівнює',
     'FILTER LESS' => 'менше',
     'FILTER LESS EQUAL' => 'менше дорівнює',
