@@ -49,6 +49,7 @@ class ImeiData extends \yii\db\ActiveRecord
     const TYPE_ACTION_ZIGBEE_RELOAD = 4;
     const TYPE_ACTION_BILL_ACCEPTANCE_RELOAD = 5;
     const TYPE_ACTION_TIME_SET = 6;
+    const TYPE_HALF_HOUR = 1800;
 
     public $eventCentalBoard = [
         '1' => 'ErrFram',
@@ -333,18 +334,19 @@ class ImeiData extends \yii\db\ActiveRecord
      */
     public function getCPStatus()
     {
+        $currentTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
+        if ($currentTimestamp - $this->created_at > self::TYPE_HALF_HOUR) {
+
+            return Yii::t('imeiData', 'ErrTerminal');
+        }
+
         $packet = $this->packet;
+
         if (!empty($packet)) {
             $centalBoardId = explode('*', $packet)[0];
             if (in_array($centalBoardId, array_keys($this->eventCentalBoard))) {
-                $currentTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
-                if ($currentTimestamp - $this->created_at <= 1800) {
 
-                    return Yii::t('imeiData', $this->eventCentalBoard[$centalBoardId]);
-                } else {
-
-                    return Yii::t('imeiData', 'ErrTerminal');
-                }
+                return Yii::t('imeiData', $this->eventCentalBoard[$centalBoardId]);   
             }
         }
 
