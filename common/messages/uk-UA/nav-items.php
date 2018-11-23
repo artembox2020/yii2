@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'Collection Journal' => 'Журнал Інкасації',
+    'Encashment Journal' => 'Журнал Інкасації',
 ];

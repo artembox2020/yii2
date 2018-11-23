@@ -42,7 +42,7 @@ use yii\widgets\Pjax;
             [
                 'label' => $monitoringShapters['common'],
                 'format' => 'raw',
-                'value' => function($model) use($monitoringController, $searchModel)
+                'value' => function($model) use ($monitoringController, $searchModel)
                 {
 
                     return $monitoringController->renderCommonDataByImeiId($model->id, $searchModel);

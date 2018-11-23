@@ -137,8 +137,8 @@ AppAsset::register($this);
 //            'visible' => Yii::$app->user->can('zurnal'),
             ],
             [
-                'label' => Yii::t('nav-items', 'Collection Journal'),
-                'url' => ['/collection-journal'],
+                'label' => Yii::t('nav-items', 'Encashment Journal'),
+                'url' => ['/encashment-journal'],
 //            'visible' => Yii::$app->user->can('zurnal'),
             ],
             [
