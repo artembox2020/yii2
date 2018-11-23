@@ -28,6 +28,7 @@ use frontend\services\globals\EntityHelper;
                     data-is-deleted = "<?= $data[$j]['incomes'][$i]['deleted'] ?>"
                     data-is-created = "<?= $data[$j]['incomes'][$i]['created'] ?>"
                     data-address-id = "<?= $data[$j]['incomes'][$i]['mashine_id'] ?>"
+                    data-mashine-id = "<?= $data[$j]['incomes'][$i]['mashine_id'] ?>"
                     class = " timestamp <?= $data[$j][$i]['class'] ?>"
                 >
                 <?php

@@ -354,6 +354,47 @@ class BalanceHolderSummarySearch extends BalanceHolder
     }
 
     /**
+     * Gets date and sum encashment by timestamps and imeiid
+     *
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param int $imeiId
+     * @return array
+     */
+    public function getDateAndSumEncashmentByTimestamps($start, $end, $imeiId)
+    {
+        global $encashmentHistory;
+        $imeiData = new ImeiData();
+        $dayBeginning = $this->getDayBeginningTimestampByTimestamp($start);
+        if (empty($encashmentHistory[$imeiId])) {
+            $nowTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
+            $encashmentHistory[$imeiId] = $imeiData->getEncashmentHistoryByImeiId($imeiId, $start, $nowTimestamp);
+        }
+
+        if (empty($encashmentHistory[$imeiId][$dayBeginning])) {
+
+            return [
+                'encasment_date' => null,
+                'encasment_sum' => null
+            ];
+        }
+
+        $encashmentSum = 0;
+        $encashmentDate = null;
+        foreach ($encashmentHistory[$imeiId][$dayBeginning] as $item) {
+            $encashmentSum += $item['money_in_banknotes'];
+            if (empty($encashmentDate)) {
+                $encashmentDate = $item['created_at'];
+            }
+        }
+
+        return [
+            'encashment_date' => $encashmentDate,
+            'encashment_sum' => $encashmentSum
+        ];
+    }
+
+    /**
      * Gets the query representing all imeis
      *
      * @param timestamp $start
@@ -617,8 +658,9 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $mashinesActive = $this->getAllActiveMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
         $mashinesAll = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->count();
         $mashines = $this->getAllMashinesQueryByTimestamps($timestamp, $timestampEnd, $imei->id)->all();
-        $totalIdleHours = 0;
-        $totalHours = 0;
+        $encashmentInfo = $this->getDateAndSumEncashmentByTimestamps($timestamp, $timestampEnd, $imei->id);
+        $totalIdleHours = 0.00;
+        $totalHours = 0.00;
         foreach ($mashines as $mashine) {
             $idleHoursInfo = $entityHelper->getUnitIdleHoursByTimestamps(
                 $timestamp,
@@ -644,8 +686,10 @@ class BalanceHolderSummarySearch extends BalanceHolder
             'deleted' => $mashinesDeleted,
             'active' => $mashinesActive,
             'all' => $mashinesAll,
-            'idleHours' => !is_null($totalIdleHours) ? $totalIdleHours : 24,
+            'idleHours' => !is_null($totalIdleHours) ? $totalIdleHours : null,
             'allHours' => $totalHours,
+            'encashment_date' => empty($encashmentInfo['encashment_date']) ? null : $encashmentInfo['encashment_date'],
+            'encashment_sum' => empty($encashmentInfo['encashment_sum']) ? null : $encashmentInfo['encashment_sum'],
             'imei' => $imei->imei,
             'imei_id' => $imei->id,
             'address_id' => $address->id
@@ -876,6 +920,10 @@ class BalanceHolderSummarySearch extends BalanceHolder
             if (!empty($income['deleted'])) {
                 $class .= ' red-color';
             }
+            
+            if (!empty($income['encashment_date'])) {
+                $class.= ' blue-color';
+            }
 
             if (empty($income['allHours'])) {
 
@@ -1038,6 +1086,10 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
         if (!empty($incomeData['deleted'])) {
             $eventsString .= Yii::t('frontend', 'Deletion').', ';
+        }
+
+        if (!empty($incomeData['encashment_date'])) {
+            $eventsString .= Yii::t('frontend', 'Encashment').', ';
         }
 
         $eventsString = trim($eventsString);

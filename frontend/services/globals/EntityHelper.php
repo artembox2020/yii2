@@ -561,11 +561,15 @@ class EntityHelper implements EntityHelperInterface
             }
         }
 
-        //$allHours = $bhSummarySearch->parseFloat(($end - $start) / 3600, 2);
-
         return ['idleHours' => $idleHours, 'allHours' => $allHours];
     }
 
+    /**
+     * Gets unit deletion timestamp
+     * 
+     * @param instance $bInst
+     * @return timestamp
+     */
     public function getUnitDeletionTimestamp($bInst)
     {
         if (empty($bInst->is_deleted)) {
@@ -576,6 +580,12 @@ class EntityHelper implements EntityHelperInterface
         return $bInst->deleted_at;
     }
 
+    /**
+     * Gets unit creation timestamp
+     * 
+     * @param instance $bInst
+     * @return timestamp
+     */
     public function getUnitCreationTimestamp($bInst) {
 
         return $bInst->created_at;

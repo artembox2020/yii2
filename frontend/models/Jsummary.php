@@ -37,8 +37,8 @@ class Jsummary extends ActiveRecord
     {
         return [
             [['imei_id', 'start_timestamp', 'end_timestamp'], 'required'],
-            [['imei_id', 'created', 'active', 'deleted', 'all'], 'integer'],
-            [['income', 'idleHours', 'allHours'] , 'double']
+            [['imei_id', 'created', 'active', 'deleted', 'all', 'encashment_date'], 'integer'],
+            [['income', 'idleHours', 'allHours', 'encashment_sum'] , 'double']
         ];
     }
 
@@ -101,14 +101,18 @@ class Jsummary extends ActiveRecord
         $deleted = isset($parts[2]) ? $parts[2] : false;
         $income = isset($parts[3]) ? $parts[3] : null;
         $idleHours = isset($parts[4]) ? $parts[4] : null;
-        $allHours = isset($parts[5]) ? explode("`", $parts[5])[0] : null;
+        $allHours = isset($parts[5]) ? $parts[5] : null;
+        $encashment_date = isset($parts[6]) ? $parts[6] : null;
+        $encashment_sum = isset($parts[7]) ? explode("`", $parts[7])[0] : null;
 
         return [
             'created' => $created,
             'deleted' => $deleted,
             'income' => $income,
             'idleHours' => $idleHours,
-            'allHours' => $allHours
+            'allHours' => $allHours,
+            'encashment_date' => $encashment_date,
+            'encashment_sum' => $encashment_sum
         ];
     }
 
@@ -234,6 +238,8 @@ class Jsummary extends ActiveRecord
                         'all' => 0,
                         'idleHours' => null,
                         'allHours' => null,
+                        'encashment_date' => null,
+                        'encashment_sum' => null,
                         'imei' => !empty($imei) ? $imei->imei : Yii::t('frontend', 'Undefined'),
                         'imei_id' => !empty($imei) ? $imei->id : 0,
                         'address_id' => $address_id,
@@ -251,6 +257,8 @@ class Jsummary extends ActiveRecord
                         'all'=> $item->all,
                         'idleHours' => $item->idleHours,
                         'allHours' => $item->allHours,
+                        'encashment_date' => $item->encashment_date,
+                        'encashment_sum' => $item->encashment_sum,
                         'imei' => !empty($imei) ? $imei->imei : Yii::t('frontend', 'Undefined'),
                         'imei_id' => !empty($imei) ? $imei->id : 0,
                         'address_id' => $address_id,

@@ -17,7 +17,7 @@ use frontend\models\BalanceHolderSummarySearch;
                 foreach ($dataProvider->query->all() as $balanceHolder):
             ?>
             <tr data-key="<?= $balanceHolder->id ?>">
-                <td class="cell-device">
+                <td class="mashine-number-device cell-device">
                     <?= $balanceHolder->name ?>
                 </td>
                 <td class="is_deleted hidden">
@@ -39,7 +39,7 @@ use frontend\models\BalanceHolderSummarySearch;
                             foreach ($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->all() as $address):
                         ?>
                             <tr>
-                                <td class="address">
+                                <td class="mashine-number-device address">
                                     <?= $address->address ?>,
                                     <?= $address->floor ? $address->floor : ' &nbsp;' ?>
                                 </td>

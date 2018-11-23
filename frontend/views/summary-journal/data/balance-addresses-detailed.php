@@ -17,7 +17,7 @@ use frontend\models\BalanceHolderSummarySearch;
                 foreach ($dataProvider->query->all() as $balanceHolder):
             ?>
             <tr data-key="<?= $balanceHolder->id ?>">
-                <td class="cell-device">
+                <td class="mashine-number-device cell-device">
                     <?= $balanceHolder->name ?>
                 </td>
                 <td class="is_deleted hidden">
@@ -40,7 +40,7 @@ use frontend\models\BalanceHolderSummarySearch;
                                 $mashinesQuery = $searchModel->getAllMashinesQueryByYearMonth($year, $month, $address);
                         ?>
                             <tr>
-                                <td class = "address">
+                                <td class = "mashine-number-device address">
                                     <?= $address->address ?>,
                                     <?= $address->floor ? $address->floor : ' &nbsp;' ?>
                                 </td>
@@ -55,7 +55,7 @@ use frontend\models\BalanceHolderSummarySearch;
                                     <?php else: ?>
                                         <?php foreach($mashinesQuery->all() as $mashine): ?>
                                         <tr>
-                                            <td class="address-id-<?= $mashine->id ?>"> &nbsp;<?= $mashine->number_device ?></td>
+                                            <td class="mashine-number-device address-id-<?= $mashine->id ?>"> &nbsp;<?= $mashine->number_device ?></td>
                                         </tr>
                                         <?php endforeach; ?>
                                     <?php endif; ?>
