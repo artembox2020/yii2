@@ -163,4 +163,68 @@ class WmMashineData extends \yii\db\ActiveRecord
 
         return null;
     }
+    
+    /**
+     * Gets last encashment date  and sum, before timestamp accepted
+     * 
+     * @param int $mashineId
+     * @param timestamp $timestampBefore
+     * @return array|bool
+     */
+    public function getDateAndSumLastEncashmentByMashineId($mashineId, $timestampBefore)
+    {
+        $query = WmMashineData::find()->andWhere(['mashine_id' => $mashineId])
+                                 ->andWhere(['bill_cash' => 0])
+                                 ->andWhere(['<', 'created_at', $timestampBefore])
+                                 ->orderBy(['created_at' => SORT_DESC])
+                                 ->limit(1);
+
+        $item = $query->one();
+
+        if ($item) {
+            $resultQuery = WmMashineData::find()->andWhere(['mashine_id' => $mashineId])
+                                           ->andWhere(['<', 'created_at', $item->created_at])
+                                           ->andWhere(['!=', 'bill_cash', 0])
+                                           ->orderBy(['created_at' => SORT_DESC])
+                                           ->limit(1);
+            $resultItem = $resultQuery->one();
+
+            if ($resultItem) {
+
+                return [
+                    'created_at' => $resultItem->created_at,
+                    'bill_cash' => $resultItem->bill_cash
+                ];
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets encashment history by mashine id and timestamps
+     * 
+     * @param int $mashineId
+     * @param timestamp $start
+     * @param  timestamp $end
+     * @return array
+     */
+    public function getEncashmentHistoryByMashineId($mashineId, $start, $end)
+    {
+        $history = [];
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        while($end > $start) {
+            $encashmentInfo = $this->getDateAndSumLastEncashmentByMashineId($mashineId, $end);
+            if (empty($encashmentInfo) || $encashmentInfo['created_at'] < $start) {
+
+                break;
+            }
+
+            $end = $encashmentInfo['created_at'];
+            $dayBeginningTimestamp = $bhSummarySearch->getDayBeginningTimestampByTimestamp($end);
+            $history[$dayBeginningTimestamp][] = $encashmentInfo;
+        }
+
+        return $history;
+    }
 }

@@ -236,6 +236,7 @@ class ImeiData extends \yii\db\ActiveRecord
                                  ->andWhere(['<', 'created_at', $timestampBefore])
                                  ->orderBy(['created_at' => SORT_DESC])
                                  ->limit(1);
+
         $item = $query->one();
 
         if ($item) {
@@ -256,6 +257,33 @@ class ImeiData extends \yii\db\ActiveRecord
         }
 
         return false;
+    }
+
+    /**
+     * Gets encashment history by imei id and timestamps
+     * 
+     * @param int $imeiId
+     * @param timestamp $start
+     * @param  timestamp $end
+     * @return array
+     */
+    public function getEncashmentHistoryByImeiId($imeiId, $start, $end)
+    {
+        $history = [];
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        while ($end > $start) {
+            $encashmentInfo = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $end);
+            if (empty($encashmentInfo) || $encashmentInfo['created_at'] < $start) {
+
+                break;
+            }
+
+            $end = $encashmentInfo['created_at'];
+            $dayBeginningTimestamp = $bhSummarySearch->getDayBeginningTimestampByTimestamp($end);
+            $history[$dayBeginningTimestamp][] = $encashmentInfo;
+        }
+
+        return $history;
     }
 
     /**

@@ -150,6 +150,47 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
     }
 
     /**
+     * Gets date and sum encashment by timestamps and mashine id
+     *
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param int $mashineId
+     * @return array
+     */
+    public function getDateAndSumEncashmentByTimestamps($start, $end, $mashineId)
+    {
+        global $encashmentHistory;
+        $mashineData = new WmMashineData();
+        $dayBeginning = $this->getDayBeginningTimestampByTimestamp($start);
+        if (empty($encashmentHistory[$mashineId])) {
+            $nowTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
+            $encashmentHistory[$mashineId] = $mashineData->getEncashmentHistoryByMashineId($mashineId, $start, $nowTimestamp);
+        }
+
+        if (empty($encashmentHistory[$mashineId][$dayBeginning])) {
+
+            return [
+                'encasment_date' => null,
+                'encasment_sum' => null
+            ];
+        }
+
+        $encashmentSum = 0;
+        $encashmentDate = null;
+        foreach ($encashmentHistory[$mashineId][$dayBeginning] as $item) {
+            $encashmentSum += $item['bill_cash'];
+            if (empty($encashmentDate)) {
+                $encashmentDate = $item['created_at'];
+            }
+        }
+
+        return [
+            'encashment_date' => $encashmentDate,
+            'encashment_sum' => $encashmentSum
+        ];
+    }
+
+    /**
      * Gets mashine detailed statistics
      * @param timestamp $startTimestamp
      * @param timestamp $endTimestamp
@@ -190,7 +231,10 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
             $is_created = false;
         }
 
-        return [$idleHours, $allHours, $is_deleted, $is_created];
+        $encashmentInfo = $this->getDateAndSumEncashmentByTimestamps($startTimestamp, $endTimestamp, $mashine->id);
+        list($encashment_date, $encashment_sum) = [$encashmentInfo['encashment_date'], $encashmentInfo['encashment_sum']];
+
+        return [$idleHours, $allHours, $is_deleted, $is_created, $encashment_date, $encashment_sum];
     }
 
     /**
@@ -284,9 +328,9 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     $income = $this->getAverageIncome($lastMonthIncomes);
                 }
 
-                list($idleHours, $allHours, $is_deleted, $is_created) = $this->getMashineDetailedStatisticsByTimestamps(
-                    $startTimestamp, $endTimestamp, $mashine
-                );
+                list($idleHours, $allHours, $is_deleted, $is_created, $encashment_date, $encashment_sum)
+                 = 
+                $this->getMashineDetailedStatisticsByTimestamps($startTimestamp, $endTimestamp, $mashine);
 
                 $incomes[$i] = [
                     'income' => $income,
@@ -295,7 +339,9 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     'idleHours' => $idleHours,
                     'allHours' => $allHours,
                     'imei' => !empty($imei) ? $imei->imei : false,
-                    'mashine_id' => $mashine->id
+                    'mashine_id' => $mashine->id,
+                    'encashment_date' => $encashment_date,
+                    'encashment_sum' => $encashment_sum
                 ];
 
                 $this->saveDetailedHistoryItem(
@@ -333,9 +379,9 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
 
             $income = $this->getMashineIncomeValueByTimestamps($startTimestamp, $endTimestamp, $mashine);
 
-            list($idleHours, $allHours, $is_deleted, $is_created) = $this->getMashineDetailedStatisticsByTimestamps(
-                $startTimestamp, $endTimestamp, $mashine
-            );
+            list($idleHours, $allHours, $is_deleted, $is_created, $encashment_date, $encashment_sum)
+             = 
+            $this->getMashineDetailedStatisticsByTimestamps($startTimestamp, $endTimestamp, $mashine);
 
             $incomes[$i] = [
                 'income' => $income,
@@ -346,7 +392,9 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 'imei' => !empty($imei) ? $imei->imei : false,
                 'address_id' => $mashine->address_id,
                 'imei_id' => $mashine->imei_id,
-                'mashine_id' => $mashine->id
+                'mashine_id' => $mashine->id,
+                'encashment_date' => $encashment_date,
+                'encashment_sum' => $encashment_sum
             ];
 
             $this->saveDetailedHistoryItem(
@@ -391,7 +439,9 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 .$incomes['deleted'].'**'
                 .$incomes['income'].'**'
                 .$incomes['idleHours'].'**'
-                .$incomes['allHours']
+                .$incomes['allHours'].'**'
+                .$incomes['encashment_date'].'**'
+                .$incomes['encashment_sum']
                 .'`';
         $jSummary->saveItemDetailed($imeiId, $addressId, $start,  $end, [], $incomeByMashines);
     }
@@ -412,6 +462,10 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
 
         if (!empty($incomeData['deleted'])) {
             $eventsString .= Yii::t('frontend', 'Deletion').', ';
+        }
+
+        if (!empty($incomeData['encashment_date'])) {
+            $eventsString .= Yii::t('frontend', 'Encashment').', ';
         }
 
         $eventsString = trim($eventsString);

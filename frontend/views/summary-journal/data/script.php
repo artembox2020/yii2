@@ -538,7 +538,7 @@
         // updates cell color marking for mashines number (green and red mark added or deleted ones)
         function numberMashinesCellColorMarking()
         {
-            var cells = summaryJournal.querySelectorAll('.timestamp.green-color, .timestamp.red-color');
+            var cells = summaryJournal.querySelectorAll('.timestamp.green-color, .timestamp.red-color, .timestamp.blue-color');
             for (var i = 0; i < cells.length; ++i) {
                 var addressId = cells[i].dataset.addressId;
                 var addressCell = summaryJournal.querySelector('.address-id-' + addressId);
@@ -550,7 +550,10 @@
                 if (cells[i].classList.contains('red-color')) {
                     addressCell.classList.add('red-color');
                 }
-                
+
+                if (cells[i].classList.contains('blue-color')) {
+                    addressCell.classList.add('blue-color');
+                }
             }
         }
 
