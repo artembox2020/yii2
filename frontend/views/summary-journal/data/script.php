@@ -546,13 +546,9 @@
                 if (cells[i].classList.contains('green-color')) {
                     addressCell.classList.add('green-color');
                 }
-                
+
                 if (cells[i].classList.contains('red-color')) {
                     addressCell.classList.add('red-color');
-                }
-
-                if (cells[i].classList.contains('blue-color')) {
-                    addressCell.classList.add('blue-color');
                 }
             }
         }
