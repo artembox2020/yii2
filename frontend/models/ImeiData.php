@@ -328,6 +328,39 @@ class ImeiData extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param $imeiId
+     * @return bool|mixed
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function  getScalarSumLastEncashmentByImeiId($imeiId)
+    {
+        $timestampBefore = time() + Jlog::TYPE_TIME_OFFSET;
+        $dateSumEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
+
+        if ($dateSumEncashment) {
+            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumEncashment['created_at'], 'short');
+
+            return  $dateSumEncashment['money_in_banknotes'];
+        }
+
+        return false;
+    }
+
+    public function  getScalarDateLastEncashmentByImeiId($imeiId)
+    {
+        $timestampBefore = time() + Jlog::TYPE_TIME_OFFSET;
+        $dateSumEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
+
+        if ($dateSumEncashment) {
+            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumEncashment['created_at'], 'short');
+
+            return  $dateEncashment;
+        }
+
+        return false;
+    }
+
+    /**
      * Gets CP status
      *
      * @return string|bool

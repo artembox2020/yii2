@@ -141,11 +141,12 @@ class CbLog extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return array|null|\yii\db\ActiveRecord
+     * @param $address_id
+     * @return array|\yii\db\ActiveRecord|null
      */
-    public function getAddress()
+    public function getAddress($address_id)
     {
-        return AddressBalanceHolder::find(['id' => $this->imei_id])->one();
+        return AddressBalanceHolder::find(['id' => $address_id])->one();
     }
 
     public function getWmLog()

@@ -23,31 +23,49 @@ use frontend\services\globals\EntityHelper;
         'columns' => [
             [
                 'label' => Yii::t('frontend', 'Date'),
-                'format' =>'raw',
-                'value' => 'created_at'
+//                'format' => ['date', 'php:H:i:s d.m.Y'],
+                'format' => ['date', 'php:d.m.Y'],
+                'value' => 'created_at',
             ],
-                [
-                'attribute' => 'date_sum_last_encashment',
-                'format' =>'raw',
-                'header' => EntityHelper::makePopupWindow(
-                    [
-                        '/static/img/monitoring/calendar.png',
-                        '/static/img/monitoring/date_last_encashment.png',
-                    ],
-                    $searchModel->attributeLabels()['date_sum_last_encashment']
-                ),
+            [
+                'label' => Yii::t('frontend', 'Time'),
+                'format' => ['date', 'php:H:i'],
+                'value' => 'created_at',
+            ],
+            [
+                'label' => Yii::t('frontend', 'Address'),
+                'format' => 'raw',
+                'value' => 'address.address',
+            ],
+            [
+                'label' => Yii::t('frontend', 'Encashment, hrn.'),
+                'format' => 'raw',
                 'value' => function($model) use ($searchModel) {
                     return (
-                        $searchModel->getScalarDateAndSumLastEncashmentByImeiId($model->id) .
-                        EntityHelper::makePopupWindow(
-                            [],
-                            $searchModel->attributeLabels()['date_sum_last_encashment'],
-                            'top: -5px',
-                            'height: 5px'
-                        )
+                    $searchModel->getScalarSumLastEncashmentByImeiId($model->id)
+//                        EntityHelper::makePopupWindow(
+//                            [],
+//                            $searchModel->attributeLabels()['date_sum_last_encashment'],
+//                            'top: -5px',
+//                            'height: 5px')
                     );
                 }
-                ],
+            ],
+            [
+                'label' => Yii::t('frontend', 'Number of days from previous encashment'),
+                'format' => 'raw',
+                'value' => function($model) use ($searchModel) {
+                    return (
+                    $searchModel->getScalarSumLastEncashmentByImeiId($model->id)
+//                        EntityHelper::makePopupWindow(
+//                            [],
+//                            $searchModel->attributeLabels()['date_sum_last_encashment'],
+//                            'top: -5px',
+//                            'height: 5px')
+                    );
+                }
+            ],
+//
             ],
         ]); ?>
     <?php Pjax::end(); ?>

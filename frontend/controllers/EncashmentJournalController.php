@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\CbLogSearch;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\EntityHelper;
 use Yii;
@@ -35,14 +36,26 @@ class EncashmentJournalController extends Controller
 
     /**
      * @return string
-     * @throws \yii\web\NotFoundHttpException
      */
     public function actionIndex()
     {
         $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->getImeiData(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Yii::$app->request->post());
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionEncashment()
+    {
+        $searchModel = new CbLogSearch();
+        $dataProvider = $searchModel->getEncashment(Yii::$app->request->queryParams);
+
+//        Debugger::dd($searchModel->getAddress());
+
+        return $this->render('encashment', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
