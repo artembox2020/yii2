@@ -136,6 +136,33 @@
             }
         }
 
+        // adjusts all rows height of the table to equal each other
+        function adjustTableSizeTheSameHeight(tableClass, cellClass, shift)
+        {
+            adjustTableSize(tableClass, cellClass, shift);
+            var closestCells = monitoring.querySelectorAll('td.' + tableClass);
+
+            if (closestCells != null) {
+
+                for (var i = 0; i < closestCells.length; ++i) {
+                    var tableRows = closestCells[i].querySelectorAll('.' + cellClass);
+                    var tableRowsLength = tableRows.length;
+                    var totalHeight = 0;
+
+                    for (var j = 0; j < tableRowsLength; ++j) {
+                        var tableRowStyleObject = window.getComputedStyle(tableRows[j].closest('tr'));
+                        totalHeight += parseInt(tableRowStyleObject.getPropertyValue('height'));
+                    }
+
+                    var height = parseInt(totalHeight / tableRowsLength);
+
+                    for (var j = 0; j < tableRowsLength; ++j) {
+                        tableRows[j].closest('tr').style = "height: " + height + "px;";
+                    }
+                }
+            }
+        }
+
         // hides redundant headers
         function hideRedundantHeaders()
         {
@@ -212,7 +239,7 @@
         // applies all table processing functions
         adjustCommonTableSize();
         adjustModemCardTableSize();
-        adjustTableSize('devices', 'cell-device', 0);
+        adjustTableSizeTheSameHeight('devices', 'cell-device', 0);
         adjustTableSize('financial', 'cell-financial', 0);
         adjustTableSize('terminal', 'cell-bill-acceptance', 0);
         adjustTableSize('terminal', 'cell-software', 0);

@@ -540,7 +540,7 @@ div.required label:after {
 .summary-journal .timestamp.blue-color,
 .summary-journal .mashine-count.blue-color,
 .summary-journal .mashine-number-device.blue-color {
-    background-color: blue;
+    background-color: #c8dbef;
 }
 
 .summary-journal .timestamp.red-color.green-color,
@@ -552,19 +552,19 @@ div.required label:after {
 .summary-journal .timestamp.red-color.blue-color,
 .summary-journal .mashine-count.red-color.blue-color,
 .summary-journal .mashine-number-device.red-color.blue-color {
-    background-image: linear-gradient( blue 50%, red 50%);
+    background-image: linear-gradient( #c8dbef 50%, red 50%);
 }
 
 .summary-journal .timestamp.green-color.blue-color,
 .summary-journal .mashine-count.blue-color.green-color,
 .summary-journal .mashine-number-device.green-color.blue-color {
-    background-image: linear-gradient( blue 50%, green 50%);
+    background-image: linear-gradient( #c8dbef 50%, green 50%);
 }
 
 .summary-journal .timestamp.green-color.blue-color.red-color,
 .summary-journal .mashine-count.red-color.blue-color.green-color,
 .summary-journal .mashine-number-device.red-color.blue-color.green-color {
-    background-image: linear-gradient( blue 33%, red 33%, red 66%, green 66%);
+    background-image: linear-gradient( #c8dbef 33%, red 33%, red 66%, green 66%);
 }
 
 .summary-journal .table-income td.timestamp {
