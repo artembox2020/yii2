@@ -64,11 +64,6 @@ class JournalController extends Controller
             ]
         );
 
-        if ($params['type_packet'] == Jlog::TYPE_PACKET_LOG) {
-
-            return $this->redirect(['/journal/logs']);
-        }
-
         $addresses = $searchModel->getAddressesMapped();
         $imeis = $searchModel->getImeisMapped();
         $dataProvider = $searchModel->search($params);
@@ -106,7 +101,8 @@ class JournalController extends Controller
             'removeRedundantGrids' => $removeRedundantGrids,
             'columnFilterScript' => $columnFilterScript,
             'addresses' =>  $addresses,
-            'imeis' => $imeis
+            'imeis' => $imeis,
+            'journalController' => $this
         ]);
     }
 
@@ -202,6 +198,11 @@ class JournalController extends Controller
         ]);
     }
 
+    /**
+     * Renders journal logs
+     *
+     * @return string
+     */
     public function actionLogs()
     {
         $searchModel = new CbLogSearch();
@@ -255,11 +256,29 @@ class JournalController extends Controller
             ]
         );
 
-        return $this->render('logs/index', [
+        return $this->renderPartial('logs/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'params' => $params,
             'columnFilterScript' => $columnFilterScript,
+        ]);
+    }
+
+    /**
+     * Renders index journal view by actual  data
+     *
+     * @param ActiveDataProvider $dataProvider
+     * @param JlogSearch $searchModel
+     * @param array $params
+     * @return string
+     */
+    public function renderAll($dataProvider, $searchModel, $params)
+    {
+
+        return $this->renderPartial('/journal/all/index', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'params' => $params
         ]);
     }
 }

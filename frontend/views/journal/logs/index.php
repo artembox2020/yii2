@@ -23,7 +23,7 @@ use \frontend\models\AddressBalanceHolder;
             'label' => Yii::t('frontend', 'Address'),
             'value'=> function ($model) {
                 $address = AddressBalanceHolder::findOne(['id' => $model['address_id']]);
-                return $address->address;
+                return $address->address.', '.(empty($address->floor) ? '' : $address->floor);
             },
             'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
         ],
@@ -171,7 +171,3 @@ use \frontend\models\AddressBalanceHolder;
     ],
 ]); ?>
 </div>
-
-<?php
-    echo $columnFilterScript;
-?>

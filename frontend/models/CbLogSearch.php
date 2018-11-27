@@ -92,6 +92,9 @@ class CbLogSearch extends CbLog
         $query = $searchFilter->applyFilterByValueMethod($query, 'wash_temperature', $params);
         $query = $searchFilter->applyFilterByConditionMethod($query, 'wash_temperature', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC);
 
+        $query = $searchFilter->applyFilterByValueMethod($query, 'address', ['inputValue' => $params]);
+        $query = $searchFilter->applyFilterByValueMethod($query, 'imei', ['inputValue' => $params]);
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
