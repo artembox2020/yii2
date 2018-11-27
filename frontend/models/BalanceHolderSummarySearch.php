@@ -557,7 +557,12 @@ class BalanceHolderSummarySearch extends BalanceHolder
             $income = null;
         }
 
-        $jSummary->saveItem($imei->id, $address->id, $start, $end, ['income' => $income], false);
+        $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
+
+        if ($todayTimestamp > $start) {
+
+            $jSummary->saveItem($imei->id, $address->id, $start, $end, ['income' => $income], false);
+        }
 
         return $income;
     }
@@ -695,7 +700,11 @@ class BalanceHolderSummarySearch extends BalanceHolder
             'address_id' => $address->id
         ];
 
-        $jSummary->saveItem($imei->id, $address->id, $timestamp, $timestampEnd, $mashineStatistics, false);
+        $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
+
+        if ($todayTimestamp > $timestamp) {
+            $jSummary->saveItem($imei->id, $address->id, $timestamp, $timestampEnd, $mashineStatistics, false);
+        }
 
         return $mashineStatistics;
     }
