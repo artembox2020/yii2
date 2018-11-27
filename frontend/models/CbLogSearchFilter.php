@@ -28,7 +28,7 @@ class CbLogSearchFilter extends JlogSearch
 
             return $query;
         }
-        
+
         $entity = new Entity();
 
         if (in_array($columnName, ['address','imei'])) {
@@ -43,7 +43,7 @@ class CbLogSearchFilter extends JlogSearch
 
         return $query->andWhere(['like', $columnName, $params['inputValue'][$columnName]]);
     }
-    
+
     /**
      * Applies conditional filter related to filter category
      * 
@@ -136,16 +136,22 @@ class CbLogSearchFilter extends JlogSearch
             $operator == 'like' &&
             in_array($filterCondition, [self::FILTER_TEXT_START_FROM, self::FILTER_TEXT_END_WITH])
         ) {
-            $whereCondition = [$operator, $expression, $value, false];
+            $whereCondition = [$operator, $expression, explode(",", $value)[0], false];
         }
         else {
-            $whereCondition = [$operator, $expression, $value];
+            $whereCondition = [$operator, $expression, explode(",", $value)[0]];
         }
 
         $unitModels = ['address' => new AddressBalanceHolder(), 'imei' => new Imei()];
-        $units =  $unitModels[$columnName]::find()->where($whereCondition)
-                                                  ->andWhere(['company_id' => $entity->getCompanyId()])
-                                                  ->all();
+        $unitsQuery =  $unitModels[$columnName]::find()->where($whereCondition)
+                                                  ->andWhere(['company_id' => $entity->getCompanyId()]);
+
+        if ($columnName == 'address' && count(explode(",", $value)) > 1) {
+            $floor = trim(explode(",", $value)[1]);
+            $unitsQuery = $unitsQuery->andWhere(['like', 'floor', $floor]);
+        }
+
+        $units = $unitsQuery->all();
 
         if (empty($units)) {
 
