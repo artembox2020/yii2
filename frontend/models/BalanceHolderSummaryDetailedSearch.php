@@ -344,9 +344,14 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     'encashment_sum' => $encashment_sum
                 ];
 
-                $this->saveDetailedHistoryItem(
-                    $incomes[$i], $mashine->address_id, $mashine->imei_id, $mashine->id, $startTimestamp, $endTimestamp
-                );
+                $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
+
+                if ($todayTimestamp > $startTimestamp) {
+
+                    $this->saveDetailedHistoryItem(
+                        $incomes[$i], $mashine->address_id, $mashine->imei_id, $mashine->id, $startTimestamp, $endTimestamp
+                    );
+                }
 
                 continue;
             }
@@ -396,10 +401,15 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 'encashment_date' => $encashment_date,
                 'encashment_sum' => $encashment_sum
             ];
+            
+            $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
 
-            $this->saveDetailedHistoryItem(
-                $incomes[$i], $mashine->address_id, $mashine->imei_id, $mashine->id, $startTimestamp, $endTimestamp
-            );
+            if ($todayTimestamp > $startTimestamp) {
+
+                $this->saveDetailedHistoryItem(
+                    $incomes[$i], $mashine->address_id, $mashine->imei_id, $mashine->id, $startTimestamp, $endTimestamp
+                );
+            }
         }
 
         return $incomes;
