@@ -14,7 +14,7 @@ class CParser implements CParserInterface
      * Parsers the packet type data of TYPE_PACKET_INITIALIZATION
      * 
      * @param $p
-     * @return array
+     * @return array|bool
      */
     public function iParse($p)
     {
@@ -41,6 +41,11 @@ class CParser implements CParserInterface
             $arrOut = array_merge($arrOut, $subArr);
         }
 
+        if (count($arrOut) != count($column)) {
+
+            return false;
+        }
+
         $result = array_combine($column, $arrOut);
 
         return $result;
@@ -54,11 +59,17 @@ class CParser implements CParserInterface
      */
     public function dParse($p)
     {
-        $cController = new CController();
         $param = explode('_', $p);
 
         $imeiData = explode(CController::STAR, $param[0]);
 
-        return $cController->setImeiData($imeiData);
+        /** new version for imei */
+        foreach ($imeiData as $key => $value) {
+            if ($key > 7) {
+                unset ($imeiData[$key]);
+            }
+        }
+
+        return CController::setImeiData($imeiData);
     }
 }

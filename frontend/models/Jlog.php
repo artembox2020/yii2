@@ -62,6 +62,11 @@ class Jlog extends ActiveRecord
             'address' => Yii::t('frontend', 'Address'),
             'date' => Yii::t('frontend', 'DateTime'),
             'events' => Yii::t('frontend', 'Events'),
+            'pcb_version' => Yii::t('frontend', 'PCB version'),
+            'firmware_version_cpu' => Yii::t('frontend', 'Firmware Version CPU'),
+            'firmware_6lowpan' => Yii::t('frontend', 'Link Version'),
+            'type_bill_acceptance' => Yii::t('frontend', 'Type Bill Acceptance'),
+            'serial_number_kp' => Yii::t('frontend', 'Serial Number Kp')
         ];
     }
     

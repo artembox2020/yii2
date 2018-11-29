@@ -132,7 +132,7 @@ class CController extends Controller
 //        Debugger::d($packet);
 //        Debugger::dd($imeiData);
 
-        $result = $this->setImeiData($imeiData);
+        $result = self::setImeiData($imeiData);
 
         $imeiDataDto = new ImeiDataDto($result);
         $imeiData = new ImeiData();
@@ -175,7 +175,7 @@ class CController extends Controller
      * @param $data
      * @return array
      */
-    public function setImeiData($data)
+    public static function setImeiData($data)
     {
         $array_fields = [
             'date',
