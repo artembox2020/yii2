@@ -84,7 +84,7 @@ $this->title = Yii::t('frontend', 'Events Journal');
     <div class="form-group hidden">
         <?= Html::submitButton(Yii::t('frontend', 'Submit'), ['class' => 'btn btn-primary', 'id' => 'filter-submit-btn']); ?>
     </div>
-    
+
     <?php
         echo Html::endForm();
         echo $submitFormOnInputEvents;

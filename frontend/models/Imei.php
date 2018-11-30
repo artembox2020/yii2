@@ -106,6 +106,7 @@ class Imei extends \yii\db\ActiveRecord
         return [
 
             [['imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at', 'capacity_bill_acceptance'], 'integer'],
+            [['on_modem_account'], 'float'],
             [['imei', 'address_id', 'company_id', 'balance_holder_id', 'status'], 'required'],
             [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms', 'communication_program_version'], 'string', 'max' => 255],
             [['capacity_bill_acceptance'], 'integer', 'min' => 1],

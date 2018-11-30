@@ -35,18 +35,43 @@ class CParser implements CParserInterface
             'time_out'
         ];
 
+        // new initialization packet version
+        $columnNew = [
+            'imei',
+            'firmware_version_cpu',
+            'firmware_version',
+            'firmware_6lowpan',
+            'number_channel',
+            'pcb_version',
+            'phone_module_number',
+            'on_modem_account',
+            'level_signal'
+        ];
+
         $array = array_map("str_getcsv", explode('*', $p));
 
         foreach ($array as $subArr) {
             $arrOut = array_merge($arrOut, $subArr);
         }
 
-        if (count($arrOut) != count($column)) {
+        // pick up the appropriate parset
+        if (count($column) == count($arrOut)) {
+
+            $result = array_combine($column, $arrOut);
+            $result['on_modem_account'] = null;
+
+        } elseif (count($columnNew) == count($arrOut)) {
+
+            $result = array_combine($columnNew, $arrOut);
+            $result['type_bill_acceptance'] = null;
+            $result['serial_number_kp'] = null;
+            $result['crash_event_sms'] = null;
+            $result['critical_amount'] = null;
+            $result['time_out'] = null;
+        } else {
 
             return false;
         }
-
-        $result = array_combine($column, $arrOut);
 
         return $result;
     }

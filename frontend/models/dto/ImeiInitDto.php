@@ -21,6 +21,7 @@ class ImeiInitDto
     public $firmware_6lowpan;
     public $number_channel;
     public $pcb_version;
+    public $on_modem_account;
 
     /**
      * map string to ImeiInitDto
@@ -83,6 +84,10 @@ class ImeiInitDto
 
         if (array_key_exists('pcb_version', $data)) {
             $this->pcb_version = (string)$data['pcb_version'];
+        }
+
+        if (array_key_exists('on_modem_account', $data)) {
+            $this->on_modem_account = (float)$data['on_modem_account'];
         }
     }
 }
