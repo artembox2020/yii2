@@ -36,6 +36,7 @@ class CController extends Controller
     const STAR = '*';
     const STAR_DOLLAR = '*$';
     const ONE_CONST = 1;
+    const SEVEN = 7;
 
     /**
      * Initialisation method
@@ -121,7 +122,7 @@ class CController extends Controller
         /** new version for imei */
         $diff = '';
         foreach ($imeiData as $key => $value) {
-            if ($key > 7) {
+            if ($key > self::SEVEN) {
                 $diff .= $value . '*';
                 unset ($imeiData[$key]);
             }

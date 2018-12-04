@@ -25,12 +25,12 @@ use frontend\services\globals\EntityHelper;
                 'label' => Yii::t('frontend', 'Date'),
 //                'format' => ['date', 'php:H:i:s d.m.Y'],
                 'format' => ['date', 'php:d.m.Y'],
-                'value' => 'created_at',
+                'value' => 'date',
             ],
             [
                 'label' => Yii::t('frontend', 'Time'),
                 'format' => ['date', 'php:H:i'],
-                'value' => 'created_at',
+                'value' => 'date',
             ],
             [
                 'label' => Yii::t('frontend', 'Address'),
@@ -50,7 +50,7 @@ use frontend\services\globals\EntityHelper;
             'format' => 'raw',
             'value' => function($data) use ($searchModel) {
                 $address = new \frontend\models\CbLog();
-                return $address->getAddress($data['address_id'])->address;
+                return $address->getSumDaysPreviousAnAddress($data['unix_time_offset'], $data['address_id']);
             },
         ],
         [

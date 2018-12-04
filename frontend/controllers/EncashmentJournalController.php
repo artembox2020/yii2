@@ -48,6 +48,9 @@ class EncashmentJournalController extends Controller
         ]);
     }
 
+    /**
+     * @return string
+     */
     public function actionEncashment()
     {
         $searchModel = new CbLogSearch();
@@ -59,40 +62,5 @@ class EncashmentJournalController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
-    }
-
-    /**
-     * Renders financial data view by imei id
-     *
-     * @param int $imeiId
-     * @param ImeiDataSearch $searchModel
-     * @return string
-     */
-    public function renderFinancialDataByImeiId($imeiId, $searchModel)
-    {
-        global $dProvider;
-        $this->setGlobals($imeiId, $searchModel);
-
-        return $this->renderPartial('/monitoring/data/financial', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dProvider,
-        ]);
-    }
-
-    /**
-     * Sets global variables $dProvider and $currentImeiId
-     *
-     * @param int $imeiId
-     * @param ImeiDatasearch $searchModel
-     */
-    private function setGlobals($imeiId, $searchModel)
-    {
-        global $dProvider;
-        global $currentImeiId;
-
-        if (empty($currentImeiId) || $currentImeiId != $imeiId) {
-            $dProvider = $searchModel->searchImeiCardDataByImeiId($imeiId);
-            $currentImeiId = $imeiId;
-        }
     }
 }

@@ -133,8 +133,17 @@ class CbLogSearch extends CbLog
         $searchFilter = new CbLogSearchFilter();
 
         $query = (new \yii\db\Query())
-            ->select('*')
+            ->select(['date',
+                'address_id',
+                'collection_counter',
+                'unix_time_offset',
+                'fireproof_counter_hrn'])
             ->from('cb_log')->where(['company_id' => $entity->getCompanyId()]);
+
+        $query->orderBy([
+//                'id' => SORT_ASC,
+                'date' => SORT_DESC,
+            ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
