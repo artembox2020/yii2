@@ -22,15 +22,6 @@ use frontend\services\parser\CParser;
         ],
         'columns' => [
             [
-                'attribute' => 'address',
-                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
-                'value' => function($model)
-                {
-                    
-                    return $model->address;
-                }
-            ],
-            [
                 'attribute' => 'date',
                 'format' => 'raw',
                 'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
@@ -38,18 +29,50 @@ use frontend\services\parser\CParser;
                 {
                     $dateParts = explode(' ', $model->date);
 
-                    return $dateParts[1].'<br>'.$dateParts[0];
-                }
+                    return date('m/d/y', strtotime($dateParts[0])).' '.$dateParts[1];
+                },
+                'contentOptions' => ['class' => 'inline']
             ],
             [
-                'attribute' => 'imei',
-                'format' => 'raw',
-                'filter' => $this->render('/journal/filters/main', ['name'=> 'imei', 'params' => $params]),
+                'attribute' => 'address',
+                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
                 'value' => function($model)
                 {
-                    $imei = Imei::find()->where(['id' => $model['imei_id']])->one();
+                    $addressParts = explode(",", $model->address);
+                    $countParts = count($addressParts);
 
-                    return $imei->imei.'<br>'.$imei->phone_module_number;
+                    return $addressParts[$countParts-2]." (".$addressParts[$countParts-1].")";
+                },
+                'contentOptions' => ['class' => 'inline']
+            ],
+            [
+                'attribute' => 'on_modem_account_number',
+                'format' => 'raw',
+                'value' => function($model)
+                {
+                    $packet = $model->packet;
+                    $cParser = new CParser();
+                    $packetData = $cParser->iParse($packet);
+
+                    if (is_null($packetData['on_modem_account'])) {
+                        
+                        return null;
+                    }
+
+                    return $packetData['on_modem_account'].' - '.$packetData['phone_module_number'];
+                },
+                'contentOptions' => ['class' => 'inline']
+            ],
+            [
+                'attribute' => 'level_signal',
+                'format' => 'raw',
+                'value' => function($model)
+                {
+                    $packet = $model->packet;
+                    $cParser = new CParser();
+                    $packetData = $cParser->iParse($packet);
+
+                    return $packetData['level_signal'];
                 }
             ],
             [
@@ -86,25 +109,14 @@ use frontend\services\parser\CParser;
                 }
             ],
             [
-                'attribute' => 'type_bill_acceptance',
+                'attribute' => 'number_channel',
                 'value' => function($model)
                 {
                     $packet = $model->packet;
                     $cParser = new CParser();
                     $packetData = $cParser->iParse($packet);
 
-                    return $packetData['type_bill_acceptance'];
-                }
-            ],
-            [
-                'attribute' => 'serial_number_kp',
-                'value' => function($model)
-                {
-                    $packet = $model->packet;
-                    $cParser = new CParser();
-                    $packetData = $cParser->iParse($packet);
-
-                    return $packetData['serial_number_kp'];
+                    return $packetData['number_channel'];
                 }
             ],
         ],

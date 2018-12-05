@@ -9,6 +9,9 @@
         color: blue;
         font-weight: normal;
     }
+    .journal-grid-view td.inline {
+        white-space: nowrap;
+    }
     .grid-view-filter .filter-menu {
         position: absolute;
         display: none;

@@ -9,7 +9,7 @@
         </tr>
         <tr>
             <td>
-                <b><?= $model->imeiRelation->attributeLabels()['firmware_version'] ?></b>
+                <b><?= $model->imeiRelation->attributeLabels()['firmware_version_cpu'] ?></b>
                 <br>
                 <b><?= $model->imeiRelation->firmware_version ?></b>
             </td>
@@ -22,7 +22,7 @@
         </tr>-->
         <tr>
             <td>
-                <b><?= $model->imeiRelation->attributeLabels()['firmware_version_cpu'] ?></b>
+                <b><?= $model->imeiRelation->attributeLabels()['firmware_version'] ?></b>
                 <br>
                 <b><?= $model->imeiRelation->firmware_version_cpu ?></b>
             </td>

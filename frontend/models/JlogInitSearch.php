@@ -17,10 +17,12 @@ use frontend\services\globals\EntityHelper;
 class JlogInitSearch extends JlogSearch
 {
     public $pcb_version;
-    public $firmware_version_cpu;
     public $firmware_6lowpan;
-    public $type_bill_acceptance;
-    public $serial_number_kp;
+    public $on_modem_acount_number;
+    public $level_signal;
+    public $firmware_version;
+    public $firmware_version_cpu;
+    public $number_channel;
 
     /**
      * Creates data provider instance with search query applied
@@ -99,11 +101,6 @@ class JlogInitSearch extends JlogSearch
 
         $query = $this->applyFilterByValueMethod($query, 'date', $params);
         $query = $this->applyFilterByConditionMethod($query, 'date', $params, self::FILTER_CATEGORY_DATE);
-
-        // apply filters by imei column
-
-        $query = $this->applyFilterByValueMethod($query, 'imei', $params);
-        $query = $this->applyFilterByConditionMethod($query, 'imei', $params, self::FILTER_CATEGORY_COMMON);
 
         $query->andFilterWhere(['like', 'imei', $params['imei']]);
 

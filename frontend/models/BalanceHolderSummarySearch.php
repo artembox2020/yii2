@@ -765,6 +765,12 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $entity = new Entity();
         $jSummary = new Jsummary();
         $addressImeiData = new AddressImeiData();
+
+        if ($addressImeiData->getWmMashinesCountByYearMonth($year, $month, $address) == 0) {
+
+            return [];
+        }
+
         $imeiQuery = $entity->getUnitsQueryPertainCompany(new Imei());
         $imei = $addressImeiData->getCurrentImeiIdByAddress($address->id, $address->status);
         $incomes = [];

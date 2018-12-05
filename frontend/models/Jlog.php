@@ -62,14 +62,18 @@ class Jlog extends ActiveRecord
             'address' => Yii::t('frontend', 'Address'),
             'date' => Yii::t('frontend', 'DateTime'),
             'events' => Yii::t('frontend', 'Events'),
+            'on_modem_account_number' => Yii::t('frontend', 'On Modem Account/Number'),
+            'number_channel' => Yii::t('frontend', 'Number Channel'),
             'pcb_version' => Yii::t('frontend', 'PCB version'),
             'firmware_version_cpu' => Yii::t('frontend', 'Firmware Version CPU'),
+            'firmware_version' => Yii::t('frontend', 'Firmware Version'),
+            'level_signal' => Yii::t('frontend', 'Level Signal'),
             'firmware_6lowpan' => Yii::t('frontend', 'Link Version'),
             'type_bill_acceptance' => Yii::t('frontend', 'Type Bill Acceptance'),
             'serial_number_kp' => Yii::t('frontend', 'Serial Number Kp')
         ];
     }
-    
+
     /**
      * Creates journal record, based on imei
      * 

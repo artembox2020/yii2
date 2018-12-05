@@ -11,7 +11,7 @@ use frontend\controllers\CController;
 class CParser implements CParserInterface
 {
     /**
-     * Parsers the packet type data of TYPE_PACKET_INITIALIZATION
+     * Parses the packet type data of TYPE_PACKET_INITIALIZATION
      * 
      * @param $p
      * @return array|bool
@@ -20,10 +20,11 @@ class CParser implements CParserInterface
     {
         $arrOut = array();
 
+        // old initialization packet version
         $column = [
             'imei',
-            'firmware_version_cpu',
             'firmware_version',
+            'firmware_version_cpu',
             'firmware_6lowpan',
             'number_channel',
             'pcb_version',
@@ -38,8 +39,8 @@ class CParser implements CParserInterface
         // new initialization packet version
         $columnNew = [
             'imei',
-            'firmware_version_cpu',
             'firmware_version',
+            'firmware_version_cpu',
             'firmware_6lowpan',
             'number_channel',
             'pcb_version',
@@ -54,11 +55,12 @@ class CParser implements CParserInterface
             $arrOut = array_merge($arrOut, $subArr);
         }
 
-        // pick up the appropriate parset
+        // pick up the appropriate parser
         if (count($column) == count($arrOut)) {
 
             $result = array_combine($column, $arrOut);
             $result['on_modem_account'] = null;
+            $result['level_signal'] = null;
 
         } elseif (count($columnNew) == count($arrOut)) {
 
