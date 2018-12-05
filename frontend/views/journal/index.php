@@ -84,7 +84,7 @@ $this->title = Yii::t('frontend', 'Events Journal');
     <div class="form-group hidden">
         <?= Html::submitButton(Yii::t('frontend', 'Submit'), ['class' => 'btn btn-primary', 'id' => 'filter-submit-btn']); ?>
     </div>
-    
+
     <?php
         echo Html::endForm();
         echo $submitFormOnInputEvents;
@@ -95,6 +95,9 @@ $this->title = Yii::t('frontend', 'Events Journal');
         switch ($params['type_packet']) {
             case Jlog::TYPE_PACKET_LOG:
                 echo $journalController->actionLogs();
+                break;
+            case Jlog::TYPE_PACKET_INITIALIZATION:
+                echo $journalController->actionInit();
                 break;
             default:
                 echo $journalController->renderAll($dataProvider,$searchModel, $params);

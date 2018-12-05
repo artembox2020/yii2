@@ -9,6 +9,7 @@ use frontend\models\BalanceHolderSummarySearch;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $searchModel frontend\models\BalanceHolderSummarySearch */
+
 ?>
 <div>
     <table class="table table-bordered table-container">

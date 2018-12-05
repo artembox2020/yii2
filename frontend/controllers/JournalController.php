@@ -14,6 +14,8 @@ use frontend\models\Jlog;
 use frontend\models\WmMashine;
 use frontend\models\GdMashine;
 use frontend\models\JlogSearch;
+use frontend\models\JlogInitSearch;
+use frontend\models\JlogDataSearch;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\Imei;
 use yii\data\ArrayDataProvider;
@@ -279,6 +281,112 @@ class JournalController extends Controller
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'params' => $params
+        ]);
+    }
+
+    /**
+     * Renders journal initialization
+     *
+     * @return string
+     */
+    public function actionInit()
+    {
+        $searchModel = new JLogInitSearch();
+        $entityHelper = new EntityHelper();
+        $params = $entityHelper->makeParamsFromRequest([
+            'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
+            'filterCondition' => [
+                'date', 'type_packet', 'address', 'imei', 'id',
+            ],
+            'val1' => [
+                'date', 'type_packet', 'address', 'imei', 'id',
+            ],
+            'val2' => [
+                'date', 'type_packet', 'address', 'imei', 'id',
+            ],
+            'inputValue' => [
+                'date', 'type_packet', 'address', 'imei', 'id',
+            ],
+            'sort',
+        ]);
+
+        $dataProvider = $searchModel->searchInit($params);
+
+        $searchModel->inputValue['date'] = $params['inputValue']['date'];
+        $searchModel->val2['date'] = $params['val2']['date'];
+
+        $columnFilterScript = Yii::$app->view->render(
+            "/journal/filters/columnFilter",
+            [
+                'today' => Yii::t('frontend', 'Today'),
+                'tomorrow' => Yii::t('frontend', 'Tomorrow'),
+                'yesterday' => Yii::t('frontend', 'Yesterday'),
+                'lastweek' => Yii::t('frontend', 'Lastweek'),
+                'lastmonth' => Yii::t('frontend', 'Lastmonth'),
+                'lastyear' => Yii::t('frontend', 'Lastyear'),
+                'certain' => Yii::t('frontend', 'Certain'),
+                'params' => $params
+            ]
+        );
+
+        return $this->renderPartial('init/index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'params' => $params,
+            'columnFilterScript' => $columnFilterScript,
+        ]);
+    }
+
+    /**
+     * Renders journal data
+     *
+     * @return string
+     */
+    public function actionData()
+    {
+        $searchModel = new JLogDataSearch();
+        $entityHelper = new EntityHelper();
+        $params = $entityHelper->makeParamsFromRequest([
+            'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
+            'filterCondition' => [
+                'date', 'type_packet', 'address', 'imei', 'id',
+            ],
+            'val1' => [
+                'date', 'type_packet', 'address', 'imei', 'id',
+            ],
+            'val2' => [
+                'date', 'type_packet', 'address', 'imei', 'id',
+            ],
+            'inputValue' => [
+                'date', 'type_packet', 'address', 'imei', 'id',
+            ],
+            'sort',
+        ]);
+
+        $dataProvider = $searchModel->searchData($params);
+
+        $searchModel->inputValue['date'] = $params['inputValue']['date'];
+        $searchModel->val2['date'] = $params['val2']['date'];
+
+        $columnFilterScript = Yii::$app->view->render(
+            "/journal/filters/columnFilter",
+            [
+                'today' => Yii::t('frontend', 'Today'),
+                'tomorrow' => Yii::t('frontend', 'Tomorrow'),
+                'yesterday' => Yii::t('frontend', 'Yesterday'),
+                'lastweek' => Yii::t('frontend', 'Lastweek'),
+                'lastmonth' => Yii::t('frontend', 'Lastmonth'),
+                'lastyear' => Yii::t('frontend', 'Lastyear'),
+                'certain' => Yii::t('frontend', 'Certain'),
+                'params' => $params
+            ]
+        );
+
+        return $this->renderPartial('data/index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'params' => $params,
+            'columnFilterScript' => $columnFilterScript,
         ]);
     }
 }

@@ -740,5 +740,4 @@ class JlogSearch extends Jlog
 
         return $addressesMapped;
     }
-
 }
