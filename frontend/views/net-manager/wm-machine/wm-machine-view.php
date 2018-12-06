@@ -30,6 +30,14 @@ use frontend\models\Imei;
                 'label' => Yii::t('frontend', 'ID device'),
                 'value' => $model->id,
             ],
+            [
+                'label' => Yii::t('frontend', 'Device number'),
+                'value' => $model->number_device,
+            ],
+            [
+                'label' => Yii::t('frontend', 'Inventory number'),
+                'value' => $model->inventory_number,
+            ],
                 [
                     'label' => Yii::t('frontend', 'Serial number'),
                     'value' => $model->serial_number,
@@ -59,18 +67,10 @@ use frontend\models\Imei;
                 'value' => !empty($address = $model->address) ? $address->address : null,
             ],
             [
-                'label' => Yii::t('frontend', 'Device number'),
-                'value' => $model->number_device,
-            ],
-            [
                 'label' => Yii::t('frontend', 'Last ping'),
                 'value' => function($model) {
                 return date('[H:i:s] d.m.Y', $model->ping);
             },
-            ],
-            [
-                'label' => Yii::t('frontend', 'Inventory number'),
-                'value' => $model->inventory_number,
             ],
     ],
 ]);?>

@@ -64,7 +64,7 @@ $machine_menu = [];
             },
         ],
         'buttons'=>[
-            'label' => Yii::t('frontend', 'View'),
+            'label' => Yii::t('frontend', 'ID device'),
             'format' => 'raw',
             'options'=>['class' => 'btn btn-primary'],
             'value' => function ($dataProvider) {
