@@ -525,10 +525,22 @@ class BalanceHolderSummarySearch extends BalanceHolder
         if (!empty($itemStart)) {
             $entityHelper = new EntityHelper();
 
+            $itemEnd = ImeiData::find()->andWhere(['imei_id' => $imei->id])
+                                       ->andWhere(['>', 'created_at', $end])
+                                       ->orderBy(['created_at' => SORT_ASC])
+                                       ->limit(1)
+                                       ->one();
+
+            if ($itemEnd) {
+                $endTimestamp = $itemEnd->created_at + 1;
+            } else {
+                $endTimestamp = $end;
+            }
+
             // makes none-zero time intervals
             $nonZeroIntervals = $entityHelper->makeNonZeroIntervalsByTimestamps(
                 $start,
-                $end,
+                $endTimestamp,
                 new ImeiData(),
                 $imei,
                 'imei_id',

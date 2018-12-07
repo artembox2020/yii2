@@ -25,98 +25,72 @@ use frontend\services\parser\CParser;
                 'attribute' => 'date',
                 'format' => 'raw',
                 'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
-                    $dateParts = explode(' ', $model->date);
 
-                    return date('m/d/y', strtotime($dateParts[0])).' '.$dateParts[1];
+                    return $searchModel->getDateView($model);                 
                 },
                 'contentOptions' => ['class' => 'inline']
             ],
             [
                 'attribute' => 'address',
                 'filter' =>  $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
-                    $addressParts = explode(",", $model->address);
-                    $countParts = count($addressParts);
-
-                    return $addressParts[$countParts-2]." (".$addressParts[$countParts-1].")";
+                    
+                    return $searchModel->getAddressView($model);   
                 },
                 'contentOptions' => ['class' => 'inline']
             ],
             [
                 'attribute' => 'on_modem_account_number',
                 'format' => 'raw',
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
-                    $packet = $model->packet;
-                    $cParser = new CParser();
-                    $packetData = $cParser->iParse($packet);
 
-                    if (is_null($packetData['on_modem_account'])) {
-                        
-                        return null;
-                    }
-
-                    return $packetData['on_modem_account'].' - '.$packetData['phone_module_number'];
+                    return $searchModel->getOnModemAccountNumber($model);
                 },
                 'contentOptions' => ['class' => 'inline']
             ],
             [
                 'attribute' => 'level_signal',
                 'format' => 'raw',
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
-                    $packet = $model->packet;
-                    $cParser = new CParser();
-                    $packetData = $cParser->iParse($packet);
 
-                    return $packetData['level_signal'];
+                    return $searchModel->getLevelSignal($model);
                 }
             ],
             [
                 'attribute' => 'pcb_version',
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
-                    $packet = $model->packet;
-                    $cParser = new CParser();
-                    $packetData = $cParser->iParse($packet);
 
-                    return $packetData['pcb_version'];
+                    return $searchModel->getPcbVersion($model);
                 }
             ],
             [
                 'attribute' => 'firmware_version_cpu',
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
-                    $packet = $model->packet;
-                    $cParser = new CParser();
-                    $packetData = $cParser->iParse($packet);
 
-                    return $packetData['firmware_version_cpu'];
+                    return $searchModel->getFirmwareVersionCpu($model);
                 }
             ],
             [
                 'attribute' => 'firmware_6lowpan',
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
-                    $packet = $model->packet;
-                    $cParser = new CParser();
-                    $packetData = $cParser->iParse($packet);
 
-                    return $packetData['firmware_6lowpan'];
+                    return $searchModel->getFirmware6Lowpan($model);
                 }
             ],
             [
                 'attribute' => 'number_channel',
-                'value' => function($model)
+                'value' => function($model) use ($searchModel)
                 {
-                    $packet = $model->packet;
-                    $cParser = new CParser();
-                    $packetData = $cParser->iParse($packet);
 
-                    return $packetData['number_channel'];
+                    return $searchModel->getNumberChannel($model);
                 }
             ],
         ],

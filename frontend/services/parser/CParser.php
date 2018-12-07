@@ -5,6 +5,7 @@ namespace frontend\services\parser;
 use frontend\controllers\CController;
 
 /**
+ * parsing initialization and data packet types
  * Class CParser
  * @package frontend\services\parser
  */
