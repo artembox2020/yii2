@@ -91,9 +91,19 @@ class CParser implements CParserInterface
 
         $imeiData = explode(CController::STAR, $param[0]);
 
+        // get timestamp year for old data packet version
+        $year = date("Y", (integer)$imeiData[0]); 
+
+        // switch index according to packet data version
+        if (count($imeiData) >= 8 && (integer)$year > 2000 && (integer)$year < 2100) {
+            $indexOldVersion = 7;
+        } else {
+            $indexOldVersion = 4;
+        }
+
         /** new version for imei */
         foreach ($imeiData as $key => $value) {
-            if ($key > 7) {
+            if ($key > $indexOldVersion) {
                 unset ($imeiData[$key]);
             }
         }

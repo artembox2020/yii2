@@ -15,6 +15,7 @@ class ImeiDataDto
     public $money_in_banknotes;
     public $fireproof_residue;
     public $price_regim;
+    public $evt_bill_validator;
 //    public $tiem_out;
 
     public function __construct($data)
@@ -49,6 +50,10 @@ class ImeiDataDto
 
         if (array_key_exists('price_regim', $data)) {
             $this->price_regim = (double)$data['price_regim'];
+        }
+
+        if (array_key_exists('evt_bill_validator', $data)) {
+            $this->evt_bill_validator = (integer)$data['evt_bill_validator'];
         }
 
 //        if (array_key_exists('time_out', $data)) {
