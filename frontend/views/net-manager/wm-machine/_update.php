@@ -79,7 +79,7 @@ use bs\Flatpickr\FlatpickrWidget;
     <?= $form->field($model, 'imei_id')->dropDownList(
         \yii\helpers\ArrayHelper::map($imeis, 'id',
         function($model) {
-            return $model->imei . ' #' . $model->address->name;
+            return $model->imei . ' #' . $model->address->name . ' ' . $model->address->floor;
         })
     ) ?>
 
