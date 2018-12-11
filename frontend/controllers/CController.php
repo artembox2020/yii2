@@ -97,6 +97,7 @@ class CController extends Controller
     {
         $array = array();
         $mashineData = array();
+        $packetParser = new CParser();
 
         $param = explode('_', $p);
 
@@ -120,15 +121,8 @@ class CController extends Controller
             }
         }
 
-        // get timestamp year for old data packet version
-        $year = date("Y", (integer)$imeiData[0]);
-
-        // switch index according to packet data version
-        if (count($imeiData) >= 8 && (integer)$year > 2000 && (integer)$year < 2100) {
-            $indexOldVersion = 7;
-        } else {
-            $indexOldVersion = 4;
-        }
+        // get index according to packet data version
+        $indexOldVersion = $packetParser->getIndexVersionByImeiData($imeiData);
 
         /** new version for imei */
         $diff = '';

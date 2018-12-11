@@ -11,6 +11,9 @@ use frontend\controllers\CController;
  */
 class CParser implements CParserInterface
 {
+    const SEVEN = 7;
+    const FOUR = 4;
+
     /**
      * Parses the packet type data of TYPE_PACKET_INITIALIZATION
      * 
@@ -91,15 +94,8 @@ class CParser implements CParserInterface
 
         $imeiData = explode(CController::STAR, $param[0]);
 
-        // get timestamp year for old data packet version
-        $year = date("Y", (integer)$imeiData[0]); 
-
-        // switch index according to packet data version
-        if (count($imeiData) >= 8 && (integer)$year > 2000 && (integer)$year < 2100) {
-            $indexOldVersion = 7;
-        } else {
-            $indexOldVersion = 4;
-        }
+        // get index according to packet data version
+        $indexOldVersion = $this->getIndexVersionByImeiData($imeiData);
 
         /** new version for imei */
         foreach ($imeiData as $key => $value) {
@@ -109,5 +105,26 @@ class CParser implements CParserInterface
         }
 
         return CController::setImeiData($imeiData);
+    }
+
+    /**
+     * Gets index data packet version by imei data
+     * 
+     * @param array $imeiData
+     * @return integer
+     */
+    public function getIndexVersionByImeiData($imeiData)
+    {
+        // get timestamp year for old data packet version
+        $year = date("Y", (integer)$imeiData[0]);
+
+        // switch index according to packet data version
+        if (count($imeiData) >= 8 && (integer)$year > 2000 && (integer)$year < 2100) {
+
+            return $indexOldVersion = self::SEVEN;
+        } else {
+
+            return $indexOldVersion = self::FOUR;
+        }
     }
 }
