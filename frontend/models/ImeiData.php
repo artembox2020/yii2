@@ -246,10 +246,10 @@ class ImeiData extends \yii\db\ActiveRecord
 
     /**
      * Gets last encashment date  and sum, before timestamp accepted
-     * 
-     * @param int $imeiId
-     * @param timestamp $timestampBefore
-     * @return array
+     *
+     * @param $imeiId
+     * @param $timestampBefore
+     * @return array|bool
      */
     public function getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore)
     {
@@ -310,9 +310,9 @@ class ImeiData extends \yii\db\ActiveRecord
 
     /**
      * Gets last encashment date  and sum, like string
-     * 
-     * @param int $imeiId
-     * @return string
+     * @param $imeiId
+     * @return bool|string
+     * @throws \yii\base\InvalidConfigException
      */
     public function getScalarDateAndSumPreLastEncashmentByImeiId($imeiId)
     {
@@ -322,7 +322,7 @@ class ImeiData extends \yii\db\ActiveRecord
             $dateSumPreLastEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $dateSumLastEncashment['created_at']);
             $dateEncashment =  \Yii::$app->formatter->asDate($dateSumPreLastEncashment['created_at'], 'short');
 
-            return  $dateEncashment.'<br>'.$dateSumPreLastEncashment['money_in_banknotes'].' грн';
+            return  $dateEncashment . '<br>' . $dateSumPreLastEncashment['money_in_banknotes'] . ' грн';
         }
 
         return false;
@@ -343,6 +343,39 @@ class ImeiData extends \yii\db\ActiveRecord
             $dateEncashment =  \Yii::$app->formatter->asDate($dateSumEncashment['created_at'], 'short');
 
             return  $dateEncashment.'<br>'.$dateSumEncashment['money_in_banknotes'].' грн';
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $imeiId
+     * @return bool|mixed
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function  getScalarSumLastEncashmentByImeiId($imeiId)
+    {
+        $timestampBefore = time() + Jlog::TYPE_TIME_OFFSET;
+        $dateSumEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
+
+        if ($dateSumEncashment) {
+            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumEncashment['created_at'], 'short');
+
+            return  $dateSumEncashment['money_in_banknotes'];
+        }
+
+        return false;
+    }
+
+    public function  getScalarDateLastEncashmentByImeiId($imeiId)
+    {
+        $timestampBefore = time() + Jlog::TYPE_TIME_OFFSET;
+        $dateSumEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
+
+        if ($dateSumEncashment) {
+            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumEncashment['created_at'], 'short');
+
+            return  $dateEncashment;
         }
 
         return false;

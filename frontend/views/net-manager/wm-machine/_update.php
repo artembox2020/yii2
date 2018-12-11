@@ -8,6 +8,7 @@ use bs\Flatpickr\FlatpickrWidget;
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $model frontend\models\WmMashine */
+/* @var $addresses frontend\models\AddressBalanceHolder */
 
 ?>
 
@@ -75,9 +76,11 @@ use bs\Flatpickr\FlatpickrWidget;
     ]) ?>
 
     <?= $form->field($model, 'status')->label(Yii::t('frontend', 'Status'))->radioList(WmMashine::statuses()) ?>
-
     <?= $form->field($model, 'imei_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map($imeis, 'id', 'imei')
+        \yii\helpers\ArrayHelper::map($imeis, 'id',
+        function($model) {
+            return $model->imei . ' #' . $model->address->name . ' #' . $model->address->floor;
+        })
     ) ?>
 
     <div class="form-group">

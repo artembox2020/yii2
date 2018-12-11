@@ -36,6 +36,7 @@ class CController extends Controller
     const STAR = '*';
     const STAR_DOLLAR = '*$';
     const ONE_CONST = 1;
+    const SEVEN = 7;
 
     /**
      * Initialisation method
@@ -480,14 +481,6 @@ class CController extends Controller
         $wm_mashine->update(false);
         echo $wm_mashine->number_device . ' WM updated!' . '<br>';
     }
-
-//    public function updateWmDeviceNumberNull($wm_mashine_dto, $imei_id)
-//    {
-//        $imei = $this->getImei($imei_id);
-//
-////        Debugger::dd($imei);
-//        Debugger::dd($wm_mashine_dto->number_device);
-//    }
 
     /**
      * @param $gd_mashine

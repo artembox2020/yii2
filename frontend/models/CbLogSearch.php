@@ -123,11 +123,53 @@ class CbLogSearch extends CbLog
         return $dataProvider;
     }
 
-//    /**
-//     * @return array|null|\yii\db\ActiveRecord
-//     */
-//    public function getAddress($id)
-//    {
-//        return AddressBalanceHolder::find(['id' => $id])->one();
-//    }
+    /**
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function getEncashment($params)
+    {
+        $entity = new Entity();
+        $searchFilter = new CbLogSearchFilter();
+
+        $query = (new \yii\db\Query())
+            ->select(['date',
+                'address_id',
+                'collection_counter',
+                'unix_time_offset',
+                'fireproof_counter_hrn'])
+            ->from('cb_log')->where(['company_id' => $entity->getCompanyId()]);
+
+        $query->orderBy([
+//                'id' => SORT_ASC,
+                'date' => SORT_DESC,
+            ]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => self::PAGE_SIZE
+            ],
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'date' => $this->date,
+            'imei' => $this->imei,
+            'status' => $this->status
+        ]);
+
+        $query->andFilterWhere(['like', 'date', $this->date])
+            ->andFilterWhere(['like', 'imei', $this->imei]);
+
+        return $dataProvider;
+    }
 }

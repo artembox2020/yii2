@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -231,6 +232,49 @@ class ImeiDataSearch extends ImeiData
                 $address->serial_column = $params['serialNumber'];
                 $address->save(false);
             }
+        }
+    }
+
+    /**
+     * @param $params
+     * @return ActiveDataProvider
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getImeiData($params)
+    {
+        $timestampBefore = time() + Jlog::TYPE_TIME_OFFSET;
+        $entity = new Entity();
+        $id = $entity->getUnitsPertainCompany(new Imei());
+
+        $query = ImeiData::find()->andWhere(['imei_id' => $id])
+            ->andWhere(['money_in_banknotes' => 0])
+            ->andWhere(['<', 'created_at', $timestampBefore])
+            ->orderBy(['created_at' => SORT_DESC])
+            ->limit(1);
+        $item = $query->one();
+
+        if ($item) {
+            $resultQuery = ImeiData::find()->andWhere(['imei_id' => $id])
+                ->andWhere(['<', 'created_at', $item->created_at])
+                ->andWhere(['!=', 'money_in_banknotes', 0])
+                ->orderBy(['created_at' => SORT_DESC])
+                ->limit(1);
+            $resultItem = $resultQuery->one();
+
+            $dataProvider = new ActiveDataProvider([
+                'query' => $resultItem,
+            ]);
+
+            $this->load($params);
+
+            if (!$this->validate()) {
+                // uncomment the following line if you do not want to return any records when validation fails
+                // $query->where('0=1');
+                return $dataProvider;
+            }
+
+            return $dataProvider;
+
         }
     }
 }

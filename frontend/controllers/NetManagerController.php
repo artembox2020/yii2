@@ -618,6 +618,7 @@ class NetManagerController extends \yii\web\Controller
             foreach ($company->balanceHolders as $balanceHolder) {
                 foreach ($balanceHolder->addressBalanceHolders as $addresses) {
                     foreach ($addresses->imeis as $imei) {
+                        $address[] = $addresses->address;
                         $imeis[] = $imei;
                     }
                 }
@@ -637,6 +638,7 @@ class NetManagerController extends \yii\web\Controller
             'model' => $model,
             'company' => $company,
             'imeis' => $imeis,
+            'addresses' => $address
         ]);
     }
 

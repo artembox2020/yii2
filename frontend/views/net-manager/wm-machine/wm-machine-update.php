@@ -8,7 +8,7 @@ use yii\helpers\Html;
 /* @var $balanceHolders frontend\models\BalanceHolder */
 /* @var $company frontend\models\Company */
 /* @var $model frontend\models\WmMashine */
-/* @var $imes */
+/* @var $imeis */
 
 
 ?>
@@ -24,7 +24,8 @@ use yii\helpers\Html;
         <?= $this->render('_update', [
             'model' => $model,
             'company' => $company,
-            'imeis' => $imeis
+            'imeis' => $imeis,
+            'addresses' => $addresses
         ]) ?>
 
     </div>

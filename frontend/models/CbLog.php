@@ -2,7 +2,9 @@
 
 namespace frontend\models;
 
+use DateTime;
 use frontend\services\custom\Debugger;
+use nepster\basis\helpers\DateTimeHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -30,6 +32,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  */
 class CbLog extends \yii\db\ActiveRecord
 {
+
+    const ZERO = '0';
     /** @var array $current_state */
     public $current_state = [
         '-11' => 'invalid_command',
@@ -141,11 +145,50 @@ class CbLog extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return array|null|\yii\db\ActiveRecord
+     * @param $address_id
+     * @return array|\yii\db\ActiveRecord|null
      */
-    public function getAddress()
+    public function getAddress($address_id)
     {
-        return AddressBalanceHolder::find(['id' => $this->imei_id])->one();
+        return AddressBalanceHolder::find(['id' => $address_id])->one();
+    }
+
+    /**
+     * @param $date
+     * @param $address_id
+     * @return false|string|null
+     * @throws \yii\db\Exception
+     */
+    public function getSumDaysPreviousAnAddress($date, $address_id)
+    {
+        $diff = Yii::$app->db->createCommand(
+            'SELECT `date` FROM `cb_log`
+                    WHERE `date` < :date
+                    and `address_id` = :address_id
+                    ORDER BY `date` ASC
+                    LIMIT 1')
+            ->bindValue(':date', $date)
+            ->bindValue(':address_id', $address_id)
+            ->queryScalar();
+
+//        Debugger::dd($diff);
+
+        $a = DateTimeHelper::diffDaysPeriod($date, $diff, $showTimeUntilDay = true);
+
+//        echo $a;die;
+        if ($diff) {
+            $date = date('Y-m-d', $date);
+            $diff = date('Y-m-d', $diff);
+//            echo $date;die;
+            $datetime1 = new DateTime($date);
+            $datetime2 = new DateTime($diff);
+            $interval = $datetime1->diff($datetime2);
+//            return $interval->format('%R%a');
+            return $a;
+        }
+
+
+        return $diff;
     }
 
     public function getWmLog()
