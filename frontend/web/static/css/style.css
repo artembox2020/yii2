@@ -408,6 +408,11 @@ div.required label:after {
     height: 25px!important;
     font-weight: bold;
 }
+.monitoring .cell-bill-acceptance {
+    min-width: 67px;
+    max-width: 67px;
+    white-space: normal!important;
+}
 .enhanced-z-index {
     position: relative;
     z-index: 1020;

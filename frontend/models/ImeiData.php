@@ -51,6 +51,14 @@ class ImeiData extends \yii\db\ActiveRecord
     const TYPE_ACTION_TIME_SET = 6;
     const TYPE_HALF_HOUR = 1800;
 
+    const TYPE_BILL_OK = 0;
+    const TYPE_BILL_ERRMOTOR = 1;
+    const TYPE_BILL_ERRSENSOR = 2;
+    const TYPE_BILL_ERRROM = 3;
+    const TYPE_BILL_ERRBILLJAMMED = 4;
+    const TYPE_BILL_ERRUNEXP = 5;
+    const TYPE_BILL_ERRVALIDFULL = 6;
+
     public $eventCentalBoard = [
         '1' => 'ErrFram',
         '2' => 'ErrFlash',
@@ -59,6 +67,18 @@ class ImeiData extends \yii\db\ActiveRecord
         '5' => 'ErrSettings',
         '6' => 'Err6LowPan',
         '7' => 'OK'
+    ];
+
+    // bill acceptance event constant list
+    const evtBillValidator = [
+        self::TYPE_BILL_OK => 'OK',
+        self::TYPE_BILL_ERRMOTOR => 'ErrMotor',
+        self::TYPE_BILL_ERRSENSOR => 'ErrSensor',
+        self::TYPE_BILL_ERRROM => 'ErrROM',
+        self::TYPE_BILL_ERRBILLJAMMED => 'ErrBillJammed',
+        self::TYPE_BILL_ERRUNEXP => 'ErrUnexp',
+        self::TYPE_BILL_ERRVALIDFULL => 'ErrValidFull',
+        null => null
     ];
 
     /**
@@ -96,7 +116,7 @@ class ImeiData extends \yii\db\ActiveRecord
     {
         return [
             [['imei_id'], 'required'],
-            [['imei_id', 'created_at', 'updated_at', 'deleted_at'], 'integer'],
+            [['imei_id', 'created_at', 'updated_at', 'deleted_at', 'evt_bill_validator'], 'integer'],
             [['imei_id'], 'exist', 'skipOnError' => true, 'targetClass' => Imei::className(), 'targetAttribute' => ['imei_id' => 'id']],
         ];
     }
@@ -132,6 +152,7 @@ class ImeiData extends \yii\db\ActiveRecord
             'counter_last_encashment' => Yii::t('frontend', 'Counter Last Encashment'),
             'counter_zeroing' => Yii::t('frontend', 'Counter Zeroing'),
             'technical_injection' => Yii::t('frontend', 'Technical Injection'),
+            'evt_bill_validator' => Yii::t('imeiData', 'Event Bill Validator'),
         ];
     }
 

@@ -121,10 +121,20 @@ class CController extends Controller
             }
         }
 
+        // get timestamp year for old data packet version
+        $year = date("Y", (integer)$imeiData[0]);
+
+        // switch index according to packet data version
+        if (count($imeiData) >= 8 && (integer)$year > 2000 && (integer)$year < 2100) {
+            $indexOldVersion = 7;
+        } else {
+            $indexOldVersion = 4;
+        }
+
         /** new version for imei */
         $diff = '';
         foreach ($imeiData as $key => $value) {
-            if ($key > self::SEVEN) {
+            if ($key > $indexOldVersion) {
                 $diff .= $value . '*';
                 unset ($imeiData[$key]);
             }
@@ -152,6 +162,7 @@ class CController extends Controller
             $imeiData->money_in_banknotes = $imeiDataDto->money_in_banknotes;
             $imeiData->fireproof_residue = $imeiDataDto->fireproof_residue;
             $imeiData->price_regim = $imeiDataDto->price_regim;
+            $imeiData->evt_bill_validator = $imeiDataDto->evt_bill_validator;
             $imeiData->is_deleted = false;
 
             $imei->level_signal = $imeiData->level_signal;
@@ -160,7 +171,7 @@ class CController extends Controller
             $imei->update();
 
             $imeiData->save();
-            
+
             $imei->ping = time() + Jlog::TYPE_TIME_OFFSET;
             $imei->save();
 
@@ -180,6 +191,7 @@ class CController extends Controller
      */
     public static function setImeiData($data)
     {
+        // old data packet version  fields
         $array_fields = [
             'date',
             'imei',
@@ -192,7 +204,22 @@ class CController extends Controller
 //            'time_out'
         ];
 
-        return $result = array_combine($array_fields, $data);
+        // new data packet version fields
+        $new_array_fields = [
+            'imei',
+            'in_banknotes',
+            'money_in_banknotes',
+            'fireproof_residue',
+            'evt_bill_validator'
+        ];
+
+        if (count($data) == 5) {
+
+            return $result = array_combine($new_array_fields, $data);
+        } else {
+
+            return $result = array_combine($array_fields, $data);
+        }
     }
 
     /**
@@ -460,14 +487,6 @@ class CController extends Controller
         $wm_mashine->update(false);
         echo $wm_mashine->number_device . ' WM updated!' . '<br>';
     }
-
-//    public function updateWmDeviceNumberNull($wm_mashine_dto, $imei_id)
-//    {
-//        $imei = $this->getImei($imei_id);
-//
-////        Debugger::dd($imei);
-//        Debugger::dd($wm_mashine_dto->number_device);
-//    }
 
     /**
      * @param $gd_mashine
