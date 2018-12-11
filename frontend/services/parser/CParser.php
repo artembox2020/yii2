@@ -119,7 +119,7 @@ class CParser implements CParserInterface
         $year = date("Y", (integer)$imeiData[0]);
 
         // switch index according to packet data version
-        if (count($imeiData) >= 8 && (integer)$year > 2000 && (integer)$year < 2100) {
+        if (count($imeiData) >= 8 && (integer)$year > 1969 && (integer)$year < 2100) {
 
             return $indexOldVersion = self::SEVEN;
         } else {
