@@ -99,8 +99,11 @@ $this->title = Yii::t('frontend', 'Events Journal');
             case Jlog::TYPE_PACKET_INITIALIZATION:
                 echo $journalController->actionInit();
                 break;
+            case Jlog::TYPE_PACKET_DATA_CP:
+                echo $journalController->actionDataCp();
+                break;
             default:
-                echo $journalController->renderAll($dataProvider,$searchModel, $params);
+                echo $journalController->renderAll($dataProvider, $searchModel, $params);
                 break;
         }
     ?>

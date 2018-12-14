@@ -3,6 +3,8 @@
 namespace frontend\services\parser;
 
 use frontend\controllers\CController;
+use frontend\models\ImeiData;
+use Yii;
 
 /**
  * parsing initialization and data packet types
@@ -90,6 +92,23 @@ class CParser implements CParserInterface
      */
     public function dParse($p)
     {
+
+        return $this->getImeiData($p)['imeiData'];
+    }
+
+    /**
+     * Gets imeiData the packet type data of TYPE_PACKET_DATA
+     * 
+     * @param $p
+     * @return array
+     */
+    public function getImeiData($p)
+    {
+        if (empty($p)) {
+
+            return ['imeiData' => null, 'packet' => null];
+        }
+
         $param = explode('_', $p);
 
         $imeiData = explode(CController::STAR, $param[0]);
@@ -98,13 +117,22 @@ class CParser implements CParserInterface
         $indexOldVersion = $this->getIndexVersionByImeiData($imeiData);
 
         /** new version for imei */
+        $diff = '';
         foreach ($imeiData as $key => $value) {
             if ($key > $indexOldVersion) {
+                $diff .= $value . '*';
                 unset ($imeiData[$key]);
             }
         }
 
-        return CController::setImeiData($imeiData);
+        $packet = substr($diff, 0, -1);
+
+        $imeiData = CController::setImeiData($imeiData);
+
+        return [
+            'imeiData' => $imeiData,
+            'packet' => $packet
+        ];
     }
 
     /**
@@ -126,5 +154,97 @@ class CParser implements CParserInterface
 
             return $indexOldVersion = self::FOUR;
         }
+    }
+
+    /**
+     * Gets cental board status value from 'packet' field (present at tables 'imei_data', 'j_log')
+     * 
+     * @param string $packet
+     * @param ImeiData $imeiData
+     * @return string|bool
+     */
+    public function getCPStatusFromPacketField($packet, $imeiData = false)
+    {
+        if (empty($packet)) {
+
+            return false;
+        }
+        
+        if (!$imeiData) {
+            
+            $imeiData = new ImeiData();
+        }
+
+        $centalBoardId = explode('*', $packet)[0];
+
+        if (in_array($centalBoardId, array_keys($imeiData->eventCentalBoard))) {
+
+            return Yii::t('imeiData', $imeiData->eventCentalBoard[$centalBoardId]);   
+        }
+
+        return false;
+    }
+    
+    /**
+     * Gets cental board status value from packet'p'
+     * 
+     * @param string $p
+     * @return string|bool
+     */
+    public function getCPStatusFromDataPacket($p)
+    {
+        $packet = $this->getImeiData($p)['packet'];
+
+        if (empty($packet)) {
+
+            return false;
+        }
+
+        $centalBoardId = explode('*', $packet)[0];
+        $imeiData = new ImeiData();
+
+        if (in_array($centalBoardId, array_keys($imeiData->eventCentalBoard))) {
+
+            return Yii::t('imeiData', $imeiData->eventCentalBoard[$centalBoardId]);   
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets event bill validator value from packet 'p'
+     * $useAsCpStatus means to apply EventCentalBoard statuses insead of EventBillValidator ones
+     * 
+     * @param string $packet
+     * @param bool $useAsCpStatus
+     * @return string|bool
+     */
+    public function getEvtBillValidatorFromDataPacket($p, $useAsCpStatus = false)
+    {
+        $data = $this->getImeiData($p);
+        $data = $data['imeiData'];
+
+        if (isset($data['evt_bill_validator'])) {
+
+            if ($useAsCpStatus) {
+                $imeiData = new ImeiData();
+
+                if (in_array($data['evt_bill_validator'], array_keys($imeiData->eventCentalBoard))) {
+
+                    return  Yii::t('imeiData', $imeiData->eventCentalBoard[$data['evt_bill_validator']]);
+                }
+
+                return false;
+            }
+
+            if (in_array($data['evt_bill_validator'], array_keys(ImeiData::evtBillValidator))) {
+
+                return  Yii::t('imeiData', ImeiData::evtBillValidator[$data['evt_bill_validator']]);
+            }
+
+            return false;
+        }
+
+        return false;
     }
 }

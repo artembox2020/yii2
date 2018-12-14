@@ -34,7 +34,7 @@
             ?>
         </b>
         <br>
-        <?= $model->level_signal ?>
+        <?= $model->getLevelSignal() ?>
         <br>
     </td>
 </tr>
@@ -51,7 +51,7 @@
             ?>
         </b>
         <br>
-        <?= \Yii::$app->formatter->asDecimal($model->on_modem_account, 0) ?>
+        <?= \Yii::$app->formatter->asDecimal($model->getOnModemAccount(), 0) ?>
         <br>
     </td>
 </tr>

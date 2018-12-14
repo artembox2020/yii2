@@ -207,7 +207,7 @@ class CController extends Controller
             'evt_bill_validator'
         ];
 
-        if (count($data) == 5) {
+        if (count($data) == count($new_array_fields)) {
 
             return $result = array_combine($new_array_fields, $data);
         } else {

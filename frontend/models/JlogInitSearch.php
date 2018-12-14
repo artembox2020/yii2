@@ -122,7 +122,12 @@ class JlogInitSearch extends JlogSearch
         $addressParts = explode(",", $model->address);
         $countParts = count($addressParts);
 
-        return $addressParts[$countParts-2]." (".$addressParts[$countParts-1].")";
+        if ($countParts >= 2) {
+
+            return $addressParts[$countParts-2]." (".$addressParts[$countParts-1].")";
+        }
+
+        return $model->address;
     }
 
     /**
@@ -136,7 +141,7 @@ class JlogInitSearch extends JlogSearch
     {
         $dateParts = explode(' ', $model->date);
 
-        return date('m/d/y', strtotime($dateParts[0])).' '.$dateParts[1];
+        return date('m.d.Y', strtotime($dateParts[0])).' '.$dateParts[1];
     }
 
     /**

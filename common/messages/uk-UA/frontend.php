@@ -355,6 +355,7 @@ return [
     'Sort BY Serial Number' => 'Сортувати за номером',
     'Start Timestamp' => 'Мітка початку',
     'Status Packages' => 'Стан',
+    'Status Packages CP' => 'стан ЦП',
     'Subject' => 'Тема',
     'Summary Journal(General)' => 'Підсумковий журнал(загально)',
     'Summary Journal(Detailed)' => 'Підсумковий журнал(детально)',

@@ -4,12 +4,7 @@
             <td class="cell-bill-acceptance">
                 <b><?= $model->attributeLabels()['status'] ?></b>
                 <br>
-                <?= 
-                    Yii::t(
-                        'imeiData',
-                        \frontend\models\ImeiData::evtBillValidator[$model->evt_bill_validator]
-                    )    
-                ?>
+                <?= $model->getEvtBillValidator() ?>
                 <br>
             </td>
         </tr>

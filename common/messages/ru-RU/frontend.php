@@ -308,6 +308,7 @@ return [
     'Start Timestamp' => 'Метка начала',
     'Status Off' => 'Отключен',
     'Status Packages' => 'Состояние',
+    'Status Packages CP' => 'Состояние ЦП',
     'Subject' => 'Тема',
     'Submit' => 'Ок',
     'Summary Technical Data' => 'Сведенные технические данные',

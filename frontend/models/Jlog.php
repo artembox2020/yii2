@@ -22,6 +22,7 @@ class Jlog extends ActiveRecord
 {
     const TYPE_PACKET_INITIALIZATION = 1;
     const TYPE_PACKET_DATA = 2;
+    const TYPE_PACKET_DATA_CP = 5;
     const TYPE_PACKET_LOG = 3;
     const TYPE_PACKET_PRICE = 4;
 
@@ -112,6 +113,7 @@ class Jlog extends ActiveRecord
         $typePackets = [
             self::TYPE_PACKET_INITIALIZATION => Yii::t('frontend', 'Initialization'),
             self::TYPE_PACKET_DATA => Yii::t('frontend', 'Status Packages'),
+            self::TYPE_PACKET_DATA_CP => Yii::t('frontend', 'Status Packages CP'),
             self::TYPE_PACKET_LOG => Yii::t('frontend', 'Log'),
             self::TYPE_PACKET_PRICE => Yii::t('frontend', 'Price'),
         ];
