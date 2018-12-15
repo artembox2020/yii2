@@ -123,8 +123,9 @@ class JlogInitSearch extends JlogSearch
         $countParts = count($addressParts);
 
         if ($countParts >= 2) {
+            $partOne = $addressParts[0];
 
-            return $addressParts[$countParts-2]." (".$addressParts[$countParts-1].")";
+            return $partOne." (".mb_substr($model->address, mb_strlen($partOne) + 1).")";
         }
 
         return $model->address;
