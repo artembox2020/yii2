@@ -435,7 +435,7 @@ class ImeiData extends \yii\db\ActiveRecord
 
         if ($cpStatus) {
 
-            return Yii::t('frontend', self::evtBillValidator[$this->evt_bill_validator]);
+            return Yii::t('imeiData', self::evtBillValidator[$this->evt_bill_validator]);
         }
 
         return false;

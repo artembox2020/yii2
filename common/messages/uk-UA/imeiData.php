@@ -17,6 +17,6 @@ return [
     'ErrBillJammed' => 'Зажувало гроші',
     'ErrUnexp' => 'КП не підключений / не відповідає',
     'ErrValidFull' => 'Касета заповнена. Потрібна інкасація',
-    'Event Bill Acceptance' => 'стан купюропийомника',
+    'Event Bill Acceptance' => 'стан купюроприйомника',
     'OK' => 'OK'
 ];

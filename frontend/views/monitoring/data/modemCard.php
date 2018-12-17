@@ -39,7 +39,7 @@
     </td>
 </tr>
 <tr class="modem-card-last-row">
-    <td>
+    <td class="cell-modem">
         <b>
             <?= 
                 \frontend\services\globals\EntityHelper::makePopupWindow(

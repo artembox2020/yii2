@@ -176,8 +176,7 @@ class Jlog extends ActiveRecord
             $jlogDataCpSearch->getCPStatusFromDataPacket($newItem->packet)
             != 
             $jlogDataCpSearch->getCPStatusFromDataPacket($oldItem->packet)
-        )
-        {
+        ) {
 
             return false;
         }
@@ -186,8 +185,12 @@ class Jlog extends ActiveRecord
             $jlogDataCpSearch->getEvtBillValidatorFromDataPacket($newItem->packet)
             !=
             $jlogDataCpSearch->getEvtBillValidatorFromDataPacket($oldItem->packet)
-        )
-        {
+        ) {
+
+            return false;
+        }
+
+        if (!$this->checkWmMashinesEqual($oldItem->packet, $newItem->packet)) {
 
             return false;
         }
@@ -224,6 +227,41 @@ class Jlog extends ActiveRecord
     }
 
     /**
+     * Checks whether data packets 'p' and 'p2' have the same WM Mashines info 
+     * 
+     * @param string $p
+     * @param string $p2
+     * @return bool
+     */
+    public function checkWmMashinesEqual($p, $p2)
+    {
+        $p = strtoupper($p);
+        $p2 = strtoupper($p2);
+        $position = strpos($p, '_WM');
+        $position2 = strpos($p2, '_WM');
+
+        if ($position) {
+            $wm_substring = trim(substr($p, $position));
+        }
+
+        if ($position2) {
+            $wm_substring2 = trim(substr($p2, $position2));
+        }
+
+        if (!$position && !$position2) {
+
+            return true;
+        }
+
+        if (!$position || !$position2) {
+
+            return false;
+        }
+
+        return $wm_substring === $wm_substring2;
+    }
+
+    /**
      * Gets all type packets
      */
     public static function getTypePackets()
@@ -235,7 +273,7 @@ class Jlog extends ActiveRecord
             self::TYPE_PACKET_LOG => Yii::t('frontend', 'Log'),
             self::TYPE_PACKET_PRICE => Yii::t('frontend', 'Price'),
         ];
-        
+
         return $typePackets;
     }
 
