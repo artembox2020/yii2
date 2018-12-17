@@ -237,17 +237,20 @@
         }
 
         // applies all table processing functions
+
         adjustCommonTableSize();
         adjustModemCardTableSize();
         adjustTableSizeTheSameHeight('devices', 'cell-device', 0);
-        adjustTableSize('financial', 'cell-financial', 0);
-        adjustTableSize('terminal', 'cell-bill-acceptance', 0);
-        adjustTableSize('terminal', 'cell-software', 0);
-        adjustTableSize('terminal', 'cell-actions', 0);
-        hideRedundantHeaders();
-        hideRedundantCommonHeaders();
+        adjustTableSizeTheSameHeight('financial', 'cell-financial', 0);
+        adjustTableSizeTheSameHeight('terminal', 'cell-bill-acceptance', 0);
+        adjustTableSizeTheSameHeight('terminal', 'cell-software', 0);
+        adjustTableSizeTheSameHeight('terminal', 'cell-actions', 0);
+        adjustTableSizeTheSameHeight('terminal', 'cell-modem', 0);
         adjustCellsHeightBySelector(40, '.financial tr.modem-card-last-row', 1);
         adjustCellsHeightBySelector(40, '.terminal tr.modem-card-last-row', 1);
+
+        hideRedundantHeaders();
+        hideRedundantCommonHeaders();
 
         // monitoring form address change function
         monitoringFormAddress.onchange = function()

@@ -5,6 +5,7 @@ namespace frontend\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use frontend\services\parser\CParser;
 
 /**
  * This is the model class for table "imei_data".
@@ -382,7 +383,7 @@ class ImeiData extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets CP status
+     * Gets the real CP Status value
      *
      * @return string|bool
      */
@@ -396,14 +397,77 @@ class ImeiData extends \yii\db\ActiveRecord
 
         $packet = $this->packet;
 
-        if (!empty($packet)) {
-            $centalBoardId = explode('*', $packet)[0];
-            if (in_array($centalBoardId, array_keys($this->eventCentalBoard))) {
+        $cParser = new CParser();
 
-                return Yii::t('imeiData', $this->eventCentalBoard[$centalBoardId]);   
+        $cpStatus = $cParser->getCPStatusFromPacketField($packet, $this);
+
+        if (!$cpStatus) {
+
+            if (isset($this->evt_bill_validator) && in_array($this->evt_bill_validator, array_keys($this->eventCentalBoard))) {
+
+                return Yii::t('imeiData', $this->eventCentalBoard[$this->evt_bill_validator]);
             }
+        } else {
+
+            return $cpStatus;
         }
 
         return false;
+    }
+
+    /**
+     * Gets the real Event Bill Validator value
+     *
+     * @return string|bool
+     */
+    public function getEvtBillValidator() {
+
+        if (!isset($this->evt_bill_validator) || !in_array($this->evt_bill_validator, array_keys(self::evtBillValidator))) {
+
+            return false;
+        }
+
+        $packet = $this->packet;
+
+        $cParser = new CParser();
+
+        $cpStatus = $cParser->getCPStatusFromPacketField($packet, $this);
+
+        if ($cpStatus) {
+
+            return Yii::t('imeiData', self::evtBillValidator[$this->evt_bill_validator]);
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets on modem account value
+     *
+     * @return string|bool
+     */
+    public function getOnModemAccount()
+    {
+        if (!is_null($this->imeiRelation->on_modem_account)) {
+
+            return $this->imeiRelation->on_modem_account;
+        }
+
+        return $this->on_modem_account;
+    }
+
+    /**
+     * Gets the level signal value
+     *
+     * @return string|bool
+     */
+    public function getLevelSignal()
+    {
+        if (!is_null($this->imeiRelation->level_signal)) {
+
+            return $this->imeiRelation->level_signal;
+        }
+
+        return $this->level_signal;
     }
 }

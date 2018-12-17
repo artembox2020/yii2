@@ -7,7 +7,7 @@ use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-/* @var $searchModel frontend\models\ImeiDataSearch */
+/* @var $searchModel frontend\models\ImeiData */
 ?>
 <div>
     <?php Pjax::begin(); ?>

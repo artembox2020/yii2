@@ -3,6 +3,8 @@
 namespace frontend\models;
 use yii\db\ActiveRecord;
 use frontend\services\globals\Entity;
+use frontend\services\parser\CParser;
+use frontend\models\JlogDataCpSearch;
 use Yii;
 
 /**
@@ -22,6 +24,7 @@ class Jlog extends ActiveRecord
 {
     const TYPE_PACKET_INITIALIZATION = 1;
     const TYPE_PACKET_DATA = 2;
+    const TYPE_PACKET_DATA_CP = 5;
     const TYPE_PACKET_LOG = 3;
     const TYPE_PACKET_PRICE = 4;
 
@@ -92,7 +95,7 @@ class Jlog extends ActiveRecord
             'address' => $imei->tryRelationData(['address' => ['address', 'floor'], ', ']),
             'events' => $imei->getLastPing()
         ];
-        
+
         $jlog = new Jlog();
         foreach ($params as $key=>$param)
         {
@@ -100,10 +103,164 @@ class Jlog extends ActiveRecord
                $jlog->$key = $param;
            }
         }
+
         $jlog->date = Yii::$app->formatter->asDate(time() + self::TYPE_TIME_OFFSET, Imei::DATE_TIME_FORMAT);
+
+        // update item if previous item is the same
+        if (in_array($params['type_packet'], [self::TYPE_PACKET_DATA ,self::TYPE_PACKET_DATA_CP])) {
+            $previousItem = $this->getLastItem($params['imei_id'], $params['type_packet']);
+
+            if (!empty($previousItem) && $this->checkItemsEqual($jlog, $previousItem)) {
+                $previousItem->date_end = $jlog->date;
+
+                return $previousItem->update();
+            }
+        }
+
         $jlog->save();
     }
-    
+
+    /**
+     * Gets last item from `j_log` 
+     * 
+     * @param integer $imeiId
+     * @param integer $type
+     * @return Jlog
+     */
+    public function getLastItem($imeiId, $type)
+    {
+        $item = Jlog::find()->andWhere(['imei_id' => $imeiId, 'type_packet' => $type])
+                             ->orderBy(['id' => SORT_DESC])
+                             ->limit(1)
+                             ->one();
+
+        return $item;
+    }
+
+    /**
+     * Checks whether two Jlog items are equal 
+     * 
+     * @param Jlog $newItem
+     * @param Jlog $oldItem
+     * @return bool
+     */
+    public function checkItemsEqual($newItem, $oldItem)
+    {
+        if ($newItem->packet == $oldItem->packet) {
+
+            return true;
+        }
+
+        $cParser = new CParser();
+        $newItemImeiData = $cParser->getImeiData($newItem->packet)['imeiData'];
+        $oldItemImeiData = $cParser->getImeiData($oldItem->packet)['imeiData'];
+
+        if (!$this->checkItemsByParam($newItemImeiData, $oldItemImeiData, 'in_banknotes')) {
+
+            return false;
+        }
+
+        if (!$this->checkItemsByParam($newItemImeiData, $oldItemImeiData, 'money_in_banknotes')) {
+
+            return false;
+        }
+
+        if (!$this->checkItemsByParam($newItemImeiData, $oldItemImeiData, 'fireproof_residue')) {
+
+            return false;
+        }
+
+        $jlogDataCpSearch = new JLogDataCpSearch();
+
+        if (
+            $jlogDataCpSearch->getCPStatusFromDataPacket($newItem->packet)
+            != 
+            $jlogDataCpSearch->getCPStatusFromDataPacket($oldItem->packet)
+        ) {
+
+            return false;
+        }
+
+        if (
+            $jlogDataCpSearch->getEvtBillValidatorFromDataPacket($newItem->packet)
+            !=
+            $jlogDataCpSearch->getEvtBillValidatorFromDataPacket($oldItem->packet)
+        ) {
+
+            return false;
+        }
+
+        if (!$this->checkWmMashinesEqual($oldItem->packet, $newItem->packet)) {
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks imeiData items to be equal by parameter 
+     * 
+     * @param array $imeiData
+     * @param array $imeiDataNew
+     * @return bool
+     */
+    public function checkItemsByParam($imeiData, $imeiDataNew, $param)
+    {
+        if (!isset($imeiData[$param])) {
+
+            if (!isset($imeiDataNew[$param])) {
+
+                return true;
+            } else {
+                
+                return false;
+            }
+        }
+
+        if (!isset($imeiDataNew[$param])) {
+
+            return false;
+        }
+
+        return $imeiDataNew[$param] == $imeiData[$param];
+    }
+
+    /**
+     * Checks whether data packets 'p' and 'p2' have the same WM Mashines info 
+     * 
+     * @param string $p
+     * @param string $p2
+     * @return bool
+     */
+    public function checkWmMashinesEqual($p, $p2)
+    {
+        $p = strtoupper($p);
+        $p2 = strtoupper($p2);
+        $position = strpos($p, '_WM');
+        $position2 = strpos($p2, '_WM');
+
+        if ($position) {
+            $wm_substring = trim(substr($p, $position));
+        }
+
+        if ($position2) {
+            $wm_substring2 = trim(substr($p2, $position2));
+        }
+
+        if (!$position && !$position2) {
+
+            return true;
+        }
+
+        if (!$position || !$position2) {
+
+            return false;
+        }
+
+        return $wm_substring === $wm_substring2;
+    }
+
     /**
      * Gets all type packets
      */
@@ -112,13 +269,14 @@ class Jlog extends ActiveRecord
         $typePackets = [
             self::TYPE_PACKET_INITIALIZATION => Yii::t('frontend', 'Initialization'),
             self::TYPE_PACKET_DATA => Yii::t('frontend', 'Status Packages'),
+            self::TYPE_PACKET_DATA_CP => Yii::t('frontend', 'Status Packages CP'),
             self::TYPE_PACKET_LOG => Yii::t('frontend', 'Log'),
             self::TYPE_PACKET_PRICE => Yii::t('frontend', 'Price'),
         ];
-        
+
         return $typePackets;
     }
-    
+
     /**
      * @param int $type_packet
      * @return string 
@@ -141,7 +299,7 @@ class Jlog extends ActiveRecord
         
         return empty($typePackets[$name]) ? 0 : $typePackets[$name];
     }
-    
+
     /**
      * @param int $name
      * @return array
@@ -151,7 +309,7 @@ class Jlog extends ActiveRecord
         $typePackets = self::getTypePackets();
 
         if (empty($name)) {
-            
+
             return array_keys($typePackets);
         }
 
@@ -160,14 +318,14 @@ class Jlog extends ActiveRecord
         foreach ($typePackets as $index => $typeName)
         {
             if (mb_stripos($typeName, $name) === 0) {
-                
+
                 $packets[] = $index;
             }
         }
-        
+
         return $packets;
     }
-    
+
     /**
      * @param string $name
      * @return array 
@@ -175,28 +333,28 @@ class Jlog extends ActiveRecord
     public static function getTypePacketsFromNameByEndCondition($name)
     {
         $typePackets = self::getTypePackets();
-        
+
         if (empty($name)) {
-            
+
             return array_keys($typePackets);
         }
-        
+
         $length = strlen($name);
         $packets = [];
-        
+
         foreach ($typePackets as $index => $typeName)
         {
             $typeLength = strlen($typeName);
-            
+
             if (mb_stripos($typeName, $name) === ($typeLength - $length)) {
-                
+
                 $packets[] = $index;
             }
         }
-        
+
         return $packets;
     }
-    
+
     /**
      * @param string $name
      * @return array
@@ -204,9 +362,9 @@ class Jlog extends ActiveRecord
     public static function getTypePacketsFromNameByContainCondition($name)
     {
         $typePackets = self::getTypePackets();
-        
+
         if (empty($name)) {
-            
+
             return array_keys($typePackets);
         }
 
@@ -215,14 +373,14 @@ class Jlog extends ActiveRecord
         foreach ($typePackets as $index => $typeName)
         {
             if (mb_stripos($typeName, $name) !== false) {
-                
+
                 $packets[] = $index;
             }
         }
-        
+
         return $packets;
     }
-    
+
     /**
      * @param string $name
      * @return array
@@ -232,7 +390,7 @@ class Jlog extends ActiveRecord
         $typePackets = self::getTypePackets();
 
         if (empty($name)) {
-            
+
             return array_keys($typePackets);
         }
 
@@ -241,11 +399,11 @@ class Jlog extends ActiveRecord
         foreach ($typePackets as $index => $typeName)
         {
             if (mb_stripos($typeName, $name) === false) {
-                
+
                 $packets[] = $index;
             }
         }
-        
+
         return $packets;
     }
 }
