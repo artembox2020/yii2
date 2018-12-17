@@ -328,7 +328,11 @@ class Imei extends \yii\db\ActiveRecord
      */
     public static function getStatusOff()
     {
-        return Imei::find()->where(['status' => Imei::STATUS_OFF])->all();
+        return Imei::find()
+            ->where(['status' => Imei::STATUS_OFF])
+            ->orWhere(['status' => Imei::STATUS_UNDER_REPAIR])
+            ->orWhere(['status' => Imei::STATUS_JUNK])
+            ->all();
     }
 
     /**

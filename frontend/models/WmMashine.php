@@ -325,7 +325,11 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public static function getStatusOff()
     {
-        return WmMashine::find()->where(['status' => WmMashine::STATUS_OFF])->all();
+        return WmMashine::find()
+            ->where(['status' => WmMashine::STATUS_OFF])
+            ->orWhere(['status' => WmMashine::STATUS_JUNK])
+            ->orWhere(['status' => WmMashine::STATUS_UNDER_REPAIR])
+            ->all();
     }
 
     /**
