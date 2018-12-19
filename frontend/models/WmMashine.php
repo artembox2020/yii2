@@ -521,11 +521,6 @@ class WmMashine extends \yii\db\ActiveRecord
             ->select(['model'], 'DISTINCT')
             ->andWhere(['company_id' => $user->company_id])->all();
 
-//            ->select('model, COUNT(*) AS count')
-//            ->groupBy('model')
-//            ->andWhere(['company_id' => $user->company_id])
-//            ->all();
-
         return $result;
     }
 

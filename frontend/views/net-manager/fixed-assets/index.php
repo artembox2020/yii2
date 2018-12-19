@@ -1,16 +1,8 @@
 <?php
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
-use frontend\services\custom\Debugger;
 
-/* @var $this yii\web\View */
-/* @var $model frontend\models\Company */
-/* @var $users common\models\User */
-/* @var $balanceHolders frontend\models\BalanceHolder */
-/* @var $addresses */
-/* @var $imeis frontend\models\Imei */
-/* @var $wm_machines frontend\models\WmMashine */
+use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 <?php $menu = []; ?>
@@ -36,10 +28,38 @@ JS;
     ?>
 
 </b><br><br>
-<?php foreach ($imeis as $imei) : ?>
-    IMEI: <a href="/net-manager/fixed-assets-update-imei?id=<?= $imei->id ?>"><b><?= $imei->imei ?></b></a><br>
-<?php endforeach; ?>
 
-<?php foreach ($wm_machines as $wm_machine) : ?>
-    Wm Machine: <a href="/net-manager/fixed-assets-update-wm-machine?id=<?= $wm_machine->id ?>"><b> id:<?= $wm_machine->id ?></b></a><br>
-<?php endforeach; ?>
+<?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            ['attribute' => 'number_device',
+                'label' => Yii::t('frontend', 'Number Device'),
+            ],
+            ['attribute' => 'address.name',
+                'label' => Yii::t('frontend', 'Address'),
+            ],
+            ['attribute' => 'lastPing',
+                'label' => Yii::t('frontend', 'Last ping'),
+            ],
+            ['attribute' => 'warehouseTransferDate',
+                'label' => Yii::t('frontend', 'Warehouse transfer date'),
+            ],
+            ['label' => Yii::t('frontend', 'Storage transfer date'),
+                'value' => function ($dataProvider) {
+                            if($dataProvider->date_transfer_from_storage) {
+                                return $dataProvider->getStorageTransferDate();
+                            }
+                        },
+                'format' => 'raw',
+            ],
+            ['attribute' => 'status',
+                'label' => Yii::t('frontend', 'Status'),
+                'value' => function ($dataProvider) {
+                    return Html::a(Html::encode($dataProvider->getCurrentStatus($dataProvider->status)), Url::to(['fixed-assets-update-wm-machine', 'id' => $dataProvider->number_device]));
+                },
+                'format' => 'raw',
+            ],
+            ]
+]);
+?>

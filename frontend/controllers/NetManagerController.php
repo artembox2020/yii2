@@ -11,6 +11,8 @@ use frontend\models\BalanceHolderSearch;
 use frontend\models\Imei;
 use frontend\models\ImeiSearch;
 use frontend\models\ImeiDataSearch;
+use frontend\models\StorageHistory;
+use frontend\models\StorageHistorySearch;
 use frontend\models\WmMashine;
 use frontend\models\OtherContactPerson;
 use frontend\models\WmMashineSearch;
@@ -587,7 +589,6 @@ class NetManagerController extends \yii\web\Controller
             $model->type_mashine = self::TYPE_WM;
 
             if ($model->validate()) {
-//                Debugger::dd($model);
                 $model->save(false);
             } else {
 
@@ -630,6 +631,18 @@ class NetManagerController extends \yii\web\Controller
         if ($model->load(Yii::$app->request->post())) {
           if ($model->validate()) {
                 $model->update(false);
+                if ($model->status > self::ONE) {
+                    $storage = new StorageHistory();
+                    $storage->company_id = $model->company_id;
+                    $storage->address_id = $model->address_id;
+                    $storage->imei_id = $model->imei_id;
+                    $storage->status = $model->status;
+                    $storage->ping = $model->ping;
+                    $storage->is_deleted = false;
+                    $storage->number_device = $model->id;
+                    $storage->type = $model->type_mashine;
+                    $storage->insert();
+                }
               return $this->redirect('osnovnizasoby');
             }
         }
@@ -647,12 +660,12 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionFixedAssets()
     {
-        $imeis = Imei::getStatusOff();
-        $wm_machines = WmMashine::getStatusOff();
+        $searchModel = new StorageHistorySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('fixed-assets/index', [
-            'imeis' => $imeis,
-            'wm_machines' => $wm_machines
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
 
         ]);
     }
