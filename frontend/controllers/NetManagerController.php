@@ -656,6 +656,7 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
+     * Storage history for Wash machine
      * @return string
      */
     public function actionFixedAssets()
