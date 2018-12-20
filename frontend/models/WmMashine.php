@@ -325,7 +325,11 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public static function getStatusOff()
     {
-        return WmMashine::find()->where(['status' => WmMashine::STATUS_OFF])->all();
+        return WmMashine::find()
+            ->where(['status' => WmMashine::STATUS_OFF])
+            ->orWhere(['status' => WmMashine::STATUS_JUNK])
+            ->orWhere(['status' => WmMashine::STATUS_UNDER_REPAIR])
+            ->all();
     }
 
     /**
@@ -516,11 +520,6 @@ class WmMashine extends \yii\db\ActiveRecord
         $result = WmMashine::find()
             ->select(['model'], 'DISTINCT')
             ->andWhere(['company_id' => $user->company_id])->all();
-
-//            ->select('model, COUNT(*) AS count')
-//            ->groupBy('model')
-//            ->andWhere(['company_id' => $user->company_id])
-//            ->all();
 
         return $result;
     }

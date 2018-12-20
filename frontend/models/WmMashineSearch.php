@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use common\models\User;
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -89,7 +90,10 @@ class WmMashineSearch extends WmMashine
     {
         $user = User::findOne(Yii::$app->user->id);
 
-        $query = WmMashine::find()->andWhere(['company_id' => $user->company_id]);
+        $query = WmMashine::find()
+            ->andOnCondition(['company_id' => $user->company_id])
+            ->andWhere(['status' => WmMashine::STATUS_ACTIVE])
+            ->orWhere(['status' => WmMashine::STATUS_OFF]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query
