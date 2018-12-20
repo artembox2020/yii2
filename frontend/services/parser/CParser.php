@@ -247,4 +247,31 @@ class CParser implements CParserInterface
 
         return false;
     }
+
+    public function getMashineData($p)
+    {
+        $array = array();
+        $param = explode('_', $p);
+        $mashineData = array();
+
+        foreach ($param as $item) {
+            if (strripos($item, CController::STAR_DOLLAR)) {
+                $item = str_replace(CController::STAR_DOLLAR, '', $item);
+            }
+            $array[] = explode(CController::STAR, $item);
+        }
+
+        /**
+         * allocate the machine to an array $mashineData
+         */
+        foreach ($array as $key => $value) {
+            foreach ($value as $item => $val) {
+                if (!is_numeric($val)) {
+                    $mashineData[$val][] = $value;
+                }
+            }
+        }
+
+        return $mashineData;
+    }
 }

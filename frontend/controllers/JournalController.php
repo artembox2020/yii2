@@ -69,9 +69,9 @@ class JournalController extends Controller
 
         $addresses = $searchModel->getAddressesMapped();
         $imeis = $searchModel->getImeisMapped();
+        $params = $searchModel->setParams($searchModel, $params, $params);
         $dataProvider = $searchModel->search($params);
         $typePackets = Jlog::getTypePackets();
-        $typePackets[''] = Yii::t('frontend', 'All');
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
         $eventSelectors = [
@@ -81,20 +81,7 @@ class JournalController extends Controller
 
         $submitFormOnInputEvents = $entityHelper->submitFormOnInputEvents('.journal-filter-form', $eventSelectors);
         $removeRedundantGrids = $entityHelper->removeRedundantGrids('.journal-grid-view');
-        $columnFilterScript = Yii::$app->view->render(
-            "/journal/filters/columnFilter",
-            [
-                'today' => Yii::t('frontend', 'Today'),
-                'tomorrow' => Yii::t('frontend', 'Tomorrow'),
-                'yesterday' => Yii::t('frontend', 'Yesterday'),
-                'lastweek' => Yii::t('frontend', 'Lastweek'),
-                'lastmonth' => Yii::t('frontend', 'Lastmonth'),
-                'lastyear' => Yii::t('frontend', 'Lastyear'),
-                'certain' => Yii::t('frontend', 'Certain'),
-                'params' => $params
-            ]
-        );
-
+        $columnFilterScript = $this->getColumnFilterScript($params);
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -155,19 +142,14 @@ class JournalController extends Controller
             ]
         );
 
-        if ($params['type_packet'] == Jlog::TYPE_PACKET_LOG) {
+        $imei = Imei::findOne($mashine->imei_id);
+        $params['imei'] = $imei->imei;
 
-            return $this->redirect(['/journal/logs']);
-        }
-
-        $searchModel->from_date = $params['JlogSearch']['from_date'];
-        $searchModel->to_date = $params['JlogSearch']['to_date'];
-        $searchModel->mashineNumber = '_'.$mashine->type_mashine.'*'.$mashine->number_device;
+        $params = $searchModel->setParams($searchModel, $params, $params);
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
         $dataProvider = $searchModel->searchByMashine($params, $mashine->id);
         $typePackets = Jlog::getTypePackets();
-        $typePackets[''] = Yii::t('frontend', 'All');
         $eventSelectors = [
             'change' =>
                 '.journal-filter-form select,'.
@@ -176,19 +158,7 @@ class JournalController extends Controller
         ];
         $submitFormOnInputEvents = $entityHelper->submitFormOnInputEvents('.journal-filter-form', $eventSelectors);
         $removeRedundantGrids = $entityHelper->removeRedundantGrids('.journal-grid-view');
-        $columnFilterScript = Yii::$app->view->render(
-            "/journal/filters/columnFilter",
-            [
-                'today' => Yii::t('frontend', 'Today'),
-                'tomorrow' => Yii::t('frontend', 'Tomorrow'),
-                'yesterday' => Yii::t('frontend', 'Yesterday'),
-                'lastweek' => Yii::t('frontend', 'Lastweek'),
-                'lastmonth' => Yii::t('frontend', 'Lastmonth'),
-                'lastyear' => Yii::t('frontend', 'Lastyear'),
-                'certain' => Yii::t('frontend', 'Certain'),
-                'params' => $params
-            ]
-        );
+        $columnFilterScript = $this->getColumnFilterScript($params);
 
         return $this->renderPartial('index-by-mashine', [
             'searchModel' => $searchModel,
@@ -198,18 +168,19 @@ class JournalController extends Controller
             'submitFormOnInputEvents' => $submitFormOnInputEvents,
             'removeRedundantGrids' => $removeRedundantGrids,
             'columnFilterScript' => $columnFilterScript,
+            'journalController' => $this,
         ]);
     }
 
     /**
      * Renders journal logs
      *
+     * @param array $prms
      * @return string
      */
-    public function actionLogs()
+    public function actionLogs($prms)
     {
         $searchModel = new CbLogSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $entityHelper = new EntityHelper();
         $params = $entityHelper->makeParamsFromRequest(
             [
@@ -242,28 +213,16 @@ class JournalController extends Controller
             ]
         );
 
+        $params = $searchModel->setParams($searchModel, $params, $prms);
+        $dataProvider = $searchModel->search($params);
+
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
-
-        $columnFilterScript = Yii::$app->view->render(
-            "/journal/filters/columnFilter",
-            [
-                'today' => Yii::t('frontend', 'Today'),
-                'tomorrow' => Yii::t('frontend', 'Tomorrow'),
-                'yesterday' => Yii::t('frontend', 'Yesterday'),
-                'lastweek' => Yii::t('frontend', 'Lastweek'),
-                'lastmonth' => Yii::t('frontend', 'Lastmonth'),
-                'lastyear' => Yii::t('frontend', 'Lastyear'),
-                'certain' => Yii::t('frontend', 'Certain'),
-                'params' => $params
-            ]
-        );
 
         return $this->renderPartial('logs/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'params' => $params,
-            'columnFilterScript' => $columnFilterScript,
+            'params' => $params
         ]);
     }
 
@@ -288,9 +247,10 @@ class JournalController extends Controller
     /**
      * Renders journal initialization
      *
+     * @param array $prms
      * @return string
      */
-    public function actionInit()
+    public function actionInit($prms)
     {
         $searchModel = new JLogInitSearch();
         $entityHelper = new EntityHelper();
@@ -311,39 +271,27 @@ class JournalController extends Controller
             'sort',
         ]);
 
+        $params = $searchModel->setParams($searchModel, $params, $prms);
+
         $dataProvider = $searchModel->searchInit($params);
 
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
 
-        $columnFilterScript = Yii::$app->view->render(
-            "/journal/filters/columnFilter",
-            [
-                'today' => Yii::t('frontend', 'Today'),
-                'tomorrow' => Yii::t('frontend', 'Tomorrow'),
-                'yesterday' => Yii::t('frontend', 'Yesterday'),
-                'lastweek' => Yii::t('frontend', 'Lastweek'),
-                'lastmonth' => Yii::t('frontend', 'Lastmonth'),
-                'lastyear' => Yii::t('frontend', 'Lastyear'),
-                'certain' => Yii::t('frontend', 'Certain'),
-                'params' => $params
-            ]
-        );
-
         return $this->renderPartial('init/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'params' => $params,
-            'columnFilterScript' => $columnFilterScript,
+            'params' => $params
         ]);
     }
 
     /**
      * Renders journal data
      *
+     * @param array $prms
      * @return string
      */
-    public function actionData()
+    public function actionData($prms)
     {
         $searchModel = new JLogDataSearch();
         $entityHelper = new EntityHelper();
@@ -361,42 +309,30 @@ class JournalController extends Controller
             'inputValue' => [
                 'date', 'type_packet', 'address', 'imei', 'id',
             ],
-            'sort',
+            'sort', 'page'
         ]);
+        
+        $params = $searchModel->setParams($searchModel, $params, $prms);
 
         $dataProvider = $searchModel->searchData($params);
 
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
 
-        $columnFilterScript = Yii::$app->view->render(
-            "/journal/filters/columnFilter",
-            [
-                'today' => Yii::t('frontend', 'Today'),
-                'tomorrow' => Yii::t('frontend', 'Tomorrow'),
-                'yesterday' => Yii::t('frontend', 'Yesterday'),
-                'lastweek' => Yii::t('frontend', 'Lastweek'),
-                'lastmonth' => Yii::t('frontend', 'Lastmonth'),
-                'lastyear' => Yii::t('frontend', 'Lastyear'),
-                'certain' => Yii::t('frontend', 'Certain'),
-                'params' => $params
-            ]
-        );
-
         return $this->renderPartial('data/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'params' => $params,
-            'columnFilterScript' => $columnFilterScript,
         ]);
     }
 
     /**
      * Renders journal central board data
      *
+     * @param array $prms
      * @return string
      */
-    public function actionDataCp()
+    public function actionDataCp($prms)
     {
         $searchModel = new JLogDataCpSearch();
         $entityHelper = new EntityHelper();
@@ -416,13 +352,31 @@ class JournalController extends Controller
             ],
             'sort',
         ]);
+        
+        $params = $searchModel->setParams($searchModel, $params, $prms);
 
         $dataProvider = $searchModel->searchData($params);
 
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
 
-        $columnFilterScript = Yii::$app->view->render(
+        return $this->renderPartial('data/cp', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'params' => $params,
+        ]);
+    }
+
+    /**
+     * Gets the main journal js 
+     * 
+     * @param array $params
+     * @return string
+     */
+    private function getColumnFilterScript($params)
+    {
+
+        return Yii::$app->view->render(
             "/journal/filters/columnFilter",
             [
                 'today' => Yii::t('frontend', 'Today'),
@@ -432,15 +386,33 @@ class JournalController extends Controller
                 'lastmonth' => Yii::t('frontend', 'Lastmonth'),
                 'lastyear' => Yii::t('frontend', 'Lastyear'),
                 'certain' => Yii::t('frontend', 'Certain'),
-                'params' => $params
+                'params' => $params,
+                'pageSize' => JlogDataSearch::TYPE_PAGE_SIZE
             ]
         );
+    }
 
-        return $this->renderPartial('data/cp', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'params' => $params,
-            'columnFilterScript' => $columnFilterScript,
-        ]);
+    /**
+     * Renders appropriate action regarding the packet type 
+     * 
+     * @param array $params
+     * @return string
+     */
+    public function renderAppropriatePacket($params)
+    {
+        switch ($params['type_packet']) {
+            case Jlog::TYPE_PACKET_LOG:
+
+                return $this->actionLogs($params);
+            case Jlog::TYPE_PACKET_INITIALIZATION:
+
+                return $this->actionInit($params);
+            case Jlog::TYPE_PACKET_DATA:
+
+                return $this->actionData($params);
+            case Jlog::TYPE_PACKET_DATA_CP:
+
+                return $this->actionDataCp($params);
+        }
     }
 }

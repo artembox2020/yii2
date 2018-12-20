@@ -75,31 +75,11 @@ class JlogSearch extends Jlog
         $entity = new Entity();
         $entityHelper = new EntityHelper();
         $query = $entity->getUnitsQueryPertainCompany(new Jlog());
-        
-        $timeFrom = 0;
-        $timeTo = self::INFINITY;
-        
-        if (!empty($this->from_date)) {
-            $this->from_date .= ' 00:00:00';
-            $timeFrom = strtotime($this->from_date) - Jlog::TYPE_TIME_OFFSET;
-        }
-        
-        if (!empty($this->to_date)) {
-            $this->to_date .= ' 23:59:59';
-            $timeTo = strtotime($this->to_date) - Jlog::TYPE_TIME_OFFSET;
-        }
-        
-        $betweenCondition = new \yii\db\conditions\BetweenCondition(
-            "UNIX_TIMESTAMP(STR_TO_DATE(date, '".Imei::MYSQL_DATE_TIME_FORMAT."'))", 
-            'BETWEEN',
-            $timeFrom,
-            $timeTo
-        );
 
-        $query = $query->andWhere($betweenCondition);
+        $query = $this->applyBetweenDateCondition($query);
 
         $query = $query->andFilterWhere(['like', 'packet', $this->mashineNumber]);
-        
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -739,5 +719,83 @@ class JlogSearch extends Jlog
         }
 
         return $addressesMapped;
+    }
+
+    /**
+     * Applies between date condition to query 
+     * 
+     * @param ActiveDbQuery $query
+     * @return ActiveDbQuery
+     */
+    public function applyBetweenDateCondition($query)
+    {
+        $timeFrom = 0;
+        $timeTo = self::INFINITY;
+        $startDay = ' 00:00:00';
+        $endDay = ' 23:59:59';
+
+        if (!empty($this->from_date)) {
+
+            if (!strrpos($this->from_date, $startDay)) {
+                $this->from_date .= $startDay;
+            }
+
+            $timeFrom = strtotime($this->from_date) - Jlog::TYPE_TIME_OFFSET;
+        }
+
+        if (!empty($this->to_date)) {
+
+            if (!strrpos($this->to_date, $endDay)) {
+                $this->to_date .= $endDay;
+            }
+
+            $timeTo = strtotime($this->to_date) - Jlog::TYPE_TIME_OFFSET;
+        }
+
+        $betweenCondition = new \yii\db\conditions\BetweenCondition(
+            "UNIX_TIMESTAMP(STR_TO_DATE(date, '".Imei::MYSQL_DATE_TIME_FORMAT."'))", 
+            'BETWEEN',
+            $timeFrom,
+            $timeTo
+        );
+
+        $query = $query->andWhere($betweenCondition);
+
+        return $query;
+    }
+
+    /**
+     * Sets model attributes and params by request and accepted params 
+     * 
+     * @param JlogSearch $searchModel
+     * @param array $params
+     * @param array $prms
+     * @return array
+     */
+    public function setParams($searchModel, $params, $prms)
+    {
+        if (!empty(Yii::$app->request->get()['id'])) {
+            $mashineId = Yii::$app->request->get()['id'];
+            $mashine = WmMashine::findOne($mashineId);
+            $searchModel->mashineNumber = '_'.$mashine->type_mashine.'*'.$mashine->number_device;
+        }
+
+        if (isset($prms['JlogSearch']['from_date'])) {
+            $searchModel->from_date = $prms['JlogSearch']['from_date'];
+        }
+
+        if (isset($prms['JlogSearch']['to_date'])) {
+            $searchModel->to_date = $prms['JlogSearch']['to_date'];
+        }
+
+        if (!empty($prms) && isset($prms['imei'])) {
+            $params['imei'] = $prms['imei'];
+        }
+
+        if (empty($params['type_packet'])) {
+            $params['type_packet'] = self::TYPE_PACKET_DATA;
+        }
+
+        return $params;
     }
 }

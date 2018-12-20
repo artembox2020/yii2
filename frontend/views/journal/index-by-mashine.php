@@ -26,7 +26,7 @@ use yii\jui\DatePicker;
         <label for="type_packet"><?= Yii::t('frontend', 'Type Packet') ?></label>
         <?= Html::dropDownList(
                 'type_packet', 
-                $params['type_packet'] ? $params['type_packet'] : '', $typePackets,
+                $params['type_packet'] ? $params['type_packet'] : Jlog::TYPE_PACKET_DATA, $typePackets,
                 [
                     'class' => 'form-control'
                 ]
@@ -82,54 +82,13 @@ use yii\jui\DatePicker;
         echo Html::endForm();
         echo $submitFormOnInputEvents;
     ?>
-    <br>
-    <div class="table-responsives">
-        <?= GridView::widget([
-                'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
-                'options' => [
-                    'class' => 'journal-grid-view',
-                ],
-                'columns' => [
-                    [
-                        'attribute' => 'id',
-                        'filter' =>  $this->render('/journal/filters/main', ['name'=> 'id', 'params' => $params]),
-                    ],
-                    [
-                        'attribute' => 'type_packet',
-                        'value' => function($model)
-                        { 
 
-                            return Jlog::getTypePacketName($model->type_packet);
-                        },
-                        'filter' => $this->render('/journal/filters/main', ['name'=> 'type_packet', 'params' => $params]),
-                    ],
-                    [
-                        'attribute' => 'date',
-                        'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
-                    ],
-                    [
-                        'attribute' => 'imei',
-                        'filter' => $this->render('/journal/filters/main', ['name'=> 'imei', 'params' => $params]),
-                    ],
-                    [
-                        'attribute' => 'address',
-                        'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
-                    ],
-                    [
-                        'attribute' => 'events',
-                        'filter' => false,
-                        'content' => function($model)
-                        {
+    <?php
+        // renders appropriate view by data packet
 
-                            return '';
-                        }
-                    ],
-                ],
-            ]);
+        echo $journalController->renderAppropriatePacket($params, $searchModel, $dataProvider);
+    ?>
 
-        ?>
-    </div>
     <?php
         echo $removeRedundantGrids;
         echo $columnFilterScript;

@@ -18,6 +18,11 @@ class CbLogSearch extends CbLog
 
     public $address;
 
+    const INFINITY = 9999999999999999;
+
+    public $from_date;
+    public $to_date;
+    public $mashineNumber;
     public $inputValue = ['date'];
     public $val2 = ['date'];
 
@@ -171,5 +176,12 @@ class CbLogSearch extends CbLog
             ->andFilterWhere(['like', 'imei', $this->imei]);
 
         return $dataProvider;
+    }
+    
+    public function setParams($searchModel, $params, $prms)
+    {
+        $jlogSearchModel = new JlogSearch();
+
+        return $jlogSearchModel->setParams($searchModel, $params, $prms);
     }
 }

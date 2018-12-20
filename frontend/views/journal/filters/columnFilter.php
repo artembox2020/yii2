@@ -1,6 +1,6 @@
 <script>
 (function() {
-    
+
     /**
      * Toggles element
      * 
@@ -16,7 +16,7 @@
             element.style.display = 'none';
         }
     }
-    
+
     /**
      * Toggles filter group on filter click
      * 
@@ -64,7 +64,7 @@
             this.classList.add("glyphicon-minus");
         }
     }
-    
+
     /**
      * Prevents default element behavior
      */
@@ -73,7 +73,7 @@
         event.stopPropagation();
         event.preventDefault();
     }
-    
+
     /**
      * Disables default behavior of DOM Elements
      * 
@@ -234,6 +234,47 @@
         {
             filterSortByArrowClick(this);
         };
+    }
+
+    var summaryShapter = document.querySelectorAll(".journal-grid-view .summary-shapter-for-status");
+
+    // update summary string for mashine state data
+
+    if (summaryShapter.length > 0) {
+        summaryShapter = summaryShapter[0];
+        var ul = document.querySelector(".journal-grid-view ul.pagination");
+        var activeA = ul.querySelector("li.active a");
+        var numberOfRecords = document.querySelectorAll(".journal-grid-view table tbody > tr").length;
+        var startIndex = parseInt(activeA.dataset.page) * <?= $pageSize ?> + 1;
+        summaryShapter.querySelector('.start').innerHTML = startIndex;
+        summaryShapter.querySelector('.end').innerHTML = (startIndex + numberOfRecords - 1);
+
+        var numberOfLis = ul.querySelectorAll('li').length;
+        var checkHasDisabled = ul.querySelectorAll('li.next.disabled').length;
+
+        if (numberOfLis >= 2) {
+            var lastLi = ul.querySelectorAll("li")[numberOfLis - 2];
+            var lastA = lastLi.querySelector("a");
+
+            if (lastLi.classList.contains("active")) {
+                var total = parseInt(lastA.dataset.page)*<?= $pageSize ?> + numberOfRecords;
+                var isApproximate = false;
+            } else {
+                var total = (parseInt(lastA.dataset.page) + 1)* <?= $pageSize ?>;
+                var isApproximate = true;
+            }
+
+            var summaryShapterTotal = parseInt(summaryShapter.querySelector(".total").innerHTML);
+
+            if (summaryShapterTotal < total || checkHasDisabled) {
+
+                if (!isApproximate) {
+                    summaryShapter.querySelector('.approximate').remove();
+                }
+
+                summaryShapter.querySelector('.total').innerHTML = total;
+            }
+        }
     }
 })();
 </script>
