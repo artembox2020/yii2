@@ -12,7 +12,6 @@ use frontend\services\parser\CParser;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $params array */
 
-//echo '<pre>'; print_r($params); echo '</pre>';
 ?>
 
 <div class="table-responsives">

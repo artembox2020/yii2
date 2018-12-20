@@ -8,7 +8,7 @@ use frontend\services\parser\CParser;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\JlogDataSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $dataProvider yii\data\ArrayDataProvider */
 /* @var $params array */
 
 ?>
