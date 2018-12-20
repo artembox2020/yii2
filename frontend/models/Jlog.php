@@ -267,11 +267,10 @@ class Jlog extends ActiveRecord
     public static function getTypePackets()
     {
         $typePackets = [
-            self::TYPE_PACKET_INITIALIZATION => Yii::t('frontend', 'Initialization'),
-            self::TYPE_PACKET_DATA => Yii::t('frontend', 'Status Packages'),
+            self::TYPE_PACKET_DATA => Yii::t('frontend', 'Status Packages WM'),
             self::TYPE_PACKET_DATA_CP => Yii::t('frontend', 'Status Packages CP'),
+            self::TYPE_PACKET_INITIALIZATION => Yii::t('frontend', 'Initialization'),
             self::TYPE_PACKET_LOG => Yii::t('frontend', 'Log'),
-            self::TYPE_PACKET_PRICE => Yii::t('frontend', 'Price'),
         ];
 
         return $typePackets;

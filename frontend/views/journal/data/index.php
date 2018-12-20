@@ -8,8 +8,9 @@ use frontend\services\parser\CParser;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\JlogDataSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $dataProvider yii\data\ArrayDataProvider */
 /* @var $params array */
+
 ?>
 
 <div class="table-responsives">
@@ -20,60 +21,86 @@ use frontend\services\parser\CParser;
         'options' => [
             'class' => 'journal-grid-view',
         ],
+        'summary'=> $searchModel->getSummaryMessage($params),
         'columns' => [
-            [
-                'attribute' => 'address',
-                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
-                'value' => function($model)
-                {
-                    
-                    return $model->address;
-                }
-            ],
             [
                 'attribute' => 'date',
                 'format' => 'raw',
-                'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
-                'value' => function($model)
+                'label' => Yii::t('imeiData', 'Date Start'),
+                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
+                'value' => function($model) use ($searchModel)
                 {
-                    $dateParts = explode(' ', $model->date);
 
-                    return $dateParts[1].'<br>'.$dateParts[0];
-                }
+                    return $searchModel->getDateStartView($model);
+                },
+                'contentOptions' => ['class' => 'inline']
             ],
             [
-                'attribute' => 'imei',
+                'attribute' => 'date_end',
                 'format' => 'raw',
-                'filter' => $this->render('/journal/filters/main', ['name'=> 'imei', 'params' => $params]),
+                'label' => Yii::t('imeiData', 'Date End'),
+                'filter' => false,
+                'value' => function($model) use ($searchModel)
+                {
+
+                    return $searchModel->getDateEndView($model);
+                },
+                'contentOptions' => ['class' => 'inline']
+            ],
+            [
+                'attribute' => 'address',
+                'format' => 'raw',
+                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params, 'searchModel' => $searchModel]),
+                'value' => function($model) use ($searchModel)
+                {
+
+                    return  $searchModel->getAddressView($model);
+                },
+                'contentOptions' => ['class' => 'inline']
+            ],
+            [
+                'attribute' => 'number_device',
+                'label' => Yii::t('frontend', 'Number Device'),
                 'value' => function($model)
                 {
-                    $imei = Imei::find()->where(['id' => $model['imei_id']])->one();
 
-                    return $imei->imei;
+                    return $model['number_device'];
                 }
             ],
             [
                 'attribute' => 'level_signal',
-                'format' => 'raw',
+                'label' => Yii::t('frontend', 'Level Signal'),
                 'value' => function($model)
                 {
-                    $packet = $model->packet;
-                    $cParser = new CParser();
-                    $packetData = $cParser->dParse($packet);
 
-                    return $packetData['level_signal'];
+                    return $model['level_signal'];
                 }
             ],
             [
-                'attribute' => 'money_in_banknotes',
-                'format' => 'raw',
+                'attribute' => 'bill_cash',
+                'label' => Yii::t('frontend', 'Bill Cash'),
                 'value' => function($model)
                 {
-                    $packet = $model->packet;
-                    $cParser = new CParser();
-                    $packetData = $cParser->dParse($packet);
 
-                    return $packetData['money_in_banknotes'];
+                    return $model['bill_cash'];
+                }
+            ],
+            [
+                'attribute' => 'current_status',
+                'label' => Yii::t('frontend', 'Current Status'),
+                'value' => function($model) use ($searchModel)
+                {
+
+                    return $searchModel->getWmMashineStatus($model);
+                }
+            ],
+            [
+                'attribute' => 'display',
+                'label' => Yii::t('frontend' ,'Display'),
+                'value' => function($model)
+                {
+
+                    return $model['display'];
                 }
             ],
         ],

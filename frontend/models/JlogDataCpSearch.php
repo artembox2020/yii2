@@ -36,6 +36,7 @@ class JLogDataCpSearch extends JlogSearch
         $entity = new Entity();
         $entityHelper = new EntityHelper();
         $query = $entity->getUnitsQueryPertainCompany(new Jlog());
+        $query = $this->applyBetweenDateCondition($query);
 
         $query = $query->andFilterWhere(['type_packet' => self::TYPE_PACKET_DATA]);
 

@@ -28,7 +28,7 @@ $this->title = Yii::t('frontend', 'Events Journal');
         <label for="type_packet"><?= Yii::t('frontend', 'Type Packet') ?></label>
         <?= Html::dropDownList(
                 'type_packet', 
-                $params['type_packet'] ? $params['type_packet'] : '', $typePackets,
+                $params['type_packet'] ? $params['type_packet'] : Jlog::TYPE_PACKET_DATA, $typePackets,
                 [
                     'class' => 'form-control'
                 ]
@@ -36,7 +36,7 @@ $this->title = Yii::t('frontend', 'Events Journal');
         ?>
     </div>
     <div class="form-group">
-        
+
         <?= AutoComplete::widget([
                 'name' => 'imei',
                 'options' => [
@@ -92,20 +92,9 @@ $this->title = Yii::t('frontend', 'Events Journal');
     <br>
 
     <?php
-        switch ($params['type_packet']) {
-            case Jlog::TYPE_PACKET_LOG:
-                echo $journalController->actionLogs();
-                break;
-            case Jlog::TYPE_PACKET_INITIALIZATION:
-                echo $journalController->actionInit();
-                break;
-            case Jlog::TYPE_PACKET_DATA_CP:
-                echo $journalController->actionDataCp();
-                break;
-            default:
-                echo $journalController->renderAll($dataProvider, $searchModel, $params);
-                break;
-        }
+        // renders appropriate view by data packet
+
+        echo $journalController->renderAppropriatePacket($params);
     ?>
 
     <?php

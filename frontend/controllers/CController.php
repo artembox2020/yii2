@@ -159,7 +159,10 @@ class CController extends Controller
             $imeiData->evt_bill_validator = $imeiDataDto->evt_bill_validator;
             $imeiData->is_deleted = false;
 
-            $imei->level_signal = $imeiData->level_signal;
+            if (!is_null($imeiData->level_signal)) {
+                $imei->level_signal = $imeiData->level_signal;
+            }
+
             $imeiData->cb_version = $imei->firmware_version;
             $imeiData->packet = $packet;
             $imei->update();

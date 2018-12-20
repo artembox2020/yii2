@@ -38,27 +38,7 @@ class JlogInitSearch extends JlogSearch
         $entityHelper = new EntityHelper();
         $query = $entity->getUnitsQueryPertainCompany(new Jlog());
 
-        $timeFrom = 0;
-        $timeTo = self::INFINITY;
-
-        if (!empty($this->from_date)) {
-            $this->from_date .= ' 00:00:00';
-            $timeFrom = strtotime($this->from_date) - Jlog::TYPE_TIME_OFFSET;
-        }
-
-        if (!empty($this->to_date)) {
-            $this->to_date .= ' 23:59:59';
-            $timeTo = strtotime($this->to_date) - Jlog::TYPE_TIME_OFFSET;
-        }
-
-        $betweenCondition = new \yii\db\conditions\BetweenCondition(
-            "UNIX_TIMESTAMP(STR_TO_DATE(date, '".Imei::MYSQL_DATE_TIME_FORMAT."'))", 
-            'BETWEEN',
-            $timeFrom,
-            $timeTo
-        );
-
-        $query = $query->andWhere($betweenCondition);
+        $query = $this->applyBetweenDateCondition($query);
 
         $query = $query->andFilterWhere(['like', 'packet', $this->mashineNumber]);
 
