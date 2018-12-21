@@ -56,7 +56,7 @@ JS;
             ['attribute' => 'status',
                 'label' => Yii::t('frontend', 'Status'),
                 'value' => function ($dataProvider) {
-                    return Html::a(Html::encode($dataProvider->getCurrentStatus($dataProvider->status)), Url::to(['fixed-assets-update-wm-machine', 'id' => $dataProvider->number_device]));
+                    return Html::a(Html::encode($dataProvider->getCurrentStatus($dataProvider->status)), Url::to(['/net-manager/wm-machine-update', 'id' => $dataProvider->number_device]));
                 },
                 'format' => 'raw',
             ],

@@ -49,6 +49,12 @@ class NetManagerController extends \yii\web\Controller
 
     /** @var string  */
     const TYPE_WM = 'WM';
+
+    /** @var int for wm status transfer form storage Junk status */
+    const STATUS_JUNK = 3;
+
+    /** @var int for wm status transfer form storage Under repair status */
+    const STATUS_UNDER_REPAIR = 2;
     
     const DATA_MODEM_HISTORY_FORMAT = 'H:i:s d.m.y';
     
@@ -643,6 +649,19 @@ class NetManagerController extends \yii\web\Controller
                     $storage->type = $model->type_mashine;
                     $storage->insert();
                 }
+                if ($model->status == self::ONE
+                    or $model->status == self::ZERO
+                    or $model->status == self::STATUS_JUNK
+                    or $model->status == self::STATUS_UNDER_REPAIR) {
+                    if (StorageHistory::find(['number_device' => $model->id])->one()) {
+                        $st = StorageHistory::find(['number_device' => $model->id])->one();
+//                        Debugger::d($model->id);
+                        $st->status = $model->status;
+                        $st->date_transfer_from_storage = strtotime("now");
+//                        Debugger::dd($model->status);
+                        $st->update(false);
+                    }
+                }
               return $this->redirect('osnovnizasoby');
             }
         }
@@ -656,6 +675,7 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
+     * Storage history for Wash machine
      * @return string
      */
     public function actionFixedAssets()
