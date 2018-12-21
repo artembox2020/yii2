@@ -67,7 +67,7 @@ use frontend\services\parser\CParser;
                     return $model['number_device'];
                 }
             ],
-            [
+            /*[
                 'attribute' => 'level_signal',
                 'label' => Yii::t('frontend', 'Level Signal'),
                 'value' => function($model)
@@ -75,7 +75,7 @@ use frontend\services\parser\CParser;
 
                     return $model['level_signal'];
                 }
-            ],
+            ],*/
             [
                 'attribute' => 'bill_cash',
                 'label' => Yii::t('frontend', 'Bill Cash'),
