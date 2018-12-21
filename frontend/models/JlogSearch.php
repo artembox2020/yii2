@@ -229,6 +229,7 @@ class JlogSearch extends Jlog
             'date' => self::getDateFilters(),
             'imei' => self::getCommonFilters(),
             'address' => self::getCommonFilters(),
+            'number_device' => self::getCommonFilters(),
             'device' => self::getCommonFilters(),
             'signal' => self::getNumericFilters(),
             'fireproof_counter_hrn' => self::getNumericFilters(),

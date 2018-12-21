@@ -61,6 +61,8 @@ use frontend\services\parser\CParser;
             [
                 'attribute' => 'number_device',
                 'label' => Yii::t('frontend', 'Number Device'),
+                'format' => 'raw',
+                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'number_device', 'params' => $params, 'searchModel' => $searchModel]),
                 'value' => function($model)
                 {
 

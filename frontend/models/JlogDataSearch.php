@@ -83,6 +83,8 @@ class JlogDataSearch extends JlogSearch
         $parser = new CParser();
         $typeMashine = $this->getMashineType();
         $numberMashine = $this->getMashineNumber();
+        global $factorRelevance;
+        $factorRelevance = 0;
 
         foreach ($query->all() as $item) {
             $mashinesInfo = $parser->getMashineData($item->packet);
@@ -96,23 +98,41 @@ class JlogDataSearch extends JlogSearch
                 }
 
                 foreach ($mashinesInfo as $mashineItem) {
-                    
+
                     if (!empty($numberMashine) && $numberMashine != $mashineItem[1]) {
                         continue;
                     }
 
-                    $dataInfo[] = [
-                        'date' => $item->date,
-                        'date_end' => $item->date_end,
-                        'address' => $item->address,
-                        'number_device' => Yii::t('frontend', 'WM').$mashineItem[1],
-                        'level_signal' => $mashineItem[2],
-                        'bill_cash' => $mashineItem[3],
-                        'current_status' => $mashineItem[6],
-                        'display' => $mashineItem[7]
-                    ];
+                    if ($this->applyFilterByNumberDeviceValue($params, $mashineItem)
+                        &&
+                        $this->applyFilterByNumberDeviceCondition($params, $mashineItem)
+                    ) {
+
+                        $dataInfo[] = [
+                            'date' => $item->date,
+                            'date_end' => $item->date_end,
+                            'address' => $item->address,
+                            'number_device' => $this->getNumberDeviceValue($mashineItem),
+                            'level_signal' => $mashineItem[2],
+                            'bill_cash' => $mashineItem[3],
+                            'current_status' => $mashineItem[6],
+                            'display' => $mashineItem[7]
+                        ];
+                    } else {
+                         ++$factorRelevance;
+                    }
                 }
             }
+        }
+
+        $countDataInfo = count($dataInfo);
+
+        // factorRelevance is used to estimate the total number of records
+
+        if (!empty($countDataInfo)) {
+            $factorRelevance = $countDataInfo / ($countDataInfo + $factorRelevance);
+        } else {
+            $factorRelevance = 0;
         }
 
         // add conditions that should always apply here
@@ -124,7 +144,7 @@ class JlogDataSearch extends JlogSearch
             ],
             'sort' => [
                 'attributes' => [
-                    'date', 'address'
+                    'date', 'address', 'number_device'
                 ]
             ]
         ]);
@@ -278,6 +298,18 @@ class JlogDataSearch extends JlogSearch
     }
 
     /**
+     * Gets number device value string representation 
+     * 
+     * @param array $mashineItem
+     * @return string
+     */
+    public function getNumberDeviceValue($mashineItem)
+    {
+
+        return Yii::t('frontend', 'WM').$mashineItem[1];
+    }
+
+    /**
      * Gets the average number of Wm Mashines per imei 
      * 
      * @param array $params
@@ -285,6 +317,12 @@ class JlogDataSearch extends JlogSearch
      */
     public function getAverageNumberOfWmMashinesPerImei($params)
     {
+        global $factorRelevance;
+
+        if (empty($factorRelevance)) {
+            $factorRelevance = 1;
+        }
+
         if (!empty($params['imei'])) {
             $imei = Imei::find()->andWhere(['like', 'imei', $params['imei']])->one();
         }
@@ -305,7 +343,7 @@ class JlogDataSearch extends JlogSearch
 
             if ($numberOfWmMashines != 0) {
 
-                return $numberOfWmMashines;
+                return $numberOfWmMashines * $factorRelevance;
             }
         } else {
 
@@ -316,10 +354,71 @@ class JlogDataSearch extends JlogSearch
 
             if ($numberOfImeis != 0) {
 
-                return (double)$numberOfWmMashines / $numberOfImeis;
+                return (double)$numberOfWmMashines / $numberOfImeis * $factorRelevance;
             }
         }
 
         return 0;
+    }
+
+    /**
+     * Applies filter by number device value 
+     * 
+     * @param array $params
+     * @param  array $mashineItem
+     * @return bool
+     */
+    public function applyFilterByNumberDeviceValue($params, $mashineItem)
+    {
+        if (empty($params['inputValue']['number_device'])) {
+
+            return true;
+        }
+
+        $numberDeviceValue = $this->getNumberDeviceValue($mashineItem);
+
+        return mb_stripos($numberDeviceValue, $params['inputValue']['number_device']) !== false;
+    }
+
+    /**
+     * Applies filter by number device condition 
+     * 
+     * @param array $params
+     * @param  array $mashineItem
+     * @return bool
+     */
+    public function applyFilterByNumberDeviceCondition($params, $mashineItem)
+    {
+        $numberDeviceValue = $this->getNumberDeviceValue($mashineItem);
+        $param = trim($params['val1']['number_device']);
+        switch($params['filterCondition']['number_device']) {
+            case self::FILTER_NOT_SET:
+
+                return true;
+            case self::FILTER_CELL_EMPTY:
+
+                return empty($numberDeviceValue);
+            case self::FILTER_CELL_NOT_EMPTY:
+
+                return !empty($numberDeviceValue);
+            case self::FILTER_TEXT_CONTAIN:
+
+                return mb_stripos($numberDeviceValue, $param) !== false;   
+            case self::FILTER_TEXT_NOT_CONTAIN:
+               
+                return mb_stripos($numberDeviceValue, $param) === false; 
+            case self::FILTER_TEXT_START_FROM:
+
+                return mb_stripos($numberDeviceValue, $param) === 0;
+            case self::FILTER_TEXT_END_WITH:
+
+                return 
+                    mb_strripos($numberDeviceValue, $param) === mb_strlen($numberDeviceValue) - mb_strlen($param);
+            case self::FILTER_TEXT_EQUAL:
+
+                return $numberDeviceValue === $param;
+        }
+
+        return true;
     }
 }
