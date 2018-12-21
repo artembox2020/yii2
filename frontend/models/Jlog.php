@@ -258,7 +258,60 @@ class Jlog extends ActiveRecord
             return false;
         }
 
-        return $wm_substring === $wm_substring2;
+        $comparisonResult = $wm_substring === $wm_substring2;
+
+        if (!$comparisonResult) {
+            $parser = new CParser();
+            $mashinesInfo = $parser->getMashineData($p)['WM'];
+            $mashinesInfo2 = $parser->getMashineData($p2)['WM'];
+
+            if (
+                !$this->compareByMashinesInfo($mashinesInfo, $mashinesInfo2) ||
+                !$this->compareByMashinesInfo($mashinesInfo2, $mashinesInfo)
+            ) {
+
+                return false; 
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Compare two mashines by their mashines info 
+     * 
+     * @param array $mashinesInfo
+     * @param array $mashinesInfo2
+     * @return bool
+     */
+    private function compareByMashinesInfo($mashinesInfo, $mashinesInfo2)
+    {
+        foreach ($mashinesInfo as $mashineItem) {
+
+            // indicator whether has the same mashine
+            $hasMashine = false; 
+            foreach ($mashinesInfo2 as $mashineItem2) {
+                if ($mashineItem2[1] == $mashineItem[1]) {
+                    if (
+                        $mashineItem2[3] != $mashineItem[3] ||
+                        $mashineItem2[6] != $mashineItem[6] ||
+                        $mashineItem2[7] != $mashineItem[7]
+                    ) {
+
+                        return false;
+                    }
+                    $hasMashine = true;
+                    break;
+                }
+            }
+
+            if (!$hasMashine) {
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
