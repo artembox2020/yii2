@@ -60,6 +60,28 @@ JS;
                 },
                 'format' => 'raw',
             ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => Yii::t('common', 'Actions'),
+                'template' => '{update} {delete}',
+                'buttons' => [
+                    'update' => function ($url,$model) {
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['#', 'id' =>$model->id]);
+                    },
+
+                    'delete' => function($url, $model) {
+                        if($model->is_deleted) return '';
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['#', 'id' => $model->id],
+                            [
+                                'class' => '',
+                                'data' => [
+                                    'confirm' => Yii::t('common', 'Delete Confirmation'),
+                                    'method' => 'post',
+                                ],
+                            ]);
+                    }
+                ],
+                ],
             ]
 ]);
 ?>
