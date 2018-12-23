@@ -18,6 +18,8 @@ class CentralBoardDto
     public $notes_billiards_pcs;
     public $rate;
     public $refill_amount;
+    public $last_collection_counter;
+    public $banknote_face_values;
 
     /**
      * map string to CentralBoardDto
@@ -46,7 +48,10 @@ class CentralBoardDto
             $this->fireproof_counter_hrn = (float)$data['fireproof_counter_hrn'];
         }
 
-        if (array_key_exists('fireproof_counter_card', $data)) {
+        if (
+            array_key_exists('fireproof_counter_card', $data)
+             && !is_null($data['fireproof_counter_card'])
+        ) {
             $this->fireproof_counter_card = (float)$data['fireproof_counter_card'];
         }
 
@@ -62,8 +67,22 @@ class CentralBoardDto
             $this->rate = (double)$data['rate'];
         }
 
-        if (array_key_exists('refill_amount', $data)) {
+        if (
+            array_key_exists('refill_amount', $data)
+            && !is_null($data['refill_amount'])
+        ) {
             $this->refill_amount = (float)$data['refill_amount'];
+        }
+
+        if (
+            array_key_exists('last_collection_counter', $data) 
+            && !is_null($data['last_collection_counter'])
+        ) {
+            $this->last_collection_counter = (float)$data['last_collection_counter'];
+        }
+
+        if (array_key_exists('banknote_face_values', $data)) {
+            $this->banknote_face_values = (string)$data['banknote_face_values'];
         }
     }
 }

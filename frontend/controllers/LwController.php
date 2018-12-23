@@ -90,13 +90,36 @@ class LwController extends Controller
             'intensive_wash'
         ];
 
+        // new wm log version
+        $columnNew = [
+            'imei',
+            'unix_time_offset',
+            'number',
+            'signal',
+            'status',
+            'price',
+            'account_money',
+            'washing_mode',
+            'wash_temperature',
+            'spin_type',
+            'prewash',
+            'rinsing',
+            'intensive_wash'
+        ];
+
         $array = array_map("str_getcsv", explode('*', $p));
 
         foreach ($array as $subArr) {
             $arrOut = array_merge($arrOut, $subArr);
         }
 
-        $result = array_combine($column, $arrOut);
+        if (count($columnNew) == count($arrOut)) {
+
+            $result = array_combine($columnNew, $arrOut);
+        } else {
+
+            $result = array_combine($column, $arrOut);
+        }
 
         return $result;
     }

@@ -45,6 +45,8 @@ class LcController extends Controller
                 $cbl->notes_billiards_pcs = $centralBoardDto->notes_billiards_pcs;
                 $cbl->rate = $centralBoardDto->rate;
                 $cbl->refill_amount = $centralBoardDto->refill_amount;
+                $cbl->last_collection_counter = $centralBoardDto->last_collection_counter;
+                $cbl->banknote_face_values = $centralBoardDto->banknote_face_values;
                 $cbl->is_deleted = false;
                 $cbl->save();
                 echo 'cbl data save!';exit;
@@ -81,13 +83,35 @@ class LcController extends Controller
             'refill_amount'
         ];
 
+        // new cental board log version
+        $columnNew = [
+            'imei',
+            'unix_time_offset',
+            'status',
+            'fireproof_counter_hrn',
+            'collection_counter',
+            'notes_billiards_pcs',
+            'rate',
+            'last_collection_counter',
+            'banknote_face_values'
+        ];
+
         $array = array_map("str_getcsv", explode('*', $p));
 
         foreach ($array as $subArr) {
             $arrOut = array_merge($arrOut, $subArr);
         }
 
-        $result = array_combine($column, $arrOut);
+        if (count($arrOut) == count($columnNew)) {
+            $result = array_combine($columnNew, $arrOut);
+            $result['date'] = null;
+            $result['fireproof_counter_card'] = null;
+            $result['refill_amount'] = null;
+        } else {
+            $result = array_combine($column, $arrOut);
+            $result['last_collection_counter'] = null;
+            $result['banknote_face_values'] = null;
+        }
 
         return $result;
     }
