@@ -652,13 +652,14 @@ class NetManagerController extends \yii\web\Controller
                 if ($model->status == self::ONE
                     or $model->status == self::ZERO
                     or $model->status == self::STATUS_JUNK
-                    or $model->status == self::STATUS_UNDER_REPAIR) {
+                    or $model->status == self::STATUS_UNDER_REPAIR
+                ) {
                     if (StorageHistory::find(['number_device' => $model->id])->one()) {
-                        $st = StorageHistory::find(['number_device' => $model->id])->one();
-//                        Debugger::d($model->id);
+                        $st = StorageHistory::find(['number_device' => $model->id])->orderBy(['created_at'=>SORT_DESC])->one();
                         $st->status = $model->status;
-                        $st->date_transfer_from_storage = strtotime("now");
-//                        Debugger::dd($model->status);
+                        if ($model->status == self::ZERO or $model->status == self::ONE) {
+                            $st->date_transfer_from_storage = strtotime("now");
+                        }
                         $st->update(false);
                     }
                 }
@@ -672,6 +673,19 @@ class NetManagerController extends \yii\web\Controller
             'imeis' => $imeis,
             'addresses' => $address
         ]);
+    }
+
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionWmachineDelete($id)
+    {
+        $model = $this->findModel($id, new StorageHistory());
+        $model->softDelete();
+
+        return $this->redirect("/net-manager/fixed-assets");
     }
 
     /**

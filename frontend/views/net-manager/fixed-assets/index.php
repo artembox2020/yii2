@@ -10,11 +10,11 @@ use yii\helpers\Url;
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
     ]) ?>
-
+    <h1><?= Html::encode($this->title) ?></h1>
     <!--<a href="/net-manager/osnovnizasoby">[--><?//= Yii::t('frontend', 'washing machines') ?><!--]</a>-->
     <!--<a href="/net-manager/osnovnizasoby">[--><?//= Yii::t('frontend', 'Gel dispensers') ?><!--]</a>-->
-    <br><br>
     <a href="/net-manager/fixed-assets">[<?= Yii::t('frontend', 'Storage') ?>]</a>
+</b>
     <?php
     $url = \yii\helpers\BaseUrl::current();
     $url = explode("?", $url)[0];
@@ -56,6 +56,9 @@ JS;
             ['attribute' => 'status',
                 'label' => Yii::t('frontend', 'Status'),
                 'value' => function ($dataProvider) {
+                        if ($dataProvider->status < 2) {
+                            return $dataProvider->getCurrentStatus($dataProvider->status);
+                        }
                     return Html::a(Html::encode($dataProvider->getCurrentStatus($dataProvider->status)), Url::to(['/net-manager/wm-machine-update', 'id' => $dataProvider->number_device]));
                 },
                 'format' => 'raw',
@@ -63,15 +66,15 @@ JS;
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t('common', 'Actions'),
-                'template' => '{update} {delete}',
+                'template' => '{delete}',
                 'buttons' => [
-                    'update' => function ($url,$model) {
-                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['#', 'id' =>$model->id]);
+                    'update' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/net-manager/wm-machine-update', 'id' => $model->number_device]);
                     },
 
                     'delete' => function($url, $model) {
                         if($model->is_deleted) return '';
-                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['#', 'id' => $model->id],
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['wmachine-delete', 'id' => $model->id],
                             [
                                 'class' => '',
                                 'data' => [
