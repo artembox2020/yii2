@@ -294,8 +294,7 @@ class Jlog extends ActiveRecord
                 if ($mashineItem2[1] == $mashineItem[1]) {
                     if (
                         $mashineItem2[3] != $mashineItem[3] ||
-                        $mashineItem2[6] != $mashineItem[6] ||
-                        $mashineItem2[7] != $mashineItem[7]
+                        $mashineItem2[6] != $mashineItem[6]
                     ) {
 
                         return false;

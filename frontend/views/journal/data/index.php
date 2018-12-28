@@ -96,7 +96,7 @@ use frontend\services\parser\CParser;
                     return $searchModel->getWmMashineStatus($model);
                 }
             ],
-            [
+            /*[
                 'attribute' => 'display',
                 'label' => Yii::t('frontend' ,'Display'),
                 'value' => function($model)
@@ -104,7 +104,7 @@ use frontend\services\parser\CParser;
 
                     return $model['display'];
                 }
-            ],
+            ],*/
         ],
     ]);
     ?>
