@@ -36,6 +36,12 @@ JS;
             ['attribute' => 'number_device',
                 'label' => Yii::t('frontend', 'Number Device'),
             ],
+            ['label' => Yii::t('frontend', 'Inventory number'),
+                'value' => function ($model) {
+                    return $model->getInventoryNumber($model->number_device)->inventory_number;
+                },
+                'format' => 'raw',
+            ],
             ['attribute' => 'address.name',
                 'label' => Yii::t('frontend', 'Address'),
             ],
@@ -68,12 +74,8 @@ JS;
                 'header' => Yii::t('common', 'Actions'),
                 'template' => '{delete}',
                 'buttons' => [
-                    'update' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/net-manager/wm-machine-update', 'id' => $model->number_device]);
-                    },
-
                     'delete' => function($url, $model) {
-                        if($model->is_deleted) return '';
+                        if($model->is_deleted or $model->status == 2) return '';
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['wmachine-delete', 'id' => $model->id],
                             [
                                 'class' => '',
