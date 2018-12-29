@@ -33,9 +33,6 @@ JS;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            ['attribute' => 'number_device',
-                'label' => Yii::t('frontend', 'Number Device'),
-            ],
             ['label' => Yii::t('frontend', 'Inventory number'),
                 'value' => function ($model) {
                     return $model->getInventoryNumber($model->number_device)->inventory_number;
