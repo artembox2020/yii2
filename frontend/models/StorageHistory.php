@@ -140,4 +140,9 @@ class StorageHistory extends ActiveRecord
 
         return $statuses[$status];
     }
+
+    public function getInventoryNumber($id)
+    {
+        return WmMashine::findOne(['id' => $id]);
+    }
 }

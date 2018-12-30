@@ -10,11 +10,11 @@ use yii\helpers\Url;
     <?= $this->render('/net-manager/_sub_menu', [
         'menu' => $menu,
     ]) ?>
-
+    <h1><?= Html::encode($this->title) ?></h1>
     <!--<a href="/net-manager/osnovnizasoby">[--><?//= Yii::t('frontend', 'washing machines') ?><!--]</a>-->
     <!--<a href="/net-manager/osnovnizasoby">[--><?//= Yii::t('frontend', 'Gel dispensers') ?><!--]</a>-->
-    <br><br>
     <a href="/net-manager/fixed-assets">[<?= Yii::t('frontend', 'Storage') ?>]</a>
+</b>
     <?php
     $url = \yii\helpers\BaseUrl::current();
     $url = explode("?", $url)[0];
@@ -33,8 +33,11 @@ JS;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            ['attribute' => 'number_device',
-                'label' => Yii::t('frontend', 'Number Device'),
+            ['label' => Yii::t('frontend', 'Inventory number'),
+                'value' => function ($model) {
+                    return $model->getInventoryNumber($model->number_device)->inventory_number;
+                },
+                'format' => 'raw',
             ],
             ['attribute' => 'address.name',
                 'label' => Yii::t('frontend', 'Address'),
@@ -56,10 +59,31 @@ JS;
             ['attribute' => 'status',
                 'label' => Yii::t('frontend', 'Status'),
                 'value' => function ($dataProvider) {
+                        if ($dataProvider->status < 2) {
+                            return $dataProvider->getCurrentStatus($dataProvider->status);
+                        }
                     return Html::a(Html::encode($dataProvider->getCurrentStatus($dataProvider->status)), Url::to(['/net-manager/wm-machine-update', 'id' => $dataProvider->number_device]));
                 },
                 'format' => 'raw',
             ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => Yii::t('common', 'Actions'),
+                'template' => '{delete}',
+                'buttons' => [
+                    'delete' => function($url, $model) {
+                        if($model->is_deleted or $model->status == 2) return '';
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['wmachine-delete', 'id' => $model->id],
+                            [
+                                'class' => '',
+                                'data' => [
+                                    'confirm' => Yii::t('common', 'Delete Confirmation'),
+                                    'method' => 'post',
+                                ],
+                            ]);
+                    }
+                ],
+                ],
             ]
 ]);
 ?>

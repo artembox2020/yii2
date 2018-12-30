@@ -44,7 +44,8 @@ class StorageHistorySearch extends StorageHistory
 //            ->all();
 
         $query = StorageHistory::find()
-            ->where(['company_id' => $user->company_id]);
+            ->where(['company_id' => $user->company_id])->orderBy('created_at DESC')
+            ->andWhere(['storage_history.is_deleted' => false]);
 
         // add conditions that should always apply here
 
