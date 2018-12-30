@@ -185,25 +185,22 @@ class JournalController extends Controller
         $params = $entityHelper->makeParamsFromRequest(
             [
                 'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
+                'wm_mashine_number',
                 'filterCondition' => [
-                    'date', 'type_packet', 'address', 'imei', 'id', 'rate', 'device', 'signal',  'fireproof_counter_hrn', 'collection_counter',
-                    'notes_billiards_pcs',
-                    'wash_temperature'
+                    'date', 'type_packet', 'address', 'imei', 'id',
+                    'number',
                 ],
                 'val1' => [
-                    'date', 'type_packet', 'address', 'imei', 'id', 'rate', 'device', 'signal', 'fireproof_counter_hrn', 'collection_counter',
-                    'notes_billiards_pcs',
-                    'wash_temperature'
+                    'date', 'type_packet', 'address', 'imei', 'id',
+                    'number',
                 ],
                 'val2' => [
-                    'date', 'type_packet', 'address', 'imei', 'id', 'rate', 'device', 'signal', 'fireproof_counter_hrn', 'collection_counter',
-                    'notes_billiards_pcs',
-                    'wash_temperature'
+                    'date', 'type_packet', 'address', 'imei', 'id',
+                    'number',
                 ],
                 'inputValue' => [
-                    'date', 'type_packet', 'address', 'imei', 'id', 'rate', 'device', 'signal', 'fireproof_counter_hrn', 'collection_counter',
-                    'notes_billiards_pcs',
-                    'wash_temperature'
+                    'date', 'type_packet', 'address', 'imei', 'id',
+                    'number',
                 ],
                 'sort',
                 'CbLogSearch' => [
@@ -296,22 +293,22 @@ class JournalController extends Controller
         $searchModel = new JLogDataSearch();
         $entityHelper = new EntityHelper();
         $params = $entityHelper->makeParamsFromRequest([
-            'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
+            'type_packet', 'imei', 'address', 'selectionName', 'selectionCaretPos',
             'filterCondition' => [
-                'date', 'type_packet', 'address', 'imei', 'id',
+                'date', 'type_packet', 'address', 'imei', 'number_device',
             ],
             'val1' => [
-                'date', 'type_packet', 'address', 'imei', 'id',
+                'date', 'type_packet', 'address', 'imei', 'number_device',
             ],
             'val2' => [
-                'date', 'type_packet', 'address', 'imei', 'id',
+                'date', 'type_packet', 'address', 'imei', 'number_device',
             ],
             'inputValue' => [
-                'date', 'type_packet', 'address', 'imei', 'id',
+                'date', 'type_packet', 'address', 'imei', 'number_device',
             ],
             'sort', 'page'
         ]);
-        
+
         $params = $searchModel->setParams($searchModel, $params, $prms);
 
         $dataProvider = $searchModel->searchData($params);

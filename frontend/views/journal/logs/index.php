@@ -18,156 +18,99 @@ use \frontend\models\AddressBalanceHolder;
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => [
-        ['class' => 'yii\grid\SerialColumn'],
-        ['attribute' => 'address',
-            'label' => Yii::t('frontend', 'Address'),
-            'value'=> function ($model) {
-                $address = AddressBalanceHolder::findOne(['id' => $model['address_id']]);
-                return $address->address.', '.(empty($address->floor) ? '' : $address->floor);
-            },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
-        ],
-        ['attribute' => 'date',
+        [
+            'attribute' => 'unix_time_offset',
             'label' => Yii::t('frontend', 'Hour that date'),
-            'value' => 'date',
-            'format' => ['date', 'php:H:i:s d.m.Y'],
+            'value' => function($model)
+            {
+
+                return date('d.m.Y H:i:s', $model['unix_time_offset']);
+            },
             'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
         ],
         [
-            'attribute' => 'imei',
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'imei', 'params' => $params]),
+            'attribute' => 'address',
+            'label' => Yii::t('frontend', 'Address'),
+            'value'=> function ($model) use($searchModel) {
+
+                return $searchModel->getAddressView($model);
+            },
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
         ],
-        ['attribute' => 'rate',
-            'label' => Yii::t('logs', 'Rate'),
-            'value' => 'rate',
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'rate', 'params' => $params]),
-        ],
-        ['attribute' => 'device',
+        [
+            'attribute' => 'device',
             'label' => Yii::t('logs', 'Device'),
             'value'=> function ($model) {
-            if ($model['device'] == 'wm') {
-                return $model['device'] .' ' . $model['number'];
-            }
-            return $model['device'];
+
+                return Yii::t('WM', $model['device']) .' ' . $model['number'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'device', 'params' => $params]),
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'number', 'params' => $params]),
         ],
-        ['attribute' => 'signal',
+        [
+            'attribute' => 'signal',
             'label' => Yii::t('logs', 'Signal level'),
             'value' => 'signal',
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'signal', 'params' => $params]),
         ],
-        ['attribute' => 'status',
+        [
+            'attribute' => 'status',
+            'format' => 'raw',
             'label' => Yii::t('logs', 'Event'),
-            'value'=> function ($model) {
-                if ($model['device'] == 'wm') {
-                    $machine = new \frontend\models\WmMashine();
-                    if (array_key_exists($model['status'], $machine->log_state)) {
-                        return Yii::t('logs', $machine->log_state[$model['status']]);
-                    }
-                }
-                $cbLog = new \frontend\models\CbLog();
-                if (array_key_exists($model['status'], $cbLog->current_state)) {
-                    return Yii::t('logs', $cbLog->current_state[$model['status']]);
-                }
+            'value'=> function ($model) use ($searchModel) {
+
+                return $searchModel->getAggregatedEventsInfo($model);
             },
-            'filter' => false
+            'filter' => false,
+            'contentOptions' => ['class' => 'aggregated-status-info']
         ],
-        ['attribute' => 'device',
-            'label' => Yii::t('logs', 'Amount of replenishment, UAH (Securities) or Price of service, UAH (PM, GD)'),
-            'value'=> function ($model) {
-                if ($model['device'] == 'wm') {
-                    return $model['price'];
-                }
-                return $model['refill_amount'];
+        [
+            'attribute' => 'price',
+            'label' => Yii::t('logs', 'Rate'),
+            'value' => function ($model) {
+
+                return $model['price'];
             },
         ],
-        ['attribute' => 'fireproof_counter_hrn',
-            'label' => Yii::t('logs', 'Non-inflationary balance (CP), UAH or amount of money on the account (PM), UAH'),
-            'value'=> function ($model) {
-                if ($model['device'] == 'wm') {
-                    return $model['account_money'];
-                }
-                return $model['fireproof_counter_hrn'];
+        [
+            'attribute' => 'account_money',
+            'label' => Yii::t('logs', 'Account Money'),
+            'value' => function ($model) {
+
+                return $model['account_money'];
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'fireproof_counter_hrn', 'params' => $params]),
         ],
-        ['attribute' => 'collection_counter',
-            'label' => Yii::t('logs', 'Collection (Securities), UAH or amount of replenishment (SM), UAH'),
-            'value'=> function ($model) {
-                if ($model['device'] == 'wm') {
-                    return $model['account_money'];
-                }
-                return $model['collection_counter'];
-            },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'collection_counter', 'params' => $params]),
-        ],
-        ['attribute' => 'notes_billiards_pcs',
+        [
+            'attribute' => 'notes_biliards_pcs',
             'label' => Yii::t('logs', 'Bonds in bills'),
-            'value'=> function ($model) {
-                return $model['notes_billiards_pcs'];
-            },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'notes_billiards_pcs', 'params' => $params]),
-        ],
-        ['attribute' => 'washing_mode',
-            'label' => Yii::t('logs', 'Washing mode (SM) or Gel issued (DH), ml.'),
-            'value'=> function ($model) {
-                if ($model['device'] == 'wm') {
-                    $machine = new \frontend\models\WmMashine();
-                    if (array_key_exists($model['washing_mode'], $machine->washing_mode)) {
-                        return Yii::t('logs', $machine->washing_mode[$model['washing_mode']]);
-                    }
-                }
-                return $model['washing_mode'];
+            'value'=> function ($model) use($searchModel) {
+
+                return $searchModel->getNotesBilliardsPcs($model);
             },
         ],
-        ['attribute' => 'wash_temperature',
-            'label' => Yii::t('logs', 'Washing temperature or gel residue, ml.'),
-            'value'=> function ($model) {
-                if ($model['device'] == 'wm') {
-                    $machine = new \frontend\models\WmMashine();
-                    if (array_key_exists($model['wash_temperature'], $machine->wash_temperature)) {
-                        return Yii::t('logs', $machine->wash_temperature[$model['wash_temperature']]);
-                    }
-                }
-                return $model['wash_temperature'];
+        [
+            'attribute' => 'fireproof_counter_hrn',
+            'label' => Yii::t('logs', 'Fireproof Counter'),
+            'value'=> function ($model) use($searchModel) {
+
+                return $searchModel->getFireproofCounterHrn($model);
             },
         ],
-        ['attribute' => 'spin_type',
-            'label' => Yii::t('logs', 'Spin type'),
-            'value'=> function ($model) {
-                if ($model['device'] == 'wm') {
-                    $machine = new \frontend\models\WmMashine();
-                    if (array_key_exists($model['spin_type'], $machine->spin_type)) {
-                        return Yii::t('logs', $machine->spin_type[$model['spin_type']]);
-                    }
-                }
-                return $model['spin_type'];
+        [
+            'attribute' => 'collection_counter',
+            'label' => Yii::t('logs', 'Collection Counter'),
+            'value'=> function ($model) use ($searchModel) {
+
+                return $searchModel->getCollectionCounter($model);
             },
         ],
-        ['attribute' => 'Additional washing options',
-            'label' => Yii::t('logs', 'Additional Washing Options'),
-            'value'=> function ($model) {
-    if ($model['prewash']) {
-        if ($model['device'] == 'wm') {
-            if ($model['prewash'] == 1) {$prewash = 'prewash';} else {$prewash = '';}
-            if ($model['rinsing'] == 1) {$rinsing = 'rinsing';} else {$rinsing = '';}
-            if($model['intensive_wash'] == 1) {$intensive_wash = 'intensive_wash';} else {$intensive_wash = '';}
-            return Yii::t('logs', $prewash) . ' 
-            ' . Yii::t('logs', $rinsing) . ' 
-            ' . Yii::t('logs', $intensive_wash);
-        }
-        return $model['prewash'];
-    }
-//    if ($model['rinsing']) {
-//        return $model['rinsing'];
-//    }
-//    if ($model['intensive_wash']) {
-//        return $model['intensive_wash'];
-//    }
-            },
-        ],
-//        ['class' => 'yii\grid\ActionColumn'],
+        [
+            'attribute' => 'last_collection_counter',
+            'label' => Yii::t('logs', 'Last Collection Counter'),
+            'value' => function($model) use ($searchModel)
+            {
+
+                return $searchModel->getLastCollectionCounter($model);
+            }
+        ]
     ],
 ]); ?>
 </div>

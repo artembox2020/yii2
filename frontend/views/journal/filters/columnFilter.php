@@ -276,5 +276,25 @@
             }
         }
     }
+    
+    // popup window for log aggregated status data
+
+    var aggregatedStatusCells = document.querySelectorAll(".jlog-index table.table .aggregated-status-info");
+    for (var i = 0; i< aggregatedStatusCells.length; ++i)
+    {
+        var cell = aggregatedStatusCells[i];
+        cell.onmouseover = function()
+        {
+            var popupBlock = this.querySelector('.popup-block .label');
+            popupBlock.style.display = 'block';
+        }
+
+        cell.onmouseout = function()
+        {
+            var popupBlock = this.querySelector('.popup-block .label');
+            popupBlock.style.display = 'none';
+        }
+    }
+    
 })();
 </script>

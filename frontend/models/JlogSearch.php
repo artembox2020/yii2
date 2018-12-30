@@ -221,21 +221,16 @@ class JlogSearch extends Jlog
      */
     public static function getAccessibleFiltersByColumns()
     {
-        
+
         return [
             'id' => self::getNumericFilters(),
-            'rate' => self::getNumericFilters(),
             'type_packet' => self::getCommonFilters(),
             'date' => self::getDateFilters(),
+            'cb_log.unix_time_offset' => self::getDateFilters(),
             'imei' => self::getCommonFilters(),
             'address' => self::getCommonFilters(),
             'number_device' => self::getCommonFilters(),
-            'device' => self::getCommonFilters(),
-            'signal' => self::getNumericFilters(),
-            'fireproof_counter_hrn' => self::getNumericFilters(),
-            'collection_counter' => self::getNumericFilters(),
-            'notes_billiards_pcs' => self::getNumericFilters(),
-            'wash_temperature' => self::getNumericFilters()
+            'number' => self::getNumericFilters(),
         ];
     }
 
@@ -779,6 +774,7 @@ class JlogSearch extends Jlog
             $mashineId = Yii::$app->request->get()['id'];
             $mashine = WmMashine::findOne($mashineId);
             $searchModel->mashineNumber = '_'.$mashine->type_mashine.'*'.$mashine->number_device;
+            $params['wm_mashine_number'] = $mashine->number_device;
         }
 
         if (isset($prms['JlogSearch']['from_date'])) {

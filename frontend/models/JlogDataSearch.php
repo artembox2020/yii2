@@ -33,21 +33,15 @@ class JlogDataSearch extends JlogSearch
         $entity = new Entity();
         $entityHelper = new EntityHelper();
         $query = $entity->getUnitsQueryPertainCompany(new Jlog());
-        $this->load($params);
 
         $this->applyBetweenDateCondition($query);
+
+        $this->load($params);
 
         // apply filters by date column 
 
         $query = $this->applyFilterByValueMethod($query, 'date', $params);
         $query = $this->applyFilterByConditionMethod($query, 'date', $params, self::FILTER_CATEGORY_DATE);
-
-        // apply filters by imei column
-
-        $query = $this->applyFilterByValueMethod($query, 'imei', $params);
-        $query = $this->applyFilterByConditionMethod($query, 'imei', $params, self::FILTER_CATEGORY_COMMON);
-
-        // apply filters by address column
 
         $query = $this->applyFilterByValueMethod($query, 'address', $params);
         $query = $this->applyFilterByConditionMethod($query, 'address', $params, self::FILTER_CATEGORY_COMMON);
@@ -74,7 +68,7 @@ class JlogDataSearch extends JlogSearch
      */
     public function searchData($params)
     {
-        
+
         $query  = $this->searchDataQuery($params);
 
         $query = $query->limit(self::TYPE_QUERY_RECORDS_LIMIT);
@@ -119,7 +113,7 @@ class JlogDataSearch extends JlogSearch
                             'display' => $mashineItem[7]
                         ];
                     } else {
-                         ++$factorRelevance;
+                        ++$factorRelevance;
                     }
                 }
             }

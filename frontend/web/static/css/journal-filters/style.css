@@ -59,3 +59,18 @@
     .grid-view-filter .order:hover {
         background-color: #f0f0f0;
     }
+    .jlog-index table.table tr td {
+        vertical-align: middle;
+        text-align: center;
+    }
+    .jlog-index table.table tr th {
+        text-align: center;
+    }
+    .jlog-index table.table .detail-view {
+        margin: -8px;
+    }
+    .jlog-index table.table .detail-view tr td,
+    .jlog-index table.table .detail-view tr th {
+        max-width: 240px;
+        white-space: normal;
+    }

@@ -38,7 +38,7 @@ class CbLogSearchFilter extends JlogSearch
         } elseif ($columnName == 'date') {
             $timestampStart = strtotime($params['inputValue'][$columnName]);
 
-            return $query->andWhere(['>=', 'date', $timestampStart])->andWhere(['<', 'date', $timestampStart + 3600*24]);
+            return $query->andWhere(['>=', 'wm_log.unix_time_offset', $timestampStart])->andWhere(['<', 'wm_log.unix_time_offset', $timestampStart + 3600*24]);
         }
 
         return $query->andWhere(['like', $columnName, $params['inputValue'][$columnName]]);
@@ -64,6 +64,13 @@ class CbLogSearchFilter extends JlogSearch
             $addressIds = $this->getIdsByColumnName($columnName, $params['val1'][$columnName], $params['filterCondition'][$columnName]);
 
             return $query->andWhere([$columnName.'_id' => $addressIds]);
+        }
+
+        if ($columnName == 'date') {
+            $columnName = 'unix_time_offset';
+            $params['val1'][$columnName] = $params['val1']['date'];
+            $params['val2'][$columnName] = $params['val2']['date'];
+            $params['filterCondition'][$columnName] = $params['filterCondition']['date'];
         }
 
         switch($filterCategory) {
@@ -103,15 +110,22 @@ class CbLogSearchFilter extends JlogSearch
                 
                 break;
             case self::FILTER_CELL_EMPTY:
-                 
                 $operator = 'is';
                 $value = new \yii\db\Expression('null');
-
+                list($columnName, $expression, $operator, $value)
+                = 
+                $this->setColumnExpressionOperatorValue(
+                    $columnName, $expression, $operator, $value
+                );
                 break;
             case self::FILTER_CELL_NOT_EMPTY:
                 $operator = 'is not';
                 $value = new \yii\db\Expression('null');
-
+                list($columnName, $expression, $operator, $value)
+                = 
+                $this->setColumnExpressionOperatorValue(
+                    $columnName, $expression, $operator, $value
+                );
                 break;    
             case self::FILTER_TEXT_CONTAIN:
 
@@ -143,10 +157,10 @@ class CbLogSearchFilter extends JlogSearch
         }
 
         $unitModels = ['address' => new AddressBalanceHolder(), 'imei' => new Imei()];
-        $unitsQuery =  $unitModels[$columnName]::find()->where($whereCondition)
+        $unitsQuery =  $unitModels[explode('_', $columnName)[0]]::find()->where($whereCondition)
                                                   ->andWhere(['company_id' => $entity->getCompanyId()]);
 
-        if ($columnName == 'address' && count(explode(",", $value)) > 1) {
+        if ($columnName == 'address_id' && count(explode(",", $value)) > 1) {
             $floor = trim(explode(",", $value)[1]);
             $unitsQuery = $unitsQuery->andWhere(['like', 'floor', $floor]);
         }
@@ -200,5 +214,29 @@ class CbLogSearchFilter extends JlogSearch
         }
 
         return $query;
+    }
+
+    /**
+     * Sets 'column', 'expression', 'operator', 'value' variables
+     * 
+     * @param string $columnName
+     * @param string $expression
+     * @param string $operator
+     * @param string $value
+     * @return array
+     */
+    private function setColumnExpressionOperatorValue($columnName, $expression, $operator, $value)
+    {
+        if (!in_array($columnName, ['address', 'imei'])) {
+
+            return [$columnName, $expression, $operator, $value];
+        }
+
+        $columnName = $columnName.'_id';
+        $expression = 'id';
+        $value = '0';
+        $operator = $operator === 'is' ? '=' : '!=';
+
+        return [$columnName, $expression, $operator, $value];
     }
 }
