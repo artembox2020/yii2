@@ -8,6 +8,7 @@ use yii\helpers\Html;
 /* @var $balanceHolders frontend\models\BalanceHolder */
 /* @var $company frontend\models\Company */
 /* @var $model frontend\models\WmMashine */
+/* @var $technical_work frontend\models\TechnicalWork */
 /* @var $imeis */
 
 
@@ -25,7 +26,8 @@ use yii\helpers\Html;
             'model' => $model,
             'company' => $company,
             'imeis' => $imeis,
-            'addresses' => $addresses
+            'addresses' => $addresses,
+            'technical_work' => $technical_work
         ]) ?>
 
     </div>

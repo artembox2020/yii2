@@ -13,6 +13,7 @@ use frontend\models\ImeiSearch;
 use frontend\models\ImeiDataSearch;
 use frontend\models\StorageHistory;
 use frontend\models\StorageHistorySearch;
+use frontend\models\TechnicalWork;
 use frontend\models\WmMashine;
 use frontend\models\OtherContactPerson;
 use frontend\models\WmMashineSearch;
@@ -567,8 +568,15 @@ class NetManagerController extends \yii\web\Controller
         $entity = new Entity();
         $model = $entity->getUnitPertainCompany($id, new WmMashine());
 
+        $technical_work = TechnicalWork::find(['machine_id' => $id])->all();
+
+        $provider = new ArrayDataProvider([
+            'allModels' => $technical_work,
+        ]);
+
         return $this->render('wm-machine/wm-machine-view', [
-            'model' => $model
+            'model' => $model,
+            'provider' => $provider
         ]);
     }
 
@@ -662,16 +670,28 @@ class NetManagerController extends \yii\web\Controller
                         }
                         $st->update(false);
                     }
+
+                    if (Yii::$app->request->post('TechnicalWork')['technical_work_data']) {
+
+                        $technical_work = new TechnicalWork();
+                        $technical_work->setWork($model,
+                            Yii::$app->request->post('TechnicalWork')['technical_work_data']);
+//                        Debugger::dd(Yii::$app->request->post('TechnicalWork')['technical_work_data']);
+                    }
+
                 }
               return $this->redirect('osnovnizasoby');
             }
         }
 
+        $technical_work = new TechnicalWork();
+
         return $this->render('wm-machine/wm-machine-update', [
             'model' => $model,
             'company' => $company,
             'imeis' => $imeis,
-            'addresses' => $address
+            'addresses' => $address,
+            'technical_work' => $technical_work
         ]);
     }
 
