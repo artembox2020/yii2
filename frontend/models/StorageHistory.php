@@ -74,6 +74,10 @@ class StorageHistory extends ActiveRecord
     /**
      * @return $this|\yii\db\ActiveQuery
      */
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public static function find()
     {
         return parent::find()
@@ -141,6 +145,10 @@ class StorageHistory extends ActiveRecord
         return $statuses[$status];
     }
 
+    /**
+     * @param $id
+     * @return WmMashine|null
+     */
     public function getInventoryNumber($id)
     {
         return WmMashine::findOne(['id' => $id]);

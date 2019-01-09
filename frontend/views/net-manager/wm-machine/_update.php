@@ -9,6 +9,7 @@ use bs\Flatpickr\FlatpickrWidget;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $model frontend\models\WmMashine */
 /* @var $addresses frontend\models\AddressBalanceHolder */
+/* @var $technical_work frontend\models\TechnicalWork */
 
 ?>
 
@@ -75,13 +76,19 @@ use bs\Flatpickr\FlatpickrWidget;
         ],
     ]) ?>
 
-    <?= $form->field($model, 'status')->label(Yii::t('frontend', 'Status'))->radioList(WmMashine::statuses()) ?>
+    <?= $form->field($model, 'status')
+        ->label(Yii::t('frontend', 'Status'))
+        ->radioList(WmMashine::statuses()) ?>
+
     <?= $form->field($model, 'imei_id')->dropDownList(
         \yii\helpers\ArrayHelper::map($imeis, 'id',
         function($model) {
             return $model->imei . ' #' . $model->address->name . ' #' . $model->address->floor;
         })
     ) ?>
+    <?= $form->field($technical_work, 'technical_work_data')
+        ->label(Yii::t('wash_machine/technical_work', 'technical_work'))
+        ->checkboxList($technical_work->getTechnicalWork()) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('frontend', 'Save'), ['class' => 'btn btn-success']) ?>
