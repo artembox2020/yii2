@@ -35,7 +35,7 @@ JS;
             ['class' => 'yii\grid\SerialColumn'],
             ['label' => Yii::t('frontend', 'Inventory number'),
                 'value' => function ($model) {
-                    return $model->getInventoryNumber($model->number_device)->inventory_number;
+                    return Html::a(Html::encode($model->getInventoryNumber($model->number_device)->inventory_number), Url::to(['/net-manager/wm-machine-update', 'id' => $model->number_device]));
                 },
                 'format' => 'raw',
             ],
