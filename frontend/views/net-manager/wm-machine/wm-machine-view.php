@@ -1,4 +1,6 @@
 <?php
+
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
@@ -10,6 +12,7 @@ use frontend\models\Imei;
 /* @var $balanceHolders */
 /* @var $addresses */
 /* @var $wm_machine */
+/* @var $technical_work frontend\models\TechnicalWork */
 ?>
 <?php $menu = [];
 //Debugger::d($model->date_build);
@@ -86,8 +89,48 @@ use frontend\models\Imei;
 <br><br>
 <div>
     <b><u>Технічні дані</u></b><br>
-    ....
-    <hr>
+    <?= GridView::widget([
+    'dataProvider'=> $provider,
+        'columns' => [
+            ['attribute' => 'inventory_number',
+                'label' => Yii::t('frontend', 'Inventory number'),
+            ],
+            ['attribute' => 'address.address',
+                'label' => Yii::t('frontend', 'Address Install'),
+            ],
+            [
+                'label' => Yii::t('wash_machine/technical_work', 'Technical work'),
+                'value' => function ($provider) {
+                    return $provider->getState();
+                },
+            ],
+            ['attribute' => 'Date',
+                'label' => Yii::t('frontend', 'Date'),
+                'value' => function($provider) {
+                    return date('d/m/Y', $provider->created_at);
+                },
+            ],
+//            [
+//                'class' => 'yii\grid\ActionColumn',
+//                'header' => Yii::t('common', 'Actions'),
+//                'template' => '{delete}',
+//                'buttons' => [
+//                    'delete' => function($url, $provider) {
+//                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['technical_work_delete', 'id' => $provider->id],
+//                            [
+//                                'class' => '',
+//                                'data' => [
+//                                    'confirm' => Yii::t('common', 'Delete Confirmation'),
+//                                    'method' => 'post',
+//                                ],
+//                            ]);
+//                    }
+//
+//                ],
+//            ]
+
+    ]
+    ]);?>
     <b><u>Фінансові дані</u></b><br>
     ....
 </div>

@@ -122,7 +122,7 @@ class JlogInitSearch extends JlogSearch
     {
         $dateParts = explode(' ', $model->date);
 
-        return date('m.d.Y', strtotime($dateParts[0])).' '.$dateParts[1];
+        return date('d.m.Y', strtotime($dateParts[0])).' '.$dateParts[1];
     }
 
     /**
