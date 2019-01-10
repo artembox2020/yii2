@@ -80,6 +80,10 @@ class CbLogSearch extends CbLog
             'pagination' => [
                 'pageSize' => self::PAGE_SIZE
             ],
+            'sort' => [
+                'defaultOrder' => ['unix_time_offset' => SORT_DESC],
+                'attributes' => ['unix_time_offset']
+            ]
         ]);
 
         $this->load($params);
