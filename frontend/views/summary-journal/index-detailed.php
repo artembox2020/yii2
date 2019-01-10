@@ -21,6 +21,12 @@ use yii\widgets\Pjax;
     Pjax::begin(['id' => 'monitoring-pjax-grid-container']);
 ?>
 <?= $summaryJournalController->renderForm($params, $months, $years, $typesOfDisplay) ?>
+
+<div class="filter-type">
+    <span class ="glyphicon glyphicon-minus"></span>
+    <span class="expand-incomes" data-selector=".summary-journal"></span>
+</div>
+
 <div class="summary-journal">
     <?= GridView::widget([
         'dataProvider' => $oneDataProvider,
@@ -84,7 +90,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderAverageSummaryByAddresses();
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'incomes all']
+                'headerOptions' => ['class' => 'incomes all incomes-by-day']
             ],/*
             [
                 'label' => Yii::t('frontend', 'Incomes By Mashine'),
@@ -104,7 +110,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderAverageCitizensSummaryByAddresses();
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'incomes all']
+                'headerOptions' => ['class' => 'incomes all incomes-by-citizens']
             ],
             [
                 'label' => Yii::t('frontend', 'Consolidated Summary'),
@@ -114,7 +120,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderConsolidatedSummaryByAddresses();
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'incomes all']
+                'headerOptions' => ['class' => 'incomes all consolidated-summary']
             ],
             [
                 'label' => Yii::t('frontend', 'Expectation'),
@@ -134,7 +140,7 @@ use yii\widgets\Pjax;
                     return $summaryJournalController->renderExpectationByBalanceHoders();
                 },
                 'contentOptions' => ['class' => 'common all'],
-                'headerOptions' => ['class' => 'expectation all']
+                'headerOptions' => ['class' => 'expectation all expectation-by-balance-holders']
             ],
             [
                 'label' => Yii::t('frontend', 'Idle Days'),

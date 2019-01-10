@@ -35,7 +35,7 @@
     data-cancelled = "<?= !empty($params['is_cancelled']) ? 1 : 0 ?>"
 />
 
-<?= Yii::t('frontend', 'Cancel Statistics') ?>
+<span class="cancel-income"><?= Yii::t('frontend', 'Cancel Statistics') ?></span>
 
 <?= Yii::$app->view->render('/summary-journal/data/pjax_form', [
     'params' => $params,

@@ -14,7 +14,7 @@ use frontend\services\globals\EntityHelper;
     <table class="table table-bordered table-income">
         <tbody>
         <?php
-            for ($j = 0; $j < count($data) - 2; ++$j):
+            for ($j = 0; $j < count($data) - 3; ++$j):
         ?>
             <tr>
             <?php
@@ -23,6 +23,7 @@ use frontend\services\globals\EntityHelper;
                 <td
                     data-timestamp-start = "<?= $data[$j][$i]['timestampStart'] ?>"
                     data-timestamp-end = "<?= $data[$j][$i]['timestampEnd'] ?>"
+                    data-income = "<?= $data[$j]['incomes'][$i]['income'] ?>"
                     data-idle-hours = "<?= $data[$j]['incomes'][$i]['idleHours'] ?>"
                     data-all-hours = "<?= $data[$j]['incomes'][$i]['allHours'] ?>"
                     data-is-deleted = "<?= $data[$j]['incomes'][$i]['deleted'] ?>"
@@ -33,7 +34,8 @@ use frontend\services\globals\EntityHelper;
                 >
                 <?php
                     echo (
-                        isset($data[$j]['incomes'][$i]['income']) ? $data[$j]['incomes'][$i]['income'] : ' &nbsp;'
+                        isset($data[$j]['incomes'][$i]['income']) ?
+                        '<span class="td-cell">'.$data[$j]['incomes'][$i]['income'].'</span>' : '<span class="td-cell"> &nbsp;</span>'
                     ).
                     EntityHelper::makePopupWindow(
                         [],
@@ -50,14 +52,24 @@ use frontend\services\globals\EntityHelper;
         <?php
             endfor;
         ?>
-            <tr>
+            <tr class="summary-total">
                 <?php for ($i = 1, $j = 0; $i <= $days; ++$i) { ?>
-                    <td><?= isset($data['summaryTotal'][$i]) ? $data['summaryTotal'][$i] : '&nbsp;&nbsp;' ?></td>
+                    <td
+                        class="summary-total-cell"
+                        data-idles-total="<?= $data['idlesTotal'][$i] ?>"
+                        data-count-total="<?= $data['countTotal'] ?>"
+                    >
+                        <?= isset($data['summaryTotal'][$i]) ? $data['summaryTotal'][$i] : '&nbsp;&nbsp;' ?>
+                    </td>
                 <?php } ?>
             </tr>
-            <tr>
+            <tr class="count-total">
                 <?php for ($i = 1, $j = 0; $i <= $days; ++$i) { ?>
-                    <td>
+                    <td
+                        class="summary-count-total"
+                        data-idles-total="<?= $data['idlesTotal'][$i] ?>"
+                        data-count-total="<?= $data['countTotal'] ?>"
+                    >
                     <?= !empty($data['countTotal']) ?
                         $searchModel->parseFloat($data['summaryTotal'][$i] / $data['countTotal'], 2) : 0 
                     ?>

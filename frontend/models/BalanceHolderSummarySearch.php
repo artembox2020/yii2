@@ -995,6 +995,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
     {
         $summaryTotal = [];
         $countTotal = 0;
+        $idlesTotal = [];
         $data = [];
         $k = 0;
         $timestampEnd = $this->getTimestampByYearMonthDay($year, $month, $days, false);
@@ -1006,6 +1007,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $countTotal += $this->getAllMashinesQueryByYearMonth($year, $month, $address)->count();
                 for ($i = 1, $j = 0; $i <= $days; ++$i) {
                     $summaryTotal[$i] += $this->parseFloat($incomes[$i]['income'], 2);
+                    $idlesTotal[$i] += $this->parseFloat($incomes[$i]['idleHours'], 2);
                     $class = $this->makeClassByIncome($incomes[$i]);
                     $data[$k][$i] = [
                         'timestampStart' => $this->getTimestampByYearMonthDay($year, $month, $i, true),
@@ -1018,6 +1020,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
             }
         }
         $data['summaryTotal'] = $summaryTotal;
+        $data['idlesTotal'] = $idlesTotal;
         $data['countTotal'] = $countTotal;
 
         return $data;
