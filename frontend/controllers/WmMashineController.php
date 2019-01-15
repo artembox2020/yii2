@@ -106,7 +106,7 @@ class WmMashineController extends Controller
     {
         $this->findModel($id)->softDelete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/net-manager/osnovnizasoby']);
     }
 
     /**

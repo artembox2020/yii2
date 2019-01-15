@@ -568,7 +568,7 @@ class NetManagerController extends \yii\web\Controller
         $entity = new Entity();
         $model = $entity->getUnitPertainCompany($id, new WmMashine());
 
-        $technical_work = TechnicalWork::find(['machine_id' => $id])->all();
+        $technical_work = TechnicalWork::find()->where(['machine_id' => $id])->all();
 
         $provider = new ArrayDataProvider([
             'allModels' => $technical_work,

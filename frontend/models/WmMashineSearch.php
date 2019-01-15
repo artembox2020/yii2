@@ -43,7 +43,7 @@ class WmMashineSearch extends WmMashine
      */
     public function search($params)
     {
-        $query = WmMashine::find();
+        $query = WmMashine::find()->where(['wm_mashine.is_deleted' => false]);;
 
         // add conditions that should always apply here
 
