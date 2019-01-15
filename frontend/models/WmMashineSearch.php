@@ -43,7 +43,7 @@ class WmMashineSearch extends WmMashine
      */
     public function search($params)
     {
-        $query = WmMashine::find()->where(['wm_mashine.is_deleted' => false]);
+        $query = WmMashine::find();
 
         // add conditions that should always apply here
 
@@ -91,9 +91,9 @@ class WmMashineSearch extends WmMashine
         $user = User::findOne(Yii::$app->user->id);
 
         $query = WmMashine::find()
+            ->andOnCondition(['wm_mashine.is_deleted' => false])
             ->andOnCondition(['company_id' => $user->company_id])
             ->andWhere(['status' => WmMashine::STATUS_ACTIVE])
-            ->andWhere(['wm_mashine.is_deleted' => false])
             ->orWhere(['status' => WmMashine::STATUS_OFF]);
 
         $dataProvider = new ActiveDataProvider([
