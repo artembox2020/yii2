@@ -38,7 +38,7 @@ class CbLogSearchFilter extends JlogSearch
         } elseif ($columnName == 'date') {
             $timestampStart = strtotime($params['inputValue'][$columnName]);
 
-            return $query->andWhere(['>=', 'wm_log.unix_time_offset', $timestampStart])->andWhere(['<', 'wm_log.unix_time_offset', $timestampStart + 3600*24]);
+            return $query->andWhere(['>=', 'unix_time_offset', $timestampStart])->andWhere(['<', 'unix_time_offset', $timestampStart + 3600*24]);
         }
 
         return $query->andWhere(['like', $columnName, $params['inputValue'][$columnName]]);

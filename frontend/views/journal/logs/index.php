@@ -40,16 +40,19 @@ use \frontend\models\AddressBalanceHolder;
         [
             'attribute' => 'device',
             'label' => Yii::t('logs', 'Device'),
-            'value'=> function ($model) {
+            'value'=> function ($model) use ($searchModel) {
 
-                return Yii::t('WM', $model['device']) .' ' . $model['number'];
+                return $searchModel->getDeviceView($model);
             },
             'filter' => $this->render('/journal/filters/main', ['name'=> 'number', 'params' => $params]),
         ],
         [
             'attribute' => 'signal',
-            'label' => Yii::t('logs', 'Signal level'),
-            'value' => 'signal',
+            'label' => Yii::t('logs', 'Signal level/Rate'),
+            'value' => function ($model) use ($searchModel) {
+
+                return $searchModel->getLevelSignalView($model);
+            }
         ],
         [
             'attribute' => 'status',
@@ -57,30 +60,30 @@ use \frontend\models\AddressBalanceHolder;
             'label' => Yii::t('logs', 'Event'),
             'value'=> function ($model) use ($searchModel) {
 
-                return $searchModel->getAggregatedEventsInfo($model);
+                return $searchModel->getStatus($model);
             },
             'filter' => false,
             'contentOptions' => ['class' => 'aggregated-status-info']
         ],
         [
             'attribute' => 'price',
-            'label' => Yii::t('logs', 'Rate'),
-            'value' => function ($model) {
+            'label' => Yii::t('logs', 'Rate, uah'),
+            'value' => function ($model) use ($searchModel) {
 
-                return $model['price'];
+                return $searchModel->getPrice($model);
             },
         ],
         [
             'attribute' => 'account_money',
             'label' => Yii::t('logs', 'Account Money'),
-            'value' => function ($model) {
+            'value' => function ($model) use ($searchModel) {
 
-                return $model['account_money'];
+                return $searchModel->getAccountMoney($model);
             },
         ],
         [
             'attribute' => 'notes_biliards_pcs',
-            'label' => Yii::t('logs', 'Bonds in bills'),
+            'label' => Yii::t('logs', 'Bonds in bills/Washing Mode'),
             'value'=> function ($model) use($searchModel) {
 
                 return $searchModel->getNotesBilliardsPcs($model);
@@ -88,7 +91,7 @@ use \frontend\models\AddressBalanceHolder;
         ],
         [
             'attribute' => 'fireproof_counter_hrn',
-            'label' => Yii::t('logs', 'Fireproof Counter'),
+            'label' => Yii::t('logs', 'Fireproof Counter/Temperature'),
             'value'=> function ($model) use($searchModel) {
 
                 return $searchModel->getFireproofCounterHrn($model);
@@ -96,7 +99,7 @@ use \frontend\models\AddressBalanceHolder;
         ],
         [
             'attribute' => 'collection_counter',
-            'label' => Yii::t('logs', 'Collection Counter'),
+            'label' => Yii::t('logs', 'Collection Counter/Spin Type'),
             'value'=> function ($model) use ($searchModel) {
 
                 return $searchModel->getCollectionCounter($model);
@@ -104,7 +107,7 @@ use \frontend\models\AddressBalanceHolder;
         ],
         [
             'attribute' => 'last_collection_counter',
-            'label' => Yii::t('logs', 'Last Collection Counter'),
+            'label' => Yii::t('logs', 'Last Collection Counter/Additional Options'),
             'value' => function($model) use ($searchModel)
             {
 

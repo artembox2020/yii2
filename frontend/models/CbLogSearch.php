@@ -55,25 +55,61 @@ class CbLogSearch extends CbLog
         $entity = new Entity();
         $searchFilter = new CbLogSearchFilter();
 
-        $query = (new \yii\db\Query())
-            ->select('*')
+        $wmLogQuery = (new \yii\db\Query())
+            ->select([
+                'unix_time_offset', 
+                'address_id', 
+                'imei', 
+                'device',
+                'number',
+                'signal',
+                'status',
+                'price',
+                'account_money',
+                'washing_mode',
+                'wash_temperature',
+                'spin_type',
+                'prewash',
+                'rinsing',
+                'intensive_wash'
+            ])
             ->from('wm_log')
             ->where(['company_id' => $entity->getCompanyId()]);
 
-        $query = $this->applyBetweenDateCondition($query);
-        $query = $query->andFilterWhere(['number' => $params['wm_mashine_number']]);
+        $wmLogQuery = $this->applyCommonFilters($wmLogQuery, $params);
 
-        $query = $searchFilter->applyFilterByValueMethod($query, 'address', $params);
-        $query = $searchFilter->applyFilterByConditionMethod($query, 'address', $params, CbLogSearchFilter::FILTER_CATEGORY_COMMON);
+        $wmLogQuery = $searchFilter->applyFilterByConditionMethod(
+            $wmLogQuery, 'number', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC
+        );
 
-        $query = $searchFilter->applyFilterByValueMethod($query, 'date', $params);
-        $query = $searchFilter->applyFilterByConditionMethod($query, 'date', $params, CbLogSearchFilter::FILTER_CATEGORY_DATE);
+        $cbLogQuery = (new \yii\db\Query())
+            ->select([
+                'unix_time_offset',
+                'address_id',
+                'imei',
+                'device',
+                'number',
+                'signal',
+                'status',
+                'rate AS price',
+                'account_money',
+                'notes_billiards_pcs AS washing_mode',
+                'fireproof_counter_hrn AS wash_temperature',
+                'collection_counter AS spin_type',
+                'last_collection_counter AS prewash', 
+                'rinsing',
+                'intensive_wash'
+            ])
+            ->from('cb_log')
+            ->where(['company_id' => $entity->getCompanyId()]);
 
-        $query = $searchFilter->applyFilterByValueMethod($query, 'imei', $params);
-        $query = $searchFilter->applyFilterByConditionMethod($query, 'imei', $params, CbLogSearchFilter::FILTER_CATEGORY_COMMON);
+        $cbLogQuery = $this->applyCommonFilters($cbLogQuery, $params);
+        $cbLogQuery = $searchFilter->applyFilterByValueMethod($cbLogQuery, 'number', $params);
 
-        $query = $searchFilter->applyFilterByValueMethod($query, 'number', $params);
-        $query = $searchFilter->applyFilterByConditionMethod($query, 'number', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC);
+        $cbLogQuery->union($wmLogQuery);
+
+        $query = new \yii\db\Query();
+        $query->select('*')->from(['u' => $cbLogQuery])->orderBy(['unix_time_offset' => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -88,11 +124,39 @@ class CbLogSearch extends CbLog
 
         $this->load($params);
 
+        return $dataProvider;
+    }
+
+    /**
+     * Apply filters common for both `wm_log` and `cb_log` tables
+     *
+     * @param Query $query
+     * @param array $params
+     *
+     * @return Query
+     */
+    public function applyCommonFilters($query, $params)
+    {
+        $searchFilter = new CbLogSearchFilter();
+
+        $query = $this->applyBetweenDateCondition($query);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'address', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'address', $params, CbLogSearchFilter::FILTER_CATEGORY_COMMON);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'date', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'date', $params, CbLogSearchFilter::FILTER_CATEGORY_DATE);
+
+        $query = $searchFilter->applyFilterByValueMethod($query, 'imei', $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, 'imei', $params, CbLogSearchFilter::FILTER_CATEGORY_COMMON);
+
         $query = $searchFilter->applyFilterByValueMethod($query, 'imei', ['inputValue' => $params]);
 
         $query = $searchFilter->applyFilterByValueMethod($query, 'address', ['inputValue' => $params]);
 
-        return $dataProvider;
+        $query = $query->andFilterWhere(['number' => $params['wm_mashine_number']]);
+
+        return $query;
     }
 
     /**
@@ -160,18 +224,99 @@ class CbLogSearch extends CbLog
     }
 
     /**
-     * Gets basic query joininig 'cb_log' and 'wm_log' tables
+     * Gets 'device' basing on model data 
      * 
      * @param array $model
-     * @return ActiveDbQuery
-     */
-    private function getBaseCbLogQuery($model)
+     * @return string
+     */ 
+    public function getDeviceView($model)
     {
+        if (strtoupper($model['device']) == 'WM') {
 
-        return CbLog::find()->andWhere([
-            'unix_time_offset' => $model['unix_time_offset'],
-            'imei' => $model['imei']
-        ]);
+            return Yii::t('logs', strtoupper($model['device'])).' '.$model['number'];
+        }
+
+        return Yii::t('logs', strtoupper($model['device']));
+    }
+    
+    /**
+     * Gets 'signal' or 'price' basing on model data 
+     * 
+     * @param array $model
+     * @return integer
+     */ 
+    public function getLevelSignalView($model)
+    {
+        if (strtoupper($model['device']) == 'WM') {
+
+            return $model['signal'];
+        }
+
+        return $model['price'];
+    }
+
+    /**
+     * Gets 'status' basing on model data 
+     * 
+     * @param array $model
+     * @return integer
+     */ 
+    public function getStatus($model)
+    {
+        if (strtoupper($model['device']) == 'WM') {
+
+            return $this->getWmStatus($model);
+        }
+
+        return $this->getCpStatus($model);
+    }
+
+    /**
+     * Gets 'price' basing on model data 
+     * 
+     * @param array $model
+     * @return integer|null
+     */ 
+    public function getPrice($model)
+    {
+        if (strtoupper($model['device']) == 'WM') {
+
+            return $model['price'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets 'account_money' basing on model data 
+     * 
+     * @param array $model
+     * @return integer|null
+     */ 
+    public function getAccountMoney($model)
+    {
+        if (strtoupper($model['device']) == 'WM') {
+
+            return $model['account_money'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets 'notes_billiards_pcs' or 'washing_mode' basing on model data 
+     * 
+     * @param array $model
+     * @return integer
+     */    
+    public function getNotesBilliardsPcs($model)
+    {
+        if (strtoupper($model['device']) == 'WM') {
+
+            return $this->getWashingMode($model);
+        }
+
+        return $model['washing_mode'];
     }
 
     /**
@@ -182,34 +327,12 @@ class CbLogSearch extends CbLog
      */
     public function getFireproofCounterHrn($model)
     {
-        $query = $this->getBaseCbLogQuery($model);
-        $item = $query->limit(1)->one();
+        if (strtoupper($model['device']) == 'WM') {
 
-        if (!$item) {
-
-            return false;
+            return $this->getWashTemperature($model);
         }
 
-        return $item->fireproof_counter_hrn;
-    }
-
-    /**
-     * Gets 'notes_billiard_pcs' basing on model data 
-     * 
-     * @param array $model
-     * @return integer|bool
-     */
-    public function getNotesBilliardsPcs($model)
-    {
-        $query = $this->getBaseCbLogQuery($model);
-        $item = $query->limit(1)->one();
-        
-         if (!$item) {
-
-            return false;
-        }
-
-        return $item->notes_billiards_pcs;
+        return round($model['wash_temperature'], 1);
     }
 
     /**
@@ -220,34 +343,28 @@ class CbLogSearch extends CbLog
      */
     public function getCollectionCounter($model)
     {
-        $query = $this->getBaseCbLogQuery($model);
-        $item = $query->limit(1)->one();
-        
-         if (!$item) {
+        if (strtoupper($model['device']) == 'WM') {
 
-            return false;
+            return $this->getSpinType($model);
         }
 
-        return $item->collection_counter;
+        return round($model['spin_type'], 1);
     }
 
     /**
      * Gets 'last_collection_counter' basing on model data 
      * 
      * @param array $model
-     * @return double|bool
+     * @return double|string|bool
      */
     public function getLastCollectionCounter($model)
     {
-        $query = $this->getBaseCbLogQuery($model);
-        $item = $query->limit(1)->one();
+        if (strtoupper($model['device']) == 'WM') {
 
-         if (!$item) {
-
-            return false;
+            return $this->getAdditionalWashOptions($model);
         }
 
-        return $item->last_collection_counter;
+        return round($model['prewash'], 1);
     }
 
     /**
@@ -276,17 +393,10 @@ class CbLogSearch extends CbLog
     public function getCpStatus($model)
     {
         $cbLog = new \frontend\models\CbLog();
-        $query = $this->getBaseCbLogQuery($model);
-        $item = $query->limit(1)->one();
 
-        if (!$item) {
+        if (array_key_exists($model['status'], $cbLog->current_state)) {
 
-            return false;
-        }
-
-        if (array_key_exists($item->status, $cbLog->current_state)) {
-
-            return Yii::t('logs', $cbLog->current_state[$item->status]);
+            return Yii::t('logs', $cbLog->current_state[$model['status']]);
         }
 
         return false;
@@ -374,44 +484,6 @@ class CbLogSearch extends CbLog
         return Yii::t('logs', $prewash) . ' 
             ' . Yii::t('logs', $rinsing) . ' 
             ' . Yii::t('logs', $intensive_wash);
-    }
-
-    /**
-     * Gets aggregated wm mashine info data basing on model 
-     * 
-     * @param array $model
-     * @return string|bool
-     */
-    public function getAggregatedEventsInfo($model)
-    {
-        $wmStatus = $this->getWmStatus($model);
-        $washingMode = $this->getWashingMode($model);
-        $washTemperature = $this->getWashTemperature($model);
-        $spinType = $this->getSpinType($model);
-        $additionalWashOptions = $this->getAdditionalWashOptions($model);
-        $cpStatus = $this->getCpStatus($model);
-
-        $content = Yii::$app->view->render(
-            '/journal/logs/aggregated-status-info',
-            [
-                'model' => $model,
-                'wmStatus' => $wmStatus,
-                'washingMode' => $washingMode,
-                'washTemperature' => $washTemperature,
-                'spinType' => $spinType,
-                'additionalWashOptions' => $additionalWashOptions,
-                'cpStatus' => $cpStatus
-            ]
-        );
-
-        return
-            $wmStatus.
-            \frontend\services\globals\EntityHelper::makePopupWindow(
-                [],
-                $content,
-                'top: -300px; left: -6px; display: none; color: black; position: absolute;',
-                'height: auto; position:relative;'
-            );
     }
 
     /**
