@@ -25,7 +25,7 @@ class LcController extends Controller
     {
         $result = $this->iParse($p);
         $centralBoardDto = new CentralBoardDto($result);
-
+        
         if (Imei::findOne(['imei' => $centralBoardDto->imei])) {
             $imei = $this->getImei($centralBoardDto->imei);
             if (Imei::getStatus($imei) == self::ONE_CONST) {
@@ -50,8 +50,6 @@ class LcController extends Controller
                 $cbl->is_deleted = false;
                 $cbl->save();
                 echo 'cbl data save!';exit;
-//                Debugger::d($centralBoardDto);
-//                Debugger::dd($cbl);
             } else {
                 echo 'Imei not Active';exit;
             }
