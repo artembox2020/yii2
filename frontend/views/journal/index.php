@@ -19,77 +19,38 @@ $this->title = Yii::t('frontend', 'Events Journal');
 ?>
 
 <div class="jlog-index">
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php
-        Pjax::begin(['id' => 'journal-pjax-container']);
-        echo Html::beginForm('', 'get', ['class' => 'journal-filter-form form-inline', 'data-pjax' => 1]);
-    ?>
-    <div class="form-group">
-        <label for="type_packet"><?= Yii::t('frontend', 'Type Packet') ?></label>
-        <?= Html::dropDownList(
-                'type_packet', 
-                $params['type_packet'] ? $params['type_packet'] : Jlog::TYPE_PACKET_DATA, $typePackets,
+
+        // renders filter block
+
+        if ($params['type_packet'] == Jlog::TYPE_PACKET_ENCASHMENT) {
+            $this->title = Yii::t('logs', 'Journal Encashment');
+
+            echo Yii::$app->view->render(
+                '/journal/filter-encashment-block',
                 [
-                    'class' => 'form-control'
+                    'params' => $params,
+                    'imeis' => $imeis,
+                    'addresses' => $addresses,
+                    'submitFormOnInputEvents' => $submitFormOnInputEvents,
+                    'typePackets' => $typePackets,
+                    'searchModel' => $searchModel
                 ]
             );
-        ?>
-    </div>
-    <div class="form-group">
+        } else {
 
-        <?= AutoComplete::widget([
-                'name' => 'imei',
-                'options' => [
-                    'placeholder' => Yii::t('frontend', 'Begin to type imei'),
-                    'class' => 'form-control',
-                    'size' => 30
-                ],
-                'value' => $params['imei'],
-                'clientOptions' => [
-                    'source' => $imeis,
-                    'autoFill' => false,
-                ],
-            ]);
-        ?>
-        
-    </div>
-    
-    <div class="form-group">
-
-        <?= AutoComplete::widget([
-                'name' => 'address',
-                'options' => [
-                    'placeholder' => Yii::t('frontend', 'Begin to type address'),
-                    'class' => 'form-control',
-                    'size' => 30
-                ],
-                'value' => $params['address'],
-                'clientOptions' => [
-                    'source' => $addresses,
-                    'autoFill' => false,
-                ],
-            ]);
-        ?>
-
-    </div>
-    
-    <div class="form-group">
-        <?= Html::hiddenInput('selectionName', $params['selectionName']); ?>
-    </div>   
-    
-    <div class="form-group">
-        <?= Html::hiddenInput('selectionCaretPos', $params['selectionCaretPos']); ?>
-    </div> 
-    
-    <div class="form-group hidden">
-        <?= Html::submitButton(Yii::t('frontend', 'Submit'), ['class' => 'btn btn-primary', 'id' => 'filter-submit-btn']); ?>
-    </div>
-
-    <?php
-        echo Html::endForm();
-        echo $submitFormOnInputEvents;
+            echo Yii::$app->view->render(
+                '/journal/filter-block',
+                [
+                    'params' => $params,
+                    'imeis' => $imeis,
+                    'addresses' => $addresses,
+                    'submitFormOnInputEvents' => $submitFormOnInputEvents,
+                    'typePackets' => $typePackets
+                ]
+            );
+        }
     ?>
-    <br>
 
     <?php
         // renders appropriate view by data packet

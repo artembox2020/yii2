@@ -138,7 +138,7 @@ AppAsset::register($this);
             ],
             [
                 'label' => Yii::t('nav-items', 'Encashment Journal'),
-                'url' => ['/encashment-journal/encashment'],
+                'url' => ['/encashment-journal/index'],
 //            'visible' => Yii::$app->user->can('zurnal'),
             ],
             [

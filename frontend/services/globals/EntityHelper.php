@@ -245,12 +245,18 @@ class EntityHelper implements EntityHelperInterface
                                       
                                       if (signAllHidden) {
                                           fillHiddenSelectionFields(form, thisObj);
-                                          submitForm('{$formSelector}');
+
+                                          if (typeof submitForm === 'function') {
+                                              submitForm('{$formSelector}');
+                                          }
                                           clearInterval(hKeyUpInterval);
                                       }
                                   }, {$timeDelay});
                               } else {
-                                  submitForm('{$formSelector}');
+
+                                  if (typeof submitForm === 'function') {
+                                      submitForm('{$formSelector}');
+                                  }
                               }
                           };
                      }

@@ -2,72 +2,124 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use frontend\models\ImeiDataSearch;
-use \yii\jui\AutoComplete;
-use yii\widgets\Pjax;
-use yii\widgets\ActiveForm;
-use frontend\services\globals\EntityHelper;
+use \frontend\models\AddressBalanceHolder;
 
 /* @var $this yii\web\View */
+/* @var $searchModel frontend\models\CbLogSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-/* @var $searchModel frontend\models\ImeiDataSearch */
-
 ?>
-<h1><?= Yii::t('frontend', 'Encashment Journal') ?></h1>
 
-<div class="monitoring">
-        <?php Pjax::begin(); ?>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            [
-                'label' => Yii::t('frontend', 'Date'),
-//                'format' => ['date', 'php:H:i:s d.m.Y'],
-                'format' => ['date', 'php:d.m.Y'],
-                'value' => 'created_at',
-            ],
-            [
-                'label' => Yii::t('frontend', 'Time'),
-                'format' => ['date', 'php:H:i'],
-                'value' => 'created_at',
-            ],
-            [
-                'label' => Yii::t('frontend', 'Address'),
-                'format' => 'raw',
-                'value' => 'address.address',
-            ],
-            [
-                'label' => Yii::t('frontend', 'Encashment, hrn.'),
-                'format' => 'raw',
-                'value' => function($model) use ($searchModel) {
-                    return (
-                    $searchModel->getScalarSumLastEncashmentByImeiId($model->id)
-//                        EntityHelper::makePopupWindow(
-//                            [],
-//                            $searchModel->attributeLabels()['date_sum_last_encashment'],
-//                            'top: -5px',
-//                            'height: 5px')
-                    );
-                }
-            ],
-            [
-                'label' => Yii::t('frontend', 'Number of days from previous encashment'),
-                'format' => 'raw',
-                'value' => function($model) use ($searchModel) {
-                    return (
-                    $searchModel->getScalarSumLastEncashmentByImeiId($model->id)
-//                        EntityHelper::makePopupWindow(
-//                            [],
-//                            $searchModel->attributeLabels()['date_sum_last_encashment'],
-//                            'top: -5px',
-//                            'height: 5px')
-                    );
-                }
-            ],
-//
-            ],
-        ]); ?>
-    <?php Pjax::end(); ?>
-    <br><br>
+<div class="address-balance-holder-index logs-index encashment-index">
+<?= GridView::widget([
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'columns' => [
+        [
+            'attribute' => 'banknote_nominals',
+            'label' => '',
+            'format' => 'raw',
+            'value' => function($model) use ($searchModel, $dataProvider) {
+
+                return $searchModel->getBanknoteFaceValuesView($model, $dataProvider);
+            }
+        ],
+        [
+            'attribute' => 'unix_time_offset',
+            'format' => 'raw',
+            'label' => Yii::t('frontend', 'Hour that date'),
+            'value' => function($model)
+            {
+
+                return date('d.m.Y', $model['unix_time_offset']);
+            },
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
+        ],
+        [
+            'attribute' => 'unix_time_offset_time',
+            'label' => Yii::t('frontend', 'Time'),
+            'value' => function($model)
+            {
+
+                return date('H:i', $model['unix_time_offset']);
+            },
+        ],
+        [
+            'attribute' => 'address',
+            'label' => Yii::t('frontend', 'Address'),
+            'value'=> function ($model) use($searchModel) {
+
+                return $searchModel->getAddressView($model);
+            },
+            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+        ],
+        [
+            'attribute' => 'encashment',
+            'label' => Yii::t('logs', 'Encashment'),
+            'format' => 'raw',
+            'value'=> function ($model) use ($searchModel) {
+
+                return $searchModel->getCollectionCounterView($model);
+            },
+        ],
+        [
+            'attribute' => 'last_encashment_days_before',
+            'label' => Yii::t('logs', 'Last Encashment Days Before'),
+            'value'=> function ($model) use ($searchModel) {
+
+                return $searchModel->getLastCollectionDaysBefore($model);
+            },
+        ],
+        [
+            'attribute' => 'fireproof_counter_hrn',
+            'label' => Yii::t('logs', 'Fireproof Counter'),
+            'value'=> function ($model) use($searchModel) {
+
+                return $searchModel->getFireproofCounterHrn($model);
+            },
+        ],
+        [
+            'attribute' => 'last_fireproof_counter_hrn',
+            'label' => Yii::t('logs', 'Last Fireproof Counter'),
+            'value'=> function ($model) use($searchModel) {
+
+                return $searchModel->getLastFireproofCounterHrn($model);
+            },
+        ],
+        [
+            'attribute' => 'last_collection_counter',
+            'format' => 'raw',
+            'label' => Yii::t('logs', 'Last Collection Counter'),
+            'value' => function($model) use ($searchModel)
+            {
+
+                return $searchModel->getLastCollectionCounter($model);
+            }
+        ],
+        [
+            'attribute' => 'recount_amount',
+            'format' => 'raw',
+            'label' => Yii::t('logs', 'Recount Amount'),
+            'value' => function($model) use ($searchModel)
+            {
+
+                return $searchModel->getRecountAmount($model);
+            }
+        ],
+        [
+            'attribute' => 'difference',
+            'format' => 'raw',
+            'label' => Yii::t('logs', 'Difference'),
+            'value' => function($model) use ($searchModel)
+            {
+
+                return $searchModel->getDifferenceView($model);
+            }
+        ]
+    ],
+]); ?>
 </div>
+
+<?= $recountAmountScript ?>
+<?= $script ?>
+<?= $submitFormOnInputEvents; ?>
+<?= $removeRedundantGrids; ?>
