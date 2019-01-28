@@ -46,9 +46,11 @@ class JournalController extends Controller
 
     /**
      * Lists all Jlog models.
+     * 
+     * @param bool $isEncashment
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($isEncashment = false)
     {
         $searchModel = new JlogSearch();
         $entityHelper = new EntityHelper();
@@ -59,7 +61,7 @@ class JournalController extends Controller
                 'val1' => ['date', 'type_packet', 'address', 'imei', 'id'],
                 'val2' => ['date', 'type_packet', 'address', 'imei', 'id'],
                 'inputValue' => ['date', 'type_packet', 'address', 'imei', 'id'],
-                'sort',
+                'sort', 'isEncashment',
                 'JlogSearch' => [
                     'inputValue' => ['date'],
                     'val2' => ['date']
@@ -79,9 +81,14 @@ class JournalController extends Controller
             'change' => '.journal-filter-form select, .journal-filter-form input[name=address], .journal-filter-form input[name=imei]'
         ];
 
+        if (!empty($isEncashment)) {
+            $params['type_packet'] = Jlog::TYPE_PACKET_ENCASHMENT;
+        }
+
         $submitFormOnInputEvents = $entityHelper->submitFormOnInputEvents('.journal-filter-form', $eventSelectors);
         $removeRedundantGrids = $entityHelper->removeRedundantGrids('.journal-grid-view');
         $columnFilterScript = $this->getColumnFilterScript($params);
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -365,6 +372,17 @@ class JournalController extends Controller
     }
 
     /**
+     * Runs encashment action
+     *
+     * @param array $params
+     * @return string
+     */
+    public function actionEncashment($params)
+    {
+        return Yii::$app->runAction('encashment-journal/index', ['params' => array_merge($params, ['isEncashment' => 1])]);
+    }
+
+    /**
      * Gets the main journal js 
      * 
      * @param array $params
@@ -410,6 +428,9 @@ class JournalController extends Controller
             case Jlog::TYPE_PACKET_DATA_CP:
 
                 return $this->actionDataCp($params);
+            case Jlog::TYPE_PACKET_ENCASHMENT:
+
+                return $this->actionEncashment($params);    
         }
     }
 }

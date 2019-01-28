@@ -160,7 +160,7 @@ class CbLogSearchFilter extends JlogSearch
         $unitsQuery =  $unitModels[explode('_', $columnName)[0]]::find()->where($whereCondition)
                                                   ->andWhere(['company_id' => $entity->getCompanyId()]);
 
-        if ($columnName == 'address_id' && count(explode(",", $value)) > 1) {
+        if ($columnName == 'address' && count(explode(",", $value)) > 1) {
             $floor = trim(explode(",", $value)[1]);
             $unitsQuery = $unitsQuery->andWhere(['like', 'floor', $floor]);
         }

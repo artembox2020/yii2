@@ -7,6 +7,7 @@ use frontend\services\globals\Entity;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 
 /**
  * Class CbLogSearch
@@ -15,6 +16,8 @@ use yii\data\ActiveDataProvider;
 class CbLogSearch extends CbLog
 {
     const PAGE_SIZE = 10;
+    const TYPE_ENCASHMENT_STATUS = 8;
+    const TYPE_LAST_ENCASHMENT_DATE = '01.01.2019';
 
     public $address;
 
@@ -348,7 +351,26 @@ class CbLogSearch extends CbLog
             return $this->getSpinType($model);
         }
 
+        if ($model['status'] == self::TYPE_ENCASHMENT_STATUS) {
+
+            return round($this->getNominalsTotal($model), 1);
+        }
+
         return round($model['spin_type'], 1);
+    }
+
+    /**
+     * Gets 'collection_counter' view basing on model data 
+     * 
+     * @param array $model
+     * @return string
+     */
+    public function getCollectionCounterView($model)
+    {
+        $unixTimestamp = $model['unix_time_offset'];
+        $date = date('d.m.Y', $unixTimestamp);
+
+        return "<span class='encashment-sum' data-timestamp='{$date}'>".$this->getCollectionCounter($model)."</span>";
     }
 
     /**
@@ -518,28 +540,9 @@ class CbLogSearch extends CbLog
      */
     public function applyBetweenDateCondition($query)
     {
-        $timeFrom = 0;
-        $timeTo = self::INFINITY;
-        $startDay = ' 00:00:00';
-        $endDay = ' 23:59:59';
+        $jlogSearch = new JlogSearch();
 
-        if (!empty($this->from_date)) {
-
-            if (!strrpos($this->from_date, $startDay)) {
-                $this->from_date .= $startDay;
-            }
-
-            $timeFrom = strtotime($this->from_date) - Jlog::TYPE_TIME_OFFSET;
-        }
-
-        if (!empty($this->to_date)) {
-
-            if (!strrpos($this->to_date, $endDay)) {
-                $this->to_date .= $endDay;
-            }
-
-            $timeTo = strtotime($this->to_date) - Jlog::TYPE_TIME_OFFSET;
-        }
+        list($timeFrom, $timeTo) = $jlogSearch->makeTimeIntervals($this->from_date, $this->to_date);
 
         $betweenCondition = new \yii\db\conditions\BetweenCondition(
             'unix_time_offset', 
@@ -553,4 +556,379 @@ class CbLogSearch extends CbLog
         return $query;
     }
 
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchEncashment($params)
+    {
+        $entity = new Entity();
+        $searchFilter = new CbLogSearchFilter();
+
+        $cbLogQuery = (new \yii\db\Query())
+            ->select([
+                'id',
+                'unix_time_offset',
+                'address_id',
+                'imei_id',
+                'imei',
+                'device',
+                'number',
+                'signal',
+                'status',
+                'rate AS price',
+                'account_money',
+                'notes_billiards_pcs AS washing_mode',
+                'fireproof_counter_hrn AS wash_temperature',
+                'collection_counter AS spin_type',
+                'last_collection_counter AS prewash', 
+                'rinsing',
+                'intensive_wash',
+                'recount_amount',
+                'banknote_face_values'
+            ])
+            ->from('cb_log')
+            ->where(['company_id' => $entity->getCompanyId()])
+            ->andWhere(['status' => self::TYPE_ENCASHMENT_STATUS]);
+
+        $cbLogQuery = $this->applyCommonFilters($cbLogQuery, $params);
+        $cbLogQuery = $searchFilter->applyFilterByValueMethod($cbLogQuery, 'number', $params);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $cbLogQuery,
+            'pagination' => [
+                'pageSize' => self::PAGE_SIZE
+            ],
+            'sort' => [
+                'defaultOrder' => ['unix_time_offset' => SORT_DESC],
+                'attributes' => ['unix_time_offset']
+            ]
+        ]);
+
+        $this->load($params);
+
+        return $dataProvider;
+    }
+
+    /**
+     * Gets last item basing on model data 
+     * 
+     * @param array $model
+     * @return CbLog
+     */
+    public function getBaseItem($model) {
+        $item = CbLog::find()->where(['status' => self::TYPE_ENCASHMENT_STATUS, 'imei_id' => $model['imei_id']])
+                     ->andWhere(['<', 'unix_time_offset', $model['unix_time_offset']])
+                     ->orderBy(['unix_time_offset' => SORT_DESC])
+                     ->limit(1)
+                     ->one();
+
+        return $item;
+    }
+
+    /**
+     * Gets the number of days since last collection 
+     * 
+     * @param array $model
+     * @return integer
+     */
+    public function getLastCollectionDaysBefore($model)
+    {
+        $item = $this->getBaseItem($model);
+ 
+        $unix_time_offset = strtotime(self::TYPE_LAST_ENCASHMENT_DATE);    
+
+        if (!empty($item)) {
+
+            $unix_time_offset =  (int)$item->unix_time_offset;
+        }
+
+        return round((int)($model['unix_time_offset'] - $unix_time_offset)/(3600*24), 1);
+    }
+
+    /**
+     * Gets last `fireproof_counter_hrn` basing on model data 
+     * 
+     * @param array $model
+     * @return integer
+     */
+    public function getLastFireproofCounterHrn($model)
+    {
+        $item = $this->getBaseItem($model);
+
+        if (!$item) {
+
+            return 0;
+        }
+
+        return $item->fireproof_counter_hrn;
+    }
+
+    /**
+     * Gets difference `fireproof_counter_hrn` - last `fireproof_counter_hrn` - `collection_counter` basing on model data 
+     * 
+     * @param array $model
+     * @return integer
+     */
+    public function getDifference($model)
+    {
+
+        return ($model['wash_temperature'] - $this->getLastFireproofCounterHrn($model) - $this->getCollectionCounter($model));
+    }
+
+    /**
+     * Gets difference view basing on model data 
+     * 
+     * @param array $model
+     * @return integer
+     */
+    public function getDifferenceView($model)
+    {
+        if (($difference = $this->getDifference($model)) < 0) {
+
+            return "<span class='difference'>".$difference."</span>";
+        }
+
+        return "<span>".$difference."</span>";
+    }
+
+    /**
+     * Gets recount amount basing on model data 
+     * 
+     * @param array $model
+     * @return integer
+     */
+    public function getRecountAmount($model)
+    {
+        $recountAmount = $model['recount_amount'];
+
+        if (empty($recountAmount)) {
+            $recountAmount = 0;
+        }
+
+        return "<input type='number' name='recount_amount' data-id='{$model['id']}' value='{$recountAmount}' />";
+    }
+
+    /**
+     * Parses `banknote_face_values` basing on model data 
+     * 
+     * @param array $model
+     * @return array
+     */
+    public function parseBanknoteFaceValues($model)
+    {
+        if (empty($model['banknote_face_values'])) {
+
+            return [];
+        }
+
+        $faceValuesString = $model['banknote_face_values'];
+        $faceValuesString = $this->normalizeBanknoteFaceValuesString($faceValuesString);
+
+        $parts = explode("+", $faceValuesString);
+
+        $faceValues = [];
+
+        foreach ($parts as $instance) {
+            $part = explode("-", $instance);
+
+            $faceValues[] = ['banknote' => $part[0], 'value' => isset($part[1]) ? $part[1] : 0];
+        }
+
+        $dataNominals = [];
+
+        if (!empty($faceValues)) {
+
+            foreach ($faceValues as $nominal) {
+                $dataNominals[] = [
+                    'nominal' => $nominal['banknote'],
+                    'value' => $nominal['value'],
+                    'sum' => (int)$nominal['banknote'] * (int)$nominal['value']
+                ];
+            }
+        } else {
+            $dataNominals = [];
+        }
+
+        return $dataNominals;
+    }
+
+    /**
+     * Gets sum by nominals basing on model data 
+     * 
+     * @param array $model
+     * @return integer
+     */
+    public function getNominalsTotal($model)
+    {
+        $dataNominals = $this->parseBanknoteFaceValues($model);
+        $total = 0;
+        
+        foreach ($dataNominals as $dataNominal) {
+            $total += (int)$dataNominal['sum'];
+        }
+
+        return $total;
+    }
+
+    /**
+     * Gets sum view by nominals basing on model data 
+     * 
+     * @param array $model
+     * @return string
+     */
+    public function getNominalsTotalView($model)
+    {
+        $dataNominalsTotal = [
+            [
+                'total' => $this->getNominalsTotal($model)
+            ]
+        ];
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $dataNominalsTotal,
+        ]);
+
+        return Yii::$app->view->render(
+            '/encashment-journal/banknote_face_values/total',
+            [
+                'dataProvider' => $dataProvider
+            ]
+        );
+    }
+
+    /**
+     * Gets the number of encashments basing on model data 
+     * 
+     * @param array $model
+     * @return integer
+     */
+    public function getNumberOfEncashments($model)
+    {
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        $startTimestamp = $bhSummarySearch->getDayBeginningTimestampByTimestamp($model['unix_time_offset']);
+        $endTimestamp = $startTimestamp + 3600*24;
+        $quantity = CbLog::find()->andWhere(['>=', 'unix_time_offset', $startTimestamp])
+                                 ->andWhere(['<', 'unix_time_offset', $endTimestamp])
+                                 ->andWhere(['status' => self::TYPE_ENCASHMENT_STATUS])
+                                 ->andWhere(['imei_id' => $model['imei_id']])
+                                 ->count();
+
+        return $quantity;
+    }
+
+    /**
+     * Gets address view extended basing on model data 
+     * 
+     * @param array $model
+     * @return string
+     */
+    public function getAddressViewExtended($model)
+    {
+        return Yii::$app->view->render(
+            '/encashment-journal/banknote_face_values/address_view',
+            [
+                'address' => $this->getAddressView($model),
+                'date' => date('d.m.Y', $model['unix_time_offset']),
+                'numberOfEncashments' => $this->getNumberOfEncashments($model)
+            ]
+        );
+    }
+
+    /**
+     * Gets address grid view basing on model data 
+     * 
+     * @param array $model
+     * @return string
+     */
+    public function getAddressGridView($model)
+    {
+        $searchModel = new CbLogSearch();
+
+        $query = (new \yii\db\Query())->select('*')->from('cb_log')->andWhere(['id' => $model['id']]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        
+        return Yii::$app->view->render(
+            '/encashment-journal/banknote_face_values/address',
+
+            [
+                'model' => $model,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider
+            ]
+        );
+        
+    }
+
+    /**
+     * Gets banknote face values basing on model data 
+     * 
+     * @param array $model
+     * @return string
+     */
+    public function getBanknoteFaceValuesView($model)
+    {
+        $searchModel = new CbLogSearch();
+
+        $query = (new \yii\db\Query())->select('*')->from('cb_log')->andWhere(['id' => $model['id']]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        return Yii::$app->view->render(
+            '/encashment-journal/banknote_face_values/index',
+
+            [
+                'model' => $model,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider
+            ]
+        );
+    }
+
+    /**
+     * Gets the nominals view basing on model data 
+     * 
+     * @param array $model
+     * @return string
+     */
+    public function getNominalsView($model)
+    {
+        $dataNominals = $this->parseBanknoteFaceValues($model);
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $dataNominals,
+        ]);
+
+        return Yii::$app->view->render(
+            '/encashment-journal/banknote_face_values/nominals',
+            [
+                'dataProvider' => $dataProvider
+            ]
+        );
+    }
+
+    /**
+     * Normalizes `banknote_face_value` basing on model data 
+     * 
+     * @param sring $banknoteFaceValues
+     * @return string
+     */
+    public function normalizeBanknoteFaceValuesString($banknoteFaceValues)
+    {
+        if (!empty($banknoteFaceValues)) {
+            $banknoteFaceValues = trim($banknoteFaceValues);
+        }
+
+        $banknoteFaceValues = str_replace([' ', '/'], ['+', '+'], $banknoteFaceValues);
+
+        return $banknoteFaceValues;
+    }
 }

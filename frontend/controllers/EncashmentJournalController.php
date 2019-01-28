@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\CbLog;
 use frontend\models\CbLogSearch;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\EntityHelper;
@@ -35,32 +36,124 @@ class EncashmentJournalController extends Controller
     }
 
     /**
+     * main action
+     * 
+     * @param array $params
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(array $params = [])
     {
-        $searchModel = new ImeiDataSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Yii::$app->request->post());
+        if (!empty($params['isEncashment'])) {
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->actionEncashment($params);
+        }
+
+        return Yii::$app->runAction('journal/index', ['isEncashment' => true]);
     }
 
     /**
+     * encashment journal action
+     * @param array $prms
      * @return string
      */
-    public function actionEncashment()
+    public function actionEncashment($prms = [])
     {
         $searchModel = new CbLogSearch();
-        $dataProvider = $searchModel->getEncashment(Yii::$app->request->queryParams);
+        $entityHelper = new EntityHelper();
+        $params = $entityHelper->makeParamsFromRequest(
+            [
+                'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
+                'wm_mashine_number',
+                'filterCondition' => [
+                    'date', 'type_packet', 'address', 'imei', 'id',
+                    'number',
+                ],
+                'val1' => [
+                    'date', 'type_packet', 'address', 'imei', 'id',
+                    'number',
+                ],
+                'val2' => [
+                    'date', 'type_packet', 'address', 'imei', 'id',
+                    'number',
+                ],
+                'inputValue' => [
+                    'date', 'type_packet', 'address', 'imei', 'id',
+                    'number',
+                ],
+                'sort',
+                'CbLogSearch' => [
+                    'from_date', 'to_date',
+                    'inputValue' => ['date'],
+                    'val2' => ['date']
+                ]
+            ]
+        );
 
-//        Debugger::dd($searchModel->getAddress());
+        $params = $searchModel->setParams($searchModel, $params, $prms);
+        $dataProvider = $searchModel->searchEncashment($params);
 
-        return $this->render('encashment', [
+        $searchModel->inputValue['date'] = $params['inputValue']['date'];
+        $searchModel->val2['date'] = $params['val2']['date'];
+        $recountAmountScript = $this->getRecountAmountScript();
+        $script = $this->getScript();
+
+        $eventSelectors = [
+            'change' =>
+                '.journal-filter-form select,'.
+                '.journal-filter-form input#mashine-from-date,'.
+                '.journal-filter-form input#mashine-to-date'
+        ];
+
+        $submitFormOnInputEvents = $entityHelper->submitFormOnInputEvents('.journal-filter-form', $eventSelectors);
+        $removeRedundantGrids = $entityHelper->removeRedundantGrids('.journal-grid-view');
+
+        return $this->renderPartial('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-        ]);
+            'params' => $params,
+            'recountAmountScript' => $recountAmountScript,
+            'script' => $script,
+            'submitFormOnInputEvents' => $submitFormOnInputEvents,
+            'removeRedundantGrids' => $removeRedundantGrids
+        ]);       
+    }
+
+    /**
+     * Updates `recount_amount` field of cb_log table 
+     * @param int $logId
+     * @param int $value
+     */
+    public function actionUpdateRecountAmount($logId, $value)
+    {
+        $searchModel = new CbLog();
+        $searchModel->updateRecountAmount($logId, $value);
+    }
+
+    /**
+     * Returns recount amount script
+     *
+     * @return string
+     */
+    public function getRecountAmountScript()
+    {
+        
+        return Yii::$app->view->render(
+            "/encashment-journal/recount_amount",
+            []
+        );
+    }
+
+    /**
+     * Returns main script
+     *
+     * @return string
+     */
+    public function getScript()
+    {
+
+        return Yii::$app->view->render(
+            "/encashment-journal/script",
+            []
+        );
     }
 }

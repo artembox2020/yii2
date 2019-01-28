@@ -20,7 +20,8 @@
         border: 1px solid #dedede;
         padding: 6px;
     }
-    .grid-view-filter .glyphicon {
+    .grid-view-filter .glyphicon,
+    .glyphicon.banknote_nominals {
         cursor: pointer;
         font-size: 13px;
     }

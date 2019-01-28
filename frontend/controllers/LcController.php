@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use frontend\models\CbLog;
+use frontend\models\CbLogSearch;
 use frontend\models\dto\CentralBoardDto;
 use frontend\models\Imei;
 use frontend\services\custom\Debugger;
@@ -25,6 +26,8 @@ class LcController extends Controller
     {
         $result = $this->iParse($p);
         $centralBoardDto = new CentralBoardDto($result);
+
+        $cbLogSearch = new CbLogSearch();
         
         if (Imei::findOne(['imei' => $centralBoardDto->imei])) {
             $imei = $this->getImei($centralBoardDto->imei);
@@ -46,7 +49,7 @@ class LcController extends Controller
                 $cbl->rate = $centralBoardDto->rate;
                 $cbl->refill_amount = $centralBoardDto->refill_amount;
                 $cbl->last_collection_counter = $centralBoardDto->last_collection_counter;
-                $cbl->banknote_face_values = $centralBoardDto->banknote_face_values;
+                $cbl->banknote_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->banknote_face_values);
                 $cbl->is_deleted = false;
                 $cbl->save();
                 echo 'cbl data save!';exit;

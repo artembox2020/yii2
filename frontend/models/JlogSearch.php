@@ -718,6 +718,41 @@ class JlogSearch extends Jlog
     }
 
     /**
+     * Gets time intervals, basing on $fromDate and $toDate
+     * 
+     * @param date $fromDate
+     * @param date $toDate
+     * @return array
+     */
+    public function makeTimeIntervals($fromDate, $toDate)
+    {
+        $timeFrom = 0;
+        $timeTo = self::INFINITY;
+        $startDay = ' 00:00:00';
+        $endDay = ' 23:59:59';
+
+        if (!empty($fromDate)) {
+
+            if (!strrpos($fromDate, $startDay)) {
+                $fromDate .= $startDay;
+            }
+
+            $timeFrom = strtotime($fromDate);
+        }
+
+        if (!empty($toDate)) {
+
+            if (!strrpos($toDate, $endDay)) {
+                $toDate .= $endDay;
+            }
+
+            $timeTo = strtotime($toDate);
+        }
+
+        return [$timeFrom, $timeTo];
+    }
+
+    /**
      * Applies between date condition to query 
      * 
      * @param ActiveDbQuery $query
@@ -725,28 +760,7 @@ class JlogSearch extends Jlog
      */
     public function applyBetweenDateCondition($query)
     {
-        $timeFrom = 0;
-        $timeTo = self::INFINITY;
-        $startDay = ' 00:00:00';
-        $endDay = ' 23:59:59';
-
-        if (!empty($this->from_date)) {
-
-            if (!strrpos($this->from_date, $startDay)) {
-                $this->from_date .= $startDay;
-            }
-
-            $timeFrom = strtotime($this->from_date) - Jlog::TYPE_TIME_OFFSET;
-        }
-
-        if (!empty($this->to_date)) {
-
-            if (!strrpos($this->to_date, $endDay)) {
-                $this->to_date .= $endDay;
-            }
-
-            $timeTo = strtotime($this->to_date) - Jlog::TYPE_TIME_OFFSET;
-        }
+        list($timeFrom, $timeTo) = $this->makeTimeIntervals($this->from_date, $this->to_date);
 
         $betweenCondition = new \yii\db\conditions\BetweenCondition(
             "UNIX_TIMESTAMP(STR_TO_DATE(date, '".Imei::MYSQL_DATE_TIME_FORMAT."'))", 
