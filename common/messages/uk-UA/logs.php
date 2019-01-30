@@ -73,6 +73,7 @@ return [
     'Difference' => 'Різниця',
     'Encashment' => 'Інкасація, грн',
     'Encashment Journal' => 'Журнал інкасації',
+    'Encashment Summary' => 'Інкасація звіт',
     'Fireproof Counter' => 'Неспалювальний залишок',
     'Fireproof Counter/Temperature' => 'Неспалювальний залишок/Температура',
     'Journal Encashment' => 'Журнал інкасації',

@@ -10,6 +10,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use frontend\models\ImeiDataSearch;
+use Mpdf\Mpdf;
 
 /**
  * Class EncashmentJournalController
@@ -58,6 +59,7 @@ class EncashmentJournalController extends Controller
      */
     public function actionEncashment($prms = [])
     {
+
         $searchModel = new CbLogSearch();
         $entityHelper = new EntityHelper();
         $params = $entityHelper->makeParamsFromRequest(
@@ -115,7 +117,7 @@ class EncashmentJournalController extends Controller
             'script' => $script,
             'submitFormOnInputEvents' => $submitFormOnInputEvents,
             'removeRedundantGrids' => $removeRedundantGrids
-        ]);       
+        ]);
     }
 
     /**
@@ -155,5 +157,48 @@ class EncashmentJournalController extends Controller
             "/encashment-journal/script",
             []
         );
+    }
+
+    /**
+     * Print action
+     */
+    public function actionPrint()
+    {
+        $post = Yii::$app->request->post();
+        $filename = $post['filename'];
+        $caption = $post['caption'];
+        $title = $post['title'];
+        $html = $post['html'];
+        $this->printEncashmentSummary($filename, $caption, $title, $html);
+    }
+
+    /**
+     * Prints encashment summary and stores it as .pdf file
+     *
+     * @param string $filename
+     * @param string $caption
+     * @param string $title
+     * @param string $html
+     * @return string
+     */
+    public function printEncashmentSummary($filename, $caption, $title, $html)
+    {
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'orientation' => 'L'
+        ]);
+
+        $mpdf->setTitle($title);
+
+        $style = file_get_contents('static/css/style.css');
+
+        $encashmentStyle = file_get_contents('static/css/encashment-print-style.css');
+
+        $mpdf->WriteHTML($style, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($encashmentStyle, \Mpdf\HTMLParserMode::HEADER_CSS);
+
+        $mpdf->WriteHTML($caption);
+        $mpdf->WriteHTML($html);
+        $mpdf->Output($filename.".pdf", \Mpdf\Output\Destination::DOWNLOAD);
     }
 }

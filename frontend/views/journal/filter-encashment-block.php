@@ -86,4 +86,29 @@ use yii\jui\DatePicker;
     echo Html::endForm();
     echo $submitFormOnInputEvents;
 ?>
+
+<!--  Hidden Print Form -->
+<?php
+    echo Html::beginForm('/encashment-journal/print', 'post', ['class' => 'encashment-print-form form-inline', 'data-pjax' => '1']);
+?>
+
+<div class="form-group">
+    <?= Html::hiddenInput('html', ''); ?>
+</div>
+
+<div class="form-group">
+    <?= Html::hiddenInput('filename', ''); ?>
+</div>
+
+<div class="form-group">
+    <?= Html::hiddenInput('caption', ''); ?>
+</div>
+
+<div class="form-group">
+    <?= Html::hiddenInput('title', ''); ?>
+</div>
+
+<?php
+    echo Html::endForm();
+?>
 <br>

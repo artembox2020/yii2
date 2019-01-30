@@ -21,7 +21,8 @@ use \frontend\models\AddressBalanceHolder;
             'value' => function($model) use ($searchModel, $dataProvider) {
 
                 return $searchModel->getBanknoteFaceValuesView($model, $dataProvider);
-            }
+            },
+            'contentOptions' => ['class' => 'banknote-nominals-cell']
         ],
         [
             'attribute' => 'unix_time_offset',
@@ -85,7 +86,7 @@ use \frontend\models\AddressBalanceHolder;
                 return $searchModel->getLastFireproofCounterHrn($model);
             },
         ],
-        [
+        /*[
             'attribute' => 'last_collection_counter',
             'format' => 'raw',
             'label' => Yii::t('logs', 'Last Collection Counter'),
@@ -94,7 +95,7 @@ use \frontend\models\AddressBalanceHolder;
 
                 return $searchModel->getLastCollectionCounter($model);
             }
-        ],
+        ],*/
         [
             'attribute' => 'recount_amount',
             'format' => 'raw',
@@ -113,7 +114,8 @@ use \frontend\models\AddressBalanceHolder;
             {
 
                 return $searchModel->getDifferenceView($model);
-            }
+            },
+            'contentOptions' => ['class' => 'cell-difference']
         ]
     ],
 ]); ?>

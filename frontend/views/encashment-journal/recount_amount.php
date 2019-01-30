@@ -4,6 +4,11 @@
 
     for (var i = 0; i < recountAmounts.length; ++i) {
         var currentRa = recountAmounts[i];
+        var difference = currentRa.closest('tr').querySelector('td.cell-difference span');
+        var hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.value = parseFloat(difference.innerHTML) + parseInt(currentRa.value);
+        difference.parentNode.insertBefore(hidden, difference);
         currentRa.onchange = function() { updateRecountAmount(this);}
     }
 
@@ -19,6 +24,20 @@
 
             AjaxHandler.ajax.open("GET", "/encashment-journal/update-recount-amount?" + queryString, true);
             AjaxHandler.ajax.send();
+
+            AjaxHandler.ajax.onload = function() {
+
+                if (AjaxHandler.ajax.readyState === 4) {
+                    if (AjaxHandler.ajax.status === 200) {
+
+                        var hidden = currentRa.closest('tr').querySelector('td.cell-difference input[type=hidden]');
+                        var difference = currentRa.closest('tr').querySelector('td.cell-difference span');
+                        difference.innerHTML = parseFloat(hidden.value) - parseInt(currentRa.value);
+                    } else {
+                        console.error(AjaxHandler.ajax.statusText);
+                    }
+                }
+            };
         }
 
         AjaxHandler.run();
