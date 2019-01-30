@@ -684,7 +684,9 @@ div.required label:after {
     background: rgba(255, 255, 255, 1);
     color: rgba(255, 255, 255, 0);
 }
-
+.encashment-index .banknote-nominals-cell {
+    cursor: pointer;
+}
 .banknote-nominals-container {
     position: relative;
 }
