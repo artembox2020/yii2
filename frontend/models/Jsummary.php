@@ -222,10 +222,18 @@ class Jsummary extends ActiveRecord
                             ->all();
 
         $incomes = [];
+        $imeis = [];
 
         for ($i = 0; $i < count($items); ++$i) {
             $item = $items[$i];
-            $imei = Imei::find()->where(['id' => $item->imei_id])->one();
+
+            if (!in_array($item->imei_id, array_keys($imeis))) {
+                $imei = Imei::find()->where(['id' => $item->imei_id])->one();
+                $imeis[$item->imei_id] = $imei;
+            } else {
+                $imei = $imeis[$item->imei_id];
+            }
+
             $day = floor(($item->start_timestamp - $startTimestamp) / $stepInterval + 1);
             if (!is_null($item->idleHours)) {
 

@@ -164,7 +164,12 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
      */
     public function getDateAndSumEncashmentByTimestamps($start, $end, $mashineId)
     {
-        global $encashmentHistory;
+        return [
+            'encashment_date' => null,
+            'encashment_sum' => null
+        ];
+
+        /*global $encashmentHistory;
         $mashineData = new WmMashineData();
         $dayBeginning = $this->getDayBeginningTimestampByTimestamp($start);
         if (empty($encashmentHistory[$mashineId])) {
@@ -192,7 +197,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         return [
             'encashment_date' => $encashmentDate,
             'encashment_sum' => $encashmentSum
-        ];
+        ];*/
     }
 
     /**
