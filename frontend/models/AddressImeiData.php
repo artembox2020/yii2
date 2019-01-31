@@ -330,6 +330,7 @@ class AddressImeiData extends ActiveRecord
     * @param timestamp $start
     * @param timestamp $end
     * @param int $imeiId
+    * @return array 
     */
     public function makeWmMashineQueryItem($start, $end, $imeiId)
     {
