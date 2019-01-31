@@ -180,6 +180,47 @@ class AddressImeiData extends ActiveRecord
             'id' => $item->id
         ];
     }
+
+    /**
+     * Gets imei id by address and timestamp
+     * 
+     * @param int $addressId
+     * @param int $timestamp
+     * @return int
+     */
+    public function getImeiIdByAddressTimestamp($addressId, $timestamp)
+    {
+        $historyBeginning = $this->getHistoryBeginning($addressId);
+        $address = AddressBalanceHolder::find()->where(['id' =>$addressId])->one();
+
+        if ($historyBeginning > $timestamp) {
+
+            $currentImei = $this->getCurrentImeiIdByAddress($addressId, $address->status);
+
+            if (empty($currentImei)) {
+
+                return 0;
+            }
+
+            return $currentImei->id;
+        }
+
+        $imeiId = 0;
+        $imeiInfo = $this->getNextImeiIdByAddressAndTimestamp($addressId, $historyBeginning - 1);
+
+        while (!empty($imeiInfo)) {
+
+            if ($imeiInfo['created_at'] <= $timestamp) {
+                $imeiId = $imeiInfo['imei_id'];
+            } else {
+                break;
+            }
+
+            $imeiInfo = $this->getNextImeiIdByAddressAndTimestamp($addressId, $imeiInfo['created_at']);
+        }
+
+        return $imeiId;
+    }
     
     /**
      * Gets next address id by imei_id and timestamp (find last binding of the day)
@@ -284,65 +325,62 @@ class AddressImeiData extends ActiveRecord
     }
 
     /**
-     * Gets all mashine queries info as array by address and timestamp interval
+    * Makes mashine query item by timestamps and imei id
+    *
+    * @param timestamp $start
+    * @param timestamp $end
+    * @param int $imeiId
+    */
+    public function makeWmMashineQueryItem($start, $end, $imeiId)
+    {
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+
+        if (empty($imeiId)) {
+
+            $query = false;
+        } else {
+
+            $query = $bhSummarySearch->getAllMashinesQueryByTimestamps($start, $end, $imeiId);
+        }
+
+        return ['created_at' => $start, 'query' => $query, 'imei_id' => $imeiId];
+    }
+
+    /**
+     * Gets all mashine queries info as array by address and timestamp intervals
      * 
      * @param int $addressId
      * @param int $addressStatus
-     * @param timestamp $timestampStart
-     * @param timestamp $timestampEnd
+     * @param timestamp $start
+     * @param timestamp $end
      * @return array
      */
-    public function getWmMashinesQueries($addressId, $addressStatus, $timestampStart, $timestampEnd)
+    public function getWmMashinesQueries($addressId, $addressStatus, $start, $end)
     {
-        $timestamp = $timestampStart;
         $wmMashinesQueries = [];
-        $bhSummarySearch = new BalanceHolderSummarySearch();
-        $historyBeginning = $this->getHistoryBeginning($addressId);
-        $currentImei = $this->getCurrentImeiIdByAddress($addressId, $addressStatus);
+        $imeiId = $this->getImeiIdByAddressTimestamp($addressId, $start);
 
-        // in case of before history beginning make query info from current imei 
-        if ($timestamp < $historyBeginning) {
-            if (!empty($currentImei)) {
-                $query = $bhSummarySearch->getAllMashinesQueryByTimestamps($timestamp, $historyBeginning, $currentImei->id);
-            }
+        while (!empty($imeiInfo = $this->getNextImeiIdByAddressAndTimestamp($addressId, $start))) {
+            $wmMashinesQueries[] = $this->makeWmMashineQueryItem($start-1, $imeiInfo['created_at'], $imeiId);
+            $imeiId = $imeiInfo['imei_id'];
+            $start = $imeiInfo['created_at'];
 
-            $wmMashinesQueries[] = [
-                'created_at' => $timestamp,
-                'query' => !empty($currentImei) ? $query : false,
-                'imei_id' => !empty($currentImei) ? $currentImei->id : 0
-            ];
-
-            $timestamp = $historyBeginning;
-        }
-
-        --$timestamp;
-        $imeiInfo = $this->getNextImeiIdByAddressAndTimestamp($addressId, $timestamp);
-
-        while ($timestamp <= $timestampEnd) {
-
-            if (empty($imeiInfo)) {
+            if ($start - 1 >= $end) {
+                $lastImeiInfo = [];
                 break;
             }
 
-            $nextImeiInfo = $this->getNextImeiIdByAddressAndTimestamp($addressId, $imeiInfo['created_at']);
+            $lastImeiInfo = $imeiInfo;
+        }
 
-            if (!empty($nextImeiInfo)) {
-                $timestamp = $nextImeiInfo['created_at'];
-            } else {
-                $timestamp = self::INFINITY;
-            }
+        if (!empty($lastImeiInfo)) {
+            $wmMashinesQueries[] = $this->makeWmMashineQueryItem($start-1, $end, $imeiId);
+        }
 
-            if (!empty($imeiInfo['imei_id'])) {
-                $query = $bhSummarySearch->getAllMashinesQueryByTimestamps($imeiInfo['created_at'], $timestamp, $imeiInfo['imei_id']);
-            }
-
-            $wmMashinesQueries[] = [
-                'created_at' => $imeiInfo['created_at'],
-                'query' => !empty($imeiInfo['imei_id']) ? $query : false,
-                'imei_id' => !empty($imeiInfo['imei_id']) ? $imeiInfo['imei_id'] : 0
-            ];
-
-            $imeiInfo = $nextImeiInfo;
+        if (empty($wmMashinesQueries) && !empty($imei = $this->getCurrentImeiIdByAddress($addressId, $addressStatus))) {
+            $bhSummarySearch = new BalanceHolderSummarySearch();
+            $query = $bhSummarySearch->getAllMashinesQueryByTimestamps($start-1, $end, $imei->id);
+            $wmMashinesQueries[] = [ 'created_at' => $start, 'query' => $query, 'imei_id' => $imei->id];
         }
 
         return $wmMashinesQueries;
