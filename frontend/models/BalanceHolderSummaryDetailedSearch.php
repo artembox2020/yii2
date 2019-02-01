@@ -255,7 +255,8 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
      */
     public function getMashineAddress($mashine)
     {
-        $imei = Imei::findOne($mashine->imei_id);
+        $jSummary = new Jsummary();
+        $imei = $jSummary->getImeiFromGlobalById($mashine->imei_id);
 
         return AddressBalanceHolder::findOne($imei->address_id);
     }
@@ -298,7 +299,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         $beginningTimestamp = $this->getDayBeginningTimestampByTimestamp($address->created_at);
         $historyIncomes = $jSummary->getDetailedIncomes($start, $end - 1, $todayTimestamp, $mashine);
         $historyDays = array_keys($historyIncomes);
-        $imei = Imei::find()->where(['id' => $mashine->imei_id])->one();
+        $imei = $jSummary->getImeiFromGlobalById($mashine->imei_id);
 
         for ($i = 1; $i <= $days; ++$i) {
             $startTimestamp = $start + ($i - 1) * $stepInterval;
@@ -411,7 +412,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 'encashment_date' => $encashment_date,
                 'encashment_sum' => $encashment_sum
             ];
-            
+
             $todayTimestamp = $this->getDayBeginningTimestampByTimestamp(time() + Jlog::TYPE_TIME_OFFSET);
 
             if ($todayTimestamp > $startTimestamp) {

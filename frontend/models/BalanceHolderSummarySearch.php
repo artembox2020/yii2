@@ -468,14 +468,25 @@ class BalanceHolderSummarySearch extends BalanceHolder
      */ 
     public function getAllMashinesQueryByYearMonth($year, $month, $address)
     {
-        $entity = new Entity(); 
-        $imei = Imei::find()->andWhere(
-            ['address_id' => $address->id, 'status' => $address->status, 'company_id' => $entity->getCompanyId()]
-        );
-        $imei = $imei->limit(1)->one();
+        global $imeisByAddressStatusCompanyId;
+        $entity = new Entity();
+
+        $imeiKey = $address->id.'-'.$address->status.'-'.$entity->getCompanyId();
+
+        if (!empty($imeisByAddressStatusCompanyId[$imeiKey])) {
+
+            $imei = $imeisByAddressStatusCompanyId[$imeiKey];
+        } else {
+
+            $imei = Imei::find()->andWhere(
+                ['address_id' => $address->id, 'status' => $address->status, 'company_id' => $entity->getCompanyId()]
+            );
+
+            $imei = $imei->limit(1)->one();
+            $imeisByAddressStatusCompanyId[$imeiKey] = $imei;
+        }
 
         if ($imei) {
-
             $timestamps = $this->getTimestampByYearMonth($year, $month);
             $query = $this->getAllMashinesQueryByTimestamps($timestamps['start'], $timestamps['end'], $imei->id);
 

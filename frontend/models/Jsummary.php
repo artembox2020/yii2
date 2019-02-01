@@ -160,9 +160,7 @@ class Jsummary extends ActiveRecord
      */
     public function saveItemDetailed($imei_id, $address_id, $startTimestamp, $endTimestamp, $params, $incomeByMashines)
     {
-        $item = Jsummary::findOne(
-            ['address_id' => $address_id, 'imei_id' => $imei_id, 'start_timestamp' => $startTimestamp, 'end_timestamp' => $endTimestamp]
-        );
+        $item = $this->getItemFromGlobal($address_id, $imei_id, $startTimestamp, $endTimestamp);
 
         if (empty($item)) {
             $item = new Jsummary();
@@ -207,33 +205,12 @@ class Jsummary extends ActiveRecord
     public function getIncomes($startTimestamp, $endTimestamp, $todayTimestamp, $address_id, $imei_id = false)
     {
         $stepInterval = 3600*24;
-        $items = [];
-
-        $itemsQuery = Jsummary::find()->andWhere(['address_id' => $address_id])
-                                 ->andWhere(['>=', 'start_timestamp', $startTimestamp])
-                                 ->andWhere(['<', 'start_timestamp', $todayTimestamp])
-                                 ->andWhere(['<=', 'end_timestamp', $endTimestamp]);
-
-        if (!empty($imei_id)) {
-            $itemsQuery = $itemsQuery->andWhere(['imei_id' => $imei_id]);
-        }
-
-        $items = $itemsQuery->orderBy(['start_timestamp' => SORT_ASC])
-                            ->all();
-
+        $items = $this->getQueryItemsFromGlobal($startTimestamp, $endTimestamp, $todayTimestamp, $address_id, $imei_id);
         $incomes = [];
-        $imeis = [];
 
         for ($i = 0; $i < count($items); ++$i) {
             $item = $items[$i];
-
-            if (!in_array($item->imei_id, array_keys($imeis))) {
-                $imei = Imei::find()->where(['id' => $item->imei_id])->one();
-                $imeis[$item->imei_id] = $imei;
-            } else {
-                $imei = $imeis[$item->imei_id];
-            }
-
+            $imei = $this->getImeiFromGlobalById($item->imei_id);
             $day = floor(($item->start_timestamp - $startTimestamp) / $stepInterval + 1);
             if (!is_null($item->idleHours)) {
 
@@ -366,5 +343,88 @@ class Jsummary extends ActiveRecord
         }
 
         return true;
+    }
+
+    /**
+     * Gets imei from global variable by id
+     *
+     * @param array $id
+     * @return Imei|null
+     */    
+    public function getImeiFromGlobalById($id)
+    {
+        global $globalImeis;
+
+        if (empty($globalImeis) || !in_array($id, array_keys($globalImeis))) {
+            $imei = Imei::find()->where(['id' => $id])->one();
+            $globalImeis[$id] = $imei;
+        } else {
+            $imei = $globalImeis[$id];
+        }
+
+        return $imei;
+    }
+
+    /**
+     * Gets jsummary item from global variable
+     *
+     * @param int $address_id
+     * @param int $imei_id
+     * @param timestamp $startTimestamp
+     * @param timestamp $endTimestamp
+     * @return Jsummary|null
+     */
+    public function getItemFromGlobal($address_id, $imei_id, $startTimestamp, $endTimestamp)
+    {
+        global $jsummaryItems;
+        $itemKey = $address_id.'-'.$imei_id.'-'.$startTimestamp.'-'.$endTimestamp;
+
+        if (empty($jsummaryItems[$itemKey])) {
+
+            $jsummaryItems[$itemKey] = Jsummary::findOne([
+                'address_id' => $address_id,
+                'imei_id' => $imei_id,
+                'start_timestamp' => $startTimestamp,
+                'end_timestamp' => $endTimestamp
+            ]);
+        }
+
+        return $jsummaryItems[$itemKey];
+    }
+
+    /**
+     * Gets jsummary items from global variable
+     *
+     * @param timestamp $startTimestamp
+     * @param timestamp $endTimestamp
+     * @param timestamp $todayTimestamp
+     * @param int $address_id
+     * @param int $imei_id
+     * @return array
+     */
+    public function getQueryItemsFromGlobal($startTimestamp, $endTimestamp, $todayTimestamp, $address_id, $imei_id = false)
+    {
+        global $jsummaryQueryItems;
+        $itemsKey = $address_id.'-'.$startTimestamp.'-'.$todayTimestamp.'-'.$endTimestamp;
+
+        if (!empty($imei_id)) {
+            $itemsKey.= '-'.$imei_id;
+        }
+
+        if (empty($jsummaryQueryItems[$itemsKey])) {
+            $itemsQuery = Jsummary::find()->andWhere(['address_id' => $address_id])
+                                          ->andWhere(['>=', 'start_timestamp', $startTimestamp])
+                                          ->andWhere(['<', 'start_timestamp', $todayTimestamp])
+                                          ->andWhere(['<=', 'end_timestamp', $endTimestamp]);
+
+            if (!empty($imei_id)) {
+                $itemsQuery = $itemsQuery->andWhere(['imei_id' => $imei_id]);
+            }
+
+            $jsummaryQueryItems[$itemsKey] = $itemsQuery->orderBy(['start_timestamp' => SORT_ASC])
+                                                        ->all();
+        }
+
+        return $jsummaryQueryItems[$itemsKey];
     }
 }

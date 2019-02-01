@@ -132,6 +132,13 @@ class AddressImeiData extends ActiveRecord
      */
     public function getNextImeiIdByAddressAndTimestamp($addressId, $timestamp)
     {
+        global $nextImeiIdByAddressAndTimestamp;
+
+        if (isset($nextImeiIdByAddressAndTimestamp[$addressId.'-'.$timestamp])) {
+
+            return $nextImeiIdByAddressAndTimestamp[$addressId.'-'.$timestamp];
+        }
+
         $query = AddressImeiData::find();
         $item = $query->andWhere(['address_id' => $addressId])
                       ->andWhere(['>', 'created_at', $timestamp])
@@ -140,6 +147,8 @@ class AddressImeiData extends ActiveRecord
                       ->one();
 
         if (!$item) {
+
+            $nextImeiIdByAddressAndTimestamp[$addressId.'-'.$timestamp] = [];
 
             return [];
         }
@@ -155,11 +164,13 @@ class AddressImeiData extends ActiveRecord
 
         if ($item->imei_id == 0) {
 
-            return [
+            $nextImeiIdByAddressAndTimestamp[$addressId.'-'.$timestamp] = [
                 'imei_id' => $item->imei_id,
                 'created_at' => $item->created_at,
                 'id' => $item->id
             ];
+
+            return $nextImeiIdByAddressAndTimestamp[$addressId.'-'.$timestamp];
         }
 
         $query = AddressImeiData::find();
@@ -174,11 +185,13 @@ class AddressImeiData extends ActiveRecord
             return $this->getNextImeiIdByAddressAndTimestamp($addressId, $item->created_at);
         }
 
-        return [
+        $nextImeiIdByAddressAndTimestamp[$addressId.'-'.$timestamp] = [
             'imei_id' => $item->imei_id,
             'created_at' => $item->created_at,
             'id' => $item->id
         ];
+
+        return $nextImeiIdByAddressAndTimestamp[$addressId.'-'.$timestamp];
     }
 
     /**
@@ -289,8 +302,15 @@ class AddressImeiData extends ActiveRecord
      */
     public function getCurrentImeiIdByAddress($addressId, $addressStatus)
     {
+        global $currentImeiByAddress;
 
-        return Imei::find()->andWhere(['address_id' => $addressId, 'status' => $addressStatus])->limit(1)->one();
+        if (empty($currentImeiByAddress[$addressId.'-'.$addressStatus])) {
+
+            $imei = Imei::find()->andWhere(['address_id' => $addressId, 'status' => $addressStatus])->limit(1)->one();
+            $currentImeiByAddress[$addressId.'-'.$addressStatus] = $imei;
+        }
+
+        return $currentImeiByAddress[$addressId.'-'.$addressStatus];
     }
 
     /**
@@ -301,12 +321,19 @@ class AddressImeiData extends ActiveRecord
      */
     public function getHistoryBeginning($address_id)
     {
-        $item = AddressImeiData::find()->andWhere(['address_id' => $address_id])
-                                        ->orderBy(['created_at' => SORT_ASC])
-                                        ->limit(1)
-                                        ->one();
+        global $historyBeginningByAddressId;
 
-        return $item ? $item->created_at : self::INFINITY;
+        if (empty($historyBeginningByAddressId[$address_id])) {
+
+            $item = AddressImeiData::find()->andWhere(['address_id' => $address_id])
+                                           ->orderBy(['created_at' => SORT_ASC])
+                                           ->limit(1)
+                                           ->one();
+
+            $historyBeginningByAddressId[$address_id] = $item ? $item->created_at : self::INFINITY;
+        }
+
+        return $historyBeginningByAddressId[$address_id];
     }
 
     /**
@@ -334,6 +361,13 @@ class AddressImeiData extends ActiveRecord
     */
     public function makeWmMashineQueryItem($start, $end, $imeiId)
     {
+        global $mashineQueryItem;
+
+        if (!empty($mashineQueryItem[$start.'-'.$end.'-'.$imeiId])) {
+
+            return $mashineQueryItem[$start.'-'.$end.'-'.$imeiId];
+        }
+
         $bhSummarySearch = new BalanceHolderSummarySearch();
 
         if (empty($imeiId)) {
@@ -344,7 +378,13 @@ class AddressImeiData extends ActiveRecord
             $query = $bhSummarySearch->getAllMashinesQueryByTimestamps($start, $end, $imeiId);
         }
 
-        return ['created_at' => $start, 'query' => $query, 'imei_id' => $imeiId];
+        $mashineQueryItem[$start.'-'.$end.'-'.$imeiId] = [
+            'created_at' => $start,
+            'query' => $query,
+            'imei_id' => $imeiId
+        ];
+
+        return $mashineQueryItem[$start.'-'.$end.'-'.$imeiId];
     }
 
     /**
