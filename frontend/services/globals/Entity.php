@@ -100,9 +100,13 @@ class Entity implements EntityInterface
      */
     public function getCompanyId()
     {
-        $user = User::findOne(Yii::$app->user->id);
+        global $currentUser;
 
-        return $user->company_id;
+        if (empty($currentUser)) {
+            $currentUser = User::findOne(Yii::$app->user->id);
+        }
+
+        return $currentUser->company_id;
     }
 
     /**
