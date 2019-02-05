@@ -14,6 +14,8 @@ use yii\web\Controller;
 class ForwardController extends Controller
 {
     /**
+     * /forward/forward/index?address_name=short address name
+     * 
      * @param $address_name
      * @return \yii\web\Response
      */
