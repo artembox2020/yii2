@@ -79,6 +79,12 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionIndex()
     {
+
+        if (!\Yii::$app->user->can('net-manager/index', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $user = User::findOne(Yii::$app->user->id);
 
         if (!empty($user->company)) {
@@ -99,6 +105,11 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionEmployees()
     {
+        if (!\Yii::$app->user->can('net-manager/employees', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $searchModel = new UserSearch();
         
         $model = new User();
@@ -119,6 +130,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionCreateEmployee()
     {
+
         if (Yii::$app->user->can('create_employee')) {
             $model = new UserForm();
             $model->setScenario('create');
@@ -254,6 +266,11 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionBalanceHolders()
     {
+        if (!\Yii::$app->user->can('net-manager/balance-holders', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $user = User::findOne(Yii::$app->user->id);
 
         if (!empty($user->company)) {
@@ -303,6 +320,11 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionAddresses($balanceHolderId = false)
     {
+        if (!\Yii::$app->user->can('net-manager/addresses', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $searchModel = new AddressBalanceHolderSearch();
         $entityHelper = new EntityHelper();
         $user = User::findOne(Yii::$app->user->id);
@@ -368,6 +390,11 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionWashpay()
     {
+        if (!\Yii::$app->user->can('net-manager/washpay', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $searchModel = new ImeiSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = self::PAGE_SIZE;
@@ -832,6 +859,11 @@ class NetManagerController extends \yii\web\Controller
     
     public function actionModemHistory()
     {
+        if (!\Yii::$app->user->can('net-manager/modem-history', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $searchModel = new ImeiDataSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Yii::$app->request->post());
         $imeis = $searchModel->getImeisMapped(Imei::findAllByCompany());

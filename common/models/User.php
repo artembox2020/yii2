@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use developeruz\db_rbac\interfaces\UserRbacInterface;
 use frontend\models\Company;
 use frontend\services\globals\Entity;
 use frontend\services\custom\Debugger;
@@ -38,7 +39,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property Company $company
  */
-class User extends ActiveRecord implements IdentityInterface
+class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
 {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
@@ -117,6 +118,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function getUserProfile()
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserName()
+    {
+        return $this->username;
     }
 
     /**

@@ -40,6 +40,13 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'response' => [
+            'formatters' => [
+                \yii\web\Response::FORMAT_JSON => [
+                    'class' => 'yii\web\JsonResponseFormatter',
+                ],
+            ],
+        ],
         'urlManager' => require __DIR__ . '/_urlManager.php',
         'cache' => require __DIR__ . '/_cache.php',
         'mailer' => [

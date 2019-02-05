@@ -44,6 +44,11 @@ class EncashmentJournalController extends Controller
      */
     public function actionIndex(array $params = [])
     {
+        if (!\Yii::$app->user->can('encashment-journal/index', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         if (!empty($params['isEncashment'])) {
 
             return $this->actionEncashment($params);
@@ -59,6 +64,10 @@ class EncashmentJournalController extends Controller
      */
     public function actionEncashment($prms = [])
     {
+        if (!\Yii::$app->user->can('encashment-journal/index', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
 
         $searchModel = new CbLogSearch();
         $entityHelper = new EntityHelper();

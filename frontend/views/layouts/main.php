@@ -92,10 +92,12 @@ AppAsset::register($this);
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => Yii::t('frontend', 'Login'), 'url' => ['/account/sign-in/login']];
     } else {
-        $role = ArrayHelper::map(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'description', 'description');
-        foreach ($role as $key => $val) {
-            $role_name = $key;
-        }
+//        $role = ArrayHelper::map(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'description', 'description');
+////        \frontend\services\custom\Debugger::dd($role);
+//        foreach ($role as $key => $val) {
+//            $role_name = $key;
+//        }
+        $role_name = Yii::$app->user->identity->username;
         $menuItems = [
 //        [
 //            'label' => Yii::t('frontend', 'Users'),

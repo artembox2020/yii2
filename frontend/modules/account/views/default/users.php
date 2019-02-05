@@ -15,8 +15,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('frontend', 'Create user'), ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('frontend', 'Roles'), ['/rbac/access/role'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('frontend', 'Permissions'), ['/rbac/access/permission'], ['class' => 'btn btn-success']) ?>
+<!-- Html::a(Yii::t('frontend', 'Roles'), ['/rbac/access/role'], ['class' => 'btn btn-success']) -->
+<!-- Html::a(Yii::t('frontend', 'Permissions'), ['/rbac/access/permission'], ['class' => 'btn btn-success'])-->
     </p>
 
 
@@ -30,6 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'html',
                 'value' => function ($model) {
                     return Html::a(Html::encode($model['username']), ['view', 'id' => $model['id']]);
+                }
+            ],
+            [
+                'attribute' => 'Role',
+                'format' => 'html',
+                'value' => function ($model) {
+                    return $model->getUserRoleName($model->id);
                 }
             ],
             'created_at:datetime',

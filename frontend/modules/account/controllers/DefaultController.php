@@ -55,6 +55,11 @@ class DefaultController extends Controller
      */
     public function actionSettings()
     {
+        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $model = Yii::$app->user->identity->userProfile;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -88,6 +93,11 @@ class DefaultController extends Controller
      */
     public function actionUsers()
     {
+        if (!\Yii::$app->user->can('account/default/users', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -102,10 +112,9 @@ class DefaultController extends Controller
     }
 
     /**
-     * Displays a single User model.
-     *
-     * @param int $id
-     * @return mixed
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -169,6 +178,12 @@ class DefaultController extends Controller
      */
     public function actionCreate()
     {
+
+        if (!\Yii::$app->user->can('account/default/create', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         if (!Yii::$app->user->isGuest) {
             $model = new UserForm();
             $model->setScenario('create');
