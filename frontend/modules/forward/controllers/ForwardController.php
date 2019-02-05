@@ -5,6 +5,7 @@ namespace frontend\modules\forward\controllers;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
+use frontend\services\custom\Debugger;
 use yii\web\Controller;
 
 /**
@@ -29,9 +30,10 @@ class ForwardController extends Controller
             ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])->all();
 
         foreach ($wm_machine as $key => $value) {
-            $array[$value->number_device] = $value->display;
+            $array[$value->number_device] = ['display' => $value->display, 'status' => $value->current_status];
         }
-
+//        Debugger::dd($array);
+        
         return $this->asJson($array);
     }
 }
