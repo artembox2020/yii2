@@ -34,6 +34,10 @@ use frontend\services\globals\EntityHelper;
                'attribute' => 'balanceHolder.name',
                'label' => Yii::t('frontend','Balance Holder')
             ],
+            [
+                'attribute' => 'name',
+                'label' => Yii::t('frontend','Short Address')
+            ],
            
             [
                 'attribute' => 'address',
