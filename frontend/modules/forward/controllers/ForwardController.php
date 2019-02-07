@@ -22,6 +22,7 @@ class ForwardController extends Controller
     public function actionIndex($address_name)
     {
         $array = array();
+        $result = array();
 
         $address = AddressBalanceHolder::find()->where(['name' => $address_name])->one();
         $imei = Imei::find()->where(['address_id' => $address->id])
@@ -31,12 +32,13 @@ class ForwardController extends Controller
 
         foreach ($wm_machine as $key => $value) {
             $array[$value->number_device] = [
-                'id' => $value->id,
+                'id' => $value->number_device,
                 'display' => $value->display,
                 'status' => $value->current_status];
         }
 
-        return $this->asJson($array);
+        $result[$address->address . ' ' . $address->floor] = $array;
 
+        return $this->asJson($result);
     }
 }
