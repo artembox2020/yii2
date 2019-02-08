@@ -28,7 +28,8 @@ class ForwardController extends Controller
         $imei = Imei::find()->where(['address_id' => $address->id])
             ->andWhere(['imei.status' => Imei::STATUS_ACTIVE])->one();
         $wm_machine = WmMashine::find()->where(['imei_id' => $imei->id])
-            ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])->all();
+            ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])
+            ->andWhere(['wm_mashine.is_deleted' => false])->all();
 
         foreach ($wm_machine as $key => $value) {
             $array[$value->number_device] = [
