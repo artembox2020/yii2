@@ -35,4 +35,12 @@
     .encashment-index table thead th:nth-child(1) {
         border: 0;
     }
+    .encashment-general-summary {
+        text-align: center;
+        margin-left: 14px;
+    }
+    .encashment-general-summary table {
+        margin-left: auto;
+        margin-right: auto;
+    }
 }

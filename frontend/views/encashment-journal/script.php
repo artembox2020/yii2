@@ -126,14 +126,18 @@
             var node = encashmentBlock.querySelector('.grid-view').childNodes[i];
 
             if (typeof node.classList == 'undefined' || !node.classList.contains('table')) {
+
                 node.remove();
             }
         }
+
         encashmentBlock.querySelector('.summary').remove();
         encashmentBlock.querySelector('.pagination').remove();
 
         var table = encashmentBlock.querySelector('table');
+
         var trs = table.querySelectorAll('tbody tr');
+        var banknotesSummary = getBanknotesSummary(table, label);
 
         // remove unnecessary table items
         for (var i = 0; i < trs.length; ++i) {
@@ -148,6 +152,15 @@
         var cell = table.querySelector('tbody tr:nth-last-child(1) td.banknote-nominals-cell').nextSibling;
         cell.classList.remove('invisible');
         cell.innerHTML = "<?= Yii::t('frontend', 'Total') ?>";
+
+        var nominalsGrid = table.querySelector('.banknote-nominals-container:nth-last-child(1)').cloneNode(true);
+
+        var summaryBlock = document.createElement('div');
+        summaryBlock.classList.add('encashment-general-summary');
+        summaryBlock.innerHTML = '<?= $nominalsView ?>';
+        summaryBlock.querySelector('.summary').remove();
+        summaryBlock = implementBanknotesSummary(banknotesSummary, summaryBlock);
+        table.parentNode.insertBefore(summaryBlock, table.nextSibling);
 
         var banknoteNominals = table.querySelectorAll('td.banknote-nominals-cell');
         for (var i = 0; i < banknoteNominals.length; ++i) {
@@ -164,5 +177,109 @@
         form.querySelector('input[name=caption]').value = encashmentSummaryCaption;
         form.querySelector('input[name=title]').value = encashmentSummaryTitle;
         form.submit();
+    }
+
+    // calculates and returns banknotes summary info as array
+    function getBanknotesSummary(table, label)
+    {
+        var nominalsGrid = table.querySelectorAll('tr td.banknote-nominals-cell .banknote-nominals-grid table .nominals-grid');
+
+        var banknotesInfo = [];
+        var banknotesNominals = [];
+        for (var i = 0; i < nominalsGrid.length; ++i) {
+            var grid = nominalsGrid[i];
+            var tableTrs =  grid.querySelectorAll('tr');
+            for (var j = 0; j < tableTrs.length; ++j) {
+                var tr = tableTrs[j];
+
+                if (tr.querySelectorAll('td').length < 3) {
+                    continue;
+                }
+
+                var trLabel = tr.closest('.banknote-nominals-cell').closest('tr').querySelector("span.encashment-sum");
+
+                if (trLabel == null || trLabel.dataset.timestamp != label) {
+                    continue;
+                }
+
+                var nominal = tr.querySelector('td').innerHTML;
+                var nominalNumber = parseInt(tr.querySelector('td:nth-child(2)').innerHTML);
+                var nominalSum = parseInt(tr.querySelector('td:nth-child(3)').innerHTML);
+
+                if (typeof banknotesInfo[nominal] == 'undefined' || banknotesInfo[nominal] == null) {
+                    banknotesInfo[nominal] = {};
+                    banknotesInfo[nominal].q = nominalNumber;
+                    banknotesInfo[nominal].sum = nominalSum; 
+                } else {
+                    banknotesInfo[nominal].q += nominalNumber;
+                    banknotesInfo[nominal].sum += nominalSum; 
+                }
+
+                if (!banknotesNominals.includes(nominal)) {
+                    banknotesNominals.push(nominal);
+                }
+            }
+        }
+
+        banknotesInfo['nominals'] = banknotesNominals;
+
+        return banknotesInfo;
+    }
+
+    // appends at the end of the pdf summary general banknotes info
+    function implementBanknotesSummary(banknotesSummary, summaryBlock)
+    {
+        var table = summaryBlock.querySelector('table');
+        var tableTrs = table.querySelectorAll('tbody tr, thead tr');
+        var tbody = table.querySelector('tbody');
+
+        for (var i = 0; i < tableTrs.length; ++i) {
+            var tr = tableTrs[i];
+            tr.remove();
+        }
+
+        var headTr = table.querySelector('thead');
+        var tr = document.createElement('tr');
+        
+        var headNominalCell = document.createElement('td');
+        headNominalCell.innerHTML = "<?= Yii::t('logs', 'Nominal') ?>";
+        
+        var headNominalQCell = document.createElement('td');
+        headNominalQCell.innerHTML = "<?= Yii::t('logs', 'General Number Of Nominals') ?>";
+
+        var headNominalSumCell = document.createElement('td');
+        headNominalSumCell.innerHTML = "<?= Yii::t('logs', 'General Sum Of Banknotes') ?>";
+
+        tr.append(headNominalCell);
+        tr.append(headNominalQCell);
+        tr.append(headNominalSumCell);
+        headTr.append(tr);
+
+        for (var i = 0; i < banknotesSummary['nominals'].length; ++i) {
+            var nominal = banknotesSummary['nominals'][i];
+            var tr = document.createElement('tr');
+
+            var nominalCell = document.createElement('td');
+            nominalCell.innerHTML = nominal;
+
+            var nominalQCell = document.createElement('td');
+            nominalQCell.innerHTML = banknotesSummary[nominal].q;
+
+            var nominalSumCell = document.createElement('td');
+            nominalSumCell.innerHTML = banknotesSummary[nominal].sum;
+
+            tr.append(nominalCell);
+            tr.append(nominalQCell);
+            tr.append(nominalSumCell);
+
+            tbody.append(tr);
+        }
+
+        var generalSummary = document.createElement('h2');
+        generalSummary.align = 'center';
+        generalSummary.innerHTML = "<?= Yii::t('logs', 'General Summary') ?>";
+        summaryBlock.prepend(generalSummary);
+
+        return summaryBlock;
     }
 </script>

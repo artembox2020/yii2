@@ -106,7 +106,9 @@ class EncashmentJournalController extends Controller
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
         $recountAmountScript = $this->getRecountAmountScript();
-        $script = $this->getScript();
+        $model = ['banknote_face_values' => '1-0'];
+        $nominalsView = $searchModel->getNominalsView($model);
+        $script = $this->getScript(['nominalsView' => $nominalsView]);
 
         $eventSelectors = [
             'change' =>
@@ -159,12 +161,12 @@ class EncashmentJournalController extends Controller
      *
      * @return string
      */
-    public function getScript()
+    public function getScript($scriptParams)
     {
 
         return Yii::$app->view->render(
             "/encashment-journal/script",
-            []
+            $scriptParams
         );
     }
 

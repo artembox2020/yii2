@@ -910,12 +910,16 @@ class CbLogSearch extends CbLog
             'allModels' => $dataNominals,
         ]);
 
-        return Yii::$app->view->render(
+        $view = Yii::$app->view->render(
             '/encashment-journal/banknote_face_values/nominals',
             [
                 'dataProvider' => $dataProvider
             ]
         );
+
+        $view = str_replace(["\n", "<br>", "\r\n", "<br/>"], ["","","",""], $view);
+
+        return $view;
     }
 
     /**
