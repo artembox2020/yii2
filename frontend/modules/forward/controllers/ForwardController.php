@@ -5,6 +5,7 @@ namespace frontend\modules\forward\controllers;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
+use frontend\services\custom\Debugger;
 use yii\web\Controller;
 
 /**
@@ -24,12 +25,19 @@ class ForwardController extends Controller
         $array = array();
         $result = array();
 
-        $address = AddressBalanceHolder::find()->where(['name' => $address_name])->one();
-        $imei = Imei::find()->where(['address_id' => $address->id])
-            ->andWhere(['imei.status' => Imei::STATUS_ACTIVE])->one();
-        $wm_machine = WmMashine::find()->where(['imei_id' => $imei->id])
+        $address = AddressBalanceHolder::find()
+            ->where(['name' => $address_name])
+            ->one();
+
+        $imei = Imei::find()
+            ->andWhere(['address_id' => $address->id])
+            ->andWhere(['imei.status' => Imei::STATUS_ACTIVE])
+            ->one();
+
+        $wm_machine = WmMashine::find()
+            ->andWhere(['imei_id' => $imei->id])
             ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])
-            ->andWhere(['wm_mashine.is_deleted' => false])->all();
+            ->all();
 
         foreach ($wm_machine as $key => $value) {
             $array[$value->number_device] = [
