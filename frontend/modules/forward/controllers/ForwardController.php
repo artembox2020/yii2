@@ -26,7 +26,7 @@ class ForwardController extends Controller
         $result = array();
 
         $address = AddressBalanceHolder::find()
-            ->where(['name' => $address_name])
+            ->andWhere(['name' => $address_name])
             ->one();
 
         $imei = Imei::find()
