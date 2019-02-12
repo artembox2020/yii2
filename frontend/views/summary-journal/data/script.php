@@ -23,6 +23,7 @@
 ?>
 
 <script>
+
     // main journal
     Builder.makeJournal();
 
