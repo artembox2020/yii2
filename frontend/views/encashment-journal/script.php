@@ -154,7 +154,6 @@
         cell.innerHTML = "<?= Yii::t('frontend', 'Total') ?>";
 
         var nominalsGrid = table.querySelector('.banknote-nominals-container:nth-last-child(1)').cloneNode(true);
-
         var summaryBlock = document.createElement('div');
         summaryBlock.classList.add('encashment-general-summary');
         summaryBlock.innerHTML = '<?= $nominalsView ?>';
