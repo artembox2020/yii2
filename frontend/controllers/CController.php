@@ -11,13 +11,16 @@ use frontend\models\Imei;
 use frontend\models\ImeiData;
 use frontend\models\dto\GdDto;
 use frontend\models\dto\WmDto;
+use frontend\models\dto\CentralBoardEncashmentDto;
 use frontend\models\GdMashine;
 use frontend\models\WmMashine;
 use frontend\models\GdMashineData;
 use frontend\models\WmMashineData;
+use frontend\models\CbLogSearch;
 use frontend\models\dto\ImeiDataDto;
 use frontend\models\dto\ImeiInitDto;
 use frontend\models\Jlog;
+use frontend\models\CbEncashment;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 
@@ -587,5 +590,90 @@ class CController extends Controller
             $mashine->status = WmMashine::STATUS_OFF;
             $mashine->save(false);
         }
+    }
+
+    /**
+     * Encashment method
+     * sens.loc/c/f?p=862643034035000*1549892772*10000*450*300*14*1-0+2-0+5-0+10-10+20-0+50-4*20*1-0+2-0+5-10+10-10
+     * @param $p
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function actionF($p)
+    {
+        $result = $this->fParse($p);
+        $centralBoardDto = new CentralBoardEncashmentDto($result);
+        $cbLogSearch = new CbLogSearch();
+
+        if (Imei::findOne(['imei' => $centralBoardDto->imei])) {
+            $imei = $this->getImeiByImei($centralBoardDto->imei);
+            if (Imei::getStatus($imei) == self::ONE_CONST) {
+                $cbl = new CbEncashment();
+                $cbl->company_id = $imei->company_id;
+                $cbl->address_id = $imei->address_id;
+                $cbl->imei_id = $imei->id;
+                $cbl->imei = $centralBoardDto->imei;
+                $cbl->device = 'cb';
+                $cbl->status = CbLogSearch::TYPE_ENCASHMENT_STATUS;
+                $cbl->unix_time_offset = $centralBoardDto->unix_time_offset;
+                $cbl->fireproof_counter_hrn = $centralBoardDto->fireproof_counter_hrn;
+                $cbl->collection_counter = $centralBoardDto->collection_counter;
+                $cbl->notes_billiards_pcs = $centralBoardDto->notes_billiards_pcs;
+                $cbl->last_collection_counter = $centralBoardDto->last_collection_counter;
+                $cbl->banknote_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->banknote_face_values);
+                $cbl->amount_of_coins = $centralBoardDto->amount_of_coins;
+                $cbl->coin_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->coin_face_values);
+                $cbl->is_deleted = false;
+                $cbl->save();
+                echo 'cbl encashment data save!';
+                exit;
+            } else {
+                echo 'Imei not Active';
+                exit;
+            }
+        } else {
+            echo 'Imei not exists';exit;
+        }
+    }
+
+    /**
+     * Parses the packet encashment type data
+     *
+     * @param $p
+     * @return array
+     */
+    public function fParse($p)
+    {
+        $arrOut = [];
+        $column = [
+            'imei',
+            'unix_time_offset',
+            'fireproof_counter_hrn',
+            'collection_counter',
+            'last_collection_counter',
+            'notes_billiards_pcs',
+            'banknote_face_values',
+            'amount_of_coins',
+            'coin_face_values'
+        ];
+
+        $array = array_map("str_getcsv", explode('*', $p));
+
+        foreach ($array as $subArr) {
+            $arrOut = array_merge($arrOut, $subArr);
+        }
+
+        $result = array_combine($column, $arrOut);
+
+        return $result;
+    }
+
+    /**
+     * @param $imei
+     * @return Imei|null
+     */
+    public function getImeiByImei($imei)
+    {
+        return Imei::findOne(['imei' => $imei]);
     }
 }

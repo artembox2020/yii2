@@ -720,6 +720,8 @@ div.required label:after {
 }
 
 .banknote-nominals-grid .summary,
-.banknote-nominals-grid .filters {
+.banknote-nominals-grid .filters,
+.journal-pjax-container .encashment-title,
+#journal-pjax-container .encashment-title {
     display: none;
 }

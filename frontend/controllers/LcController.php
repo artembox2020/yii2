@@ -28,7 +28,7 @@ class LcController extends Controller
         $centralBoardDto = new CentralBoardDto($result);
 
         $cbLogSearch = new CbLogSearch();
-        
+
         if (Imei::findOne(['imei' => $centralBoardDto->imei])) {
             $imei = $this->getImei($centralBoardDto->imei);
             if (Imei::getStatus($imei) == self::ONE_CONST) {
