@@ -2,6 +2,7 @@
 
 namespace backend\models\search;
 
+use frontend\services\custom\Debugger;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -14,6 +15,8 @@ class UserSearch extends User
     const ONE = 1;
     const THIRTY = 30;
 
+    public $company;
+
     /**
      * @inheritdoc
      */
@@ -21,7 +24,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'status', 'created_at', 'updated_at', 'action_at'], 'integer'],
-            [['username', 'email', 'ip'], 'safe'],
+            [['username', 'email', 'ip', 'company'], 'safe'],
         ];
     }
 
@@ -44,14 +47,24 @@ class UserSearch extends User
     {
         $query = User::find();
 
-        // add conditions that should always apply here
+        $query->joinWith(['company']);
 
+        // add conditions that should always apply here
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => ['pagesize' => self::THIRTY],
         ]);
 
-        $this->load($params);
+        $dataProvider->sort->attributes['company'] = [
+            'asc' => ['company.name' => SORT_ASC],
+            'desc' => ['company.name' => SORT_DESC],
+        ];
+
+//        $this->load($params);
+
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -69,6 +82,7 @@ class UserSearch extends User
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
+            ->andFilterWhere(['like', 'company.name', $this->company])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'ip', $this->ip]);
 

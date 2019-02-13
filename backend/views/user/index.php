@@ -27,6 +27,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'username',
+            [
+                'attribute' => Yii::t('frontend', 'Role'),
+                'value' => function ($model) {
+                    return $model->getUserRoleName($model->id);
+                },
+            ],
+            [
+                'attribute' => 'company',
+                'value' => 'company.name'
+            ],
             // 'auth_key',
             // 'access_token',
             // 'password_hash',
