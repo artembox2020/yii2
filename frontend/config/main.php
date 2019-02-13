@@ -14,6 +14,9 @@ $config = [
         'account' => [
             'class' => 'frontend\modules\account\Module',
         ],
+        'forward' => [
+            'class' => 'frontend\modules\forward\Module',
+        ],
         'noty' => [
             'class' => 'lo\modules\noty\Module',
         ],

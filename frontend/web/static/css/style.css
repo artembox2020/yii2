@@ -628,6 +628,10 @@ div.required label:after {
 .summary-journal td.rest {
     background-color: red;
 }
+.summary-journal, .summary-journal-clone,
+.summary-journal-form .glyphicon {
+    display: none;
+}
 .main-page-model table {
     margin: 0;
     width: 100%;

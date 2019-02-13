@@ -779,6 +779,7 @@ Builder.expandStatistics = function()
             expandIncome.closest('div').click();
             expandIncome.closest('div').click();
         }
+        expandIncome.closest('div').querySelector('.glyphicon').style.display = 'inline';
     });
 }
 
@@ -838,4 +839,46 @@ Builder.makeJournalClone = function()
     Builder.expandStatistics();
 }
 
+// make journal by incomes only
+Builder.makeJournalByIncomes = function()
+{
+    Builder.makeJournalByAll();
+    document.querySelector('.wrap-clone .summary-journal-form').remove();
+    summaryJournal = document.querySelector('.summary-journal');
+}
+
+// make journals, both by incomes and idles 
+Builder.makeJournalByAll = function()
+{
+    // main journal
+    Builder.makeJournal();
+
+    // clones journal
+    Builder.cloneJournal();
+
+    // cloned journal table
+    summaryJournal = document.querySelector('.summary-journal-clone');
+    Builder.makeJournalClone();
+}
+
+// make journal by idles only
+Builder.makeJournalByIdles = function()
+{
+    Builder.makeJournalByAll();
+
+    document.querySelector('.summary-journal-form .expand-incomes').remove();
+    document.querySelector('.summary-journal-form .glyphicon').remove();
+    document.querySelector('.summary-journal').remove();
+    document.querySelector('.summary-journal-form .expand-incomes').click();
+    summaryJournal = document.querySelector('.summary-journal-clone');
+}
+
+// erases all journals
+Builder.eraseAll = function()
+{
+    var journals = document.querySelectorAll('.summary-journal, .summary-journal-clone');
+    for (var i = 0; i < journals.length; ++i) {
+        journals[i].remove();
+    }
+}
 </script>

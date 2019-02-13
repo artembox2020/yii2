@@ -351,6 +351,7 @@ return [
     'Serial Number Kp' => 'Серійний номер',
     'Settings' => 'Налаштування',
     'Shown' => 'Показані',
+    'Short Address' => 'Коротка адреса',
     'Signup' => 'Реєстрація',
     'Site' => 'Сайт',
     'Software Versions' => 'ЦП',

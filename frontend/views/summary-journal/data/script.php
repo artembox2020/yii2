@@ -22,15 +22,21 @@
     );
 ?>
 
-<script>
-    // main journal
-    Builder.makeJournal();
+<?php
 
-    // clones journal
-    Builder.cloneJournal();
+    // check privilleges for summary journal
+    $hasUserIncomesPermission = Yii::$app->user->can('summary-journal/incomes', ['class'=>static::class]);
+    $hasUserIdlesPermission = Yii::$app->user->can('summary-journal/idle', ['class'=>static::class]);
 
-    // cloned journal table
-    var summaryJournal = document.querySelector('.summary-journal-clone');
-    Builder.makeJournalClone();
-
-</script>
+    if ($hasUserIncomesPermission && $hasUserIdlesPermission) {
+        echo "<script>Builder.makeJournalByAll();</script>";
+    } elseif ($hasUserIncomesPermission) {
+        echo "<script>Builder.makeJournalByIncomes();</script>";
+    } elseif ($hasUserIdlesPermission) {
+        echo "<script>Builder.makeJournalByIdles();</script>";
+    } else {
+        echo "<script>Builder.eraseAll();</script>";
+        \Yii::$app->getSession()->setFlash('error', 'Access denied');
+        echo \Yii::$app->view->render('@app/modules/account/views/denied/access-denied');
+    }
+?>

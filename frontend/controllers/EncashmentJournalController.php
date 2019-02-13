@@ -159,6 +159,7 @@ class EncashmentJournalController extends Controller
     /**
      * Returns main script
      *
+     * @param array $scriptParams
      * @return string
      */
     public function getScript($scriptParams)
