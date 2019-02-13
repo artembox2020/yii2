@@ -99,6 +99,6 @@ class Company extends \yii\db\ActiveRecord
 
     public static function find()
     {
-        return parent::find()->where(['is_deleted' => false]);
+        return parent::find()->where(['company.is_deleted' => false]);
     }
 }
