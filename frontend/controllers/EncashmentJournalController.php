@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use frontend\models\CbLog;
+use frontend\models\CbEncashment;
 use frontend\models\CbLogSearch;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\EntityHelper;
@@ -132,13 +132,13 @@ class EncashmentJournalController extends Controller
     }
 
     /**
-     * Updates `recount_amount` field of cb_log table 
+     * Updates `recount_amount` field of cb_encashment table 
      * @param int $logId
      * @param int $value
      */
     public function actionUpdateRecountAmount($logId, $value)
     {
-        $searchModel = new CbLog();
+        $searchModel = new CbEncashment();
         $searchModel->updateRecountAmount($logId, $value);
     }
 
@@ -149,7 +149,7 @@ class EncashmentJournalController extends Controller
      */
     public function getRecountAmountScript()
     {
-        
+
         return Yii::$app->view->render(
             "/encashment-journal/recount_amount",
             []

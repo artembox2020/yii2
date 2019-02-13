@@ -13,7 +13,7 @@ use yii\jui\DatePicker;
 /* @var $addresses array */
 ?>
 
-<h1><?= Html::encode($this->title) ?></h1>
+<h1 class="encashment-title"><?= Html::encode($this->title) ?></h1>
 
 <?php
     Pjax::begin(['id' => 'journal-pjax-container']);

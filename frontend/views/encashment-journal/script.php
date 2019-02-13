@@ -17,15 +17,19 @@
         var grid = banknoteNominalsGrid[i];
         grid.querySelector("table thead").remove();
         var nominalsGrid = grid.querySelector('.nominals-grid table');
+        var coinNominalsGrid = grid.querySelector('.coin-nominals-grid table');
         var totalGrid = grid.querySelector('.total-grid table');
+        var coinTotalGrid = grid.querySelector('.coin-total-grid table');
         var addressGrid = grid.querySelector('.address-grid table');
 
         nominalsGrid.closest('.banknote-nominals').classList.remove('hide');
         var nominalsHeight = parseInt(nominalsGrid.offsetHeight);
+        var coinNominalsHeight = parseInt(coinNominalsGrid.offsetHeight);
         nominalsGrid.closest('.banknote-nominals').classList.add('hide');
 
         totalGrid.style.height = nominalsHeight + 'px';
-        addressGrid.style.height = nominalsHeight + 'px';
+        coinTotalGrid.style.height = coinNominalsHeight + 'px';
+        addressGrid.style.height = (nominalsHeight + coinNominalsHeight) + 'px';
     }
 
     // encashment summary
@@ -76,9 +80,9 @@
 
         tr.querySelector('span.encashment-sum').innerHTML = sum;
         tr.querySelector('span.encashment-sum').dataset.timestamp = dateStamp;
-        
+
         var emptyRow = tr.cloneNode(true);
-        
+
         emptyRow.querySelector('td span.encashment-sum').innerHTML = '';
         emptyRow.querySelector('td span.encashment-sum').dataset.timestamp = '0';
         emptyRow.querySelector('td span.encashment-sum').closest('tr').classList.add('invisible');
@@ -132,12 +136,20 @@
         }
 
         encashmentBlock.querySelector('.summary').remove();
-        encashmentBlock.querySelector('.pagination').remove();
+
+        if (encashmentBlock.querySelectorAll('.pagination').length > 0) {
+            encashmentBlock.querySelector('.pagination').remove();
+        }
 
         var table = encashmentBlock.querySelector('table');
 
         var trs = table.querySelectorAll('tbody tr');
-        var banknotesSummary = getBanknotesSummary(table, label);
+
+        var nominalsGrid = table.querySelectorAll('tr td.banknote-nominals-cell .banknote-nominals-grid table .nominals-banknote-grid');
+        var banknotesSummary = getBanknotesSummary(table, label, nominalsGrid);
+
+        var coinsGrid = table.querySelectorAll('tr td.banknote-nominals-cell .banknote-nominals-grid table .coin-nominals-grid');
+        var coinsSummary = getBanknotesSummary(table, label, coinsGrid);
 
         // remove unnecessary table items
         for (var i = 0; i < trs.length; ++i) {
@@ -159,8 +171,28 @@
         summaryBlock.classList.add('encashment-general-summary');
         summaryBlock.innerHTML = '<?= $nominalsView ?>';
         summaryBlock.querySelector('.summary').remove();
-        summaryBlock = implementBanknotesSummary(banknotesSummary, summaryBlock);
-        table.parentNode.insertBefore(summaryBlock, table.nextSibling);
+
+        var banknoteSummaryCaptions = [
+            "<?= Yii::t('logs', 'Nominal') ?>",
+            "<?= Yii::t('logs', 'General Number Of Nominals') ?>",
+            "<?= Yii::t('logs', 'General Sum Of Banknotes') ?>"
+        ];
+
+        var coinSummaryCaptions = [
+            "<?= Yii::t('logs', 'Nominal') ?>",
+            "<?= Yii::t('logs', 'General Number Of Coins') ?>",
+            "<?= Yii::t('logs', 'General Sum Of Coins') ?>"
+        ];
+
+        var banknotesSummaryBlock = implementBanknotesSummary(banknotesSummary, summaryBlock, banknoteSummaryCaptions);
+        var coinsSummaryBlock = implementBanknotesSummary(coinsSummary, summaryBlock, coinSummaryCaptions);
+        table.parentNode.insertBefore(coinsSummaryBlock, table.nextSibling);
+        table.parentNode.insertBefore(banknotesSummaryBlock, table.nextSibling);
+
+        var generalSummary = document.createElement('h2');
+        generalSummary.align = 'center';
+        generalSummary.innerHTML = "<?= Yii::t('logs', 'General Summary') ?>";
+        table.parentNode.insertBefore(generalSummary, table.nextSibling);
 
         var banknoteNominals = table.querySelectorAll('td.banknote-nominals-cell');
         for (var i = 0; i < banknoteNominals.length; ++i) {
@@ -180,10 +212,8 @@
     }
 
     // calculates and returns banknotes summary info as array
-    function getBanknotesSummary(table, label)
+    function getBanknotesSummary(table, label, nominalsGrid)
     {
-        var nominalsGrid = table.querySelectorAll('tr td.banknote-nominals-cell .banknote-nominals-grid table .nominals-grid');
-
         var banknotesInfo = [];
         var banknotesNominals = [];
         for (var i = 0; i < nominalsGrid.length; ++i) {
@@ -227,8 +257,9 @@
     }
 
     // appends at the end of the pdf summary general banknotes info
-    function implementBanknotesSummary(banknotesSummary, summaryBlock)
+    function implementBanknotesSummary(banknotesSummary, summaryBlockInstance, captions)
     {
+        var summaryBlock = summaryBlockInstance.cloneNode(true);
         var table = summaryBlock.querySelector('table');
         var tableTrs = table.querySelectorAll('tbody tr, thead tr');
         var tbody = table.querySelector('tbody');
@@ -240,15 +271,15 @@
 
         var headTr = table.querySelector('thead');
         var tr = document.createElement('tr');
-        
+
         var headNominalCell = document.createElement('td');
-        headNominalCell.innerHTML = "<?= Yii::t('logs', 'Nominal') ?>";
+        headNominalCell.innerHTML = captions[0];
         
         var headNominalQCell = document.createElement('td');
-        headNominalQCell.innerHTML = "<?= Yii::t('logs', 'General Number Of Nominals') ?>";
+        headNominalQCell.innerHTML = captions[1];
 
         var headNominalSumCell = document.createElement('td');
-        headNominalSumCell.innerHTML = "<?= Yii::t('logs', 'General Sum Of Banknotes') ?>";
+        headNominalSumCell.innerHTML = captions[2];
 
         tr.append(headNominalCell);
         tr.append(headNominalQCell);
@@ -274,11 +305,6 @@
 
             tbody.append(tr);
         }
-
-        var generalSummary = document.createElement('h2');
-        generalSummary.align = 'center';
-        generalSummary.innerHTML = "<?= Yii::t('logs', 'General Summary') ?>";
-        summaryBlock.prepend(generalSummary);
 
         return summaryBlock;
     }

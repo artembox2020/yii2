@@ -196,21 +196,4 @@ class CbLog extends \yii\db\ActiveRecord
     {
         return $this->hasOne(WmLog::className(), ['id' => $this->imei_id])->one();
     }
-
-    /**
-     * Updates `recount_amount` field of cb_log table
-     * 
-     * @param int $logId
-     * @param int $recountAmount
-     */
-    public function updateRecountAmount($logId, $recountAmount)
-    {
-        $item = CbLog::findOne($logId);
-
-        if (!empty($item)) {
-            $item->recount_amount = $recountAmount;
-            $item->save();
-        }
-
-    }
 }
