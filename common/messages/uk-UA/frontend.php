@@ -323,6 +323,7 @@ return [
     'oe of overflow' => 'Помилка переливу води',
     'Packet' => 'Пакет',
     'Page not found.' => 'Сторінка не знайдена',
+    'Page Size' => 'Записів на сторінку',
     'Password' => 'Пароль',
     'Password reset for {name}' => 'Скидання пароля для {name}',
     'Password reset token cannot be blank.' => 'Маркер відновлення пароля не може бути порожнім',
