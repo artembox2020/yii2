@@ -85,7 +85,7 @@ class JlogSearch extends Jlog
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => self::PAGE_SIZE
+                'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
             ]
         ]);
 

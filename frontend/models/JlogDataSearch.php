@@ -134,7 +134,7 @@ class JlogDataSearch extends JlogSearch
         $dataProvider = new ArrayDataProvider([
             'allModels' => $dataInfo,
             'pagination' => [
-                'pageSize' => self::TYPE_PAGE_SIZE
+                'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
             ],
             'sort' => [
                 'attributes' => [
@@ -202,8 +202,10 @@ class JlogDataSearch extends JlogSearch
             $params['page'] = 1;
         }
 
-        $start =((int)$params['page'] - 1) * self::TYPE_PAGE_SIZE + 1;
-        $end = $start + self::TYPE_PAGE_SIZE - 1;
+        $pageSize = $params['page_size'] ? $params['page_size'] : self::TYPE_PAGE_SIZE;
+
+        $start =((int)$params['page'] - 1) * $pageSize + 1;
+        $end = $start + $pageSize - 1;
 
         $query = $this->searchDataQuery($params);
 

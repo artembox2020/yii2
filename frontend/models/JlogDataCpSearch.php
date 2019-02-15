@@ -45,7 +45,7 @@ class JLogDataCpSearch extends JlogSearch
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => self::PAGE_SIZE
+                'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
             ],
             'sort' => [
                 'attributes' => [

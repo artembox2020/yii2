@@ -98,6 +98,13 @@ AppAsset::register($this);
             $role_name = $key;
         }
         $role_name = Yii::$app->user->identity->username;
+        $userRole = \Yii::$app->authManager->getRolesByUser(Yii::$app->user->id);
+
+        if (empty($userRole)) {
+            $userRole = '';
+        } else {
+            $userRole = array_keys($userRole)[0];
+        }
 
         $menuItems = [
 //        [
@@ -156,7 +163,7 @@ AppAsset::register($this);
         }
 
         $menuItems[] = [
-            'label' => $role_name . ' ('. $val .')',
+            'label' => $role_name . ' ('.$userRole.')',
             'url' => '#',
             'items' => [
                 [
