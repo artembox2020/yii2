@@ -312,12 +312,14 @@ class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
 
         return $role = 'Role not defined';
     }
-    
+
     /**
-     * @param string $roleNames
-     * @return integer
+     * @param $roleNames
+     * @return int
+     * @throws \yii\web\NotFoundHttpException
      */
-    public function getUserCountByRoles($roleNames) {
+    public function getUserCountByRoles($roleNames)
+    {
         $entity = new Entity();
         $users = $entity->getUnitsPertainCompany(new User());
         $ids = ArrayHelper::getColumn($users, 'id');
@@ -338,17 +340,21 @@ class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
     /**
      * @return integer
      */
-    public function getUserCount() {
+    public function getUserCount()
+    {
         $entity = new Entity();
         $query = $entity->getUnitsQueryPertainCompany(new User());
+        $query->andWhere(['!=', 'username', 'Administrator']);
                  
         return $query->count();
     }
-    
+
     /**
-     * @return integer
+     * @return int
+     * @throws \yii\web\NotFoundHttpException
      */
-    public function getUserOtherCount() {
+    public function getUserOtherCount()
+    {
         $countAll = $this->getUserCount();
         $countRoles = $this->getUserCountByRoles(
             [User::ROLE_FINANCIER, User::ROLE_TECHNICIAN, User::ROLE_MANAGER]

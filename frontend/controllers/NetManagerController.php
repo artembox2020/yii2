@@ -25,7 +25,7 @@ use yii\data\ArrayDataProvider;
 use common\models\User;
 use common\models\UserSearch;
 use backend\models\UserForm;
-use backend\models\Company;
+use frontend\models\Company;
 use yii\di\Instance;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
@@ -236,10 +236,10 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionDeleteEmployee($id) 
     {
-//        if (!\Yii::$app->user->can('manager')) {
-//            \Yii::$app->getSession()->setFlash('error', 'Access denied');
-//            return $this->render('@app/modules/account/views/denied/access-denied');
-//        }
+        if (!\Yii::$app->user->can('manager')) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
 
         $model = $this->findModel($id, new User());
         $model->softDelete();

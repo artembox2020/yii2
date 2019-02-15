@@ -102,7 +102,8 @@ class UserSearch extends User
         $user = User::findOne(Yii::$app->user->id);
         
         $query = User::find()
-                ->andWhere(['company_id' => $user->company_id]); // user belongs to company
+                ->andWhere(['company_id' => $user->company_id]) // user belongs to company
+                ->andWhere(['!=', 'username', 'Administrator']);
                 //->andWhere(['is_deleted' => false, 'status' => User::STATUS_ACTIVE]);
 
         $dataProvider = new ActiveDataProvider([
