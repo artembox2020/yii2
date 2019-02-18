@@ -470,4 +470,18 @@ class ImeiData extends \yii\db\ActiveRecord
 
         return $this->level_signal;
     }
+
+    /**
+     * Makes class indicating whether active action
+     *
+     * @param string $action
+     * @return string
+     */
+    public function makeActiveActionClass($action)
+    {
+        $imeiAction = new ImeiAction();
+        $class = $imeiAction->makeClass($this->imei_id, $action);
+
+        return $class;
+    }
 }

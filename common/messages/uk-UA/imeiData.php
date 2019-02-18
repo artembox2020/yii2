@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'Action is not active or not exists' => 'Дія неактивна або не існує',
     'CP Status' => 'стан центральной плати',
     'Date End' => 'Час та дата кінця стану',
     'Date Start' => 'Час та дата початку стану',
@@ -18,5 +19,7 @@ return [
     'ErrUnexp' => 'КП не підключений / не відповідає',
     'ErrValidFull' => 'Касета заповнена. Потрібна інкасація',
     'Event Bill Acceptance' => 'стан купюроприйомника',
+    'Imei not active' => 'Імей не активний',
+    'Imei not exists' => 'Імей не існує',
     'OK' => 'OK'
 ];
