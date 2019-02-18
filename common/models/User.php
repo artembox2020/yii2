@@ -92,7 +92,8 @@ class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             ['ip', 'ip'],
-            ['company', 'string']
+            ['company', 'string'],
+            ['company_id', 'integer'],
         ];
     }
 

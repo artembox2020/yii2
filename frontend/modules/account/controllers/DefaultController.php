@@ -171,10 +171,8 @@ class DefaultController extends Controller
     }
 
     /**
-     * Creates a new User model.
-     * If creation is successful, the browser will be redirected to the 'index' page.
-     *
-     * @return mixed
+     * @return array|string|\yii\web\Response
+     * @throws \Exception
      */
     public function actionCreate()
     {
@@ -198,16 +196,16 @@ class DefaultController extends Controller
                 $model->save();
 
                 $manager = User::findOne(Yii::$app->user->id);
-                $user = User::find()->where(['email' => $model->email])->one();
+                $user = User::findOne(['email' => $model->email]);
 
                 $user->company_id = $manager->company_id;
-                $user->save();
+                $user->save(false);
                 
                 $profile = UserProfile::findOne($user->id);
                 if ($profile->load(Yii::$app->request->post())) {
                     $profile->save();
                 }
-    
+
                 // send invite mail
                 $password = $model->other;
                 $sendMail = new MailSender();
