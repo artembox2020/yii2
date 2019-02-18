@@ -725,3 +725,11 @@ div.required label:after {
 #journal-pjax-container .encashment-title {
     display: none;
 }
+
+.monitoring .cell-actions.active {
+    border: 2px solid green;
+    background-color: yellow;
+}
+.monitoring .cell-actions {
+    cursor: pointer;
+}

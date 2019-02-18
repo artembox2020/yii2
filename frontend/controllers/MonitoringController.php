@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\User;
 use frontend\models\ImeiDataSearch;
+use frontend\models\ImeiAction;
 use frontend\models\WmMashineDataSearch;
 use frontend\models\WmMashine;
 use frontend\models\Jlog;
@@ -339,5 +340,19 @@ class MonitoringController extends \yii\web\Controller
         $responseResult['status'] = $checkResult;
 
         return json_encode($responseResult);
+    }
+
+    /**
+     * Main imei action function  
+     * 
+     * @param integer $imeId
+     * @param string $imei
+     * @param string $action
+     * @param bool $isCancel
+     */
+    public function actionImeiAction($imeiId, $imei, $action, $isCancel)
+    {
+        $searchModel = new ImeiAction();
+        $searchModel->appendAction($imeiId, $imei, $action, $isCancel);
     }
 }

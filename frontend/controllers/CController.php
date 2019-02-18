@@ -9,6 +9,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use frontend\models\Imei;
 use frontend\models\ImeiData;
+use frontend\models\ImeiAction;
 use frontend\models\dto\GdDto;
 use frontend\models\dto\WmDto;
 use frontend\models\dto\CentralBoardEncashmentDto;
@@ -675,5 +676,58 @@ class CController extends Controller
     public function getImeiByImei($imei)
     {
         return Imei::findOne(['imei' => $imei]);
+    }
+
+    /**
+     * Command status method
+     * sens.loc/c/q?p=1550513654*862643034118608
+     *
+     * @param string $p
+     * @return @return \yii\web\Response
+     */
+    public function actionQ($p)
+    {
+        $arrOut = [];
+
+        $column = [
+            'unix_time_offset',
+            'imei'
+        ];
+
+        $array = array_map("str_getcsv", explode('*', $p));
+
+        foreach ($array as $subArr) {
+            $arrOut = array_merge($arrOut, $subArr);
+        }
+
+        $arrResult = array_combine($column, $arrOut);
+
+        $imei = $this->getImeiByImei($arrResult['imei']);
+
+        if ($imei) {
+
+            if (Imei::getStatus($imei) == self::ONE_CONST) {
+                $imeiAction = new ImeiAction();
+                $action = $imeiAction->getAction($imei->id, $arrResult['unix_time_offset']);
+
+                if ($action) {
+
+                    return $this->asJson(['com' => $action]);
+                } else {
+                    $status = Yii::t('imeiData', 'Action is not active or not exists');
+
+                    return $this->asJson(['com' => '', 'status' => $status]);
+                }
+            } else {
+                $status = Yii::t('imeiData', 'Imei not active');
+
+                return $this->asJson(['com' => '', 'status' => $status]);
+            }
+
+        } else {
+            $status = Yii::t('imeiData', 'Imei not exists');
+
+            return $this->asJson(['com' => '', 'status' => $status]);
+        }
     }
 }
