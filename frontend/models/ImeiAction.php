@@ -177,6 +177,11 @@ class ImeiAction extends \yii\db\ActiveRecord
         $imeiAction->is_active = false;
         $imeiAction->save();
 
+        if ($imeiAction->action == ImeiData::TYPE_ACTION_TIME_SET) {
+
+            return $imeiAction->action.'&'.(time() + Jlog::TYPE_TIME_OFFSET);
+        }
+
         return $imeiAction->action;
     }
 

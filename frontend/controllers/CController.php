@@ -712,22 +712,22 @@ class CController extends Controller
 
                 if ($action) {
 
-                    return $this->asJson(['com' => $action]);
+                    return 'com='.$action;
                 } else {
-                    $status = Yii::t('imeiData', 'Action is not active or not exists');
+                    $status = 'Action is not active or not exists';
 
-                    return $this->asJson(['com' => '', 'status' => $status]);
+                    return 'com=0_error='.$status;
                 }
             } else {
-                $status = Yii::t('imeiData', 'Imei not active');
+                $status = 'Imei not active';
 
-                return $this->asJson(['com' => '', 'status' => $status]);
+                return 'com=0_error='.$status;
             }
 
         } else {
-            $status = Yii::t('imeiData', 'Imei not exists');
+            $status = 'Imei not exists';
 
-            return $this->asJson(['com' => '', 'status' => $status]);
+            return 'com=0_error='.$status;
         }
     }
 }

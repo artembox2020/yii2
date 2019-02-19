@@ -351,7 +351,7 @@
         {
             var imei_id = cellAction.dataset.imei_id;
             var imei = cellAction.dataset.imei;
-            var action = cellAction.dataset.action;
+            var action = cellAction.dataset.actionId;
 
             var queryString = "imeiId=" + imei_id + "&imei=" + imei + "&action=" + action + "&isCancel=" + isCancelled;
             var ajaxActions = new XMLHttpRequest();
