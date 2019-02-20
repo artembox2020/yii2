@@ -610,24 +610,28 @@ class CController extends Controller
             $imei = $this->getImeiByImei($centralBoardDto->imei);
             if (Imei::getStatus($imei) == self::ONE_CONST) {
                 $cbl = new CbEncashment();
-                $cbl->company_id = $imei->company_id;
-                $cbl->address_id = $imei->address_id;
-                $cbl->imei_id = $imei->id;
-                $cbl->imei = $centralBoardDto->imei;
-                $cbl->device = 'cb';
-                $cbl->status = CbLogSearch::TYPE_ENCASHMENT_STATUS;
-                $cbl->unix_time_offset = $centralBoardDto->unix_time_offset;
-                $cbl->fireproof_counter_hrn = $centralBoardDto->fireproof_counter_hrn;
-                $cbl->collection_counter = $centralBoardDto->collection_counter;
-                $cbl->notes_billiards_pcs = $centralBoardDto->notes_billiards_pcs;
-                $cbl->last_collection_counter = $centralBoardDto->last_collection_counter;
-                $cbl->banknote_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->banknote_face_values);
-                $cbl->amount_of_coins = $centralBoardDto->amount_of_coins;
-                $cbl->coin_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->coin_face_values);
-                $cbl->is_deleted = false;
-                $cbl->save();
-                echo 'cbl encashment data save!';
-                exit;
+                if ($cbl->checkImeiIdUnixTimeOffsetUnique($imei->id, $centralBoardDto->unix_time_offset)) {
+                    $cbl->company_id = $imei->company_id;
+                    $cbl->address_id = $imei->address_id;
+                    $cbl->imei_id = $imei->id;
+                    $cbl->imei = $centralBoardDto->imei;
+                    $cbl->device = 'cb';
+                    $cbl->status = CbLogSearch::TYPE_ENCASHMENT_STATUS;
+                    $cbl->unix_time_offset = $centralBoardDto->unix_time_offset;
+                    $cbl->fireproof_counter_hrn = $centralBoardDto->fireproof_counter_hrn;
+                    $cbl->collection_counter = $centralBoardDto->collection_counter;
+                    $cbl->notes_billiards_pcs = $centralBoardDto->notes_billiards_pcs;
+                    $cbl->last_collection_counter = $centralBoardDto->last_collection_counter;
+                    $cbl->banknote_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->banknote_face_values);
+                    $cbl->amount_of_coins = $centralBoardDto->amount_of_coins;
+                    $cbl->coin_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->coin_face_values);
+                    $cbl->is_deleted = false;
+                    $cbl->save();
+                    echo 'cbl encashment data save!';
+                    exit;
+                } else {
+                    echo 'Unique key {imei_id, unix_time_offset} constraint violation';
+                }
             } else {
                 echo 'Imei not Active';
                 exit;

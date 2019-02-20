@@ -119,4 +119,18 @@ class CbEncashment extends \yii\db\ActiveRecord
             $item->save();
         }
     }
+
+    /**
+     * Check constraint: unique key <imei_id, unix_time_offset> 
+     * 
+     * @param int $imeiId
+     * @param int $unixTimeOffset
+     * @return bool
+     */
+    public function checkImeiIdUnixTimeOffsetUnique($imeiId, $unixTimeOffset)
+    {
+        $query = CbEncashment::find()->andWhere(['imei_id' => $imeiId, 'unix_time_offset' => $unixTimeOffset]);
+
+        return $query->count() > 0 ? false : true;
+    }
 }
