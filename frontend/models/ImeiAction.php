@@ -87,7 +87,7 @@ class ImeiAction extends \yii\db\ActiveRecord
     }
 
     /**
-     * Fetches the last item by imei id
+     * Fetches the last non-cancelled item by imei id and timestamp
      *
      * @param integer $imeiId
      * @param integer $timestamp
@@ -96,7 +96,7 @@ class ImeiAction extends \yii\db\ActiveRecord
     private function fetchItem($imeiId, $timestamp = false)
     {
         // fetch item from the table
-        $item = ImeiAction::find()->where(['imei_id' => $imeiId]);
+        $item = ImeiAction::find()->where(['imei_id' => $imeiId, 'is_cancelled' => false, 'is_deleted' => false]);
 
         if ($timestamp) {
             $item = $item->andWhere(['<=', 'unix_time_offset', $timestamp]);
@@ -110,48 +110,69 @@ class ImeiAction extends \yii\db\ActiveRecord
     }
 
     /**
+     * Fetches the last item by imei id in spite of cancelled or not 
+     *
+     * @param integer $imeiId
+     * @return ImeiAction|null
+     */
+    private function fetchLastItem($imeiId)
+    {
+        // fetch item from the table
+        $item = ImeiAction::find()->where(['imei_id' => $imeiId, 'is_deleted' => false]);
+
+        $item = $item->orderBy(['unix_time_offset' => SORT_DESC, 'id' => SORT_DESC])
+                     ->limit(1)
+                     ->one();
+
+        return $item;
+    }
+
+    /**
+     * Cancellates item
+     *
+     * @param ImeiAction $item
+     * @return ImeiAction|null
+     */
+    private function makeItemCancellation($item)
+    {
+        if ($item && !$item->is_cancelled && $item->is_active) {
+            $item->is_cancelled = true;
+            $item->is_active = false;
+            $item->save();
+        }
+
+        return $item;
+    }
+
+    /**
      * Appends new item or cancels the last one by imei id
      *
      * @param integer $imeiId
      * @param Imei $imei
      * @param string $action
      * @param bool $isCancel
-     * @return string
+     * @return ImeiAction|null
      */
     public function appendAction($imeiId, $imei, $action, $isCancel)
     {
-        $imeiAction = $this->fetchItem($imeiId);
+        $imeiAction = $this->fetchLastItem($imeiId);
+        $itemCancellationResult = $this->makeItemCancellation($imeiAction);
 
-        // check for cancellation
-        if ($isCancel && (!$imeiAction || $imeiAction->is_cancelled)) {
+        if ($isCancel) {
 
-            return false;
-        } elseif ($isCancel) {
-
-            $imeiAction->is_active = false;
-        } else {
-
-            // check for non-cancellation
-            if ($imeiAction) {
-                $imeiAction->is_cancelled = true;
-                $imeiAction->is_active = false;
-                $imeiAction->unix_time_offset = time() + Jlog::TYPE_TIME_OFFSET;
-                $imeiAction->save();
-            }
-
-            $imeiAction = new ImeiAction();
-            $imeiAction->is_active = true;
+            return $itemCancellationResult;
         }
+
+        $imeiAction = new ImeiAction();
+        $imeiAction->is_active = true;
 
         // fill in the table with actual data
         $imeiAction->imei_id = $imeiId;
         $imeiAction->imei = $imei;
         $imeiAction->action = $action;
-        $imeiAction->is_cancelled = $isCancel;
-
+        $imeiAction->is_cancelled = false;
         $imeiAction->is_deleted = false;
         $imeiAction->unix_time_offset = time() + Jlog::TYPE_TIME_OFFSET;
-
         $imeiAction->save();
 
         return $imeiAction;
@@ -167,15 +188,28 @@ class ImeiAction extends \yii\db\ActiveRecord
     public function getAction($imeiId, $timestamp)
     {
         $imeiAction = $this->fetchItem($imeiId, $timestamp);
-        $result = [];
 
-        if (!$imeiAction || !$imeiAction->is_active) {
+        // return false in case of empty imeiAction
+        if (!$imeiAction) {
+
+            return false;
+        }
+
+        $lastImeiAction = $this->fetchItem($imeiId);
+
+        // last action item must be active, otherwise return false
+        if ($lastImeiAction->unix_time_offset == $imeiAction->unix_time_offset && !$imeiAction->is_active) {
 
             return false;
         }
 
         $imeiAction->is_active = false;
         $imeiAction->save();
+
+        if ($imeiAction->action == ImeiData::TYPE_ACTION_TIME_SET) {
+
+            return $imeiAction->action.'&'.(time() + Jlog::TYPE_TIME_OFFSET);
+        }
 
         return $imeiAction->action;
     }
