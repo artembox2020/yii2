@@ -4,6 +4,7 @@ namespace frontend\services\globals;
 
 use common\models\User;
 use frontend\services\custom\Debugger;
+use frontend\services\globals\QueryOptimizer;
 use Yii;
 use yii\di\Instance;
 use yii\helpers\ArrayHelper;
@@ -103,7 +104,8 @@ class Entity implements EntityInterface
         global $currentUser;
 
         if (empty($currentUser)) {
-            $currentUser = User::findOne(Yii::$app->user->id);
+            $query = User::find()->andWhere(['id' => Yii::$app->user->id])->limit(1);
+            $currentUser = $query->one();
         }
 
         return $currentUser->company_id;
@@ -157,5 +159,19 @@ class Entity implements EntityInterface
         $unit = $instance::findOne(['id' => $id]);
 
         return $this->checkAccess($unit, false);
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser()
+    {
+        global $currentUser;
+
+        if (empty($currentUser)) {
+            $currentUser = User::findOne(Yii::$app->user->id);
+        }
+
+        return $currentUser;
     }
 }

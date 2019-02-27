@@ -520,7 +520,7 @@ class CbLogSearch extends CbLog
     {
         if (
             empty($model['address_id']) ||
-            ! ($address = AddressBalanceHolder::findOne($model['address_id']))
+            ! ($address = AddressBalanceHolder::find()->where(['id' => $model['address_id']])->one())
         ) {
 
             return false;

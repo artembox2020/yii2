@@ -12,6 +12,7 @@ use frontend\models\ImeiData;
 use frontend\models\Jlog;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
+use frontend\services\globals\QueryOptimizer;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -38,12 +39,15 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         $k = 0;
         $timestampEnd = $this->getTimestampByYearMonthDay($year, $month, $days, false);
         $timestampStart = $this->getTimestampByYearMonthDay($year, $month, '01', true);
-        foreach ($dataProvider->query->all() as $balanceHolder) {
-            foreach ($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->all() as $address) {
+
+        foreach (QueryOptimizer::getItemsByQuery($dataProvider->query) as $balanceHolder) {
+            $addressesQuery = $balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd);
+
+            foreach (QueryOptimizer::getItemsByQuery($addressesQuery) as $address) {
                 $data[$k] = [];
                 $mashineQuery = $this->getAllMashinesQueryByYearMonth($year, $month, $address);
                 $incomes = $this->getMashineIncomesByYearMonth($year, $month, $days, $mashineQuery);
-                $countTotal += $mashineQuery->count();
+                $countTotal += QueryOptimizer::getItemsCountByQuery($mashineQuery);
 
                 foreach ($incomes as $mashine_id => $income) {
                     $data[$k] = [];
@@ -63,6 +67,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 }
             }
         }
+
         $data['summaryTotal'] = $summaryTotal;
         $data['idlesTotal'] = $idlesTotal;
         $data['countTotal'] = $countTotal;
@@ -85,7 +90,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         $incomes = [];
         $timestampEnd = $this->getTimestampByYearMonthDay($year, $month, $days, false);
         $timestampStart = $this->getTimestampByYearMonthDay($year, $month, '01', true);
-        if ($mashinesQuery->count() == 0) {
+        if (QueryOptimizer::getItemsCountByQuery($mashinesQuery) == 0) {
             for ($i = 1; $i <= $days; ++$i) {
                 $arrs[$i] = [ 'income' => null, 'deleted' => false, 'created' => false, 'idleHours' => 0];
             }
@@ -94,7 +99,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
             return $incomes;
         }
 
-        foreach ($mashinesQuery->all() as $mashine) {
+        foreach (QueryOptimizer::getItemsByQuery($mashinesQuery) as $mashine) {
             $incomes[$mashine->id] = $this->getMashineIncomeByTimestamps($timestampStart, $timestampEnd + 1, $days, $mashine);
         }
 
@@ -121,7 +126,8 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
             'mashine_id',
             $selectString
         );
-        if ($baseQuery->count() == 0) {
+
+        if (QueryOptimizer::getItemsCountByQuery($baseQuery) == 0) {
             $income = null;
         } else {
             $nonZeroIntervals = $entityHelper->makeNonZeroIntervalsByTimestamps(
@@ -257,8 +263,9 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
     {
         $jSummary = new Jsummary();
         $imei = $jSummary->getImeiFromGlobalById($mashine->imei_id);
+        $query = AddressBalanceHolder::find()->andWhere(['id' => $imei->address_id]);
 
-        return AddressBalanceHolder::findOne($imei->address_id);
+        return QueryOptimizer::getItemByQuery($query->limit(1));
     }
 
     /**

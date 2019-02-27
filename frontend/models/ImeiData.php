@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use frontend\services\parser\CParser;
+use frontend\services\globals\QueryOptimizer;
 
 /**
  * This is the model class for table "imei_data".
@@ -263,7 +264,7 @@ class ImeiData extends \yii\db\ActiveRecord
                                  ->orderBy(['created_at' => SORT_DESC])
                                  ->limit(1);
 
-        $item = $query->one();
+        $item = QueryOptimizer::getItemByQuery($query);
 
         if ($item) {
             $resultQuery = ImeiData::find()->andWhere(['imei_id' => $imeiId])
@@ -271,7 +272,7 @@ class ImeiData extends \yii\db\ActiveRecord
                                            ->andWhere(['!=', 'money_in_banknotes', 0])
                                            ->orderBy(['created_at' => SORT_DESC])
                                            ->limit(1);
-            $resultItem = $resultQuery->one();
+            $resultItem = QueryOptimizer::getItemByQuery($resultQuery);
 
             if ($resultItem) {
 

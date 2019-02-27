@@ -197,7 +197,7 @@ class EncashmentJournalController extends Controller
     {
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'orientation' => 'L'
+            'orientation' => 'P'
         ]);
 
         $mpdf->setTitle($title);

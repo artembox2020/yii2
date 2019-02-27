@@ -8,6 +8,7 @@ use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use frontend\models\NavItem;
+use frontend\services\globals\Entity;
 use lo\modules\noty\Wrapper;
 
 /* @var $this \yii\web\View */
@@ -32,9 +33,10 @@ AppAsset::register($this);
     <?php
     $brand = Yii::$app->name;
     $brand_url = Yii::$app->homeUrl;
+    $entity = new Entity();
 //    if (Yii::$app->user->can('administrator')) {
 //    } else {
-        if (!empty($user = User::findOne(Yii::$app->user->id))) {
+        if (!empty($user = $entity->getUser())) {
             if (!empty($user->company)) {
                 $company = $user->company;
                 $brand = $company->name;

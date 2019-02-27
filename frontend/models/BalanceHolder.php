@@ -5,6 +5,7 @@ namespace frontend\models;
 use common\models\User;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
+use frontend\services\globals\QueryOptimizer;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -269,5 +270,45 @@ class BalanceHolder extends \yii\db\ActiveRecord
         }
 
         return $balanceHoldersData;
+    }
+
+    /**
+     * Gets balance holders count by timestamps
+     * 
+     * @param int $start
+     * @param int $end
+     * @return int
+     */
+    public function getAddressBalanceHoldersCountByTimestamp($start, $end)
+    {
+        $query = $this->getAddressBalanceHoldersQueryByTimestamp($start, $end);
+
+        return QueryOptimizer::getItemsCountByQuery($query);
+    }
+
+    /**
+     * Gets balance holders by timestamps
+     * 
+     * @param int $start
+     * @param int $end
+     * @return array
+     */
+    public function getAddressBalanceHoldersByTimestamp($start, $end)
+    {
+        $query = $this->getAddressBalanceHoldersQueryByTimestamp($start, $end);
+
+        return QueryOptimizer::getItemsByQuery($query);
+    }
+
+    /**
+     * Gets all items by dataProvider
+     * 
+     * @param ActiveQueryDataProvider
+     * @return array
+     */
+    public static function getItemsByDataProvider($dataProvider)
+    {
+
+        return QueryOptimizer::getItemsByQuery($dataProvider->query);
     }
 }

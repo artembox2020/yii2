@@ -3,6 +3,8 @@
 namespace frontend\models;
 use yii\db\ActiveRecord;
 use frontend\services\globals\Entity;
+use frontend\services\custom\Debugger;
+use frontend\services\globals\QueryOptimizer;
 use Yii;
 
 /**
@@ -128,21 +130,23 @@ class Jsummary extends ActiveRecord
      */
     public function saveItem($imei_id, $address_id, $startTimestamp, $endTimestamp, $params)
     {
-        $item = Jsummary::findOne(
+        $itemQuery = Jsummary::find()->andWhere(
             ['address_id' => $address_id, 'imei_id' => $imei_id, 'start_timestamp' => $startTimestamp, 'end_timestamp' => $endTimestamp]
         );
 
-        if (!$item) {
+        if (!$itemQuery->count()) {
             $item = new Jsummary();
             $item->imei_id = $imei_id;
             $item->address_id = $address_id;
             $item->start_timestamp = $startTimestamp;
             $item->end_timestamp = $endTimestamp;
+            $item->attributes = $params;
+            $item->save(false);
+        } else {
+            $item = QueryOptimizer::getItemByQuery($itemQuery->limit(1));
+            $item->attributes = $params;
+            $item->update(false);
         }
-
-        $item->attributes = $params;
-
-        $item->save(false);
 
         return $item->id;
     }
@@ -353,16 +357,10 @@ class Jsummary extends ActiveRecord
      */    
     public function getImeiFromGlobalById($id)
     {
-        global $globalImeis;
 
-        if (empty($globalImeis) || !in_array($id, array_keys($globalImeis))) {
-            $imei = Imei::find()->where(['id' => $id])->one();
-            $globalImeis[$id] = $imei;
-        } else {
-            $imei = $globalImeis[$id];
-        }
+        $query = Imei::find()->where(['id' => $id]);
 
-        return $imei;
+        return QueryOptimizer::getItemByQuery($query);
     }
 
     /**
@@ -376,20 +374,15 @@ class Jsummary extends ActiveRecord
      */
     public function getItemFromGlobal($address_id, $imei_id, $startTimestamp, $endTimestamp)
     {
-        global $jsummaryItems;
-        $itemKey = $address_id.'-'.$imei_id.'-'.$startTimestamp.'-'.$endTimestamp;
 
-        if (empty($jsummaryItems[$itemKey])) {
+        $query = Jsummary::find()->andWhere([
+            'address_id' => $address_id,
+            'imei_id' => $imei_id,
+            'start_timestamp' => $startTimestamp,
+            'end_timestamp' => $endTimestamp
+        ]);
 
-            $jsummaryItems[$itemKey] = Jsummary::findOne([
-                'address_id' => $address_id,
-                'imei_id' => $imei_id,
-                'start_timestamp' => $startTimestamp,
-                'end_timestamp' => $endTimestamp
-            ]);
-        }
-
-        return $jsummaryItems[$itemKey];
+        return QueryOptimizer::getItemByQuery($query->limit(1));
     }
 
     /**
@@ -404,27 +397,30 @@ class Jsummary extends ActiveRecord
      */
     public function getQueryItemsFromGlobal($startTimestamp, $endTimestamp, $todayTimestamp, $address_id, $imei_id = false)
     {
-        global $jsummaryQueryItems;
-        $itemsKey = $address_id.'-'.$startTimestamp.'-'.$todayTimestamp.'-'.$endTimestamp;
+        $itemsQuery = Jsummary::find()->andWhere(['address_id' => $address_id])
+                                      ->andWhere(['>=', 'start_timestamp', $startTimestamp])
+                                      ->andWhere(['<', 'start_timestamp', $todayTimestamp])
+                                      ->andWhere(['<=', 'end_timestamp', $endTimestamp]);
 
         if (!empty($imei_id)) {
-            $itemsKey.= '-'.$imei_id;
+            $itemsQuery = $itemsQuery->andWhere(['imei_id' => $imei_id]);
         }
 
-        if (empty($jsummaryQueryItems[$itemsKey])) {
-            $itemsQuery = Jsummary::find()->andWhere(['address_id' => $address_id])
-                                          ->andWhere(['>=', 'start_timestamp', $startTimestamp])
-                                          ->andWhere(['<', 'start_timestamp', $todayTimestamp])
-                                          ->andWhere(['<=', 'end_timestamp', $endTimestamp]);
+        $itemsQuery->orderBy(['start_timestamp' => SORT_ASC]);
 
-            if (!empty($imei_id)) {
-                $itemsQuery = $itemsQuery->andWhere(['imei_id' => $imei_id]);
-            }
+        return QueryOptimizer::getItemsByQuery($itemsQuery);
+    }
 
-            $jsummaryQueryItems[$itemsKey] = $itemsQuery->orderBy(['start_timestamp' => SORT_ASC])
-                                                        ->all();
-        }
+    /**
+     * Gets address from global variable by id
+     *
+     * @param array $id
+     * @return AddressBalanceHolder|null
+     */    
+    public function getAddressFromGlobalById($id)
+    {
+        $query = AddressBalanceHolder::find()->andWhere(['id' => $id])->limit(1);
 
-        return $jsummaryQueryItems[$itemsKey];
+        return QueryOptimizer::getItemByQuery($query);
     }
 }
