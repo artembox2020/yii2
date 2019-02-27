@@ -3,6 +3,7 @@
 namespace frontend\models;
 use yii\db\ActiveRecord;
 use frontend\services\globals\Entity;
+use frontend\services\globals\QueryOptimizer;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -140,11 +141,12 @@ class AddressImeiData extends ActiveRecord
         }
 
         $query = AddressImeiData::find();
-        $item = $query->andWhere(['address_id' => $addressId])
+        $itemQuery = $query->andWhere(['address_id' => $addressId])
                       ->andWhere(['>', 'created_at', $timestamp])
                       ->orderBy(['created_at' => SORT_ASC])
-                      ->limit(1)
-                      ->one();
+                      ->limit(1);
+
+        $item = QueryOptimizer::getItemByQuery($itemQuery);
 
         if (!$item) {
 
@@ -156,11 +158,12 @@ class AddressImeiData extends ActiveRecord
         $nextDayTimestamp = $this->getNextDayBeginningByTimestamp($item->created_at);
 
         $query = AddressImeiData::find();
-        $item = $query->andWhere(['address_id' => $addressId])
-                      ->andWhere(['<', 'created_at', $nextDayTimestamp])
-                      ->orderBy(['created_at' => SORT_DESC])
-                      ->limit(1)
-                      ->one();
+        $query = $query->andWhere(['address_id' => $addressId])
+                       ->andWhere(['<', 'created_at', $nextDayTimestamp])
+                       ->orderBy(['created_at' => SORT_DESC])
+                       ->limit(1);
+
+        $item = QueryOptimizer::getItemByQuery($query);
 
         if ($item->imei_id == 0) {
 
@@ -174,11 +177,12 @@ class AddressImeiData extends ActiveRecord
         }
 
         $query = AddressImeiData::find();
-        $itemImei = $query->andWhere(['imei_id' => $item->imei_id])
-                      ->andWhere(['<', 'created_at', $nextDayTimestamp])
-                      ->orderBy(['created_at' => SORT_DESC])
-                      ->limit(1)
-                      ->one();
+        $query = $query->andWhere(['imei_id' => $item->imei_id])
+                       ->andWhere(['<', 'created_at', $nextDayTimestamp])
+                       ->orderBy(['created_at' => SORT_DESC])
+                       ->limit(1);
+
+        $itemImei = QueryOptimizer::getItemByQuery($query);
 
         if ($itemImei->id != $item->id) {
 
@@ -204,7 +208,8 @@ class AddressImeiData extends ActiveRecord
     public function getImeiIdByAddressTimestamp($addressId, $timestamp)
     {
         $historyBeginning = $this->getHistoryBeginning($addressId);
-        $address = AddressBalanceHolder::find()->where(['id' =>$addressId])->one();
+        $query = AddressBalanceHolder::find()->where(['id' =>$addressId])->limit(1);
+        $address = QueryOptimizer::getItemByQuery($query);
 
         if ($historyBeginning > $timestamp) {
 
@@ -302,15 +307,9 @@ class AddressImeiData extends ActiveRecord
      */
     public function getCurrentImeiIdByAddress($addressId, $addressStatus)
     {
-        global $currentImeiByAddress;
+        $query = Imei::find()->andWhere(['address_id' => $addressId, 'status' => $addressStatus])->limit(1);
 
-        if (empty($currentImeiByAddress[$addressId.'-'.$addressStatus])) {
-
-            $imei = Imei::find()->andWhere(['address_id' => $addressId, 'status' => $addressStatus])->limit(1)->one();
-            $currentImeiByAddress[$addressId.'-'.$addressStatus] = $imei;
-        }
-
-        return $currentImeiByAddress[$addressId.'-'.$addressStatus];
+        return QueryOptimizer::getItemByQuery($query);
     }
 
     /**
@@ -325,10 +324,11 @@ class AddressImeiData extends ActiveRecord
 
         if (empty($historyBeginningByAddressId[$address_id])) {
 
-            $item = AddressImeiData::find()->andWhere(['address_id' => $address_id])
+            $itemQuery = AddressImeiData::find()->andWhere(['address_id' => $address_id])
                                            ->orderBy(['created_at' => SORT_ASC])
-                                           ->limit(1)
-                                           ->one();
+                                           ->limit(1);
+
+            $item = QueryOptimizer::getItemByQuery($itemQuery);
 
             $historyBeginningByAddressId[$address_id] = $item ? $item->created_at : self::INFINITY;
         }
@@ -436,13 +436,14 @@ class AddressImeiData extends ActiveRecord
     public function getWmMashinesCountByMashineQueries($queriesInfo)
     {
         $mashineIds = [];
+
         foreach ($queriesInfo as $queryInfo) {
 
             if (empty($queryInfo['query'])) {
                 continue;
             }
 
-            $mashines = $queryInfo['query']->all();
+            $mashines = QueryOptimizer::getItemsByQuery($queryInfo['query']);
             $mashineIds = array_merge($mashineIds, array_diff(ArrayHelper::getColumn($mashines, 'id'), $mashineIds));
         }
 
@@ -459,11 +460,12 @@ class AddressImeiData extends ActiveRecord
      */
     public function getWmMashinesCountByYearMonth($year, $month, $address)
     {
-         $bhSummarySearch = new BalanceHolderSummarySearch();
-         $timestamps = $bhSummarySearch->getTimestampByYearMonth($year, $month);
-         $queries = $this->getWmMashinesQueries($address->id, $address->status, $timestamps['start'], $timestamps['end']);
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        $timestamps = $bhSummarySearch->getTimestampByYearMonth($year, $month);
 
-         return $this->getWmMashinesCountByMashineQueries($queries);
+        $queries = $this->getWmMashinesQueries($address->id, $address->status, $timestamps['start'], $timestamps['end']);
+
+        return $this->getWmMashinesCountByMashineQueries($queries);
     }
 
     /**

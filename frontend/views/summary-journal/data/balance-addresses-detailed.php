@@ -4,7 +4,9 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSummarySearch;
+use frontend\services\globals\QueryOptimizer;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -14,7 +16,7 @@ use frontend\models\BalanceHolderSummarySearch;
     <table class="table table-bordered table-container">
         <tbody>
             <?php 
-                foreach ($dataProvider->query->all() as $balanceHolder):
+                foreach (BalanceHolder::getItemsByDataProvider($dataProvider) as $balanceHolder):
             ?>
             <tr data-key="<?= $balanceHolder->id ?>">
                 <td class="mashine-number-device cell-device">
@@ -31,13 +33,14 @@ use frontend\models\BalanceHolderSummarySearch;
                 </td>
                 <td class="address-container balance-address-container">
                     <table
-                        data-count = "<?= $balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->count() ?>"
+                        data-count = "<?= $balanceHolder->getAddressBalanceHoldersCountByTimestamp($timestampStart, $timestampEnd) ?>"
                         class = "table table-bordered table-address-container"
                     >
                         <tbody>
                         <?php
-                            foreach ($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->all() as $address):
+                            foreach ($balanceHolder->getAddressBalanceHoldersByTimestamp($timestampStart, $timestampEnd) as $address):
                                 $mashinesQuery = $searchModel->getAllMashinesQueryByYearMonth($year, $month, $address);
+                                $mashinesQueryCount = QueryOptimizer::getItemsCountByQuery($mashinesQuery);
                         ?>
                             <tr>
                                 <td class = "mashine-number-device address">
@@ -45,15 +48,15 @@ use frontend\models\BalanceHolderSummarySearch;
                                     <?= $address->floor ? $address->floor : ' &nbsp;' ?>
                                 </td>
                                 <td class = "mashine-numbers-cell"
-                                    data-mashines-number = "<?= $mashinesQuery->count() ?>"
+                                    data-mashines-number = "<?= $mashinesQueryCount ?>"
                                 >
                                     <table class="table table-bordered mashine-numbers">
-                                    <?php if ($mashinesQuery->count() == 0): ?>
+                                    <?php if ($mashinesQueryCount == 0): ?>
                                         <tr>
                                             <td>0</td>
                                         </tr>
                                     <?php else: ?>
-                                        <?php foreach($mashinesQuery->all() as $mashine): ?>
+                                        <?php foreach(QueryOptimizer::getItemsByQuery($mashinesQuery) as $mashine): ?>
                                         <tr>
                                             <td class="mashine-number-device address-id-<?= $mashine->id ?>"> &nbsp;<?= $mashine->number_device ?></td>
                                         </tr>
@@ -62,7 +65,7 @@ use frontend\models\BalanceHolderSummarySearch;
                                     </table>
                                 </td>
                                 <td class="mashine-count hidden">
-                                    <?= $searchModel->getAllMashinesQueryByYearMonth($year, $month, $address)->count() ?>
+                                    <?= $mashinesQueryCount ?>
                                 </td>
                                 <td class="number-of-citizens hidden">
                                     <?= $address->number_of_citizens ?>

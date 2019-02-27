@@ -8,6 +8,7 @@ use frontend\models\AddressImeiData;
 use frontend\models\BalanceHolderSummarySearch;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
+use frontend\services\globals\QueryOptimizer;
 use Yii;
 use yii\di\Instance;
 use yii\helpers\ArrayHelper;
@@ -37,7 +38,7 @@ class EntityHelper implements EntityHelperInterface
 
         return $units;   
     }
-    
+
     /**
      * @param Instance $instance
      * @param int $status
@@ -470,8 +471,8 @@ class EntityHelper implements EntityHelperInterface
         $queryS2 = clone $baseQuery;
         $queryS2 = $queryS2->orderBy(['created_at' => SORT_DESC])->limit(1);
 
-        $itemStart =  $queryS1->one();
-        $itemEnd = $queryS2->one();
+        $itemStart =  QueryOptimizer::getItemByQuery($queryS1);
+        $itemEnd = QueryOptimizer::getItemByQuery($queryS2);
 
         if ($isFirst && $itemStart->$field != 0) {
             $queryS3 = clone $baseQuery;
@@ -548,13 +549,13 @@ class EntityHelper implements EntityHelperInterface
 
         for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
             $query = $this->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, $inst, $bInst, $fieldInst, $select);
-            if ($query->count() > 0) {
+            if (QueryOptimizer::getItemsCountByQuery($query) > 0) {
                 $item = $query->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
                 $timestamp = $item->created_at - $stepInterval + 1;
                 continue;
             } else {
                 $query = $this->getBaseUnitQueryByTimestamps($endTimestamp, $end, $inst, $bInst, $fieldInst, $select);
-                if ($query->count() == 0) {
+                if (QueryOptimizer::getItemsCountByQuery($query) == 0) {
                     $idleHours += ((float)$end - $timestamp) / 3600;
                     break;
                 } else {

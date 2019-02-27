@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use frontend\models\BalanceHolderSummarySearch;
+use frontend\services\globals\QueryOptimizer;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -14,8 +15,9 @@ use frontend\models\BalanceHolderSummarySearch;
 <div>
     <table class="table table-bordered table-container">
         <tbody>
-            <?php 
-                foreach ($dataProvider->query->all() as $balanceHolder):
+            <?php
+                $balanceHolders = QueryOptimizer::getItemsByQuery($dataProvider->query);
+                foreach ($balanceHolders as $balanceHolder):
             ?>
             <tr data-key="<?= $balanceHolder->id ?>">
                 <td class="mashine-number-device cell-device">
@@ -32,12 +34,13 @@ use frontend\models\BalanceHolderSummarySearch;
                 </td>
                 <td class="address-container balance-address-container">
                     <table
-                        data-count = "<?= $balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->count() ?>"
+                        data-count = "<?= QueryOptimizer::getItemsCountByQuery($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)) ?>"
                         class = "table table-bordered table-address-container"
                     >
                         <tbody>
                         <?php
-                            foreach ($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd)->all() as $address):
+                            $addresses = QueryOptimizer::getItemsByQuery($balanceHolder->getAddressBalanceHoldersQueryByTimestamp($timestampStart, $timestampEnd));
+                            foreach ($addresses as $address):
                         ?>
                             <tr>
                                 <td class="mashine-number-device address">
