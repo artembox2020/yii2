@@ -4,12 +4,14 @@ namespace frontend\controllers;
 
 use common\models\User;
 use frontend\models\ImeiDataSearch;
+use frontend\models\ImeiAction;
 use frontend\models\WmMashineDataSearch;
 use frontend\models\WmMashine;
 use frontend\models\Jlog;
 use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\filters\AccessControl;
+use yii\web\ForbiddenHttpException;
 
 class MonitoringController extends \yii\web\Controller
 {
@@ -180,7 +182,7 @@ class MonitoringController extends \yii\web\Controller
 
     /**
      * Renders financial data view by imei id
-     * 
+     *
      * @param int $imeiId
      * @param ImeiDataSearch $searchModel
      * @return string
@@ -197,12 +199,16 @@ class MonitoringController extends \yii\web\Controller
     }
 
     /**
-     * Financial monitoring action
-     * 
      * @return string
      */
     public function actionFinancial()
     {
+
+        if (!\Yii::$app->user->can('monitoring/financial', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $searchModel = new ImeiDataSearch();
         $entityHelper = new EntityHelper();
         $searchModel->setSerialNumber(Yii::$app->request->post());
@@ -247,12 +253,16 @@ class MonitoringController extends \yii\web\Controller
     }
 
     /**
-     * Technical monitoring action
-     * 
      * @return string
      */
     public function actionTechnical()
     {
+
+        if (!\Yii::$app->user->can('monitoring/technical', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $searchModel = new ImeiDataSearch();
         $entityHelper = new EntityHelper();
         $searchModel->setSerialNumber(Yii::$app->request->post());
@@ -330,5 +340,19 @@ class MonitoringController extends \yii\web\Controller
         $responseResult['status'] = $checkResult;
 
         return json_encode($responseResult);
+    }
+
+    /**
+     * Main imei action function  
+     * 
+     * @param integer $imeId
+     * @param string $imei
+     * @param string $action
+     * @param bool $isCancel
+     */
+    public function actionImeiAction($imeiId, $imei, $action, $isCancel)
+    {
+        $searchModel = new ImeiAction();
+        $searchModel->appendAction($imeiId, $imei, $action, $isCancel);
     }
 }

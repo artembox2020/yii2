@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use developeruz\db_rbac\interfaces\UserRbacInterface;
 use frontend\models\Company;
 use frontend\services\globals\Entity;
 use frontend\services\custom\Debugger;
@@ -38,7 +39,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property Company $company
  */
-class User extends ActiveRecord implements IdentityInterface
+class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
 {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
@@ -91,6 +92,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             ['ip', 'ip'],
+            ['company', 'string']
         ];
     }
 
@@ -107,7 +109,8 @@ class User extends ActiveRecord implements IdentityInterface
             'updated_at' => Yii::t('common', 'Updated at'),
             'action_at' => Yii::t('common', 'Last action at'),
             'roles' => Yii::t('backend', 'Roles'),
-            'company_id' => Yii::t('frontend', 'Company Id')
+            'company_id' => Yii::t('frontend', 'Company Id'),
+            'company' => Yii::t('frontend', 'Company')
         ];
     }
 
@@ -117,6 +120,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function getUserProfile()
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserName()
+    {
+        return $this->username;
     }
 
     /**
@@ -138,7 +149,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getCompany()
     {
-        return $this->hasOne(Company::className(), ['id' => 'company_id']);
+        return $this->hasOne(Company::className(), ['id' => 'company_id'])
+            ->orderBy(['company.name' => SORT_DESC]);
     }
 
     /**
@@ -281,7 +293,7 @@ class User extends ActiveRecord implements IdentityInterface
     public static function find()
     {
 //        return new UserQuery(get_called_class());
-        return parent::find()->where(['is_deleted' => false])
+        return parent::find()->where(['user.is_deleted' => false])
             ->andWhere(['status' => User::STATUS_ACTIVE]);
 //            ->andWhere(['<', '{{%user}}.created_at', time()]);
     }

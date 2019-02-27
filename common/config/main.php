@@ -12,6 +12,15 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'rbac' => [
+            'class' => 'developeruz\db_rbac\Yii2DbRbac',
+//            'layout' => '//admin',
+            'params' => [
+                'userClass' => 'common\models\User'
+            ]
+        ],
+    ],
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',
@@ -28,6 +37,9 @@ $config = [
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
+        ],
+        'as AccessBehavior' => [
+            'class' => \developeruz\db_rbac\behaviors\AccessBehavior::className(),
         ],
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
@@ -74,6 +86,10 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'rules' => array(
+                '<module:\w+>/<controller:\w+>/<action:(\w|-)+>' => '<module>/<controller>/<action>',
+                '<module:\w+>/<controller:\w+>/<action:(\w|-)+>/<id:\d+>' => '<module>/<controller>/<action>',
+            ),
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',

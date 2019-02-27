@@ -45,12 +45,14 @@ class ImeiData extends \yii\db\ActiveRecord
     public $counter_zeroing;
     public $technical_injection;
 
-    const TYPE_ACTION_STATE_REQUEST = 1;
-    const TYPE_ACTION_UPDATE_TERMINAL_SOFTWARE = 2;
-    const TYPE_ACTION_CPU_RELOAD = 3;
-    const TYPE_ACTION_ZIGBEE_RELOAD = 4;
-    const TYPE_ACTION_BILL_ACCEPTANCE_RELOAD = 5;
+    const TYPE_ACTION_CPU_RELOAD = 1;
+    const TYPE_ACTION_BILL_ACCEPTANCE_RELOAD = 2;
+    const TYPE_ACTION_ZIGBEE_RELOAD = 3;
+    const TYPE_ACTION_MODEM_RELOAD = 4;
+    const TYPE_ACTION_LOGDISK_FORMAT = 5;
     const TYPE_ACTION_TIME_SET = 6;
+    const TYPE_ACTION_BILL_ACCEPTANCE_BLOCK = 7;
+
     const TYPE_HALF_HOUR = 1800;
 
     const TYPE_BILL_OK = 0;
@@ -237,12 +239,13 @@ class ImeiData extends \yii\db\ActiveRecord
     {
 
         return [
-            self::TYPE_ACTION_STATE_REQUEST => Yii::t('frontend', 'Action State Request'),
-            self::TYPE_ACTION_UPDATE_TERMINAL_SOFTWARE => Yii::t('frontend', 'Action Update Terminal Software'), 
             self::TYPE_ACTION_CPU_RELOAD => Yii::t('frontend', 'Action Cpu Reload'),
-            self::TYPE_ACTION_ZIGBEE_RELOAD => Yii::t('frontend', 'Action ZigBee Reload'),
             self::TYPE_ACTION_BILL_ACCEPTANCE_RELOAD => Yii::t('frontend', 'Action Bill Acceptance Reload'),
-            self::TYPE_ACTION_TIME_SET => Yii::t('frontend', 'Action Time Set')
+            self::TYPE_ACTION_ZIGBEE_RELOAD => Yii::t('frontend', 'Action ZigBee Reload'),
+            self::TYPE_ACTION_MODEM_RELOAD => Yii::t('frontend', 'Action Modem Reload'),
+            self::TYPE_ACTION_LOGDISK_FORMAT => Yii::t('frontend', 'Action Logdisk Format'),
+            self::TYPE_ACTION_TIME_SET => Yii::t('frontend', 'Action Time Set'),
+            self::TYPE_ACTION_BILL_ACCEPTANCE_BLOCK => Yii::t('frontend', 'Action Bill Acceptance Block')
         ];
     }
 
@@ -470,5 +473,19 @@ class ImeiData extends \yii\db\ActiveRecord
         }
 
         return $this->level_signal;
+    }
+
+    /**
+     * Makes class indicating whether active action
+     *
+     * @param string $action
+     * @return string
+     */
+    public function makeActiveActionClass($action)
+    {
+        $imeiAction = new ImeiAction();
+        $class = $imeiAction->makeClass($this->imei_id, $action);
+
+        return $class;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace frontend\modules\account\models\search;
 
+use frontend\services\custom\Debugger;
+use frontend\services\globals\Entity;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -39,7 +41,10 @@ class UserSearch extends User
      */
     public function search($params)
     {
-        $query = User::find();
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany(new User());
+
+//        $query = User::find();
 
         // add conditions that should always apply here
 

@@ -52,6 +52,11 @@ class JournalController extends Controller
      */
     public function actionIndex($isEncashment = false)
     {
+        if (!\Yii::$app->user->can('journal/index', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $searchModel = new JlogSearch();
         $entityHelper = new EntityHelper();
         $params = $entityHelper->makeParamsFromRequest(
@@ -65,7 +70,8 @@ class JournalController extends Controller
                 'JlogSearch' => [
                     'inputValue' => ['date'],
                     'val2' => ['date']
-                ]
+                ],
+                'page_size'
             ]
         );
 
@@ -74,6 +80,7 @@ class JournalController extends Controller
         $params = $searchModel->setParams($searchModel, $params, $params);
         $dataProvider = $searchModel->search($params);
         $typePackets = Jlog::getTypePackets();
+        $pageSizes = jlog::getPageSizes();
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
         $eventSelectors = [
@@ -99,7 +106,8 @@ class JournalController extends Controller
             'columnFilterScript' => $columnFilterScript,
             'addresses' =>  $addresses,
             'imeis' => $imeis,
-            'journalController' => $this
+            'journalController' => $this,
+            'pageSizes' => $pageSizes
         ]);
     }
 
@@ -145,7 +153,8 @@ class JournalController extends Controller
                     'from_date', 'to_date',
                     'inputValue' => ['date'],
                     'val2' => ['date']
-                ]
+                ],
+                'page_size'
             ]
         );
 
@@ -157,6 +166,7 @@ class JournalController extends Controller
         $searchModel->val2['date'] = $params['val2']['date'];
         $dataProvider = $searchModel->searchByMashine($params, $mashine->id);
         $typePackets = Jlog::getTypePackets();
+        $pageSizes = Jlog::getPageSizes();
         $eventSelectors = [
             'change' =>
                 '.journal-filter-form select,'.
@@ -176,6 +186,7 @@ class JournalController extends Controller
             'removeRedundantGrids' => $removeRedundantGrids,
             'columnFilterScript' => $columnFilterScript,
             'journalController' => $this,
+            'pageSizes' => $pageSizes
         ]);
     }
 
@@ -213,7 +224,8 @@ class JournalController extends Controller
                 'CbLogSearch' => [
                     'inputValue' => ['date'],
                     'val2' => ['date']
-                ]
+                ],
+                'page_size'
             ]
         );
 
@@ -273,6 +285,7 @@ class JournalController extends Controller
                 'date', 'type_packet', 'address', 'imei', 'id',
             ],
             'sort',
+            'page_size'
         ]);
 
         $params = $searchModel->setParams($searchModel, $params, $prms);
@@ -313,7 +326,7 @@ class JournalController extends Controller
             'inputValue' => [
                 'date', 'type_packet', 'address', 'imei', 'number_device',
             ],
-            'sort', 'page'
+            'sort', 'page', 'page_size'
         ]);
 
         $params = $searchModel->setParams($searchModel, $params, $prms);
@@ -354,9 +367,9 @@ class JournalController extends Controller
             'inputValue' => [
                 'date', 'type_packet', 'address',
             ],
-            'sort',
+            'sort', 'page_size'
         ]);
-        
+
         $params = $searchModel->setParams($searchModel, $params, $prms);
 
         $dataProvider = $searchModel->searchData($params);
@@ -402,7 +415,7 @@ class JournalController extends Controller
                 'lastyear' => Yii::t('frontend', 'Lastyear'),
                 'certain' => Yii::t('frontend', 'Certain'),
                 'params' => $params,
-                'pageSize' => JlogDataSearch::TYPE_PAGE_SIZE
+                'pageSize' => $params['page_size'] ? $params['page_size'] : JlogDataSearch::TYPE_PAGE_SIZE
             ]
         );
     }

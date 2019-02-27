@@ -95,14 +95,24 @@ AppAsset::register($this);
         $menuItems[] = ['label' => Yii::t('frontend', 'Login'), 'url' => ['/account/sign-in/login']];
     } else {
         $role = ArrayHelper::map(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'description', 'description');
+//        \frontend\services\custom\Debugger::dd($role);
         foreach ($role as $key => $val) {
             $role_name = $key;
         }
+        $role_name = Yii::$app->user->identity->username;
+        $userRole = \Yii::$app->authManager->getRolesByUser(Yii::$app->user->id);
+
+        if (empty($userRole)) {
+            $userRole = '';
+        } else {
+            $userRole = array_keys($userRole)[0];
+        }
+
         $menuItems = [
 //        [
 //            'label' => Yii::t('frontend', 'Users'),
 //            'url' => ['/account/default/users'],
-////            'visible' => Yii::$app->user->can('administrator'),
+//            'visible' => Yii::$app->user->can('administrator'),
 //        ],
             [
                 'label' => Yii::t('frontend', 'Monitoring'),
@@ -129,7 +139,7 @@ AppAsset::register($this);
 ////            'visible' => Yii::$app->user->can('devices'),
 //            ],
             [
-                'label' => Yii::t('frontend', 'Net Manager'),
+                'label' => Yii::t('frontend', 'Net'),
                 'url' => ['/net-manager'],
 //            'visible' => Yii::$app->user->can('devices'),
             ],
@@ -139,7 +149,7 @@ AppAsset::register($this);
 //            'visible' => Yii::$app->user->can('zurnal'),
             ],
             [
-                'label' => Yii::t('nav-items', 'Encashment Journal'),
+                'label' => Yii::t('nav-items', 'Encashment'),
                 'url' => ['/encashment-journal/index'],
 //            'visible' => Yii::$app->user->can('zurnal'),
             ],
@@ -155,17 +165,22 @@ AppAsset::register($this);
         }
 
         $menuItems[] = [
-            'label' => Yii::t('frontend', $role_name),
+            'label' => $role_name . ' ('.$userRole.')',
             'url' => '#',
             'items' => [
                 [
-                        'label' => Yii::t('frontend', 'Settings'),
-                    'url' => ['/account/default/settings']
+                    'label' => Yii::t('frontend', 'Settings'),
+                    'url' => ['/account/default/settings'],
+                ],
+                [
+                    'label' => Yii::t('frontend', 'Company'),
+                    'url' => ['/account/default/tt'],
+                    'visible' => Yii::$app->user->can('administrator'),
                 ],
                 [
                     'label' => Yii::t('frontend', 'Users'),
                     'url' => ['/account/default/users'],
-//            'visible' => Yii::$app->user->can('administrator'),
+                    'visible' => Yii::$app->user->can('manager'),
                 ],
 //                [
 //                        'label' => Yii::t('frontend', 'Backend'),

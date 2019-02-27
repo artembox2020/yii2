@@ -458,4 +458,20 @@ class Jlog extends ActiveRecord
 
         return $packets;
     }
+
+    /**
+     * @return array
+     */
+    public static function getPageSizes()
+    {
+
+        return [
+            10 => 10,
+            20 => 20,
+            50 => 50,
+            100 => 100,
+            200 => 200,
+            500 => 500
+        ];
+    }
 }

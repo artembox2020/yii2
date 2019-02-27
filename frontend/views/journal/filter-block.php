@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use \yii\jui\AutoComplete;
+use frontend\models\JlogSearch;
 
 /* @var $this yii\web\View */
 /* @var $params array */
@@ -37,7 +38,7 @@ use \yii\jui\AutoComplete;
         'options' => [
             'placeholder' => Yii::t('frontend', 'Begin to type imei'),
             'class' => 'form-control',
-            'size' => 30
+            'size' => 20
         ],
         'value' => $params['imei'],
         'clientOptions' => [
@@ -55,7 +56,7 @@ use \yii\jui\AutoComplete;
         'options' => [
             'placeholder' => Yii::t('frontend', 'Begin to type address'),
             'class' => 'form-control',
-            'size' => 30
+            'size' => 20
         ],
         'value' => $params['address'],
         'clientOptions' => [
@@ -63,6 +64,19 @@ use \yii\jui\AutoComplete;
             'autoFill' => false,
         ],
     ]);
+    ?>
+</div>
+
+<div class="form-group">
+    <label for="page_size"><?= Yii::t('frontend', 'Page Size') ?></label>
+    <?= Html::dropDownList(
+            'page_size', 
+            $params['page_size'] ? $params['page_size'] : JlogSearch::PAGE_SIZE,
+            $pageSizes,
+            [
+                'class' => 'form-control'
+            ]
+        );
     ?>
 </div>
 

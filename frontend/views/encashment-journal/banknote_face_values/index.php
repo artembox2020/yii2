@@ -30,7 +30,7 @@ use yii\grid\GridView;
                     'label' => false,
                     'value'=> function ($model) use ($searchModel) {
 
-                        return $searchModel->getNominalsView($model);
+                        return $searchModel->getNominalsView($model).$searchModel->getCoinNominalsView($model);
                     },
                 ],
                 [
@@ -39,7 +39,7 @@ use yii\grid\GridView;
                     'label' => false,
                     'value' => function ($model) use ($searchModel) {
 
-                        return $searchModel->getNominalsTotalView($model);
+                        return $searchModel->getNominalsTotalView($model).$searchModel->getCoinNominalsTotalView($model);
                     }
                 ]
             ]

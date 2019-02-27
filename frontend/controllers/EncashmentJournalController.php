@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use frontend\models\CbLog;
+use frontend\models\CbEncashment;
 use frontend\models\CbLogSearch;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\EntityHelper;
@@ -44,6 +44,11 @@ class EncashmentJournalController extends Controller
      */
     public function actionIndex(array $params = [])
     {
+        if (!\Yii::$app->user->can('encashment-journal/index', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         if (!empty($params['isEncashment'])) {
 
             return $this->actionEncashment($params);
@@ -59,6 +64,10 @@ class EncashmentJournalController extends Controller
      */
     public function actionEncashment($prms = [])
     {
+        if (!\Yii::$app->user->can('encashment-journal/index', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
 
         $searchModel = new CbLogSearch();
         $entityHelper = new EntityHelper();
@@ -97,7 +106,9 @@ class EncashmentJournalController extends Controller
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
         $recountAmountScript = $this->getRecountAmountScript();
-        $script = $this->getScript();
+        $model = ['banknote_face_values' => '1-0'];
+        $nominalsView = $searchModel->getNominalsView($model);
+        $script = $this->getScript(['nominalsView' => $nominalsView]);
 
         $eventSelectors = [
             'change' =>
@@ -121,13 +132,13 @@ class EncashmentJournalController extends Controller
     }
 
     /**
-     * Updates `recount_amount` field of cb_log table 
+     * Updates `recount_amount` field of cb_encashment table 
      * @param int $logId
      * @param int $value
      */
     public function actionUpdateRecountAmount($logId, $value)
     {
-        $searchModel = new CbLog();
+        $searchModel = new CbEncashment();
         $searchModel->updateRecountAmount($logId, $value);
     }
 
@@ -138,7 +149,7 @@ class EncashmentJournalController extends Controller
      */
     public function getRecountAmountScript()
     {
-        
+
         return Yii::$app->view->render(
             "/encashment-journal/recount_amount",
             []
@@ -148,14 +159,15 @@ class EncashmentJournalController extends Controller
     /**
      * Returns main script
      *
+     * @param array $scriptParams
      * @return string
      */
-    public function getScript()
+    public function getScript($scriptParams)
     {
 
         return Yii::$app->view->render(
             "/encashment-journal/script",
-            []
+            $scriptParams
         );
     }
 
@@ -185,7 +197,7 @@ class EncashmentJournalController extends Controller
     {
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'orientation' => 'L'
+            'orientation' => 'P'
         ]);
 
         $mpdf->setTitle($title);
