@@ -286,4 +286,26 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
             $this->save(false);
         }
     }
+
+    /**
+     * Renders terminal info block view
+     *
+     */
+    public function getTerminalInfoView()
+    {
+        $addressImeiData = new AddressImeiData();
+        $imei = $addressImeiData->getCurrentImeiIdByAddress($this->id, $this->status);
+
+        if (empty($imei)) {
+
+            return false;
+        }
+
+        $imeiDataSearch = new ImeiDataSearch();
+
+        return Yii::$app->runAction(
+            '/monitoring/render-terminal-data-by-imei-id',
+            ['imeiId' => $imei->id, 'searchModel' => $imeiDataSearch]
+        );
+    }
 }

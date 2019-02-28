@@ -319,6 +319,7 @@ return [
     'Summary Journal(General)' => 'Итоговый журнал(общий)',
     'Summary Journal(Detailed)' => 'Итоговый журнал(детально)',
     'Terminal' => 'Терминал',
+    'Terminal Features' => 'Характеристика терминала',
     'Text' => 'Текст',
     'Time Work' => 'Время Работы',
     'Thank you for contacting us. We will respond to you as soon as possible.' => 'Спасибо. Мы свяжемся с вами в ближайшее время.',

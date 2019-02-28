@@ -112,56 +112,8 @@
             }
         }
 
-        // adjusts last row height of the table to the bottom of parent
-        function adjustTableSize(tableClass, cellClass, shift)
-        {
-            var closestCells = monitoring.querySelectorAll('td.' + tableClass);
-            if (closestCells != null) {
-
-                for (var i = 0; i < closestCells.length; ++i) {
-                    var tableRows = closestCells[i].querySelectorAll('.' + cellClass);
-                    var tableRowsLength = tableRows.length;
-
-                    if (tableRowsLength > 0) {
-                        var tableRow = tableRows[tableRowsLength- 1].closest('tr');
-                        var table = closestCells[i].querySelector('table');
-                        var closestCellStyleObject = window.getComputedStyle(closestCells[i]);
-                        var tableStyleObject = window.getComputedStyle(table);
-                        var tableRowStyleObject = window.getComputedStyle(tableRow);
-                        var height = - parseInt(tableStyleObject.getPropertyValue('height'));
-                        height = height + parseInt(closestCellStyleObject.getPropertyValue('height')) - 1;
-                        tableRow.style.height = parseInt(tableRowStyleObject.getPropertyValue('height')) + height + shift + 'px';
-                    }
-                }
-            }
-        }
-
-        // adjusts all rows height of the table to equal each other
-        function adjustTableSizeTheSameHeight(tableClass, cellClass, shift)
-        {
-            adjustTableSize(tableClass, cellClass, shift);
-            var closestCells = monitoring.querySelectorAll('td.' + tableClass);
-
-            if (closestCells != null) {
-
-                for (var i = 0; i < closestCells.length; ++i) {
-                    var tableRows = closestCells[i].querySelectorAll('.' + cellClass);
-                    var tableRowsLength = tableRows.length;
-                    var totalHeight = 0;
-
-                    for (var j = 0; j < tableRowsLength; ++j) {
-                        var tableRowStyleObject = window.getComputedStyle(tableRows[j].closest('tr'));
-                        totalHeight += parseInt(tableRowStyleObject.getPropertyValue('height'));
-                    }
-
-                    var height = parseInt(totalHeight / tableRowsLength);
-
-                    for (var j = 0; j < tableRowsLength; ++j) {
-                        tableRows[j].closest('tr').style = "height: " + height + "px;";
-                    }
-                }
-            }
-        }
+        // adjust table main script
+        <?= Yii::$app->view->render('/monitoring/data/adjust_table') ?>
 
         // hides redundant headers
         function hideRedundantHeaders()
@@ -285,7 +237,7 @@
             for (var i = 0; i < monitoringFormInputs.length; ++i) {
                 monitoringFormInputs[i].value = '';
             }
-            
+
             form.querySelector('button[type=submit]').click();
         }
 
@@ -318,45 +270,7 @@
         // update page script
         <?= Yii::$app->view->render('/monitoring/data/ajax_update_handler', ['timestamp' => $timestamp, 'timeOut' => $timeOut]) ?>
 
-        // process cell action click
-        var cellActions = monitoring.querySelectorAll('.cell-actions');
-        for (var i = 0; i < cellActions.length; ++i) {
-            var cellAction = cellActions[i];
-            cellAction.onclick = function() { cellActionClickProcessing(this); };
-        }
-
-        // cell action click process main function
-        function cellActionClickProcessing(cellAction)
-        {
-            if (cellAction.classList.contains('active')) {
-                cellAction.classList.remove("active");
-                updateActionList(cellAction, 1);
-            } else {
-                cellAction.classList.add("active");
-                updateActionList(cellAction, 0);
-            }
-
-            var cellActions = cellAction.closest('table').querySelectorAll('.cell-actions');
-
-            for (var i = 0; i < cellActions.length; ++i) {
-
-                if (cellActions[i].dataset.action != cellAction.dataset.action) {
-                    cellActions[i].classList.remove('active');
-                }
-            }
-        }
-
-        // makes ajax request for updating action list
-        function updateActionList(cellAction, isCancelled)
-        {
-            var imei_id = cellAction.dataset.imei_id;
-            var imei = cellAction.dataset.imei;
-            var action = cellAction.dataset.actionId;
-
-            var queryString = "imeiId=" + imei_id + "&imei=" + imei + "&action=" + action + "&isCancel=" + isCancelled;
-            var ajaxActions = new XMLHttpRequest();
-            ajaxActions.open("GET", "/monitoring/imei-action?" + queryString, true);
-            ajaxActions.send();
-        }
+        // cell action script
+        <?= Yii::$app->view->render('/monitoring/data/cell_actions_handler') ?>
     }());
 </script>

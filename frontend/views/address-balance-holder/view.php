@@ -112,4 +112,7 @@ $dateFormat = "d.m.Y";
 <div><b><u><?= Yii::t('frontend','Consolidated Financial Data') ?></u></b></div>
 <br/>
 
+<h3 align="center"><?= Yii::t('frontend', 'Terminal Features') ?></h3>
+<?= $model->getTerminalInfoView() ?>
+
 </div>
