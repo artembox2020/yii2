@@ -54,7 +54,7 @@ class SiteController extends Controller
     {
         return [
             'error' => [
-                'class' => 'yii\web\ErrorAction',
+                'class' => 'frontend\services\error\db_connection\DbError',
             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
@@ -542,4 +542,6 @@ class SiteController extends Controller
             }
         }
     }
+
+
 }
