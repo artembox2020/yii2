@@ -355,4 +355,40 @@ class MonitoringController extends \yii\web\Controller
         $searchModel = new ImeiAction();
         $searchModel->appendAction($imeiId, $imei, $action, $isCancel);
     }
+
+    /**
+     * Action renders monitoring terminal by imei id
+     * 
+     * @param $imeiId
+     * @param ImeiDataSearch $searchModel
+     * @return string
+     */
+    public function actionRenderTerminalDataByImeiId($imeiId, $searchModel)
+    {
+        $terminalDataView = $this->renderTerminalDataByImeiId($imeiId, $searchModel);
+
+        return $this->renderPartial('/monitoring/data/terminal_action', [
+            'terminalDataView' => $terminalDataView,
+            'script' => $this->renderScriptTerminal()
+        ]);
+    }
+
+    /**
+     * Action renders main script
+     *
+     * @return string
+     */
+    public function renderScriptTerminal()
+    {
+
+        return Yii::$app->view->render(
+            "/monitoring/data/script-terminal",
+            [
+                'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
+                'numberRedundantHeaders' => 4,
+                'timestamp' => time() + Jlog::TYPE_TIME_OFFSET,
+                'timeOut' => self::TYPE_TIMEOUT
+            ]
+        );
+    }
 }

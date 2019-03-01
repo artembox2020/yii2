@@ -381,6 +381,7 @@ return [
     'Storage transfer date' => 'Дата перенесення зі складу',
     'Тechnical Data' => 'Технічні дані',
     'Terminal' => 'Термінал',
+    'Terminal Features' => 'Характеристика терміналу',
     'Text' => 'Текст',
     'Time' => 'Час',
     'Time Work' => 'Час Роботи',
