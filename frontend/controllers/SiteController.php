@@ -3,10 +3,12 @@
 namespace frontend\controllers;
 
 use common\models\User;
+use DateTime;
 use frontend\services\custom\Debugger;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\auth\HttpBearerAuth;
+use yii\helpers\Json;
 use yii\web\Controller;
 use frontend\models\ContactForm;
 use frontend\models\Base;
@@ -54,7 +56,7 @@ class SiteController extends Controller
     {
         return [
             'error' => [
-                'class' => 'yii\web\ErrorAction',
+                'class' => 'frontend\services\error\db_connection\DbError',
             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
@@ -82,7 +84,7 @@ class SiteController extends Controller
             $model = $user->company;
             $balanceHolders = $model->balanceHolders;
             $balanceHoldersData = [];
-            foreach ($balanceHolders as $balanceHolder ) {
+            foreach ($balanceHolders as $balanceHolder) {
                 $balanceHoldersData[$balanceHolder->id] = $balanceHolder->getBalanceHolderData(self::CELL_HEIGHT);
             }
         } else {
@@ -126,22 +128,22 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-        public function actionMntr()
+    public function actionMntr()
     {
 //        if (Yii::$app->user->can('mntr')) {
 
-            if( Yii::$app->user->can('administrator')){
-                $devices = Devices::find()->limit(10)->all();
-            }else{
-                $org = Org::get_org_name(Yii::$app->user->id);
-                $brand = $org['name_org'];
-                $devices = Devices::find()
-                    ->limit(10)
-                    ->where("`organization` = '".$org['name_org']."'")
-                    ->all();
-            }
+        if (Yii::$app->user->can('administrator')) {
+            $devices = Devices::find()->limit(10)->all();
+        } else {
+            $org = Org::get_org_name(Yii::$app->user->id);
+            $brand = $org['name_org'];
+            $devices = Devices::find()
+                ->limit(10)
+                ->where("`organization` = '" . $org['name_org'] . "'")
+                ->all();
+        }
 
-            return $this->render('mntr', ['devices' => $devices]);
+        return $this->render('mntr', ['devices' => $devices]);
 //        }
     }
 
@@ -153,8 +155,8 @@ class SiteController extends Controller
     public function actionDevices()
     {
 //        if (Yii::$app->user->can('devices')) {
-            $devices = Devices::find()->all();
-            return $this->render('devices', ['devices' => $devices]);
+        $devices = Devices::find()->all();
+        return $this->render('devices', ['devices' => $devices]);
 //        }
     }
 
@@ -166,7 +168,7 @@ class SiteController extends Controller
     public function actionDevice_add()
     {
 //        if (Yii::$app->user->can('device_add')) {
-            return $this->render('adddevice');
+        return $this->render('adddevice');
 //        }
     }
 
@@ -314,19 +316,19 @@ class SiteController extends Controller
     public function actionZurnal()
     {
 //        if (Yii::$app->user->can('zurnal')) {
-            $dateFrom = strtotime(date('Y-m-01'));
-            $dateTo = strtotime(date('Y-m-t')) + 86399;
+        $dateFrom = strtotime(date('Y-m-01'));
+        $dateTo = strtotime(date('Y-m-t')) + 86399;
 
-            if (isset($_GET['dateFrom']) and $_GET['dateFrom'] != '' and isset($_GET['dateTo']) and $_GET['dateTo'] != '') {
-                $df = strtotime($_GET['dateFrom']);
-                $dt = strtotime($_GET['dateTo']);
-                if ($df <= $dt) {
-                    $dateFrom = $df;
-                    $dateTo = $dt + 86399;
-                }
+        if (isset($_GET['dateFrom']) and $_GET['dateFrom'] != '' and isset($_GET['dateTo']) and $_GET['dateTo'] != '') {
+            $df = strtotime($_GET['dateFrom']);
+            $dt = strtotime($_GET['dateTo']);
+            if ($df <= $dt) {
+                $dateFrom = $df;
+                $dateTo = $dt + 86399;
             }
+        }
 
-            return $this->render('zurnal', ['dateFrom' => $dateFrom, 'dateTo' => $dateTo]);
+        return $this->render('zurnal', ['dateFrom' => $dateFrom, 'dateTo' => $dateTo]);
 //        }
     }
 
@@ -338,12 +340,12 @@ class SiteController extends Controller
     public function actionDlogs()
     {
 //        if (Yii::$app->user->can('dlogs')) {
-            $imei = Yii::$app->request->post('imei', "");
-            $type = Yii::$app->request->post('type', "");
+        $imei = Yii::$app->request->post('imei', "");
+        $type = Yii::$app->request->post('type', "");
 
-            $dataProvider = Zlog::get_for_log($imei, $type);
+        $dataProvider = Zlog::get_for_log($imei, $type);
 
-            return $this->render('dlogs', ['dataProvider' => $dataProvider]);
+        return $this->render('dlogs', ['dataProvider' => $dataProvider]);
 //        }
     }
 
@@ -542,4 +544,98 @@ class SiteController extends Controller
             }
         }
     }
+
+//    const HOUR = 1;
+//    const FORMAT = 'Y-m-d H:i:s';
+//    const FILE = '../services/error/db_connection/file/data.json';
+//    public $mail = [
+//        'Serhii' => 'monstrpro@gmail.com',
+//        'Dmitro' => 'dmytro.v.kovtun@gmail.com',
+//        'Sasha' => 'sashabardash@gmail.com',
+//        'Info' => 'info@postirayka.com.ua'
+//    ];
+//    /**
+//     * Если разница между ошибками один час то записывает в файл data.json дату ошибки
+//     * и отправляет сообщение на почту
+//     *
+//     * @throws \Exception
+//     */
+//    public function actionTest($message)
+//    {
+//        if ($this->diffHour(date(self::FORMAT), $this->getDateFromFile()) > self::HOUR) {
+//            $this->save();
+//            $this->senderMessages($this->mail, $message);
+//        }
+//    }
+//
+//    public function save()
+//    {
+//        $dateArray = Json::decode(file_get_contents(self::FILE), $asArray = true);
+//        $dateArray[] = ['date' => date(self::FORMAT)];
+//        file_put_contents(self::FILE, Json::encode($dateArray));
+//
+//        unset($dateArray);
+//
+//        echo 'save' . '<br>';
+//    }
+//
+//    /**
+//     * Вернёт последнюю дату ошибки из файла data.json
+//     * Если массива нет (пустой файл) создаст массив и запишет дату первой ошибки
+//     * @return mixed
+//     */
+//    public function getDateFromFile()
+//    {
+//        if (!$this->getArrayDate()) {
+//            $this->save();
+//        }
+//
+//        $array = $this->getArrayDate();
+//        $value = array_pop($array);
+//
+//        return $value->date;
+//    }
+//
+//    /**
+//     * Вернёт разницу между двумя датами, число - в часах
+//     *
+//     * @param $current_time
+//     * @param $time_from_file
+//     * @return int
+//     * @throws \Exception
+//     */
+//    public function diffHour($current_time, $time_from_file)
+//    {
+//        $currentDate = new DateTime($current_time);
+//
+//        return $currentDate->diff(new DateTime($time_from_file))->h;
+//    }
+//
+//    /**
+//     * Вернёт массив дат (дата "ошибки" исключения базы данных)
+//     * @return array
+//     */
+//    public function getArrayDate()
+//    {
+//        return json_decode(file_get_contents(self::FILE));
+//    }
+//
+//    public function pushMessage($mail, $name, $message)
+//    {
+//        Yii::$app->mailer->compose('home-link', [
+//            'textBody' => $message,
+//        ])
+//            ->setFrom('sense.servers@gmail.com')
+//            ->setTo($mail)
+//            ->setSubject('Hello, ' . $name . '!')
+//            ->setTextBody('')
+//            ->send();
+//    }
+//
+//    public function senderMessages($mails, $message)
+//    {
+//        foreach ($mails as $name => $email) {
+//            $this->pushMessage($email, $name, $message);
+//        }
+//    }
 }
