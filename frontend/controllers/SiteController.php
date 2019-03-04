@@ -622,7 +622,7 @@ class SiteController extends Controller
 //
 //    public function pushMessage($mail, $name, $message)
 //    {
-//        Yii::$app->mailer->compose('home-link', [
+//        Yii::$app->mailer->compose('db-error', [
 //            'textBody' => $message,
 //        ])
 //            ->setFrom('sense.servers@gmail.com')
