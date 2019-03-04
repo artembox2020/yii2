@@ -5,3 +5,4 @@ error/error.log
 storage/logos/
 .env
 .vscode
+frontend/services/error/db_connection/file/data.json 
