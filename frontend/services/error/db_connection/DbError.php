@@ -19,15 +19,6 @@ class DbError extends ErrorAction
      */
     public function init()
     {
-//        if ($this->defaultMessage) {
-            try {
-                Yii::$app->db->open();
-            } catch (Exception $e) {
-                $action = new MessageDbError();
-                $action->actionRun($this->defaultMessage);
-            }
-//        }
-
         $this->exception = $this->findException();
 
         if ($this->defaultMessage === null) {
@@ -37,5 +28,15 @@ class DbError extends ErrorAction
         if ($this->defaultName === null) {
             $this->defaultName = Yii::t('yii', 'Error');
         }
+
+        if ($this->defaultMessage) {
+            try {
+                Yii::$app->db->open();
+            } catch (Exception $e) {
+                $action = new MessageDbError();
+                $action->actionRun($this->defaultMessage);
+            }
+        }
+
     }
 }
