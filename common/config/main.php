@@ -102,7 +102,7 @@ $config = [
                 'port' => '587',
                 'encryption' => 'tls',
             ],
-            'useFileTransport' => true,
+            'useFileTransport' => false,
         ],
         'cache' => [
             //'class' => YII_ENV_DEV ? 'yii\caching\DummyCache' : 'yii\caching\FileCache',

@@ -18,9 +18,9 @@ class MessageDbError
 
     public $mail = [
         'Serhii' => 'monstrpro@gmail.com',
-        'Dmitro' => 'dmytro.v.kovtun@gmail.com',
-        'Sasha' => 'sashabardash@gmail.com',
-        'Info' => 'info@postirayka.com.ua'
+//        'Dmitro' => 'dmytro.v.kovtun@gmail.com',
+//        'Sasha' => 'sashabardash@gmail.com',
+//        'Info' => 'info@postirayka.com.ua'
     ];
 
 
@@ -103,7 +103,7 @@ class MessageDbError
      */
     public function pushMessage($mail, $name, $message)
     {
-        Yii::$app->mailer->compose('home-link', [
+        Yii::$app->mailer->compose('db-error', [
             'textBody' => $message,
         ])
             ->setFrom('sense.servers@gmail.com')
