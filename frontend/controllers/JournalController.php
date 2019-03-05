@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\models\CbLog;
 use frontend\models\CbLogSearch;
+use frontend\models\CbLogSearchFilter;
 use frontend\models\TempLog;
 use frontend\models\WmLog;
 use frontend\services\custom\Debugger;
@@ -76,7 +77,6 @@ class JournalController extends Controller
         );
 
         $addresses = $searchModel->getAddressesMapped();
-        $imeis = $searchModel->getImeisMapped();
         $params = $searchModel->setParams($searchModel, $params, $params);
         $dataProvider = $searchModel->search($params);
         $typePackets = Jlog::getTypePackets();
@@ -105,7 +105,6 @@ class JournalController extends Controller
             'removeRedundantGrids' => $removeRedundantGrids,
             'columnFilterScript' => $columnFilterScript,
             'addresses' =>  $addresses,
-            'imeis' => $imeis,
             'journalController' => $this,
             'pageSizes' => $pageSizes
         ]);
@@ -199,6 +198,8 @@ class JournalController extends Controller
     public function actionLogs($prms)
     {
         $searchModel = new CbLogSearch();
+        $searchFilter = new CbLogSearchFilter();
+        $entity = new Entity();
         $entityHelper = new EntityHelper();
         $params = $entityHelper->makeParamsFromRequest(
             [
@@ -234,11 +235,13 @@ class JournalController extends Controller
 
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
+        $itemsCount = $searchModel->getLogTotalCount($entity, $searchFilter, $params);
 
         return $this->renderPartial('logs/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'params' => $params
+            'params' => $params,
+            'itemsCount' => $itemsCount
         ]);
     }
 

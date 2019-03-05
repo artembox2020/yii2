@@ -34,7 +34,7 @@ class JlogDataSearch extends JlogSearch
         $entityHelper = new EntityHelper();
         $query = $entity->getUnitsQueryPertainCompany(new Jlog());
 
-        $this->applyBetweenDateCondition($query);
+        $this->applyBetweenDateCondition($query, $this);
 
         $this->load($params);
 
@@ -144,8 +144,8 @@ class JlogDataSearch extends JlogSearch
         ]);
 
         $dataProvider->sort->attributes['date'] = [
-            'asc' => ['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_ASC],
-            'desc' => ['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_DESC],
+            'asc' => ['unix_time_offset' => SORT_ASC],
+            'desc' => ['unix_time_offset' => SORT_DESC],
         ];
 
         return $dataProvider;
@@ -247,10 +247,10 @@ class JlogDataSearch extends JlogSearch
     {
         switch ($params['sort']) {
             case '-date':
-                $query = $query->orderBy(['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_DESC]);
+                $query = $query->orderBy(['unix_time_offset' => SORT_DESC]);
                 break;
             case 'date':
-                $query = $query->orderBy(['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_ASC]);
+                $query = $query->orderBy(['unix_time_offset' => SORT_ASC]);
                 break;
             case '-address':
                 $query = $query->orderBy(['address' => SORT_DESC]);

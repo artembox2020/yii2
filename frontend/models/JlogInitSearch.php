@@ -38,7 +38,7 @@ class JlogInitSearch extends JlogSearch
         $entityHelper = new EntityHelper();
         $query = $entity->getUnitsQueryPertainCompany(new Jlog());
 
-        $query = $this->applyBetweenDateCondition($query);
+        $query = $this->applyBetweenDateCondition($query, $this);
 
         $query = $query->andFilterWhere(['like', 'packet', $this->mashineNumber]);
 

@@ -75,3 +75,6 @@
         max-width: 240px;
         white-space: normal;
     }
+    .jlog-index #journal-pjax-container h1 {
+        display:none;
+    }

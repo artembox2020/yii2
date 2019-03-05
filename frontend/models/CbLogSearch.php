@@ -18,10 +18,12 @@ class CbLogSearch extends CbLog
     const PAGE_SIZE = 10;
     const TYPE_ENCASHMENT_STATUS = 8;
     const TYPE_LAST_ENCASHMENT_DATE = '01.01.2019';
+    const TYPE_ITEMS_LIMIT = 200;
 
     public $address;
 
     const INFINITY = 9999999999999999;
+    const ZERO = 0;
 
     public $from_date;
     public $to_date;
@@ -47,17 +49,16 @@ class CbLogSearch extends CbLog
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates canonical wm_log query
      *
+     * @param frontend\services\globals\Entity
+     * @param frontend\models\CbLogSearchFilter
      * @param array $params
      *
-     * @return ActiveDataProvider
+     * @return \yii\db\Query
      */
-    public function search($params)
+    public function getWmLogQuery($entity, $searchFilter, $params)
     {
-        $entity = new Entity();
-        $searchFilter = new CbLogSearchFilter();
-
         $wmLogQuery = (new \yii\db\Query())
             ->select([
                 'unix_time_offset', 
@@ -85,6 +86,20 @@ class CbLogSearch extends CbLog
             $wmLogQuery, 'number', $params, CbLogSearchFilter::FILTER_CATEGORY_NUMERIC
         );
 
+        return $wmLogQuery;
+    }
+
+    /**
+     * Creates canonical cb_log query
+     *
+     * @param frontend\services\globals\Entity
+     * @param frontend\models\CbLogSearchFilter
+     * @param array $params
+     *
+     * @return \yii\db\Query
+     */
+    public function getCbLogQuery($entity, $searchFilter, $params)
+    {
         $cbLogQuery = (new \yii\db\Query())
             ->select([
                 'unix_time_offset',
@@ -109,10 +124,76 @@ class CbLogSearch extends CbLog
         $cbLogQuery = $this->applyCommonFilters($cbLogQuery, $params);
         $cbLogQuery = $searchFilter->applyFilterByValueMethod($cbLogQuery, 'number', $params);
 
-        $cbLogQuery->union($wmLogQuery);
+        return $cbLogQuery;
+    }
+
+    /**
+     * Appends orderBy sentence, considering default order and allowed order fields
+     *
+     * @param \yii\db\Query $query
+     * @param array $params
+     * @param array $assocOrder
+     * @param array $orderFields
+     *
+     * @return \yii\db\Query
+     */
+    public function applyOrder($query, $params, $assocOrder, $orderFields)
+    {
+        $sort = $params['sort'];
+        
+        if (!empty($sort)) {
+            $firstChar = substr($sort, 0, 1);
+            $orderDirection = $firstChar == '-' ? SORT_DESC : SORT_ASC;
+            $sort = str_replace(['-', '+'], [''], $sort);
+            $assocOrder = in_array($sort, $orderFields) ? [$sort => $orderDirection] : $assocOrder;
+        }
+
+        return $query->orderBy($assocOrder);
+    }
+
+    /**
+     * Calculates the total number of items
+     *
+     * @param frontend\services\globals\Entity
+     * @param frontend\models\CbLogSearchFilter
+     * @param array $params
+     *
+     * @return int
+     */
+    public function getLogTotalCount($entity, $searchFilter, $params)
+    {
+        
+        $cbLogCount = (int)$this->getCbLogQuery($entity, $searchFilter, $params)->count();
+        $wmLogCount = (int)$this->getWmLogQuery($entity, $searchFilter, $params)->count();
+
+        return $cbLogCount + $wmLogCount;
+    }
+
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        $entity = new Entity();
+        $searchFilter = new CbLogSearchFilter();
+        $defaultOrderAssoc = ['unix_time_offset' => SORT_DESC];
+        $orderFields = ['unix_time_offset'];
+
+        $wmLogQuery = $this->getWmLogQuery($entity, $searchFilter, $params);
+        $this->applyOrder($wmLogQuery, $params, $defaultOrderAssoc, $orderFields);
+        $wmLogQuery->limit(self::TYPE_ITEMS_LIMIT);
+
+        $cbLogQuery = $this->getCbLogQuery($entity, $searchFilter, $params);
+        $this->applyOrder($cbLogQuery, $params, $defaultOrderAssoc, $orderFields);
+        $cbLogQuery->limit(self::TYPE_ITEMS_LIMIT);
 
         $query = new \yii\db\Query();
-        $query->select('*')->from(['u' => $cbLogQuery])->orderBy(['unix_time_offset' => SORT_DESC]);
+        $query->select('*')->from(['u' => $cbLogQuery->union($wmLogQuery, true)]);
+        $this->applyOrder($query, $params, $defaultOrderAssoc, $orderFields);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -544,18 +625,7 @@ class CbLogSearch extends CbLog
     {
         $jlogSearch = new JlogSearch();
 
-        list($timeFrom, $timeTo) = $jlogSearch->makeTimeIntervals($this->from_date, $this->to_date);
-
-        $betweenCondition = new \yii\db\conditions\BetweenCondition(
-            'unix_time_offset', 
-            'BETWEEN',
-            $timeFrom,
-            $timeTo
-        );
-
-        $query = $query->andWhere($betweenCondition);
-
-        return $query;
+        return $jlogSearch->applyBetweenDateCondition($query, $this);
     }
 
     /**

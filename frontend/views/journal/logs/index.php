@@ -17,6 +17,7 @@ use \frontend\models\AddressBalanceHolder;
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
+    'summary' => "<b>".Yii::t('frontend', 'Shown')."</b> {begin} - {end} ".Yii::t('frontend', 'From')." {$itemsCount}",
     'columns' => [
         [
             'attribute' => 'unix_time_offset',

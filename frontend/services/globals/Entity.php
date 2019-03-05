@@ -148,7 +148,7 @@ class Entity implements EntityInterface
 
         return $this->checkAccess($units, false);
     }
-    
+
     /** 
      * @param int $id
      * @param Instance $instance
@@ -173,5 +173,17 @@ class Entity implements EntityInterface
         }
 
         return $currentUser;
+    }
+
+    /**
+     * Gets all units query pertaining company, e.g. inactive, soft deleted
+     * @param null $instance
+     * @return yii\db\Query
+     */
+    public function getAllUnitsQueryPertainCompany($instance)
+    {
+        $units = $instance::find()->where(['company_id' => $this->getCompanyId()]);
+
+        return $units;
     }
 }

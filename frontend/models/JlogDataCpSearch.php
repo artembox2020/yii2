@@ -36,7 +36,7 @@ class JLogDataCpSearch extends JlogSearch
         $entity = new Entity();
         $entityHelper = new EntityHelper();
         $query = $entity->getUnitsQueryPertainCompany(new Jlog());
-        $query = $this->applyBetweenDateCondition($query);
+        $query = $this->applyBetweenDateCondition($query, $this);
 
         $query = $query->andFilterWhere(['type_packet' => self::TYPE_PACKET_DATA]);
 
@@ -45,7 +45,7 @@ class JLogDataCpSearch extends JlogSearch
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
+                'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE,
             ],
             'sort' => [
                 'attributes' => [
@@ -60,12 +60,12 @@ class JLogDataCpSearch extends JlogSearch
         ]);
 
         $dataProvider->sort->attributes['date'] = [
-            'asc' => ['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_ASC],
-            'desc' => ['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_DESC],
+            'asc' => ['unix_time_offset' => SORT_ASC],
+            'desc' => ['unix_time_offset' => SORT_DESC],
         ];
 
         $this->load($params);
-        
+
          // apply filters by address column
 
         $query = $this->applyFilterByValueMethod($query, 'address', $params);
