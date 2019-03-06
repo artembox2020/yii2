@@ -550,9 +550,9 @@ class SiteController extends Controller
     const FILE = '../services/error/db_connection/file/data.json';
     public $mail = [
         'Serhii' => 'monstrpro@gmail.com',
-        'Dmitro' => 'dmytro.v.kovtun@gmail.com',
-        'Sasha' => 'sashabardash@gmail.com',
-        'Info' => 'info@postirayka.com.ua'
+//        'Dmitro' => 'dmytro.v.kovtun@gmail.com',
+//        'Sasha' => 'sashabardash@gmail.com',
+//        'Info' => 'info@postirayka.com.ua'
     ];
     /**
      * Если разница между ошибками один час то записывает в файл data.json дату ошибки
@@ -563,7 +563,7 @@ class SiteController extends Controller
     public function actionTest($message)
     {
         if ($this->diffHour(date(self::FORMAT), $this->getDateFromFile()) > self::HOUR) {
-            $this->save();
+//            $this->save();
             $this->senderMessages($this->mail, $message);
         }
     }

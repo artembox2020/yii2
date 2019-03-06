@@ -100,7 +100,7 @@ $config = [
                 'username' => 'server@postirayka.com',
                 'password' => '',
                 'port' => '25',
-                'encryption' => 'tls',
+//                'encryption' => 'tls',
             ],
             'useFileTransport' => false,
         ],
