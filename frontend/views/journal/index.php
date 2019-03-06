@@ -30,7 +30,6 @@ $this->title = Yii::t('frontend', 'Events Journal');
                 '/journal/filter-encashment-block',
                 [
                     'params' => $params,
-                    'imeis' => $imeis,
                     'addresses' => $addresses,
                     'submitFormOnInputEvents' => $submitFormOnInputEvents,
                     'typePackets' => $typePackets,
@@ -43,7 +42,6 @@ $this->title = Yii::t('frontend', 'Events Journal');
                 '/journal/filter-block',
                 [
                     'params' => $params,
-                    'imeis' => $imeis,
                     'addresses' => $addresses,
                     'submitFormOnInputEvents' => $submitFormOnInputEvents,
                     'typePackets' => $typePackets,

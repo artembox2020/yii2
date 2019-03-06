@@ -105,7 +105,10 @@ class Jlog extends ActiveRecord
            }
         }
 
-        $jlog->date = Yii::$app->formatter->asDate(time() + self::TYPE_TIME_OFFSET, Imei::DATE_TIME_FORMAT);
+        $time = time() + self::TYPE_TIME_OFFSET;
+
+        $jlog->date = Yii::$app->formatter->asDate($time, Imei::DATE_TIME_FORMAT);
+        $jlog->unix_time_offset = $time;
 
         // update item if previous item is the same
         if (in_array($params['type_packet'], [self::TYPE_PACKET_DATA ,self::TYPE_PACKET_DATA_CP])) {

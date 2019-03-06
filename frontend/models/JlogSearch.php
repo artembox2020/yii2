@@ -46,6 +46,7 @@ class JlogSearch extends Jlog
     const FILTER_CATEGORY_NUMERIC = 21;
     
     const INFINITY = 9999999999999999;
+    const ZERO = 0;
 
     public $from_date;
     public $to_date;
@@ -76,7 +77,7 @@ class JlogSearch extends Jlog
         $entityHelper = new EntityHelper();
         $query = $entity->getUnitsQueryPertainCompany(new Jlog());
 
-        $query = $this->applyBetweenDateCondition($query);
+        $query = $this->applyBetweenDateCondition($query, $this);
 
         $query = $query->andFilterWhere(['like', 'packet', $this->mashineNumber]);
 
@@ -687,11 +688,18 @@ class JlogSearch extends Jlog
     public function getImeisMapped()
     {
         $entity = new Entity();
-        $query = $entity->getUnitsQueryPertainCompany(new Jlog());
+        $query = $entity->getUnitsQueryPertainCompany(new Imei());
         $imeis = $query->select('imei')->distinct()->all();
         $imeisMapped = [];
         $counter = 1;
+        $imeiIds = [];
         foreach($imeis as $imei) {
+
+            if (in_array($imei->id, $imeiIds)) {
+                continue;
+            }
+
+            $imeiIds[] = $imei->id;
             $imeisMapped[] = (object)['id' => $counter++, 'value' => $imei->imei]; 
         }
 
@@ -706,7 +714,7 @@ class JlogSearch extends Jlog
     public function getAddressesMapped()
     {
         $entity = new Entity();
-        $query = $entity->getUnitsQueryPertainCompany(new Jlog());
+        $query = $entity->getAllUnitsQueryPertainCompany(new AddressBalanceHolder());
         $addresses = $query->select('address')->distinct()->all();
         $addressesMapped = [];
         $counter = 1;
@@ -756,20 +764,20 @@ class JlogSearch extends Jlog
      * Applies between date condition to query 
      * 
      * @param ActiveDbQuery $query
+     * @param yii\db\ActiveRecord $searchModel
      * @return ActiveDbQuery
      */
-    public function applyBetweenDateCondition($query)
+    public function applyBetweenDateCondition($query, $searchModel)
     {
-        list($timeFrom, $timeTo) = $this->makeTimeIntervals($this->from_date, $this->to_date);
+        list($timeFrom, $timeTo) = $this->makeTimeIntervals($searchModel->from_date, $searchModel->to_date);
 
-        $betweenCondition = new \yii\db\conditions\BetweenCondition(
-            "UNIX_TIMESTAMP(STR_TO_DATE(date, '".Imei::MYSQL_DATE_TIME_FORMAT."'))", 
-            'BETWEEN',
-            $timeFrom,
-            $timeTo
-        );
+        if ($timeFrom > self::ZERO) {
+            $query = $query->andWhere(['>=', 'unix_time_offset', $timeFrom]);
+        }
 
-        $query = $query->andWhere($betweenCondition);
+        if ($timeTo < self::INFINITY) {
+            $query = $query->andWhere(['<=', 'unix_time_offset', $timeTo]);
+        }
 
         return $query;
     }

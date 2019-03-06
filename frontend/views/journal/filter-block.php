@@ -34,24 +34,6 @@ use frontend\models\JlogSearch;
 <div class="form-group">
 
     <?= AutoComplete::widget([
-        'name' => 'imei',
-        'options' => [
-            'placeholder' => Yii::t('frontend', 'Begin to type imei'),
-            'class' => 'form-control',
-            'size' => 20
-        ],
-        'value' => $params['imei'],
-        'clientOptions' => [
-            'source' => $imeis,
-            'autoFill' => false,
-        ],
-    ]);
-    ?>
-</div>
-
-<div class="form-group">
-
-    <?= AutoComplete::widget([
         'name' => 'address',
         'options' => [
             'placeholder' => Yii::t('frontend', 'Begin to type address'),
