@@ -557,10 +557,10 @@ class SiteController extends Controller
     /**
      * Если разница между ошибками один час то записывает в файл data.json дату ошибки
      * и отправляет сообщение на почту
-     *
+     * @param $message
      * @throws \Exception
      */
-    public function actionTest($message)
+    public function actionTest($message): void
     {
         if ($this->diffHour(date(self::FORMAT), $this->getDateFromFile()) > self::HOUR) {
 //            $this->save();
@@ -568,7 +568,7 @@ class SiteController extends Controller
         }
     }
 
-    public function save()
+    public function save(): void
     {
         $dateArray = Json::decode(file_get_contents(self::FILE), $asArray = true);
         $dateArray[] = ['date' => date(self::FORMAT)];
@@ -582,9 +582,9 @@ class SiteController extends Controller
     /**
      * Вернёт последнюю дату ошибки из файла data.json
      * Если массива нет (пустой файл) создаст массив и запишет дату первой ошибки
-     * @return mixed
+     * @return string|$this->save
      */
-    public function getDateFromFile()
+    public function getDateFromFile(): string
     {
         if (!$this->getArrayDate()) {
             $this->save();
@@ -604,7 +604,7 @@ class SiteController extends Controller
      * @return int
      * @throws \Exception
      */
-    public function diffHour($current_time, $time_from_file)
+    public function diffHour(int $current_time, int $time_from_file): int
     {
         $currentDate = new DateTime($current_time);
 
@@ -615,7 +615,7 @@ class SiteController extends Controller
      * Вернёт массив дат (дата "ошибки" исключения базы данных)
      * @return array
      */
-    public function getArrayDate()
+    public function getArrayDate(): array
     {
         return json_decode(file_get_contents(self::FILE));
     }
@@ -632,7 +632,7 @@ class SiteController extends Controller
             ->send();
     }
 
-    public function senderMessages($mails, $message)
+    public function senderMessages(array $mails, string $message): void
     {
         foreach ($mails as $name => $email) {
             $this->pushMessage($email, $name, $message);
