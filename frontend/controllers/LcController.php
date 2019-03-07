@@ -7,6 +7,7 @@ use frontend\models\CbLogSearch;
 use frontend\models\dto\CentralBoardDto;
 use frontend\models\Imei;
 use frontend\services\custom\Debugger;
+use frontend\services\globals\DateTimeHelper;
 use yii\web\Controller;
 
 /**
@@ -26,6 +27,7 @@ class LcController extends Controller
     {
         $result = $this->iParse($p);
         $centralBoardDto = new CentralBoardDto($result);
+        $dateTimeHelper = new DateTimeHelper(); 
 
         $cbLogSearch = new CbLogSearch();
 
@@ -40,7 +42,7 @@ class LcController extends Controller
                 $cbl->imei = $centralBoardDto->imei;
                 $cbl->device = $this->type_packet;
                 $cbl->signal = $imei->level_signal;
-                $cbl->unix_time_offset = $centralBoardDto->unix_time_offset;
+                $cbl->unix_time_offset = $dateTimeHelper->getRealUnixTimeOffset($centralBoardDto->unix_time_offset);
                 $cbl->status = $centralBoardDto->status;
                 $cbl->fireproof_counter_hrn = $centralBoardDto->fireproof_counter_hrn;
                 $cbl->fireproof_counter_card = $centralBoardDto->fireproof_counter_card;
