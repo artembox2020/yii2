@@ -6,6 +6,7 @@ use frontend\models\dto\LwmDto;
 use frontend\models\Imei;
 use frontend\models\WmLog;
 use frontend\services\custom\Debugger;
+use frontend\services\globals\DateTimeHelper;
 use yii\web\Controller;
 
 /**
@@ -27,6 +28,7 @@ class LwController extends Controller
     {
         $result = $this->iParse($p);
         $LwmDto = new LwmDto($result);
+        $dateTimeHelper = new DateTimeHelper();
 
         if (Imei::findOne(['imei' => $LwmDto->imei])) {
             $imei = $this->getImei($LwmDto->imei);
@@ -40,7 +42,7 @@ class LwController extends Controller
                 $wml->imei = $LwmDto->imei;
                 $wml->device = $this->type_packet;
                 $wml->signal = $imei->level_signal;
-                $wml->unix_time_offset = $LwmDto->unix_time_offset;
+                $wml->unix_time_offset = $dateTimeHelper->getRealUnixTimeOffset($LwmDto->unix_time_offset);
                 $wml->number = $LwmDto->number;
                 $wml->signal = $LwmDto->signal;
                 $wml->status = $LwmDto->status;
