@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\models\User;
 use DateTime;
 use frontend\services\custom\Debugger;
+use phpDocumentor\Reflection\Types\Integer;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\auth\HttpBearerAuth;
@@ -586,7 +587,7 @@ class SiteController extends Controller
      */
     public function getDateFromFile(): string
     {
-        if (!$this->getArrayDate()) {
+        if (!is_array($this->getArrayDate())) {
             $this->save();
         }
 
@@ -604,7 +605,7 @@ class SiteController extends Controller
      * @return int
      * @throws \Exception
      */
-    public function diffHour(int $current_time, int $time_from_file): int
+    public function diffHour(string $current_time, string $time_from_file): int
     {
         $currentDate = new DateTime($current_time);
 
@@ -615,7 +616,7 @@ class SiteController extends Controller
      * Вернёт массив дат (дата "ошибки" исключения базы данных)
      * @return array
      */
-    public function getArrayDate(): array
+    public function getArrayDate(): ?array
     {
         return json_decode(file_get_contents(self::FILE));
     }
