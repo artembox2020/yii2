@@ -54,7 +54,7 @@ $this->title = Yii::t('frontend', 'Events Journal');
     <?php
         // renders appropriate view by data packet
 
-        echo $journalController->renderAppropriatePacket($params);
+        echo $journalController->renderAppropriatePacket($params, $dataProvider);
     ?>
 
     <?php

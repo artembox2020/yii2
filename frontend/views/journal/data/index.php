@@ -16,12 +16,12 @@ use frontend\services\parser\CParser;
 <div class="table-responsives">
 
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
+        'dataProvider' => $arrayProvider,
         'filterModel' => $searchModel,
         'options' => [
             'class' => 'journal-grid-view',
         ],
-        'summary'=> $searchModel->getSummaryMessage($params),
+        'summary'=> $searchModel->getSummaryMessage($params, $dataProvider->query),
         'columns' => [
             [
                 'attribute' => 'date',
