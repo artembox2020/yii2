@@ -2,7 +2,7 @@
 
 namespace backend\services\mail;
 
-use backend\models\Company;
+use frontend\models\Company;
 use common\models\User;
 use Yii;
 

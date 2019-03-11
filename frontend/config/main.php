@@ -52,19 +52,19 @@ $config = [
         ],
         'urlManager' => require __DIR__ . '/_urlManager.php',
         'cache' => require __DIR__ . '/_cache.php',
-        'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-//            One more suggestion is to use port "465" and encryption as "ssl" instead of port "587", encryption "tls".
-            'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                'host' => 'smtp.gmail.com',
-                'username' => 'sense.servers@gmail.com',
-                'password' => 'senseserver010203',
-                'port' => '587',
-                'encryption' => 'tls',
-            ],
-            'useFileTransport' => true,
-        ],
+//        'mailer' => [
+//            'class' => 'yii\swiftmailer\Mailer',
+////            One more suggestion is to use port "465" and encryption as "ssl" instead of port "587", encryption "tls".
+//            'transport' => [
+//                'class' => 'Swift_SmtpTransport',
+//                'host' => 'smtp.gmail.com',
+//                'username' => 'sense.servers@gmail.com',
+//                'password' => 'senseserver010203',
+//                'port' => '587',
+//                'encryption' => 'tls',
+//            ],
+//            'useFileTransport' => false,
+//        ],
     ],
     'as beforeAction' => [
         'class' => 'common\behaviors\LastActionBehavior',

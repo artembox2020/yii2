@@ -96,13 +96,13 @@ $config = [
 //            One more suggestion is to use port "465" and encryption as "ssl" instead of port "587", encryption "tls".
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
-                'host' => 'smtp.gmail.com',
-                'username' => 'sense.servers@gmail.com',
-                'password' => 'senseserver010203',
-                'port' => '587',
-                'encryption' => 'tls',
+                'host' => 'robots.1gb.ua',
+                'username' => 'server@postirayka.com',
+                'password' => '',
+                'port' => '25',
+//                'encryption' => 'tls',
             ],
-            'useFileTransport' => true,
+            'useFileTransport' => false,
         ],
         'cache' => [
             //'class' => YII_ENV_DEV ? 'yii\caching\DummyCache' : 'yii\caching\FileCache',

@@ -179,7 +179,7 @@ AppAsset::register($this);
                 ],
                 [
                     'label' => Yii::t('frontend', 'Users'),
-                    'url' => ['/account/default/users'],
+                    'url' => ['/net-manager/employees'],
                     'visible' => Yii::$app->user->can('manager'),
                 ],
 //                [

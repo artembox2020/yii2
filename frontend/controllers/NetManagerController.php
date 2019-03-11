@@ -25,7 +25,7 @@ use yii\data\ArrayDataProvider;
 use common\models\User;
 use common\models\UserSearch;
 use backend\models\UserForm;
-use backend\models\Company;
+use frontend\models\Company;
 use yii\di\Instance;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
@@ -58,6 +58,8 @@ class NetManagerController extends \yii\web\Controller
     const STATUS_UNDER_REPAIR = 2;
     
     const DATA_MODEM_HISTORY_FORMAT = 'H:i:s d.m.y';
+
+    const ADMINISTRATOR = 'administrator';
     
     public function behaviors()
     {
@@ -202,6 +204,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionEditEmployee($id)
     {
+        $array = array();
 
         if (!\Yii::$app->user->can('manager')) {
             \Yii::$app->getSession()->setFlash('error', 'Access denied');
@@ -221,11 +224,18 @@ class NetManagerController extends \yii\web\Controller
                 return $this->redirect(['/net-manager/employees']);
             }    
         }
+
+        if (!array_key_exists(self::ADMINISTRATOR, Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId()))) {
+            $array = Yii::$app->authManager->getRoles();
+            unset($array[self::ADMINISTRATOR]);
+        } else {
+            $array = Yii::$app->authManager->getRoles();
+        }
         
         return $this->render('create', [
             'user' => $user,
             'profile' => $profile,
-            'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+            'roles' => ArrayHelper::map($array, 'name', 'name'),
         ]);
     }
 
@@ -236,10 +246,10 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionDeleteEmployee($id) 
     {
-//        if (!\Yii::$app->user->can('manager')) {
-//            \Yii::$app->getSession()->setFlash('error', 'Access denied');
-//            return $this->render('@app/modules/account/views/denied/access-denied');
-//        }
+        if (!\Yii::$app->user->can('manager')) {
+            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
 
         $model = $this->findModel($id, new User());
         $model->softDelete();
