@@ -199,6 +199,7 @@ class DefaultController extends Controller
                 $user = User::findOne(['email' => $model->email]);
 
                 $user->company_id = $manager->company_id;
+                Debugger::dd($user->save(false));
                 $user->save(false);
                 
                 $profile = UserProfile::findOne($user->id);

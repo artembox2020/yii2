@@ -111,7 +111,6 @@ return [
     'Counter Zeroing' => 'Счетчик обнуления',
     'Create' => 'Создать',
     'Created' => 'Создано',
-    'Created' => 'Создано',
     'Create user' => 'Создать пользователя',
     'Create Address Balance Holder' => 'Создать адрес',
     'Create Imei' => 'Создать WASHPAY',
