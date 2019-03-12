@@ -28,7 +28,7 @@ class MailSender
         Yii::$app->mailer->compose('home-link', [
             'textBody' => $textBody,
         ])
-            ->setFrom('sense.servers@gmail.com')
+            ->setFrom(env('ADMIN_EMAIL'))
             ->setTo($user->email)
             ->setSubject('Hello, ' . $user->username . '!')
             ->setTextBody('')

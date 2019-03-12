@@ -45,7 +45,7 @@ class MessageForm extends Model
     {
         return Yii::$app->mailer->compose()
             ->setTo($email)
-            ->setFrom([Yii::$app->user->identity->email => Yii::$app->user->identity->username])
+            ->setFrom([env('ADMIN_EMAIL') => Yii::$app->user->identity->username])
             ->setSubject($this->subject)
             ->setTextBody($this->body)
             ->send();
