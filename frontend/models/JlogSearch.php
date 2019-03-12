@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use frontend\models\Jlog;
 use frontend\models\WmMashine;
 use frontend\models\Imei;
+use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 
@@ -87,12 +88,18 @@ class JlogSearch extends Jlog
             'query' => $query,
             'pagination' => [
                 'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
+            ],
+            'sort' => [
+                'defaultOrder' => ['date' => SORT_DESC],
+                'attributes' => [
+                    'date', 'address'
+                ]
             ]
         ]);
 
         $dataProvider->sort->attributes['date'] = [
-            'asc' => ['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_ASC],
-            'desc' => ['STR_TO_DATE(j_log.date, \''.Imei::MYSQL_DATE_TIME_FORMAT.'\')' => SORT_DESC],
+            'asc' => ['unix_time_offset' => SORT_ASC],
+            'desc' => ['unix_time_offset' => SORT_DESC],
         ];
 
         $this->load($params);
@@ -122,16 +129,6 @@ class JlogSearch extends Jlog
         $query = $this->applyFilterByValueMethod($query, 'imei', $params);
         $query = $this->applyFilterByConditionMethod($query, 'imei', $params, self::FILTER_CATEGORY_COMMON);
 
-        // grid filtering conditions
-
-        if (!empty($params['type_packet'])) {
-            $query->andFilterWhere([
-                'type_packet' => $params['type_packet'],
-            ]);
-        }
-
-        $query->andFilterWhere(['like', 'imei', $params['imei']]);
-
         $query->andFilterWhere(['like', 'address', $params['address']]);
 
         return $dataProvider;
@@ -148,7 +145,8 @@ class JlogSearch extends Jlog
     {
         $wm_mashine = WmMashine::findOne($id);
         $imei = Imei::findOne($wm_mashine->imei_id);
-        $params['imei'] = $imei->imei;
+        $params['filterCondition']['imei'] = self::FILTER_TEXT_EQUAL;
+        $params['val1']['imei'] = $imei->imei;
         if (empty(Yii::$app->request->queryParams['sort'])) {
             $extraParams = ['sort' => '-date'];
             Yii::$app->request->queryParams = array_merge($extraParams, Yii::$app->request->queryParams);
@@ -164,7 +162,7 @@ class JlogSearch extends Jlog
      */
     public static function getCommonFilters()
     {
-        
+
         return [
             self::FILTER_NOT_SET => Yii::t('frontend', 'FILTER NOT SET'),
             self::FILTER_CELL_EMPTY => Yii::t('frontend', 'FILTER CELL EMPTY'),
@@ -792,13 +790,6 @@ class JlogSearch extends Jlog
      */
     public function setParams($searchModel, $params, $prms)
     {
-        if (!empty(Yii::$app->request->get()['id'])) {
-            $mashineId = Yii::$app->request->get()['id'];
-            $mashine = WmMashine::findOne($mashineId);
-            $searchModel->mashineNumber = '_'.$mashine->type_mashine.'*'.$mashine->number_device;
-            $params['wm_mashine_number'] = $mashine->number_device;
-        }
-
         if (isset($prms['JlogSearch']['from_date'])) {
             $searchModel->from_date = $prms['JlogSearch']['from_date'];
         }
@@ -813,6 +804,47 @@ class JlogSearch extends Jlog
 
         if (empty($params['type_packet'])) {
             $params['type_packet'] = self::TYPE_PACKET_DATA;
+        }
+
+        return $params;
+    }
+
+    /**
+     * Sets mashine number to model instance
+     * 
+     * @param JlogSearch $searchModel
+     * @param array $params
+     * @return array
+     */
+    public function setMashineNumber(JlogSearch $searchModel, array $params): array
+    {
+        $mashineId = Yii::$app->request->get()['id'] ?? self::ZERO;
+
+        if (!empty($mashineId)) {
+            $mashine = WmMashine::findOne($mashineId);
+            $searchModel->mashineNumber = '_'.$mashine->type_mashine.'*'.$mashine->number_device;
+            $params['wm_mashine_number'] = $mashine->number_device;
+        }
+
+        return $params;
+    }
+
+    /**
+     * Sets address as filter param
+     * 
+     * @param JlogSearch $searchModel
+     * @param array $params
+     * @return array
+     */
+    public function setAddressId(JlogSearch $searchModel, array $params): array
+    {
+        $addressId = Yii::$app->request->get()['id'] ?? self::ZERO;
+
+        if (!empty($addressId)) {
+            $entityHelper = new EntityHelper();
+            $address = AddressBalanceHolder::findOne($addressId);
+            $params['filterCondition']['address'] = self::FILTER_TEXT_EQUAL;
+            $params['val1']['address'] = $entityHelper->tryUnitRelationData($address, ['address' => ['address', 'floor'], ', ']);
         }
 
         return $params;

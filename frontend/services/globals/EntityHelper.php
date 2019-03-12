@@ -288,16 +288,16 @@ class EntityHelper implements EntityHelperInterface
 
         return '<script>'.$jsCode.'</script>';
     }
-    
+
     /**
-     * Creates params based on $_GET data
+     * Creates params based on given data
      * 
      * @param array $requiredParams
+     * @param array $params
      * @return array
      */
-    public function makeParamsFromRequest(Array $requiredParams)
+    public function makeParamsFromArray(array $requiredParams, array $params): array
     {
-        $params = Yii::$app->request->get();
         foreach ($requiredParams as $key => $param) {
             if (is_int($key)) {
                 if (!isset($params[$param])) {
@@ -319,6 +319,19 @@ class EntityHelper implements EntityHelperInterface
         }
 
         return $params;
+    }
+
+    /**
+     * Creates params based on $_GET data
+     * 
+     * @param array $requiredParams
+     * @return array
+     */
+    public function makeParamsFromRequest(array $requiredParams): array
+    {
+        $params = Yii::$app->request->get();
+
+        return $this->makeParamsFromArray($requiredParams, $params);
     }
 
     /**

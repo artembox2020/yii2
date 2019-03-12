@@ -53,6 +53,7 @@ return [
     'Address Card' => 'Картка адреси',
     'Address Install' => 'Адреса установки',
     'Address List' => 'Список адрес',
+    'Address Logs' => 'Логи адреси',
     'Address Name' => 'Коротка назва',
     'Address amount' => 'Кількість адрес',
     'Add IMEI' => 'Додати IMEI',

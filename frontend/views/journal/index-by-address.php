@@ -6,6 +6,7 @@ use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
 use frontend\models\Imei;
 use frontend\models\Jlog;
+use frontend\services\custom\Debugger;
 use frontend\services\globals\EntityHelper;
 use yii\widgets\Pjax;
 use \yii\jui\AutoComplete;
@@ -17,7 +18,7 @@ use yii\jui\DatePicker;
 
 ?>
 <div class="jlog-index">
-    <h1><?= Yii::t('frontend', 'Mashine Logs') ?></h1>
+    <h3 align="center"><?= Yii::t('frontend', 'Address Logs') ?></h3>
     <?php
         Pjax::begin(['id' => 'journal-pjax-container']);
         echo Html::beginForm('', 'get', ['class' => 'journal-filter-form form-inline', 'data-pjax' => 1]);
@@ -77,15 +78,14 @@ use yii\jui\DatePicker;
     <div class="form-group hidden">
         <?= Html::submitButton(Yii::t('frontend', 'Submit'), ['class' => 'btn btn-primary', 'id' => 'filter-submit-btn']); ?>
     </div>
-    
+
     <?php
         echo Html::endForm();
         echo $submitFormOnInputEvents;
     ?>
 
     <?php
-        // renders appropriate view by data packet
-
+        // renders appropriate packet 
         echo $journalController->renderAppropriatePacket($params, $dataProvider);
     ?>
 

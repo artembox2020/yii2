@@ -82,7 +82,16 @@ interface EntityHelperInterface
      * @param array $requiredParams
      * @return array
      */
-    public function makeParamsFromRequest(Array $requiredParams);
+    public function makeParamsFromRequest(array $requiredParams): array;
+
+    /**
+     * Creates params based on given data
+     * 
+     * @param array $requiredParams
+     * @param array $params
+     * @return array
+     */
+    public function makeParamsFromArray(array $requiredParams, array $params): array;
 
     /**
      * Renders popup window view

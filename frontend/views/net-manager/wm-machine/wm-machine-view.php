@@ -140,7 +140,7 @@ use frontend\models\Imei;
 
         echo Yii::$app->runAction(
             '/journal/index-by-mashine',
-            ['id' => $model->id, 'mashineRedirectAction' => '/net-manager/wm-machine-view']
+            ['id' => $model->id, 'redirectAction' => '/net-manager/wm-machine-view']
         );
     }
 ?>

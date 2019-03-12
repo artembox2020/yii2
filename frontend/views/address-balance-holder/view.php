@@ -112,7 +112,15 @@ $dateFormat = "d.m.Y";
 <div><b><u><?= Yii::t('frontend','Consolidated Financial Data') ?></u></b></div>
 <br/>
 
-<h3 align="center"><?= Yii::t('frontend', 'Terminal Features') ?></h3>
-<?= $model->getTerminalInfoView() ?>
+<?php if (!empty($model->getTerminalInfoView())): ?>
+    <h3 align="center"><?= Yii::t('frontend', 'Terminal Features') ?></h3>
+    <?= $model->getTerminalInfoView() ?>
+<?php endif; ?>
 
+<?php
+    echo Yii::$app->runAction(
+        '/journal/index-by-address',
+        ['id' => $model->id, 'redirectAction' => '/address-balance-holder/view']
+    );
+?>
 </div>

@@ -10,6 +10,7 @@ use frontend\models\Jlog;
 use frontend\models\JlogDataCpSearch;
 use frontend\models\WmMashine;
 use frontend\models\Imei;
+use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 use frontend\services\parser\CParser;
@@ -23,54 +24,16 @@ class JlogDataSearch extends JlogSearch
     const TYPE_QUERY_RECORDS_LIMIT = 500;
 
     /**
-     * Gets search data query 
-     * 
-     * @param array $params
-     * @return ActiveDbQuery
-     */
-    public function searchDataQuery($params)
-    {
-        $entity = new Entity();
-        $entityHelper = new EntityHelper();
-        $query = $entity->getUnitsQueryPertainCompany(new Jlog());
-
-        $this->applyBetweenDateCondition($query, $this);
-
-        $this->load($params);
-
-        // apply filters by date column 
-
-        $query = $this->applyFilterByValueMethod($query, 'date', $params);
-        $query = $this->applyFilterByConditionMethod($query, 'date', $params, self::FILTER_CATEGORY_DATE);
-
-        $query = $this->applyFilterByValueMethod($query, 'address', $params);
-        $query = $this->applyFilterByConditionMethod($query, 'address', $params, self::FILTER_CATEGORY_COMMON);
-
-        $query = $query->andFilterWhere(['like', 'packet', $this->mashineNumber]);
-
-        $query = $query->andFilterWhere(['type_packet' => self::TYPE_PACKET_DATA]);
-
-        $query->andFilterWhere(['like', 'imei', $params['imei']]);
-
-        $query->andFilterWhere(['like', 'address', $params['address']]);
-
-        $query = $this->makeOrder($query, $params);
-
-        return $query;
-    }
-
-    /**
      * Creates data provider instance with search query applied
      *
      * @param array $params
+     * @param yii\db\ActiveDbQuery $query
      *
      * @return ArrayDataProvider
      */
-    public function searchData($params)
+    public function searchData($params, $query)
     {
-
-        $query  = $this->searchDataQuery($params);
-
+        $query = $this->makeOrder($query, $params);
         $query = $query->limit(self::TYPE_QUERY_RECORDS_LIMIT);
 
         $dataInfo = [];
@@ -110,7 +73,8 @@ class JlogDataSearch extends JlogSearch
                             'level_signal' => $mashineItem[2],
                             'bill_cash' => $mashineItem[3],
                             'current_status' => $mashineItem[6],
-                            'display' => $mashineItem[7]
+                            'unix_time_offset' => $item->unix_time_offset,
+                            //'display' => $mashineItem[7]
                         ];
                     } else {
                         ++$factorRelevance;
@@ -137,6 +101,7 @@ class JlogDataSearch extends JlogSearch
                 'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
             ],
             'sort' => [
+                'defaultOrder' => ['date' => SORT_DESC],
                 'attributes' => [
                     'date', 'address', 'number_device'
                 ]
@@ -194,9 +159,10 @@ class JlogDataSearch extends JlogSearch
      * Gets summary message 
      * 
      * @param array $params
+     * @param yii\db\ActiveQuery $query
      * @return string
      */
-    public function getSummaryMessage($params)
+    public function getSummaryMessage($params, $query)
     {
         if (empty($params['page'])) {
             $params['page'] = 1;
@@ -206,8 +172,6 @@ class JlogDataSearch extends JlogSearch
 
         $start =((int)$params['page'] - 1) * $pageSize + 1;
         $end = $start + $pageSize - 1;
-
-        $query = $this->searchDataQuery($params);
 
         $totalNumber = (integer)($query->count() * $this->getAverageNumberOfWmMashinesPerImei($params));
 
@@ -257,6 +221,9 @@ class JlogDataSearch extends JlogSearch
                 break;
             case 'address':
                 $query = $query->orderBy(['address' => SORT_ASC]);
+                break;
+            default:
+                $query = $query->orderBy(['unix_time_offset' => SORT_DESC]);
                 break;
         }
 
