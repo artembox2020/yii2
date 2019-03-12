@@ -621,12 +621,12 @@ class SiteController extends Controller
         return json_decode(file_get_contents(self::FILE));
     }
 
-    public function pushMessage($mail, $name, $message)
+    public function pushMessage($mail, $name, $message): void
     {
         Yii::$app->mailer->compose('db-error', [
             'textBody' => $message,
         ])
-            ->setFrom('sense.servers@gmail.com')
+            ->setFrom(env('ADMIN_EMAIL'))
             ->setTo($mail)
             ->setSubject('Hello, ' . $name . '!')
             ->setTextBody('')

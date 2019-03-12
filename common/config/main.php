@@ -97,8 +97,8 @@ $config = [
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'robots.1gb.ua',
-                'username' => 'server@postirayka.com',
-                'password' => '',
+//                'username' => 'server@postirayka.com',
+//                'password' => '',
                 'port' => '25',
 //                'encryption' => 'tls',
             ],
