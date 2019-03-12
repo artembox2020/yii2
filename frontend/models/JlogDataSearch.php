@@ -192,7 +192,7 @@ class JlogDataSearch extends JlogSearch
         $statusCode = $model['current_status'];
         $wmMashine = new WmMashine();
         $wmMashineStatuses = $wmMashine->current_state;
-        if (!is_int($statusCode) || !in_array($statusCode, array_keys($wmMashineStatuses))) {
+        if (!in_array($statusCode, array_keys($wmMashineStatuses))) {
 
             return false;
         }
