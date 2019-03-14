@@ -57,6 +57,7 @@ class Imei extends \yii\db\ActiveRecord
     const MYSQL_DATE_TIME_FORMAT = '%d.%m.%Y %H:%i:%s';
     const DATE_PICKER_FORMAT = 'dd.MM.yyyy';
 
+//    public $id;
     public $current_status = [
         'Off',
         'On',
