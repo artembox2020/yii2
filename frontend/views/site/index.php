@@ -4,6 +4,9 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
 use frontend\services\custom\Debugger;
+use frontend\storages\GoogleGraphStorage;
+use frontend\storages\MashineStatStorage;
+
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
 /* @var $users common\models\User */
@@ -74,4 +77,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="balance-holders-list">
         <?= Yii::$app->view->render('balance_holders', ['balanceHolders' => $balanceHolders, 'balanceHoldersData' => $balanceHoldersData]) ?>
     </div>
+
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
+    <?php
+        /*$ggs = new GoogleGraphStorage();
+        $mss = new MashineStatStorage();
+        $start = 1552608000 - 3600*24*7;
+        $end = 1552608000;
+        $step = 3600 * 24;
+        $data = $mss->aggregateActiveWorkErrorForGoogleGraphByTimestamps($start, $end, $step);
+        echo $ggs->drawHistogram($data, '#chart_div');*/
+        echo Yii::$app->runAction(
+            '/dashboard/active-work-error',
+            ['start' => 1552608000 - 3600*24*7, 'end' => 1552608000, 'selector' => '#chart_div']
+        );
+    ?>
 </div>

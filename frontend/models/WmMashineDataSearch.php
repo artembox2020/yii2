@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use frontend\models\WmMashineData;
+use frontend\services\globals\QueryOptimizer;
 
 /**
  * WmMashineDataSearch represents the model behind the search form of `frontend\models\WmMashineData`.
@@ -92,6 +93,40 @@ class WmMashineDataSearch extends WmMashineData
         $arrayDeviceIds = explode(",", $deviceIds);
         $query = WmMashineData::find()->andWhere(['mashine_id' => $arrayDeviceIds])
                                       ->andWhere(['>=', 'created_at', $timestamp]);
+
+        return $query->count();
+    }
+
+    public function getBaseActiveMashinesQueryByTimestamps($start, $end)
+    {
+        $query = WmMashineData::find();
+
+        return $query->select('mashine_id')
+                     ->distinct()
+                     ->andWhere(['>=', 'created_at', $start])
+                     ->andWhere(['<=', 'created_at', $end]);
+    }
+
+    public function getActiveMashinesCountByTimestamps($start, $end)
+    {
+
+        return $this->getBaseActiveMashinesQueryByTimestamps($start, $end)->count();
+    }
+
+    public function getAtWorkMashinesCountByTimestamps($start, $end)
+    {
+        $query = $this->getBaseActiveMashinesQueryByTimestamps($start, $end);
+        $allowedStatuses = [2, 3, 4, 5, 6, 7, 8];
+        $query = $query->andWhere(['current_status' => $allowedStatuses]);
+
+        return $query->count();
+    }
+
+    public function getErrorMashinesCountByTimestamps($start, $end)
+    {
+        $query = $this->getBaseActiveMashinesQueryByTimestamps($start, $end);
+        $allowedStatuses = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26];
+        $query = $query->andWhere(['current_status' => $allowedStatuses]);
 
         return $query->count();
     }
