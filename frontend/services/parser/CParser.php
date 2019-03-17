@@ -177,9 +177,9 @@ class CParser implements CParserInterface
 
         $centalBoardId = explode('*', $packet)[0];
 
-        if (in_array($centalBoardId, array_keys($imeiData->eventCentalBoard))) {
+        if (in_array($centalBoardId, array_keys($imeiData->status_central_board))) {
 
-            return Yii::t('imeiData', $imeiData->eventCentalBoard[$centalBoardId]);   
+            return Yii::t('imeiData', $imeiData->status_central_board[$centalBoardId]);
         }
 
         return false;
@@ -203,9 +203,9 @@ class CParser implements CParserInterface
         $centalBoardId = explode('*', $packet)[0];
         $imeiData = new ImeiData();
 
-        if (in_array($centalBoardId, array_keys($imeiData->eventCentalBoard))) {
+        if (in_array($centalBoardId, array_keys($imeiData->status_central_board))) {
 
-            return Yii::t('imeiData', $imeiData->eventCentalBoard[$centalBoardId]);   
+            return Yii::t('imeiData', $imeiData->status_central_board[$centalBoardId]);
         }
 
         return false;
@@ -229,9 +229,9 @@ class CParser implements CParserInterface
             if ($useAsCpStatus) {
                 $imeiData = new ImeiData();
 
-                if (in_array($data['evt_bill_validator'], array_keys($imeiData->eventCentalBoard))) {
+                if (in_array($data['evt_bill_validator'], array_keys($imeiData->status_central_board))) {
 
-                    return  Yii::t('imeiData', $imeiData->eventCentalBoard[$data['evt_bill_validator']]);
+                    return  Yii::t('imeiData', $imeiData->status_central_board[$data['evt_bill_validator']]);
                 }
 
                 return false;

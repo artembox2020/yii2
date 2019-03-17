@@ -63,7 +63,7 @@ class ImeiData extends \yii\db\ActiveRecord
     const TYPE_BILL_ERRUNEXP = 5;
     const TYPE_BILL_ERRVALIDFULL = 6;
 
-    public $eventCentalBoard = [
+    public $status_central_board = [
         '1' => 'ErrFram',
         '2' => 'ErrFlash',
         '3' => 'ErrLogImage',
@@ -71,6 +71,16 @@ class ImeiData extends \yii\db\ActiveRecord
         '5' => 'ErrSettings',
         '6' => 'Err6LowPan',
         '7' => 'OK'
+    ];
+
+    public $status_bill_acceptor = [
+        'OK',
+        'ErrMotor',
+        'ErrSensor',
+        'ErrROM',
+        'ErrBillJammed',
+        'ErrUnexp',
+        'ErrValidFull'
     ];
 
     // bill acceptance event constant list
@@ -407,9 +417,9 @@ class ImeiData extends \yii\db\ActiveRecord
 
         if (!$cpStatus) {
 
-            if (isset($this->evt_bill_validator) && in_array($this->evt_bill_validator, array_keys($this->eventCentalBoard))) {
+            if (isset($this->evt_bill_validator) && in_array($this->evt_bill_validator, array_keys($this->status_central_board))) {
 
-                return Yii::t('imeiData', $this->eventCentalBoard[$this->evt_bill_validator]);
+                return Yii::t('imeiData', $this->status_central_board[$this->evt_bill_validator]);
             }
         } else {
 
