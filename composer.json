@@ -41,7 +41,8 @@
     "kartik-v/yii2-widget-datepicker": "@dev",
     "nepster-web/yii2-basis-components": "*",
     "mpdf/mpdf":"*",
-    "phpdocumentor/phpdocumentor": "2.*"
+    "phpdocumentor/phpdocumentor": "2.*",
+    "ext-pdo": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",

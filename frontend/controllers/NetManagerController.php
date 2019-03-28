@@ -919,4 +919,12 @@ class NetManagerController extends \yii\web\Controller
             'dateFormat' => self::DATA_MODEM_HISTORY_FORMAT
         ]);
     }
+
+    /**
+     * Logger action
+     */
+    public function actionLogger()
+    {
+        return $this->render('logger/index');
+    }
 }

@@ -80,7 +80,7 @@
             var form = button.closest('.graph-container').querySelector('.form-dashboard-ajax');
             var ajax = new XMLHttpRequest();
             filterPrompt.click();
-            document.querySelector(selector).innerHTML = "<img src='<?= Yii::getAlias('@dashboardUrl') ?>/gifs/loader.gif'/>";
+            document.querySelector(selector).innerHTML = "<img src='<?= Yii::$app->homeUrl . '/static/gif/loader.gif' ?>'/>";
 
             ajax.addEventListener("load", function() {
                 graphBuilder.submitAjaxForm(form, this.responseText);
@@ -106,7 +106,7 @@
             graphBuilder.isGraphBusy = true;
             var ajax = new XMLHttpRequest();
             filterPrompt.click();
-            document.querySelector(selector).innerHTML = "<img src='<?= Yii::getAlias('@dashboardUrl') ?>/gifs/loader.gif'/>";
+            document.querySelector(selector).innerHTML = "<img src='<?= Yii::$app->homeUrl . '/static/gif/loader.gif' ?>'/>";
             ajax.addEventListener("load", function() {
                 graphBuilder.submitAjaxForm(form, this.responseText);
             });

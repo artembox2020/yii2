@@ -139,7 +139,7 @@ AppAsset::register($this);
 ////            'visible' => Yii::$app->user->can('devices'),
 //            ],
             [
-                'label' => Yii::t('frontend', 'Net'),
+                'label' => Yii::t('nav-items', 'Net'),
                 'url' => ['/net-manager'],
 //            'visible' => Yii::$app->user->can('devices'),
             ],

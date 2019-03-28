@@ -18,9 +18,9 @@ class MessageDbError
 
     public $mail = [
         'Serhii' => 'monstrpro@gmail.com',
-//        'Dmitro' => 'dmytro.v.kovtun@gmail.com',
-//        'Sasha' => 'sashabardash@gmail.com',
-//        'Info' => 'info@postirayka.com.ua'
+        'Dmitro' => 'dmytro.v.kovtun@gmail.com',
+        'Sasha' => 'sashabardash@gmail.com',
+        'Info' => 'info@postirayka.com.ua'
     ];
 
 
@@ -33,7 +33,7 @@ class MessageDbError
      * @param $message
      * @throws \Exception
      */
-    public function actionRun($message)
+    public function actionRun($message): void
     {
         if ($this->diffHour(date(self::FORMAT), $this->getDateFromFile()) > self::HOUR) {
             $this->save();
@@ -44,7 +44,7 @@ class MessageDbError
     /**
      * Добавит в массив current дату ошибки db и сохранит в файл
      */
-    public function save()
+    public function save(): void
     {
         $dateArray = Json::decode(file_get_contents(self::FILE), $asArray = true);
         $dateArray[] = ['date' => date(self::FORMAT)];
@@ -59,7 +59,7 @@ class MessageDbError
      *
      * @return string|$this->save
      */
-    public function getDateFromFile()
+    public function getDateFromFile(): string
     {
         if (!$this->getArrayDate()) {
             $this->save();
@@ -79,7 +79,7 @@ class MessageDbError
      * @return int
      * @throws \Exception
      */
-    public function diffHour($current_time, $time_from_file)
+    public function diffHour(string $current_time, string $time_from_file): int
     {
         $currentDate = new DateTime($current_time);
         $difference = $currentDate->diff(new DateTime($time_from_file))->h;
@@ -91,7 +91,7 @@ class MessageDbError
      * Вернёт массив дат (дата "ошибки" исключения базы данных)
      * @return array
      */
-    public function getArrayDate()
+    public function getArrayDate(): ?array
     {
         return json_decode(file_get_contents(self::FILE));
     }
@@ -101,12 +101,12 @@ class MessageDbError
      * @param $name
      * @param $message
      */
-    public function pushMessage($mail, $name, $message)
+    public function pushMessage($mail, $name, $message): void
     {
         Yii::$app->mailer->compose('db-error', [
             'textBody' => $message,
         ])
-            ->setFrom('sense.servers@gmail.com')
+            ->setFrom(env('ADMIN_EMAIL'))
             ->setTo($mail)
             ->setSubject('Hello, ' . $name . '!')
             ->setTextBody('')
@@ -117,7 +117,7 @@ class MessageDbError
      * @param $mails
      * @param $message
      */
-    public function senderMessages($mails, $message)
+    public function senderMessages(array $mails, string $message): void
     {
         foreach ($mails as $name => $email) {
             $this->pushMessage($email, $name, $message);

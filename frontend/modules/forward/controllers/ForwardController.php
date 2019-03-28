@@ -4,8 +4,12 @@ namespace frontend\modules\forward\controllers;
 
 use frontend\models\AddressBalanceHolder;
 use frontend\models\Imei;
+use frontend\models\ImeiData;
 use frontend\models\WmMashine;
+use frontend\modules\forward\service\ServiceForward;
+use frontend\modules\forward\service\StateImeiData;
 use frontend\services\custom\Debugger;
+use Yii;
 use yii\web\Controller;
 
 /**
@@ -16,37 +20,17 @@ use yii\web\Controller;
  */
 class ForwardController extends Controller
 {
+
     /**
+     * Отдает набор сущностей по адресу в json формате
+     *
      * @param $address_name
      * @return \yii\web\Response
      */
-    public function actionIndex($address_name)
+    public function actionIndex(string $address_name)
     {
-        $array = array();
-        $result = array();
-
-        $address = AddressBalanceHolder::find()
-            ->andWhere(['name' => $address_name])
-            ->one();
-
-        $imei = Imei::find()
-            ->andWhere(['address_id' => $address->id])
-            ->andWhere(['imei.status' => Imei::STATUS_ACTIVE])
-            ->one();
-
-        $wm_machine = WmMashine::find()
-            ->andWhere(['imei_id' => $imei->id])
-            ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])
-            ->all();
-
-        foreach ($wm_machine as $key => $value) {
-            $array[$value->number_device] = [
-                'id' => $value->number_device,
-                'display' => $value->display,
-                'status' => $value->current_status];
-        }
-
-        $result[$address->address . ' ' . $address->floor] = $array;
+        $service = new ServiceForward();
+        $result = $service->getStaff($address_name);
 
         return $this->asJson($result);
     }
