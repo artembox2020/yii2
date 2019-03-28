@@ -86,6 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="chart-container graph-block">
         <img src="<?= Yii::getAlias('@dashboardUrl') ?>/gifs/loader.gif"/>
+        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
     </div>
 
     <?= Yii::$app->runAction(
