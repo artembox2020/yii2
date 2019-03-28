@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <img src="<?= Yii::getAlias('@dashboardUrl') ?>/gifs/loader.gif"/>
     </div>
 
-    <?= Yii::$app->runAction(
+    <?php echo Yii::$app->runAction(
         '/dashboard/render-engine',
         [
             'selector' => '.chart-container',
@@ -97,3 +97,4 @@ $this->params['breadcrumbs'][] = $this->title;
         ]);
     ?>
 </div>
+<div class="margin-bottom-274"></div>
