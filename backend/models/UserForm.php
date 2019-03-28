@@ -16,6 +16,7 @@ class UserForm extends Model
 {
     const ZERO = 0;
 
+    public $id;
     public $username;
     public $email;
     public $password;
@@ -23,6 +24,7 @@ class UserForm extends Model
     public $roles;
     public $company_id;
     public $other;
+    public $created_at;
 
     private $model;
 
@@ -95,6 +97,7 @@ class UserForm extends Model
         $this->status = $model->status;
         $this->model = $model;
         $this->roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($model->getId()), 'name');
+        $this->created_at = $model->created_at;
 
         return $this->model;
     }

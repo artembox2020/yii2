@@ -5,7 +5,7 @@ namespace frontend\modules\account\controllers;
 use backend\services\mail\MailSender;
 use frontend\models\Company;
 use frontend\services\custom\Debugger;
-use tests\models\Tag;
+use frontend\services\logger\src\service\LoggerService;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -20,10 +20,28 @@ use frontend\modules\account\models\search\UserSearch;
 use backend\models\UserForm;
 
 /**
- * Default controller.
+ * Class DefaultController
+ * @package frontend\modules\account\controllers
  */
 class DefaultController extends Controller
 {
+
+    /** @var LoggerService  */
+    private $service;
+
+    /**
+     * DefaultController constructor.
+     * @param $id
+     * @param $module
+     * @param LoggerService $service
+     * @param array $config
+     */
+    public function __construct($id, $module, LoggerService $service, $config = [])
+    {
+        $this->service = $service;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @inheritdoc
      */
@@ -125,9 +143,9 @@ class DefaultController extends Controller
     }
 
     /**
-     * Displays message page.
-     *
-     * @return mixed
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionMessage($id)
     {
@@ -176,7 +194,6 @@ class DefaultController extends Controller
      */
     public function actionCreate()
     {
-
         if (!\Yii::$app->user->can('account/default/create', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('error', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
@@ -193,17 +210,21 @@ class DefaultController extends Controller
             
             if ($model->load(Yii::$app->request->post())) {
                 $model->other = $model->password;
+
                 $model->save();
 
                 $manager = User::findOne(Yii::$app->user->id);
                 $user = User::findOne(['email' => $model->email]);
 
                 $user->company_id = $manager->company_id;
+
                 $user->save(false);
+
+                $this->service->createLog($user);
                 
                 $profile = UserProfile::findOne($user->id);
                 if ($profile->load(Yii::$app->request->post())) {
-                    $profile->save();
+                    $profile->save(false);
                 }
 
                 // send invite mail
@@ -229,6 +250,7 @@ class DefaultController extends Controller
             }
 
             $model->status = 1;
+
             return $this->render('create', [
                 'model' => $model,
                 'roles' => $roles,
@@ -260,6 +282,8 @@ class DefaultController extends Controller
     }
 
     /**
+     * Secret action view for ADMINISTRATOR (changed company)
+     *
      * @return string|\yii\web\Response
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
