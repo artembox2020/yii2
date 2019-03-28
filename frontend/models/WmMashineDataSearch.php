@@ -7,12 +7,18 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use frontend\models\WmMashineData;
 use frontend\services\globals\QueryOptimizer;
+use yii\helpers\ArrayHelper;
+use frontend\services\globals\DateTimeHelper;
+use frontend\services\globals\Entity;
 
 /**
  * WmMashineDataSearch represents the model behind the search form of `frontend\models\WmMashineData`.
  */
 class WmMashineDataSearch extends WmMashineData
 {
+    const TYPE_STATUS_DISCONNECTED = 0;
+    const TYPE_STATUS_NOT_CONNECTED = 27;
+
     /**
      * @inheritdoc
      */
@@ -97,37 +103,283 @@ class WmMashineDataSearch extends WmMashineData
         return $query->count();
     }
 
-    public function getBaseActiveMashinesQueryByTimestamps($start, $end)
+    /**
+     * Gets query, mashines by timestamp
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return ActiveDbQuery
+     */
+    public function getAllMashinesQueryByTimestamps(int $start, int $end)
     {
-        $query = WmMashineData::find();
+        $entity = new Entity();
+        $companyId = $entity->getCompanyId();
+        $query = WmMashine::find()->select(['id']);
+        $query = $query->where(['<', 'created_at', $end]);
+        $query = $query->andWhere(['company_id' => $companyId])
+                        ->andWhere(
+                            new \yii\db\conditions\OrCondition([
+                                ['is_deleted' => false],
+                                new \yii\db\conditions\AndCondition([
+                                    ['is_deleted' => true],
+                                    ['>', 'deleted_at', $start]
+                                ])
+                            ])
+                        );
 
-        return $query->select('mashine_id')
-                     ->distinct()
-                     ->andWhere(['>=', 'created_at', $start])
-                     ->andWhere(['<=', 'created_at', $end]);
+        return $query;
     }
 
-    public function getActiveMashinesCountByTimestamps($start, $end)
+    /**
+     * Gets all mashines count by timestamps
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return int
+     */
+    public function getAllMashinesCountByTimestamps(int $start, int $end)
     {
-
-        return $this->getBaseActiveMashinesQueryByTimestamps($start, $end)->count();
-    }
-
-    public function getAtWorkMashinesCountByTimestamps($start, $end)
-    {
-        $query = $this->getBaseActiveMashinesQueryByTimestamps($start, $end);
-        $allowedStatuses = [2, 3, 4, 5, 6, 7, 8];
-        $query = $query->andWhere(['current_status' => $allowedStatuses]);
+        $query = $this->getAllMashinesQueryByTimestamps($start, $end);
 
         return $query->count();
     }
 
+    /**
+     * Gets query, mashines from wm_masine_data by timestamps
+     *
+     * @param int $start
+     * @param int $end
+     * @param array $select
+     *
+     * @return ActiveDbQuery
+     */
+    public function getBaseWmMashineDataQueryByTimestamps(int $start, int $end, array $select)
+    {
+        $query = WmMashineData::find();
+        $query = $query->select($select)
+                        ->distinct()
+                        ->andWhere(['>=', 'created_at', $start])
+                        ->andWhere(['<', 'created_at', $end]);
+
+        return $query;
+    }
+
+    /**
+     * Gets green mashines count by timestamps
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return int
+     */
+    public function getGreenMashinesCountByTimestamps($start, $end)
+    {
+        $allMashinesQuery = $this->getAllMashinesQueryByTimestamps($start, $end);
+        $allMashines = QueryOptimizer::getItemsByQuery($allMashinesQuery);
+        $allMashineIds = ArrayHelper::getColumn($allMashines, 'id');
+
+        $query = $this->getBaseWmMashineDataQueryByTimestamps($start, $end, ['mashine_id']);
+        $query = $query->andWhere(['!=', 'current_status', [self::TYPE_STATUS_DISCONNECTED, self::TYPE_STATUS_NOT_CONNECTED]]);
+
+        $dataMashines = QueryOptimizer::getItemsByQuery($query);
+        $dataMashineIds = ArrayHelper::getColumn($dataMashines, 'mashine_id');
+
+        $commonMashineIds = array_intersect($allMashineIds, $dataMashineIds);
+
+        return count($commonMashineIds);
+    }
+
+    /**
+     * Gets grey mashines count by timestamps
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return int
+     */
+    public function getGreyMashinesCountByTimestamp($start, $end)
+    {
+        $allMashinesQuery = $this->getAllMashinesQueryByTimestamps($start, $end);
+        $allMashines = QueryOptimizer::getItemsCountByQuery($allMashinesQuery);
+        $greenMashines = $this->getGreenMashinesCountByTimestamps($start, $end);
+
+        return ($allMashines - $greenMashines);
+    }
+
+    /**
+     * Gets work mashines count by timestamps
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return int
+     */
+    public function getWorkMashinesCountByTimestamps($start, $end)
+    {
+        $allMashinesQuery = $this->getAllMashinesQueryByTimestamps($start, $end);
+        $allMashines = QueryOptimizer::getItemsByQuery($allMashinesQuery);
+        $allMashineIds = ArrayHelper::getColumn($allMashines, 'id');
+
+        $allowedStatuses = [2, 3, 4, 5, 6, 7, 8];
+        $query = $this->getBaseWmMashineDataQueryByTimestamps($start, $end, ['mashine_id']);
+        $query = $query->andWhere(['current_status' => $allowedStatuses]);
+
+        $dataMashines = QueryOptimizer::getItemsByQuery($query);
+        $dataMashineIds = ArrayHelper::getColumn($dataMashines, 'mashine_id');
+
+        $commonMashineIds = array_intersect($allMashineIds, $dataMashineIds);
+
+        return count($commonMashineIds);
+    }
+
+    /**
+     * Gets error mashines count by timestamps
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return int
+     */
     public function getErrorMashinesCountByTimestamps($start, $end)
     {
-        $query = $this->getBaseActiveMashinesQueryByTimestamps($start, $end);
+        $allMashinesQuery = $this->getAllMashinesQueryByTimestamps($start, $end);
+        $allMashines = QueryOptimizer::getItemsByQuery($allMashinesQuery);
+        $allMashineIds = ArrayHelper::getColumn($allMashines, 'id');
+
+        $query = $this->getBaseWmMashineDataQueryByTimestamps($start, $end, ['mashine_id']);
         $allowedStatuses = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26];
         $query = $query->andWhere(['current_status' => $allowedStatuses]);
 
-        return $query->count();
+        $dataMashines = QueryOptimizer::getItemsByQuery($query);
+        $dataMashineIds = ArrayHelper::getColumn($dataMashines, 'mashine_id');
+
+        $commonMashineIds = array_intersect($allMashineIds, $dataMashineIds);
+
+        return count($commonMashineIds);
+    }
+
+    /**
+     * Gets query current mashines
+     *
+     * @return ActiveDbQuery
+     */
+    public function getAllCurrentMashinesQuery()
+    {
+        $entity = new Entity();
+        $companyId = $entity->getCompanyId();
+        $statuses = [WmMashine::STATUS_OFF, WmMashine::STATUS_ACTIVE, WmMashine::STATUS_UNDER_REPAIR];
+        $query = WmMashine::find()->select(['id', 'ping'])->andWhere(['status' => $statuses, 'company_id' => $companyId]);
+
+        return $query;
+    }
+
+    /**
+     * Gets all current mashines count
+     *
+     * @return int
+     */
+    public function getAllCurrentMashinesCount()
+    {
+        $query = $this->getAllCurrentMashinesQuery();
+
+        return QueryOptimizer::getItemsCountByQuery($query);
+    }
+
+    /**
+     * Gets green current mashines count
+     *
+     * @return int
+     */
+    public function getGreenCurrentMashinesCount()
+    {
+        $statuses = [WmMashine::STATUS_ACTIVE];
+        $query = $this->getAllCurrentMashinesQuery();
+        $query = $query->andWhere(['!=', 'current_status', [self::TYPE_STATUS_DISCONNECTED, self::TYPE_STATUS_NOT_CONNECTED]]);
+        $mashines = $query->all();
+        $count = 0;
+
+        foreach ($mashines as $mashine) {
+            if ($mashine->getActualityClass() == 'ping-actual') {
+                ++$count;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Gets grey current mashines count
+     *
+     * @return int
+     */
+    public function getGreyCurrentMashinesCount()
+    {
+        $allMashinesCount = $this->getAllCurrentMashinesCount();
+        $greenMashinesCount = $this->getGreenCurrentMashinesCount();
+
+        return $allMashinesCount - $greenMashinesCount;
+    }
+
+    /**
+     * Gets work current mashines count
+     *
+     * @return int
+     */
+    public function getWorkCurrentMashinesCount()
+    {
+        $statuses = [WmMashine::STATUS_ACTIVE];
+        $allowedStatuses = [2, 3, 4, 5, 6, 7, 8];
+        $query = $this->getAllCurrentMashinesQuery();
+        $query = $query->andWhere(['status' => $statuses, 'current_status' => $allowedStatuses]);
+        $mashines = $query->all();
+        $count = 0;
+
+        foreach ($mashines as $mashine) {
+            if ($mashine->getActualityClass() == 'ping-actual') {
+                ++$count;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Gets error current mashines count
+     *
+     * @return int
+     */
+    public function getErrorCurrentMashinesCount()
+    {
+        $statuses = [WmMashine::STATUS_ACTIVE];
+        $allowedStatuses = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26];
+        $query = $this->getAllCurrentMashinesQuery();
+        $query = $query->andWhere(['status' => $statuses, 'current_status' => $allowedStatuses]);
+        $mashines = $query->all();
+        $count = 0;
+
+        foreach ($mashines as $mashine) {
+            if ($mashine->getActualityClass() == 'ping-actual') {
+                ++$count;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Gets day beginning of history
+     *
+     * @return int
+     */
+    public function getHistoryDayBeginning()
+    {
+        $dateTimeHelper = new DateTimeHelper();
+        $query = WmMashineData::find()->select(['created_at'])->orderBy(['created_at' => SORT_ASC])->limit(1);
+        $item = $query->one();
+        $timestamp = $item ? $item->created_at : $dateTimeHelper->getRealUnixTimeOffset(0);
+
+        return $dateTimeHelper->getDayBeginningTimestamp($timestamp);
     }
 }

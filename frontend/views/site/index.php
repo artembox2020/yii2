@@ -6,6 +6,9 @@ use yii\widgets\DetailView;
 use frontend\services\custom\Debugger;
 use frontend\storages\GoogleGraphStorage;
 use frontend\storages\MashineStatStorage;
+use frontend\models\WmMashineDataSearch;
+use frontend\services\globals\DateTimeHelper;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
@@ -78,18 +81,19 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Yii::$app->view->render('balance_holders', ['balanceHolders' => $balanceHolders, 'balanceHoldersData' => $balanceHoldersData]) ?>
     </div>
 
-    <div id="chart_div" style="width: 100%; height: 500px;"></div>
-    <?php
-        /*$ggs = new GoogleGraphStorage();
-        $mss = new MashineStatStorage();
-        $start = 1552608000 - 3600*24*7;
-        $end = 1552608000;
-        $step = 3600 * 24;
-        $data = $mss->aggregateActiveWorkErrorForGoogleGraphByTimestamps($start, $end, $step);
-        echo $ggs->drawHistogram($data, '#chart_div');*/
-        echo Yii::$app->runAction(
-            '/dashboard/active-work-error',
-            ['start' => 1552608000 - 3600*24*7, 'end' => 1552608000, 'selector' => '#chart_div']
-        );
+    <br>
+    <b><?= Yii::t('graph', 'WM Mashine Statistics'); ?></b>
+
+    <div class="chart-container graph-block">
+        <img src="<?= Yii::getAlias('@dashboardUrl') ?>/gifs/loader.gif"/>
+    </div>
+
+    <?= Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container',
+            'action' => '/dashboard/all-green-grey-work-error', 
+            'active' => 'current day'
+        ]);
     ?>
 </div>

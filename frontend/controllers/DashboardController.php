@@ -5,44 +5,188 @@ namespace frontend\controllers;
 use common\models\User;
 use DateTime;
 use frontend\services\custom\Debugger;
-use phpDocumentor\Reflection\Types\Integer;
 use Yii;
-use yii\filters\AccessControl;
-use yii\filters\auth\HttpBearerAuth;
-use yii\helpers\Json;
 use yii\web\Controller;
-use frontend\models\ContactForm;
-use frontend\models\Base;
-use frontend\models\Devices;
-use frontend\models\ImeiDataSummarySearch;
-use frontend\models\Zlog;
-use frontend\models\Com;
-use frontend\models\Org;
-use common\models\UserSearch;
-use vova07\fileapi\actions\UploadAction as FileAPIUpload;
 use frontend\storages\GoogleGraphStorage;
 use frontend\storages\MashineStatStorage;
+use frontend\services\globals\DateTimeHelper;
+use frontend\models\Jlog;
 
 /**
- * Class DashboardController.
+ * Class DashboardController
+ * @package frontend\controllers
  */
 class DashboardController extends Controller
 {
-    const STEP = 3600 * 24;
-
-    public function actionActiveWorkError($start, $end, $selector)
+    /**
+     * Renders graph: all, green, grey, work, error WM mashines
+     * Accepts data as post params
+     * 
+     * @return string
+     */  
+    public function actionAllGreenGreyWorkError()
     {
-        //list($start, $end) = $this->getTimeIntervals(Yii::$app->request->get());
+        $post = Yii::$app->request->post();
+        list($start, $end, $action, $selector, $active) = [
+            $post['start'], $post['end'], $post['action'], $post['selector'], $post['active']
+        ];
         $ggs = new GoogleGraphStorage();
         $mss = new MashineStatStorage();
-        $data = $mss->aggregateActiveWorkErrorForGoogleGraphByTimestamps($start, $end, self::STEP);
+        $mss->setStepByTimestamps($start, $end);
+        $options = ['colors' => ['cyan', 'green', 'grey', '#00ff7f', 'red']];
+        $data = $mss->aggregateAllGreenGreyWorkErrorForGoogleGraphByTimestamps($start, $end, $options);
+        $histogram = $ggs->drawHistogram($data, $selector);
+        $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active);
 
-        return $ggs->drawHistogram($data, $selector);
+        return $histogram.$actionBuilder;
     }
 
-    public function getTimeIntervals($get)
+    /**
+     * Renders ajax submission form
+     * 
+     * @param int $start
+     * @param int $end
+     * @param string $action
+     * @param string $selector
+     * @param string $active
+     * 
+     * @return string
+     */  
+    public function actionRenderAjaxFormSubmission(int $start, int $end, string $action, string $selector, string $active)
     {
 
-        return [$get['start'], $get['end']];
+        return $this->renderAjaxFormSubmission($start, $end, $action, $selector, $active);
+    }
+
+    /**
+     * Renders data with timestamps by dropdown and date
+     * 
+     * @param string $active
+     * @param string $date
+     * 
+     * @return string
+     */    
+    public function actionGetTimestampsByDropDown(string $active, string $date)
+    {
+        $mss = new MashineStatStorage();
+
+        return json_encode($mss->getTimeIntervalsByDropDown($active, $date)); 
+    }
+
+    /**
+     * Renders data with timestamps by dates between
+     * 
+     * @param string $active
+     * 
+     * @return string
+     */
+    public function actionGetTimestampsByDatesBetween(string $active)
+    {
+        $mss = new MashineStatStorage();
+
+        return json_encode($mss->getTimeIntervalsByDatesBetween($active)); 
+    }
+
+    /**
+     * Renders action builder
+     * 
+     * @param int $start
+     * @param int $end
+     * @param string $action
+     * @param string $selector
+     * @param string $active
+     * 
+     * @return string
+     */
+    public function actionRenderActionBuilder(int $start, int $end, string $action, string $selector, string $active)
+    {
+        $mss = new MashineStatStorage();
+        $currentTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
+        global $randToken;
+        $randToken = rand();
+
+        return $this->renderPartial('builds/action-builder', [
+            'start' => $start,
+            'end' => $end,
+            'action' => $action,
+            'selector' => $selector,
+            'active' => $active,
+            'controller' => $this,
+            'model' => $mss,
+            'currentTimestamp' => $currentTimestamp,
+            'random' => $randToken
+        ]);
+    }
+
+    /**
+     * Renders submission form
+     * 
+     * @param int $start
+     * @param int $end
+     * @param string $action
+     * @param string $selector
+     * @param string $active
+     * 
+     * @return string
+     */
+    public function renderAjaxFormSubmission(int $start, int $end, string $action, string $selector, string $active)
+    {
+
+        return Yii::$app->view->render('/dashboard/forms/submission', [
+            'start' => $start,
+            'end' => $end,
+            'action' => $action,
+            'selector' => $selector,
+            'active' => $active
+        ]);
+    }
+
+    /**
+     * Renders graph builder
+     *
+     * @return string
+     */
+    public function renderGraphBuilder()
+    {
+        global $isGraphBuilder;
+
+        if (!$isGraphBuilder) {
+            $isGraphBuilder = true;
+
+            return Yii::$app->view->render('/dashboard/graph-builder', []);
+        }
+    }
+
+    /**
+     * Renders init action
+     * 
+     * @return string
+     */
+    public function actionRenderActionInit()
+    {
+        global $randToken;
+        $params['random'] = $randToken;
+        $ggs = new GoogleGraphStorage();
+
+        return $this->renderPartial('inits/action-init', $params);
+    }
+
+    /**
+     * Base action, renders appropriate action
+     * 
+     * @param string $selector
+     * @param string $action
+     * @param string $active
+     * 
+     * @return string
+     */
+    public function actionRenderEngine(string $selector, string $action, string $active)
+    {
+        $mss = new MashineStatStorage();
+        $params = $mss->getInitialParams($selector, $action, $active);
+
+        return $this->renderPartial('render-engine', [
+            'params' => $params
+        ]);
     }
 }

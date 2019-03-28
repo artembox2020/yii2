@@ -17,7 +17,6 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'static/js/journal-filters/main.js',
-        //'https://www.gstatic.com/charts/loader.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',
