@@ -16,3 +16,4 @@ Yii::setAlias('storage', realpath(__DIR__ . '/../../storage'));
 Yii::setAlias('frontendUrl', env('FRONTEND_URL'));
 Yii::setAlias('backendUrl', env('BACKEND_URL'));
 Yii::setAlias('storageUrl', env('STORAGE_URL'));
+Yii::setAlias('dashboardUrl', '/frontend/views/dashboard');
