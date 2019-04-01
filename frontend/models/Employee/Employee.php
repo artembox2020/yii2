@@ -15,7 +15,7 @@ class Employee
             new Password('asdf'),
             new Status(1),
             new CompanyId(1),
-            new Ip(46.211.125.154),
+            new Ip('46.211.125.154'),
         new CreatedAt()
         )
     }
