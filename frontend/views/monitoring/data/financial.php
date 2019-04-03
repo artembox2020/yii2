@@ -64,30 +64,8 @@ use frontend\services\globals\EntityHelper;
                 }
             ],
             [
-                'attribute' => 'date_sum_pre_last_encashment',
-                'format' =>'raw',
-                'header' => EntityHelper::makePopupWindow(
-                    [
-                        '/static/img/monitoring/calendar.png',
-                        '/static/img/monitoring/date_last_encashment.png',
-                    ],
-                    $searchModel->attributeLabels()['date_sum_pre_last_encashment']
-                ),
-                'value' => function($model) use ($searchModel)
-                {
-                    return (
-                        $searchModel->getScalarDateAndSumPreLastEncashmentByImeiId($model->imei_id).
-                        EntityHelper::makePopupWindow(
-                            [],
-                            $searchModel->attributeLabels()['date_sum_pre_last_encashment'],
-                            'top: -5px',
-                            'height: 5px'
-                        )
-                    );
-                }
-            ],
-            [
                 'attribute' => 'date_sum_last_encashment',
+                'contentOptions' => ['class' => 'cell-encashment'],
                 'format' =>'raw',
                 'header' => EntityHelper::makePopupWindow(
                     [
@@ -103,6 +81,30 @@ use frontend\services\globals\EntityHelper;
                         EntityHelper::makePopupWindow(
                             [],
                             $searchModel->attributeLabels()['date_sum_last_encashment'],
+                            'top: -5px',
+                            'height: 5px'
+                        )
+                    );
+                }
+            ],
+            [
+                'attribute' => 'date_sum_pre_last_encashment',
+                'contentOptions' => ['class' => 'cell-encashment'],
+                'format' =>'raw',
+                'header' => EntityHelper::makePopupWindow(
+                    [
+                        '/static/img/monitoring/calendar.png',
+                        '/static/img/monitoring/date_last_encashment.png',
+                    ],
+                    $searchModel->attributeLabels()['date_sum_pre_last_encashment']
+                ),
+                'value' => function($model) use ($searchModel)
+                {
+                    return (
+                        $searchModel->getScalarDateAndSumPreLastEncashmentByImeiId($model->imei_id).
+                        EntityHelper::makePopupWindow(
+                            [],
+                            $searchModel->attributeLabels()['date_sum_pre_last_encashment'],
                             'top: -5px',
                             'height: 5px'
                         )

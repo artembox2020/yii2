@@ -271,7 +271,11 @@ div.required label:after {
     padding: 1px!important;
 }
 .monitoring td.cell-financial {
-    width: 70px;
+    min-width: 64px!important;
+    max-width: 64px!important;
+}
+.monitoring td.cell-encashment {
+    width: 140px;
 }
 .monitoring td.current-status {
     width: 140px!important;

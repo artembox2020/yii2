@@ -62,6 +62,8 @@ class ImeiData extends \yii\db\ActiveRecord
     const TYPE_BILL_ERRBILLJAMMED = 4;
     const TYPE_BILL_ERRUNEXP = 5;
     const TYPE_BILL_ERRVALIDFULL = 6;
+    
+    const TYPE_DATE_FORMAT = 'd.m.Y H:i';
 
     public $status_central_board = [
         '1' => 'ErrFram',
@@ -335,7 +337,7 @@ class ImeiData extends \yii\db\ActiveRecord
         $dateSumLastEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
         if ($dateSumLastEncashment) {
             $dateSumPreLastEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $dateSumLastEncashment['created_at']);
-            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumPreLastEncashment['created_at'], 'short');
+            $dateEncashment = $dateEncashment = date(self::TYPE_DATE_FORMAT, $dateSumPreLastEncashment['created_at']);
 
             return  $dateEncashment . '<br>' . $dateSumPreLastEncashment['money_in_banknotes'] . ' грн';
         }
@@ -355,7 +357,7 @@ class ImeiData extends \yii\db\ActiveRecord
         $dateSumEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
 
         if ($dateSumEncashment) {
-            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumEncashment['created_at'], 'short');
+            $dateEncashment = date(self::TYPE_DATE_FORMAT, $dateSumEncashment['created_at']);
 
             return  $dateEncashment.'<br>'.$dateSumEncashment['money_in_banknotes'].' грн';
         }
