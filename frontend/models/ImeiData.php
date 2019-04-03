@@ -177,7 +177,9 @@ class ImeiData extends \yii\db\ActiveRecord
      */
     public function getImeiRelation()
     {
-        return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
+        $query = Imei::find()->andWhere(['id' => $this->imei_id])->limit(1);
+
+        return QueryOptimizer::getItemByQuery($query);
     }
 
     public static function find()
@@ -264,13 +266,23 @@ class ImeiData extends \yii\db\ActiveRecord
     /**
      * Gets last encashment date  and sum, before timestamp accepted
      *
-     * @param $imeiId
-     * @param $timestampBefore
+     * @param int $imeiId
+     * @param int $timestampBefore
      * @return array|bool
      */
-    public function getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore)
+    public function getDateAndSumLastEncashmentByImeiId(int $imeiId, int $timestampBefore)
     {
-        $query = ImeiData::find()->andWhere(['imei_id' => $imeiId])
+        $cbLogSearch = new CbLogSearch();
+        $data = $cbLogSearch->getLastEncashmentInfoByImeiId($imeiId, $timestampBefore);
+
+        if (!empty($data['created_at'])) {
+
+            return $data;
+        }
+
+        return false;
+
+        /*$query = ImeiData::find()->andWhere(['imei_id' => $imeiId])
                                  ->andWhere(['money_in_banknotes' => 0])
                                  ->andWhere(['<', 'created_at', $timestampBefore])
                                  ->orderBy(['created_at' => SORT_DESC])
@@ -296,6 +308,7 @@ class ImeiData extends \yii\db\ActiveRecord
         }
 
         return false;
+        */
     }
 
     /**

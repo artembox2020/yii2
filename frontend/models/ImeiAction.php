@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use DateTime;
 use frontend\services\custom\Debugger;
+use frontend\services\globals\QueryOptimizer;
 use nepster\basis\helpers\DateTimeHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -102,9 +103,10 @@ class ImeiAction extends \yii\db\ActiveRecord
             $item = $item->andWhere(['<=', 'unix_time_offset', $timestamp]);
         }
 
-        $item = $item->orderBy(['unix_time_offset' => SORT_DESC, 'id' => SORT_DESC])
-                     ->limit(1)
-                     ->one();
+        $itemQuery = $item->orderBy(['unix_time_offset' => SORT_DESC, 'id' => SORT_DESC])
+                     ->limit(1);
+
+        $item = QueryOptimizer::getItemByQuery($itemQuery);
 
         return $item;
     }

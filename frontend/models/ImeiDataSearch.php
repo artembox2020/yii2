@@ -10,6 +10,7 @@ use frontend\models\ImeiData;
 use frontend\models\WmMashine;
 use frontend\models\GdMashine;
 use frontend\services\globals\Entity;
+use frontend\services\globals\QueryOptimizer;
 use yii\helpers\ArrayHelper;
 use frontend\controllers\MonitoringController;
 
@@ -156,7 +157,7 @@ class ImeiDataSearch extends ImeiData
      */
     public function getAddressesMapped($dbQuery)
     {
-        $items = $dbQuery->all();
+        $items = QueryOptimizer::getItemsByQuery($dbQuery);
         $addressesMapped = [];
         $counter = 1;
         foreach($items as $item) {
@@ -181,7 +182,7 @@ class ImeiDataSearch extends ImeiData
      */
     public function getImeisMapped($dbQuery)
     {
-        $items = $dbQuery->all();
+        $items = QueryOptimizer::getItemsByQuery($dbQuery);
         $imeisMapped = [];
         foreach($items as $item) {
 
