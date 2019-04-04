@@ -10,6 +10,7 @@ use frontend\models\WmMashine;
 use frontend\models\Jlog;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
+use frontend\services\globals\QueryOptimizer;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\ArrayHelper;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -197,7 +198,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getFakeAddress()
     {
-        return $this->hasOne(AddressBalanceHolder::className(), ['id' => 'address_id']);
+        $query = AddressBalanceHolder::find()->andWhere(['id' => $this->address_id])->limit(1);
+
+        return QueryOptimizer::getItemByQuery($query);
     }
 
     /**
@@ -205,7 +208,9 @@ class Imei extends \yii\db\ActiveRecord
      */
     public function getBalanceHolder()
     {
-        return $this->hasOne(BalanceHolder::className(), ['id' => 'balance_holder_id']);
+        $query = BalanceHolder::find()->andWhere(['id' => $this->balance_holder_id])->limit(1);
+
+        return QueryOptimizer::getItemByQuery($query);
     }
 
     /**
