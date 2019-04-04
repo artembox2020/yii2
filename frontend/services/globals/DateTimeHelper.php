@@ -130,4 +130,36 @@ class DateTimeHelper
 
         return $yearTimestamp; 
     }
+
+    /**
+     * Gets today beginning timestamp
+     *
+     * @return int
+     */
+    public function getTodayBeginningTimestamp()
+    {
+        $timestamp = $this->getRealUnixTimeOffset(0);
+
+        return $this->getDayBeginningTimestamp($timestamp);
+    }
+
+    /**
+     * Gets next month beginning timestamp by timestamp
+     * 
+     * @param int $timestamp
+     * @return int
+     */
+    public function getNextMonthBeginningByTimestamp($timestamp)
+    {
+        $year = date('Y', $timestamp);
+        $month = date('m', $timestamp);
+        ++$month;
+
+        if ($month > self::MONTHS_NUMBER) {
+            $month = '01';
+            ++$year;
+        }
+
+        return strtotime($year.'-'.$month.'-01 00:00:00');
+    }
 }

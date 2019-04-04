@@ -610,4 +610,44 @@ class EntityHelper implements EntityHelperInterface
 
         return $bInst->created_at;
     }
+
+    /**
+     * Gets unit query by timestamps
+     * 
+     * @param instance $instance
+     * @param int $start
+     * @param int $end
+     * @param array $select
+     * @param array $compareCondition
+     *
+     * @return ActiveDbQuery
+     */
+    public function getUnitQueryByTimestamps($instance, $start, $end, $select = false, $compareCondition = false)
+    {
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany($instance);
+
+        if ($select) {
+            $query = $query->select($select);
+        }
+
+        $query = $query->where(['company_id' => $entity->getCompanyId()]);
+
+        if ($compareCondition) {
+            $query = $query->andWhere($compareCondition);
+        }
+
+        $query = $query->andWhere(['<=', 'created_at', $end]);
+        $query = $query->andWhere(new \yii\db\conditions\OrCondition([
+                            new \yii\db\conditions\AndCondition([
+                                ['=', 'is_deleted', false],
+                            ]),
+                            new \yii\db\conditions\AndCondition([
+                                ['=', 'is_deleted', true],
+                                ['>', 'deleted_at', $start]
+                            ])
+                        ]));
+
+        return $query;
+    }
 }

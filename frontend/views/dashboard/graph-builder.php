@@ -111,8 +111,7 @@
                 graphBuilder.submitAjaxForm(form, this.responseText);
             });
 
-            var queryString = "active=" + active;
-            console.log("active=" + active + " " + toDate.value);
+            var queryString = "active=" + active + "&dateStart=" +fromDate.value + "&dateEnd=" + toDate.value;
             ajax.open("GET", "/dashboard/get-timestamps-by-dates-between?" + queryString, true);
             ajax.send();
     }

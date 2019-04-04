@@ -98,5 +98,5 @@ interface MashineStatStorageInterface
      * 
      * @return array
      */
-    public function getTimeIntervalsByDatesBetween($active);
+    public function getTimeIntervalsByDatesBetween($active, $start, $end);
 }

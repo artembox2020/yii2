@@ -4,6 +4,7 @@ return [
     'All WM' => 'Усі ПМ',
     'Any date' => 'Будь-яка дата',
     'At Work' => 'В роботі',
+    'Balance Holders Incomes' => 'Доходи по балансотримачам',
     'Criteria' => 'Критерій',
     'Current' => 'Поточний день',
     'Current month' =>  'Поточний місяць',

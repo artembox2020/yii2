@@ -5,7 +5,9 @@ namespace frontend\models;
 use common\models\User;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
+use frontend\services\globals\EntityHelper;
 use frontend\services\globals\QueryOptimizer;
+use frontend\services\globals\DateTimeHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -310,5 +312,89 @@ class BalanceHolder extends \yii\db\ActiveRecord
     {
 
         return QueryOptimizer::getItemsByQuery($dataProvider->query);
+    }
+
+    /**
+     * Gets balanceholder income by timestamps
+     * 
+     * @param int $start
+     * @param int $end
+     * @return int
+     */
+    public function getIncomeByTimestamps($start, $end)
+    {
+        $addresses = $this->getAddressBalanceHoldersByTimestamp($start, $end);
+        $income = 0;
+        $jSummary = new Jsummary();
+
+        foreach ($addresses as $address) {
+            $income += $jSummary->getIncomeByAddressIdAndTimestamps($start, $end, $address->id);
+        }
+
+        return $income;
+    }
+
+    /**
+     * Gets current day balance holder income
+     * 
+     * @param int $start
+     * @param int $end
+     * @return int
+     */
+    public function getCurrentIncome($start, $end)
+    {
+        $addresses = $this->getAddressBalanceHoldersByTimestamp($start, $end);
+        $income = 0;
+
+        foreach ($addresses as $address) {
+            $income += $address->getCurrentDayIncome() ?? 0;
+        }
+
+        return $income;
+    }
+
+    /**
+     * Gets incomes by all balance holders by timestamps
+     * 
+     * @param int $start
+     * @param int $end
+     * @return int
+     */
+    public static function getIncomesByAllBalanceHolders($start, $end)
+    {
+        $entityHelper = new EntityHelper();
+        $query = $entityHelper->getUnitQueryByTimestamps(new BalanceHolder(), $start, $end, ['id', 'name']);
+        $balanceHolders = $query->all();
+        $incomes = [];
+
+        foreach ($balanceHolders as $balanceHolder) {
+            $name = $balanceHolder->name;
+            $incomes[$name] = $balanceHolder->getIncomeByTimestamps($start, $end);
+        }
+
+        return $incomes;
+    }
+
+    /**
+     * Gets current day balance holders income
+     *
+     * @return int
+     */
+    public static function getCurrentIncomesByAllBalanceHolders()
+    {
+        $entityHelper = new EntityHelper();
+        $dateTimeHelper = new DateTimeHelper();
+        $start = $dateTimeHelper->getTodayBeginningTimestamp();
+        $end = $dateTimeHelper->getRealUnixTimeOffset(0);
+        $query = $entityHelper->getUnitQueryByTimestamps(new BalanceHolder(), $start, $end, ['id', 'name']);
+        $balanceHolders = $query->all();
+        $incomes = [];
+
+        foreach ($balanceHolders as $balanceHolder) {
+            $name = $balanceHolder->name;
+            $incomes[$name] = $balanceHolder->getCurrentIncome($start, $end);
+        }
+
+        return $incomes;
     }
 }

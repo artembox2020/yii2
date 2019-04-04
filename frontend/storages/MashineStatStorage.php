@@ -2,6 +2,7 @@
 
 namespace frontend\storages;
 use frontend\models\WmMashineDataSearch;
+use frontend\models\BalanceHolder;
 use Yii;
 use frontend\services\globals\DateTimeHelper;
 
@@ -112,6 +113,66 @@ class MashineStatStorage implements MashineStatStorageInterface
         ];
 
         return $data;
+    }
+
+    /**
+     * Aggregates balance holders incomes
+     * 
+     * @param int $start
+     * @param int $end
+     * 
+     * @return array
+     */
+    public function aggregateBalanceHoldersIncomes($start, $end)
+    {
+        $incomes = BalanceHolder::getIncomesByAllBalanceHolders($start, $end);
+
+        if ($end - $start > DateTimeHelper::DAY_TIMESTAMP) {
+            $key = date($this->dateFormat, $start).'-'.date($this->dateFormat, $end - DateTimeHelper::DAY_TIMESTAMP);
+        } else {
+            $key = date($this->dateFormat, $start);
+        }
+
+        return [$key => $incomes];
+    }
+
+    /**
+     * Aggregates current baalnce holders incomes
+     * 
+     * @param int $timestamp
+     * 
+     * @return array
+     */
+    public function aggregateCurrentBalanceHoldersIncomes($timestamp)
+    {
+        $incomes = BalanceHolder::getCurrentIncomesByAllBalanceHolders();
+        $key = date($this->dateFormat, $timestamp);
+
+        return [$key => $incomes];
+    }
+
+    /**
+     * Aggregates balance holders incomes for Google Graph
+     * 
+     * @param int $start
+     * @param int $end
+     * @param array $opitons
+     * 
+     * @return array
+     */
+    public function aggregateBalanceHoldersIncomesForGoogleGraph($start, $end, $options)
+    {
+        if ($start != $end) {
+            $data = $this->aggregateBalanceHoldersIncomes($start, $end);
+        } else {
+            $data = $this->aggregateCurrentBalanceHoldersIncomes($start);
+        }
+
+        $key = array_keys($data)[0];
+        $lines = [0 => array_merge([$key], array_values($data[$key]))];
+        $titles = array_merge([''], array_keys($data[$key]));
+
+        return ['titles' => $titles, 'lines' => $lines, 'options' => $options];
     }
 
     /**
@@ -324,13 +385,19 @@ class MashineStatStorage implements MashineStatStorageInterface
      * Gets time intervals by dates between
      * 
      * @param string $active
+     * @param string $dateStart
+     * @param string $dateEnd
      * 
      * @return array
      */
-    public function getTimeIntervalsByDatesBetween($active)
+    public function getTimeIntervalsByDatesBetween($active, $dateStart, $dateEnd)
     {
-        $start = explode("*", $active)[0];
-        $end = explode("*", $active)[1] + DateTimeHelper::DAY_TIMESTAMP;
+        $dateTimeHelper = new DateTimeHelper();
+        $timestamp = strtotime($dateStart);
+        $start = $dateTimeHelper->getDayBeginningTimestamp($timestamp);
+
+        $timestamp = strtotime($dateEnd);
+        $end = $dateTimeHelper->getDayBeginningTimestamp($timestamp) + DateTimeHelper::DAY_TIMESTAMP;
 
         return ['start' => $start, 'end' => $end, 'active' => $active];
     }

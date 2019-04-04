@@ -42,6 +42,28 @@ class DashboardController extends Controller
     }
 
     /**
+     * Renders graph: balance holders incomes
+     * Accepts data as post params
+     * 
+     * @return string
+     */  
+    public function actionBalanceHolderIncomes()
+    {
+        $post = Yii::$app->request->post();
+        list($start, $end, $action, $selector, $active) = [
+            $post['start'], $post['end'], $post['action'], $post['selector'], $post['active']
+        ];
+        $ggs = new GoogleGraphStorage();
+        $mss = new MashineStatStorage();
+
+        $data = $mss->aggregateBalanceHoldersIncomesForGoogleGraph($start, $end, []);
+        $histogram = $ggs->drawHistogram($data, $selector);
+        $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active);
+
+        return $histogram.$actionBuilder;
+    }
+
+    /**
      * Renders ajax submission form
      * 
      * @param int $start
@@ -77,14 +99,16 @@ class DashboardController extends Controller
      * Renders data with timestamps by dates between
      * 
      * @param string $active
+     * @param string $dateStart
+     * @param string $dateEnd
      * 
      * @return string
      */
-    public function actionGetTimestampsByDatesBetween(string $active)
+    public function actionGetTimestampsByDatesBetween(string $active, string $dateStart, string $dateEnd)
     {
         $mss = new MashineStatStorage();
 
-        return json_encode($mss->getTimeIntervalsByDatesBetween($active)); 
+        return json_encode($mss->getTimeIntervalsByDatesBetween($active, $dateStart, $dateEnd)); 
     }
 
     /**
