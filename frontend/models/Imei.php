@@ -413,12 +413,7 @@ class Imei extends \yii\db\ActiveRecord
             return false;
         }
 
-        $entity = new Entity();
-
-        // retrieve address associated with current instance of imei 
-        $address = $entity->tryUnitPertainCompany(
-            $this->address_id, new AddressBalanceHolder()
-        );
+        $address = AddressBalanceHolder::findOne($this->address_id);
 
         // update balance_holder_id
         if (!empty($address)) {
