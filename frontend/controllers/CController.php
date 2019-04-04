@@ -564,7 +564,7 @@ class CController extends Controller
     public function disableNotAvailableWmMashines($wm_mashine_ids, $imei_id)
     {
         $entity = new Entity();
-        $query = $entity->getUnitsQueryPertainCompany(new WmMashine());
+        $query = WmMashine::find();
         $query = $query->andFilterWhere(['imei_id' => $imei_id]);
         $query = $query->andFilterWhere(['not in', 'id', $wm_mashine_ids]);
 
@@ -573,7 +573,7 @@ class CController extends Controller
             $mashine->save(false);
         }
     }
-    
+
     /**
      * Disables GdMashines, except ones in the list
      * 
