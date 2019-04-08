@@ -28,20 +28,20 @@ use \frontend\models\AddressBalanceHolder;
             'attribute' => 'unix_time_offset',
             'format' => 'raw',
             'label' => Yii::t('frontend', 'Hour that date'),
-            'value' => function($model)
+            'value' => function($model) use ($searchModel)
             {
 
-                return date('d.m.Y', $model['unix_time_offset']);
+                return $searchModel->getDateByTimestamp($model['unix_time_offset'], 'd.m.Y');
             },
             'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
         ],
         [
             'attribute' => 'unix_time_offset_time',
             'label' => Yii::t('frontend', 'Time'),
-            'value' => function($model)
+            'value' => function($model) use ($searchModel)
             {
 
-                return date('H:i', $model['unix_time_offset']);
+                return $searchModel->getDateByTimestamp($model['unix_time_offset'], 'H:i');
             },
         ],
         [

@@ -22,10 +22,10 @@ use \frontend\models\AddressBalanceHolder;
         [
             'attribute' => 'unix_time_offset',
             'label' => Yii::t('frontend', 'Hour that date'),
-            'value' => function($model)
+            'value' => function($model) use ($searchModel)
             {
 
-                return date('d.m.Y H:i:s', $model['unix_time_offset']);
+                return $searchModel->getDateByTimestamp($model['unix_time_offset'], 'd.m.Y H:i:s');
             },
             'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
         ],

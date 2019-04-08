@@ -1128,4 +1128,21 @@ class CbLogSearch extends CbLog
 
         return ['created_at' => $model['unix_time_offset'], 'money_in_banknotes' => $sum];
     }
+
+    /**
+     * Gets date by timestamp, using UTC timezone
+     * 
+     * @param int $timestamp
+     * @param string $dateFormat
+     * @return string
+     */
+    public function getDateByTimestamp($timestamp, $dateFormat)
+    {
+        $currentTimezone = date_default_timezone_get();
+        date_default_timezone_set('UTC');
+        $date = date($dateFormat, $timestamp);
+        date_default_timezone_set($currentTimezone);
+
+        return $date;
+    }
 }
