@@ -760,6 +760,9 @@ class CbLogSearch extends CbLog
         if (($difference = $this->getDifference($model)) < 0) {
 
             return "<span class='difference'>".$difference."</span>";
+        } elseif ($difference > 0) {
+
+            return "<span class='difference-green'>".$difference."</span>";
         }
 
         return "<span>".$difference."</span>";

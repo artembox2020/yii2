@@ -686,7 +686,14 @@ div.required label:after {
     padding: 0;
     margin: -20px -8px;
 }
-
+.encashment-index .difference-green {
+    display: inline-block;
+    background-color: #00C251;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: -20px -8px;
+}
 .encashment-index table tr td.invisible {
     border: 0;
     background: rgba(255, 255, 255, 1);
