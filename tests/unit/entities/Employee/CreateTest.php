@@ -3,43 +3,43 @@
 namespace test\unit\entities\Employee;
 
 use Codeception\Test\Unit;
-use frontend\models\entities\Employee\Email;
-use frontend\models\entities\Employee\Employee;
-use frontend\models\entities\Employee\EmployeeId;
-use frontend\models\entities\Employee\Events\EmployeeCreated;
-use frontend\models\entities\Employee\Name;
-use frontend\models\entities\Employee\Password;
-use frontend\models\entities\Employee\Phone;
+use common\models\User;
+use PHPUnit\Framework\TestCase;
 
-class CreateTest extends Unit
+class CreateTest extends TestCase
 {
-    public function testSuccessEmployeeCreate()
+//    public function testSuccessEmployeeCreate()
+//    {
+//        $user = new User();
+//
+//        $user->username = 'UserName';
+//        $user->email = 'adsf@com.com';
+//
+//        $this->assertEquals($user->username, $user->username);
+//        $this->assertEquals($name, $employee->getName());
+//        $this->assertEquals($email, $employee->getEmail());
+//        $this->assertEquals($phones, $employee->getPhones());
+//
+//        $this->assertNotNull($employee->getCreateDate());
+//
+//        $this->assertTrue($employee->isActive());
+//
+//        $this->assertCount(1, $statuses = $employee->getStatuses());
+//        $this->assertTrue(end($statuses)->isActive());
+//
+//        $this->assertNotEmpty($events = $employee->releaseEvents());
+//        $this->assertInstanceOf(EmployeeCreated::class, end($events));
+//    }
+
+    public function testValidateUser()
     {
-        $employee = new Employee(
-            $id = new EmployeeId(25),
-            $name = new Name('Pupkin', 'Vasil', 'Petrovich'),
-            $email = new Email('pupkin@gmail.com'),
-            $password = new Password('32rsar23'),
-            $phones = [
-                new Phone(3, '063', '00000001'),
-                new Phone(3, '063', '00000002')
-            ]
-        );
+        $user = new User();
+        $user->username = 'Name';
+        $user->email = 'asdf@asdf.com';
+        $user->status = User::STATUS_ACTIVE;
 
-        $this->assertEquals($id, $employee->getId());
-        $this->assertEquals($name, $employee->getName());
-        $this->assertEquals($email, $employee->getEmail());
-        $this->assertEquals($phones, $employee->getPhones());
 
-        $this->assertNotNull($employee->getCreateDate());
-
-        $this->assertTrue($employee->isActive());
-
-        $this->assertCount(1, $statuses = $employee->getStatuses());
-        $this->assertTrue(end($statuses)->isActive());
-
-        $this->assertNotEmpty($events = $employee->releaseEvents());
-        $this->assertInstanceOf(EmployeeCreated::class, end($events));
+        $this->assertFalse($user->validate(), 'validate true');
     }
 }
 
