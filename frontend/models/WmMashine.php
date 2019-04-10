@@ -62,6 +62,8 @@ class WmMashine extends \yii\db\ActiveRecord
     
     const LEVEL_SIGNAL_MAX = 10000;
 
+    const STATUS_DISCONNECTED = 0;
+
     private $wm;
 
     /** @var array current state */
@@ -692,10 +694,26 @@ class WmMashine extends \yii\db\ActiveRecord
         $actualityClass = 'ping-not-actual';
         $halfHourBeforeTimestamp = strtotime("-30 minutes") + Jlog::TYPE_TIME_OFFSET;
 
-        if ($this->ping >= $halfHourBeforeTimestamp) {
+        if ($this->ping >= $halfHourBeforeTimestamp && $this->current_status != self::STATUS_DISCONNECTED) {
             $actualityClass = 'ping-actual';
         }
 
         return $actualityClass;
+    }
+
+    /**
+     * Sets last ping value if necessary
+     * 
+     * @param WmMashineData $wm_mashine_data
+     */
+    public function setLastPing(WmMashineData $wm_mashine_data)
+    {
+        if (
+            $wm_mashine_data->current_status != self::STATUS_DISCONNECTED
+            || 
+            $this->current_status != self::STATUS_DISCONNECTED
+        ) {
+            $this->ping = $wm_mashine_data->ping;
+        }
     }
 }

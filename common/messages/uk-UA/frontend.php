@@ -446,7 +446,7 @@ return [
     'WASHER_FREE' => 'Пральна машина вільна.',
     'WP-3' => 'WP-3',
     'WP-4' => 'WP-4',
-    'disconnected' => 'Відключено',
+    'disconnected' => 'Немає зв\'язку з ПМ',
     'Add Device' => 'Додати пристрій',
     'Enter IMEI' => 'Введіть IMEI',
     'Encashment Journal' => 'Журнал інкасації',
