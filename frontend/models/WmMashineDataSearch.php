@@ -273,7 +273,7 @@ class WmMashineDataSearch extends WmMashineData
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
         $statuses = [WmMashine::STATUS_OFF, WmMashine::STATUS_ACTIVE, WmMashine::STATUS_UNDER_REPAIR];
-        $query = WmMashine::find()->select(['id', 'ping'])->andWhere(['status' => $statuses, 'company_id' => $companyId]);
+        $query = WmMashine::find()->select(['id', 'current_status', 'ping'])->andWhere(['status' => $statuses, 'company_id' => $companyId]);
 
         return $query;
     }
