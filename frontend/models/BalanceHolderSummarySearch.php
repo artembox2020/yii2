@@ -21,9 +21,11 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
     const PERCENT_ONE_THIRD = 33;
     const PERCENT_TWO_THIRD = 67;
-    const IDLE_TIME_HOURS = 8;
+    const IDLE_TIME_HOURS = 0.25;
     const TYPE_GENERAL = 0;
     const TYPE_DETAILED = 1;
+    const TYPE_WM_MIN_ERROR_CODE = 9;
+    const TYPE_DAMAGE_IDLE_HOURS = 8;
 
     /**
      * @inheritdoc
@@ -685,6 +687,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $encashmentInfo = $this->getDateAndSumEncashmentByTimestamps($timestamp, $timestampEnd, $imei->id);
         $totalIdleHours = 0.00;
         $totalHours = 0.00;
+        $totalDamageIdleHours = 0.00;
         foreach ($mashines as $mashine) {
             $idleHoursInfo = $entityHelper->getUnitIdleHoursByTimestamps(
                 $timestamp,
@@ -693,15 +696,19 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $mashine,
                 'mashine_id',
                 'created_at, mashine_id',
-                self::IDLE_TIME_HOURS
+                self::IDLE_TIME_HOURS,
+                ['<', 'current_status', self::TYPE_WM_MIN_ERROR_CODE]
             );
             list($idleHours, $allHours) = [$idleHoursInfo['idleHours'], $idleHoursInfo['allHours']];
+            $damageIdleHours = $idleHoursInfo['idleHours'] >= self::TYPE_DAMAGE_IDLE_HOURS ? $idleHoursInfo['idleHours'] : 0;
 
             if ($idleHours >= self::IDLE_TIME_HOURS) {
                 $totalIdleHours += $idleHours;
             }
             $totalHours += $allHours;
+            $totalDamageIdleHours += $damageIdleHours;
         }
+
         $totalIdleHours = $this->parseFloat($totalIdleHours, 2);
         $totalHours = $this->parseFloat($totalHours, 2);
 
@@ -711,6 +718,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
             'active' => $mashinesActive,
             'all' => $mashinesAll,
             'idleHours' => !is_null($totalIdleHours) ? $totalIdleHours : null,
+            'damageIdleHours' => $totalDamageIdleHours,
             'allHours' => $totalHours,
             'encashment_date' => empty($encashmentInfo['encashment_date']) ? null : $encashmentInfo['encashment_date'],
             'encashment_sum' => empty($encashmentInfo['encashment_sum']) ? null : $encashmentInfo['encashment_sum'],

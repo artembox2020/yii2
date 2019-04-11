@@ -364,7 +364,7 @@ Builder.makeIdleDays = function()
 
             for (var j = 0; j < tds.length; ++j) {
                 if (!tds[j].classList.contains('not-set-income')) {
-                    totalIdles += preciseNumber(parseFloat(tds[j].dataset.idleHours) / 24);
+                    totalIdles += preciseNumber(parseFloat(tds[j].dataset.damageIdleHours) / 24);
                 }
             }
             sumTotal += totalIdles;
@@ -399,6 +399,7 @@ Builder.makeIdleDamages = function()
             var td = row.querySelector('td');
             var idleDays = summaryJournal.querySelector('.table-idle-days tr:nth-child(' + (i+1) + ') td');
             var sum = parseIdles(td) * parse(idleDays);
+            console.log("idle days="+ parse(idleDays), );
             sumTotal += preciseNumber(sum);
         }
 

@@ -41,7 +41,7 @@ class Jsummary extends ActiveRecord
         return [
             [['imei_id', 'start_timestamp', 'end_timestamp'], 'required'],
             [['imei_id', 'created', 'active', 'deleted', 'all', 'encashment_date'], 'integer'],
-            [['income', 'idleHours', 'allHours', 'encashment_sum'] , 'double']
+            [['income', 'idleHours', 'allHours', 'damageIdleHours', 'encashment_sum'] , 'double']
         ];
     }
 
@@ -107,12 +107,14 @@ class Jsummary extends ActiveRecord
         $allHours = isset($parts[5]) ? $parts[5] : null;
         $encashment_date = isset($parts[6]) ? $parts[6] : null;
         $encashment_sum = isset($parts[7]) ? explode("`", $parts[7])[0] : null;
+        $damageIdleHours = isset($parts[8]) ? explode("`", $parts[8])[0] : null;
 
         return [
             'created' => $created,
             'deleted' => $deleted,
             'income' => $income,
             'idleHours' => $idleHours,
+            'damageIdleHours' => $damageIdleHours,
             'allHours' => $allHours,
             'encashment_date' => $encashment_date,
             'encashment_sum' => $encashment_sum
@@ -227,6 +229,7 @@ class Jsummary extends ActiveRecord
                         'deleted' => 0,
                         'all' => 0,
                         'idleHours' => null,
+                        'damageIdleHours' => null,
                         'allHours' => null,
                         'encashment_date' => null,
                         'encashment_sum' => null,
@@ -246,6 +249,7 @@ class Jsummary extends ActiveRecord
                         'active' => $item->active,
                         'all'=> $item->all,
                         'idleHours' => $item->idleHours,
+                        'damageIdleHours' => $item->damageIdleHours,
                         'allHours' => $item->allHours,
                         'encashment_date' => $item->encashment_date,
                         'encashment_sum' => $item->encashment_sum,
