@@ -399,7 +399,6 @@ Builder.makeIdleDamages = function()
             var td = row.querySelector('td');
             var idleDays = summaryJournal.querySelector('.table-idle-days tr:nth-child(' + (i+1) + ') td');
             var sum = parseIdles(td) * parse(idleDays);
-            console.log("idle days="+ parse(idleDays), );
             sumTotal += preciseNumber(sum);
         }
 
