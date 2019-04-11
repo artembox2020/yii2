@@ -17,7 +17,8 @@ use frontend\services\globals\Entity;
 class WmMashineDataSearch extends WmMashineData
 {
     const TYPE_STATUS_DISCONNECTED = 0;
-    const TYPE_STATUS_NOT_CONNECTED = 27;
+    const TYPE_MAX_STATUS_CODE = 26;
+    const TYPE_MIN_STATUS_CODE = -2;
 
     /**
      * @inheritdoc
@@ -181,7 +182,9 @@ class WmMashineDataSearch extends WmMashineData
         $allMashineIds = ArrayHelper::getColumn($allMashines, 'id');
 
         $query = $this->getBaseWmMashineDataQueryByTimestamps($start, $end, ['mashine_id']);
-        $query = $query->andWhere(['!=', 'current_status', [self::TYPE_STATUS_DISCONNECTED, self::TYPE_STATUS_NOT_CONNECTED]]);
+        $query = $query->andWhere(['!=', 'current_status', self::TYPE_STATUS_DISCONNECTED]);
+        $query = $query->andWhere(['<=', 'current_status', self::TYPE_MAX_STATUS_CODE]);
+        $query = $query->andWhere(['>=', 'current_status', self::TYPE_MIN_STATUS_CODE]);
 
         $dataMashines = QueryOptimizer::getItemsByQuery($query);
         $dataMashineIds = ArrayHelper::getColumn($dataMashines, 'mashine_id');
@@ -270,7 +273,7 @@ class WmMashineDataSearch extends WmMashineData
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
         $statuses = [WmMashine::STATUS_OFF, WmMashine::STATUS_ACTIVE, WmMashine::STATUS_UNDER_REPAIR];
-        $query = WmMashine::find()->select(['id', 'ping'])->andWhere(['status' => $statuses, 'company_id' => $companyId]);
+        $query = WmMashine::find()->select(['id', 'current_status', 'ping'])->andWhere(['status' => $statuses, 'company_id' => $companyId]);
 
         return $query;
     }
@@ -296,7 +299,9 @@ class WmMashineDataSearch extends WmMashineData
     {
         $statuses = [WmMashine::STATUS_ACTIVE];
         $query = $this->getAllCurrentMashinesQuery();
-        $query = $query->andWhere(['!=', 'current_status', [self::TYPE_STATUS_DISCONNECTED, self::TYPE_STATUS_NOT_CONNECTED]]);
+        $query = $query->andWhere(['!=', 'current_status', self::TYPE_STATUS_DISCONNECTED]);
+        $query = $query->andWhere(['<=', 'current_status', self::TYPE_MAX_STATUS_CODE]);
+        $query = $query->andWhere(['>=', 'current_status', self::TYPE_MIN_STATUS_CODE]);
         $mashines = $query->all();
         $count = 0;
 
