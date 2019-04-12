@@ -130,6 +130,7 @@ return [
     'Date connection monitoring' => 'Дата підключення до моніторінгу',
     'Delete' => 'Удалить',
     'Deleted' => 'Удалено',
+    'Deleted user' => '<удален>',
     'Deletion' => 'удаление',
     'Delete Balance Holder' => 'Удалить балансодержатель',
     'Delete contact person' => 'Удалить контактное лицо',

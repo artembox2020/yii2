@@ -713,11 +713,18 @@ class JlogSearch extends Jlog
     {
         $entity = new Entity();
         $query = $entity->getAllUnitsQueryPertainCompany(new AddressBalanceHolder());
-        $addresses = $query->select('address')->distinct()->all();
+        $addresses = $query->select('address, is_deleted')->distinct()->all();
         $addressesMapped = [];
         $counter = 1;
         foreach($addresses as $address) {
-            $addressesMapped[] = (object)['id' => $counter++, 'value' => $address->address]; 
+
+            if ($address->is_deleted) {
+                $value = $address->address.' - '.Yii::t('frontend', 'Deleted user');
+            } else {
+                $value = $address->address;
+            }
+
+            $addressesMapped[] = (object)['id' => $counter++, 'value' => $value]; 
         }
 
         return $addressesMapped;
