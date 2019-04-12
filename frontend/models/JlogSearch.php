@@ -49,6 +49,7 @@ class JlogSearch extends Jlog
     const INFINITY = 9999999999999999;
     const ZERO = 0;
 
+    const ADDRESS_DELIMITER = ' - ';
     public $from_date;
     public $to_date;
     public $mashineNumber;
@@ -129,7 +130,8 @@ class JlogSearch extends Jlog
         $query = $this->applyFilterByValueMethod($query, 'imei', $params);
         $query = $this->applyFilterByConditionMethod($query, 'imei', $params, self::FILTER_CATEGORY_COMMON);
 
-        $query->andFilterWhere(['like', 'address', $params['address']]);
+        $addressValue = trim(explode(self::ADDRESS_DELIMITER, $params['address'])[0]);
+        $query->andFilterWhere(['like', 'address', $addressValue]);
 
         return $dataProvider;
     }
@@ -719,7 +721,7 @@ class JlogSearch extends Jlog
         foreach($addresses as $address) {
 
             if ($address->is_deleted) {
-                $value = $address->address.' - '.Yii::t('frontend', 'Deleted user');
+                $value = $address->address.self::ADDRESS_DELIMITER.Yii::t('frontend', 'Deleted address');
             } else {
                 $value = $address->address;
             }

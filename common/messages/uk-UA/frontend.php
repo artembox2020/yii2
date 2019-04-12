@@ -138,7 +138,7 @@ return [
     'ce cooling' => 'Помилка охолодження (cE)',
     'Consolidated technical data' => 'Зведені технічні дані',
     'Consolidated financial data' => 'Зведені фінансові дані',
-    'Deleted user' => '<видалений>',
+    'Deleted address' => '<видалений>',
     'Deletion' => 'видалення',
     'Disabled' => 'Відключено',
     'Data' => 'Дані',
