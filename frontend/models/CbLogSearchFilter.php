@@ -105,6 +105,10 @@ class CbLogSearchFilter extends JlogSearch
         $expression = $columnName;
         $operator = 'like';
 
+        if ($columnName == 'address') {
+            $value = trim(explode(JlogSearch::ADDRESS_DELIMITER, $value)[0]);
+        }
+
         switch ($filterCondition) {
             case self::FILTER_NOT_SET:
                 

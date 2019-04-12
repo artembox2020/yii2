@@ -49,6 +49,7 @@ class JlogSearch extends Jlog
     const INFINITY = 9999999999999999;
     const ZERO = 0;
 
+    const ADDRESS_DELIMITER = ' - ';
     public $from_date;
     public $to_date;
     public $mashineNumber;
@@ -129,7 +130,8 @@ class JlogSearch extends Jlog
         $query = $this->applyFilterByValueMethod($query, 'imei', $params);
         $query = $this->applyFilterByConditionMethod($query, 'imei', $params, self::FILTER_CATEGORY_COMMON);
 
-        $query->andFilterWhere(['like', 'address', $params['address']]);
+        $addressValue = trim(explode(self::ADDRESS_DELIMITER, $params['address'])[0]);
+        $query->andFilterWhere(['like', 'address', $addressValue]);
 
         return $dataProvider;
     }
@@ -713,11 +715,18 @@ class JlogSearch extends Jlog
     {
         $entity = new Entity();
         $query = $entity->getAllUnitsQueryPertainCompany(new AddressBalanceHolder());
-        $addresses = $query->select('address')->distinct()->all();
+        $addresses = $query->select('address, is_deleted')->distinct()->all();
         $addressesMapped = [];
         $counter = 1;
         foreach($addresses as $address) {
-            $addressesMapped[] = (object)['id' => $counter++, 'value' => $address->address]; 
+
+            if ($address->is_deleted) {
+                $value = $address->address.self::ADDRESS_DELIMITER.Yii::t('frontend', 'Deleted address');
+            } else {
+                $value = $address->address;
+            }
+
+            $addressesMapped[] = (object)['id' => $counter++, 'value' => $value]; 
         }
 
         return $addressesMapped;
