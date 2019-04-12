@@ -30,10 +30,10 @@ class ForwardController extends Controller
         $service = new ServiceForward();
         $result = $service->getStaff($address_name);
 
-        return $this->render('index', [
-            'result' => $result
-        ]);
+//        return $this->render('index', [
+//            'result' => $result
+//        ]);
 
-//        return $this->asJson($result);
+        return $this->asJson($result);
     }
 }
