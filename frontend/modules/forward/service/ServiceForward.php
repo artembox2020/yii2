@@ -22,8 +22,7 @@ class ServiceForward implements ServiceForwardInterface
     const DATE_FORMAT = 'h:i d.m.Y';
     public $array = array();
     public $result = array();
-
-
+    
     /**
      *
      * getStaff принимает строку (короткий адрес) возвращает связанные объекты в сформированном
@@ -50,7 +49,7 @@ class ServiceForward implements ServiceForwardInterface
     }
     }
      * @param string $address_name
-     * @return array | mixed
+     * @return array
      * @throws \yii\db\Exception
      */
     public function getStaff(string $address_name): array
@@ -77,7 +76,6 @@ class ServiceForward implements ServiceForwardInterface
                 ->queryOne();
 
             $imeiData = new ImeiData();
-
 
             $this->result['param'] = [
                 'central_board_status' => Yii::t('imeiData', $imeiData->status_central_board[$res['packet']]),
