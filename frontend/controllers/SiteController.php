@@ -523,7 +523,7 @@ class SiteController extends Controller
     private function accessDenied()
     {
         return Yii::$app->session->setFlash(
-            'error',
+            'AccessDenied',
             Yii::t('frontend', 'Access denied')
         );
     }

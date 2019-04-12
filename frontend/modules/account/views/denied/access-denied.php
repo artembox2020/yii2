@@ -13,6 +13,6 @@ use yii\helpers\Html;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Yii::$app->session->getFlash('error'); ?>
+        <?= Yii::$app->session->getFlash('AccessDenied'); ?>
     </p>
 </div>
