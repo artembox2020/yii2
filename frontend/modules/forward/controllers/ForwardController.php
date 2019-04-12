@@ -22,16 +22,18 @@ class ForwardController extends Controller
 {
 
     /**
-     * Отдает набор сущностей по адресу в json формате
-     *
-     * @param $address_name
-     * @return \yii\web\Response
+     * @param string $address_name
+     * @return string
      */
     public function actionIndex(string $address_name)
     {
         $service = new ServiceForward();
         $result = $service->getStaff($address_name);
 
-        return $this->asJson($result);
+        return $this->render('index', [
+            'result' => $result
+        ]);
+
+//        return $this->asJson($result);
     }
 }

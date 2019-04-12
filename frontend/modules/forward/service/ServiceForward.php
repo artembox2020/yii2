@@ -10,6 +10,7 @@ use frontend\models\WmMashine;
 use frontend\modules\forward\interfaces\ServiceForwardInterface;
 use frontend\services\custom\Debugger;
 use Yii;
+use yii\db\Query;
 
 /**
  * Class ServiceForward
@@ -67,14 +68,17 @@ class ServiceForward implements ServiceForwardInterface
             ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])
             ->all();
 
-        $imeiData = ImeiData::find()
-            ->andWhere(['imei_id' => $imei->id])
-            ->orderBy('created_at DESC')
-            ->one();
+        $res = Yii::$app->db->createCommand('SELECT *
+              FROM imei_data WHERE imei_id = :imei_id ORDER BY created_at DESC LIMIT 1')
+            ->bindValue(':imei_id', $imei->id)
+            ->queryOne();
+
+        $imeiData = new ImeiData();
+
 
         $this->result['param'] = [
-            'central_board_status' => Yii::t('imeiData', $imeiData->status_central_board[$imeiData->packet]),
-            'bill_acceptor_status' => Yii::t('imeiData', $imeiData->status_bill_acceptor[$imeiData->evt_bill_validator])
+            'central_board_status' => Yii::t('imeiData', $imeiData->status_central_board[$res['packet']]),
+            'bill_acceptor_status' => Yii::t('imeiData', $imeiData->status_bill_acceptor[$res['evt_bill_validator']])
         ];
 
         $this->result['BalanceHolder'] = $balanceHolderName;
@@ -88,7 +92,7 @@ class ServiceForward implements ServiceForwardInterface
         }
 
         $this->result[$address->address . ' ' . $address->floor] = $this->array;
-        
+
         return $this->result;
     }
 }
