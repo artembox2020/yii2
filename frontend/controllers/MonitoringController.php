@@ -205,7 +205,7 @@ class MonitoringController extends \yii\web\Controller
     {
 
         if (!\Yii::$app->user->can('monitoring/financial', ['class'=>static::class])) {
-            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
 
@@ -259,7 +259,7 @@ class MonitoringController extends \yii\web\Controller
     {
 
         if (!\Yii::$app->user->can('monitoring/technical', ['class'=>static::class])) {
-            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
 

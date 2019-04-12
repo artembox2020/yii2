@@ -20,6 +20,9 @@ $config = [
                 'userClass' => 'common\models\User'
             ]
         ],
+        'noty' => [
+            'class' => 'lo\modules\noty\Module',
+        ],
     ],
     'components' => [
         'db' => [
