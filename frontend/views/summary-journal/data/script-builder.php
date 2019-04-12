@@ -364,7 +364,7 @@ Builder.makeIdleDays = function()
 
             for (var j = 0; j < tds.length; ++j) {
                 if (!tds[j].classList.contains('not-set-income')) {
-                    totalIdles += preciseNumber(parseFloat(tds[j].dataset.idleHours) / 24);
+                    totalIdles += preciseNumber(parseFloat(tds[j].dataset.damageIdleHours) / 24);
                 }
             }
             sumTotal += totalIdles;
