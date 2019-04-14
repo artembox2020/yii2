@@ -58,8 +58,6 @@ class ServiceForward implements ServiceForwardInterface
                 ->andWhere(['name' => $address_name])
                 ->one();
 
-            $balanceHolderName = $address->balanceHolder->name;
-
             $imei = Imei::find()
                 ->andWhere(['address_id' => $address->id])
                 ->andWhere(['imei.status' => Imei::STATUS_ACTIVE])
@@ -82,14 +80,15 @@ class ServiceForward implements ServiceForwardInterface
                 'bill_acceptor_status' => Yii::t('imeiData', $imeiData->status_bill_acceptor[$res['evt_bill_validator']])
             ];
 
-            $this->result['BalanceHolder'] = $balanceHolderName;
+            $this->result['BalanceHolder'] = $address->balanceHolder->name;
 
             foreach ($wm_machine as $key => $value) {
                 $this->array[$value->number_device] = [
                     'device_number' => $value->number_device,
                     'display' => $value->display,
                     'date' => date(self::DATE_FORMAT, $value->ping),
-                    'status' => Yii::t('frontend', $value->current_state[$value->current_status])];
+                    'status' => Yii::t('frontend', $value->current_state[$value->current_status])
+                ];
             }
 
             $this->result[$address->address . ' ' . $address->floor] = $this->array;
