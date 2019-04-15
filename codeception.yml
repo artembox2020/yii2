@@ -1,5 +1,5 @@
 paths:
-    tests: tests
+    tests: frontend/tests
     output: tests/_output
     data: tests/_data
     support: tests/_support
