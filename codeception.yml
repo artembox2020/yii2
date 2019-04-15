@@ -13,5 +13,5 @@ settings:
 modules:
     config:
         Yii2:
-            configFile: 'tests/config/test.php'
+            configFile: 'frontend/tests/config/test.php'
             cleanup: false

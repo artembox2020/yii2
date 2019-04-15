@@ -2,11 +2,13 @@
 
 namespace frontend\modules\forward\service;
 
+use Codeception\Util\Debug;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\Imei;
 use frontend\models\ImeiData;
 use frontend\models\WmMashine;
 use frontend\modules\forward\interfaces\ServiceForwardInterface;
+use frontend\services\custom\Debugger;
 use Yii;
 
 /**
@@ -58,7 +60,11 @@ class ServiceForward implements ServiceForwardInterface
         $imeiData = ImeiData::find()
             ->andWhere(['imei_id' => $imei->id])
             ->orderBy('created_at DESC')
+//            ->limit(1);
             ->one();
+//        ->limit(1);
+
+//        Debugger::dd($imeiData);
 
         $this->result['param'] = [
             'central_board_status' => Yii::t('imeiData', $imeiData->status_central_board[$imeiData->packet]),

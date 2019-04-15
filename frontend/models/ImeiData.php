@@ -27,6 +27,7 @@ use frontend\services\globals\QueryOptimizer;
  * @property int $deleted_at
  * @property int $status
  * @property string $packet
+ * @property string $evt_bill_validator
  * @property string $cb_version
  *
 // * @property Imei $imei
