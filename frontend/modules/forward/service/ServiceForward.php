@@ -54,48 +54,49 @@ class ServiceForward implements ServiceForwardInterface
      */
     public function getStaff(string $address_name): array
     {
-            $address = AddressBalanceHolder::find()
-                ->andWhere(['name' => $address_name])
-                ->one();
+        $address = AddressBalanceHolder::find()
+            ->andWhere(['name' => $address_name])
+            ->one();
 
-            $imei = Imei::find()
-                ->andWhere(['address_id' => $address->id])
-                ->andWhere(['imei.status' => Imei::STATUS_ACTIVE])
-                ->one();
+        $imei = Imei::find()
+            ->andWhere(['address_id' => $address->id])
+            ->andWhere(['imei.status' => Imei::STATUS_ACTIVE])
+            ->one();
 
-            $wm_machine = WmMashine::find()
-                ->andWhere(['imei_id' => $imei->id])
-                ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])
-                ->all();
+        $wm_machine = WmMashine::find()
+            ->andWhere(['imei_id' => $imei->id])
+            ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])
+            ->all();
 
-            $res = Yii::$app->db->createCommand('SELECT *
-              FROM imei_data WHERE imei_id = :imei_id ORDER BY created_at DESC LIMIT 1')
-                ->bindValue(':imei_id', $imei->id)
-                ->queryOne();
+        $res = Yii::$app->db->createCommand('SELECT *
+          FROM imei_data WHERE imei_id = :imei_id ORDER BY created_at DESC LIMIT 1')
+            ->bindValue(':imei_id', $imei->id)
+            ->queryOne();
 
-            $imeiData = new ImeiData();
+        $imeiData = new ImeiData();
 
-            $this->result['param'] = [
-                'central_board_status' => Yii::t('imeiData', $imeiData->status_central_board[$res['packet']]),
-                'bill_acceptor_status' => Yii::t('imeiData', $imeiData->status_bill_acceptor[$res['evt_bill_validator']])
+        $this->result['param'] = [
+            'balance_holder' => $address->balanceHolder->name,
+            'address' => $address->address,
+            'floor' => $address->floor,
+            'central_board_status' => Yii::t('imeiData', $imeiData->status_central_board[$res['packet']]),
+            'bill_acceptor_status' => Yii::t('imeiData', $imeiData->status_bill_acceptor[$res['evt_bill_validator']])
+        ];
+
+        foreach ($wm_machine as $key => $value) {
+            $this->array[$value->number_device] = [
+                'device_number' => $value->number_device,
+                'display' => $value->display,
+                'date' => date(self::DATE_FORMAT, $value->ping),
+                'status' => Yii::t('frontend', $value->current_state[$value->current_status])
             ];
+        }
 
-            $this->result['BalanceHolder'] = $address->balanceHolder->name;
+        $this->result['wash_machine'] = $this->array;
 
-            foreach ($wm_machine as $key => $value) {
-                $this->array[$value->number_device] = [
-                    'device_number' => $value->number_device,
-                    'display' => $value->display,
-                    'date' => date(self::DATE_FORMAT, $value->ping),
-                    'status' => Yii::t('frontend', $value->current_state[$value->current_status])
-                ];
-            }
-
-            $this->result[$address->address . ' ' . $address->floor] = $this->array;
-
-            if (!$address) {
-                $this->result = ['address' => Yii::t('common', 'Not found')];
-            }
+        if (!$address) {
+            $this->result = ['address' => Yii::t('common', 'Not found')];
+        }
 
         return $this->result;
     }
