@@ -225,7 +225,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
             'mashine_id',
             'created_at, mashine_id',
             self::IDLE_TIME_HOURS,
-            ['<', 'current_status', self::TYPE_WM_MIN_ERROR_CODE]
+            "AND current_status < ".self::TYPE_WM_MIN_ERROR_CODE
         );
         list($idleHours, $allHours) = [$idleHoursInfo['idleHours'], $idleHoursInfo['allHours']];
         $idleHours = $this->parseFloat($idleHours, 2);
