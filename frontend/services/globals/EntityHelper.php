@@ -510,100 +510,6 @@ class EntityHelper implements EntityHelperInterface
     }
 
     /**
-     * Main calculation unit idle hours by timestamps
-     * 
-     * @param timestamp $start
-     * @param timestamp $end
-     * @param Instance $inst
-     * @param Instance $bInst
-     * @param string $fieldInst
-     * @param string $select
-     * @param int $timeIdleHours
-     * @param array|false $queryCondition
-     * @return array
-     */
-    public function getUnitIdleHoursByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition = false)
-    {
-        $nowTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
-        $unitCreationTimestamp = $this->getUnitCreationTimestamp($bInst);
-        $unitDeletionTimestamp = $this->getUnitDeletionTimestamp($bInst);
-        $stepInterval = $timeIdleHours * 3600;
-
-        if ($start < $unitCreationTimestamp) {
-            $start = $unitCreationTimestamp;
-        }
-        
-        if ($end > $nowTimestamp) {
-            $end = $nowTimestamp;
-        }
-
-        if ($end > $unitDeletionTimestamp) {
-            $end = $unitDeletionTimestamp;
-        }
-
-        return $this->getUnitIdleHoursByTimestampsRecursion($start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition, $unitCreationTimestamp, $unitDeletionTimestamp);
-    }
-
-    /**
-     * Recursive calculation unit idle hours by timestamps
-     * 
-     * @param timestamp $start
-     * @param timestamp $end
-     * @param Instance $inst
-     * @param Instance $bInst
-     * @param string $fieldInst
-     * @param string $select
-     * @param int $timeIdleHours
-     * @param array|false $queryCondition
-     * @param int $unitCreationTimestamp
-     * @param int $unitDeletionTimestamp
-     * @return array
-     */
-    public function getUnitIdleHoursByTimestampsRecursion(
-        $start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition,
-        $unitCreationTimestamp, $unitDeletionTimestamp
-    )
-    {
-        $bhSummarySearch = new BalanceHolderSummarySearch();
-        $allHours = $bhSummarySearch->parseFloat(($end - $start) / 3600, 2);
-        $stepInterval = $timeIdleHours * 3600;
-
-        if ($start + $stepInterval > $end) {
-
-            return ['idleHours' => 0, 'allHours' => $allHours];
-        } elseif ($start + 2*$stepInterval > $end) {
-
-            $data = $this->getUnitIdleHoursByTimestampsBase($start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition, $unitCreationTimestamp, $unitDeletionTimestamp);
-
-            return ['allHours' => $allHours, 'idleHours' => $data['idleHours']];
-        } else {
-
-            $middle = $start + ($end - $start) / 2;
-            $middle = (int)$middle;
-            $idleHours = 0;
-
-            while ($start < $end)  {
-                $query = $this->getBaseUnitQueryByTimestamps($start, $middle, $inst, $bInst, $fieldInst, $select);
-                if ($queryCondition) {
-                    $query = $query->andWhere($queryCondition);
-                }
-
-                if ($query->count() == 0) {
-                    $idleHours += $bhSummarySearch->parseFloat(($middle - $start) / 3600, 4);
-                } else {
-                    $data = $this->getUnitIdleHoursByTimestampsRecursion($start, $middle, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition, $unitCreationTimestamp, $unitDeletionTimestamp);
-                    $idleHours += $data['idleHours'];
-                }
-            
-                $start = $middle;
-                $middle = $end;
-            }
-
-            return ['allHours' => $allHours, 'idleHours' => $idleHours];
-        }
-    }
-
-    /**
      * Base calculation unit idle hours by timestamps
      * 
      * @param timestamp $start
@@ -613,14 +519,11 @@ class EntityHelper implements EntityHelperInterface
      * @param string $fieldInst
      * @param string $select
      * @param int $timeIdleHours
-     * @param array|false $queryCondition
-     * @param int $unitCreationTimestamp
-     * @param int $unitDeletionTimestamp
+     * @param string|false $queryCondition
      * @return array
      */
-    public function getUnitIdleHoursByTimestampsBase(
-        $start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition,
-        $unitCreationTimestamp, $unitDeletionTimestamp
+    public function getUnitIdleHoursByTimestamps(
+        $start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition =false
     )
     {
         $stepInterval = $timeIdleHours * 3600;
@@ -628,6 +531,20 @@ class EntityHelper implements EntityHelperInterface
         $bhSummarySearch = new BalanceHolderSummarySearch();
 
         $nowTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
+        $unitCreationTimestamp = $this->getUnitCreationTimestamp($bInst);
+        $unitDeletionTimestamp = $this->getUnitDeletionTimestamp($bInst);
+
+        if ($start < $unitCreationTimestamp) {
+            $start = $unitCreationTimestamp;
+        }
+
+        if ($end > $nowTimestamp) {
+            $end = $nowTimestamp;
+        }
+
+        if ($end > $unitDeletionTimestamp) {
+            $end = $unitDeletionTimestamp;
+        }
 
         $endTimestamp = $start + $stepInterval;
 
@@ -646,24 +563,31 @@ class EntityHelper implements EntityHelperInterface
             return ['idleHours' => 0, 'allHours' => $allHours];
         }
 
+        $dbHelper = Yii::$app->dbCommandHelper;
+
         for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
-            $query = $this->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, $inst, $bInst, $fieldInst, $select);
+            $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, $inst, $bInst, $fieldInst, $select);
 
             if ($queryCondition) {
-                $query = $query->andWhere($queryCondition);
+                $dbHelper->addQueryString($queryCondition);
             }
 
-            if ($query->count() > 0) {
-                $item = $query->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
+            if ($dbHelper->getCount() > 0) {
+                $dbHelper->addQueryString("ORDER BY created_at DESC LIMIT 1 ");
+                $item = $dbHelper->getItem();
+                $item = (object)$item;
                 $timestamp = $item->created_at - $stepInterval + 1;
                 continue;
             } else {
-                $query = $this->getBaseUnitQueryByTimestamps($endTimestamp, $end, $inst, $bInst, $fieldInst, $select);
-                if ($query->count() == 0) {
+                $dbHelper->getBaseUnitQueryByTimestamps($endTimestamp, $end, $inst, $bInst, $fieldInst, $select);
+
+                if ($dbHelper->getCount() == 0) {
                     $idleHours += ((float)$end - $timestamp) / 3600;
                     break;
                 } else {
-                    $item = $query->orderBy(['created_at' => SORT_ASC])->limit(1)->one();
+                    $dbHelper->addQueryString("ORDER BY created_at ASC LIMIT 1 ");
+                    $item = $dbHelper->getItem();
+                    $item = (object)$item;
                     $timeDiff = ($item->created_at < $end ? $item->created_at : $end) - $endTimestamp;
                     $idleHours += $timeIdleHours + ((float)$timeDiff / 3600);
                     $timestamp = $item->created_at - $stepInterval + 1;

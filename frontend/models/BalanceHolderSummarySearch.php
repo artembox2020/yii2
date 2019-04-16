@@ -697,7 +697,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 'mashine_id',
                 'created_at, mashine_id',
                 self::IDLE_TIME_HOURS,
-                ['<', 'current_status', self::TYPE_WM_MIN_ERROR_CODE]
+                "AND current_status < ".self::TYPE_WM_MIN_ERROR_CODE
             );
             list($idleHours, $allHours) = [$idleHoursInfo['idleHours'], $idleHoursInfo['allHours']];
             $damageIdleHours = $idleHoursInfo['idleHours'] >= self::TYPE_DAMAGE_IDLE_HOURS ? $idleHoursInfo['idleHours'] : 0;
