@@ -19,7 +19,7 @@ use yii\db\Query;
  */
 class ServiceForward implements ServiceForwardInterface
 {
-    const DATE_FORMAT = 'h:i d.m.Y';
+    const DATE_FORMAT = 'H:i d.m.Y';
     public $array = array();
     public $result = array();
     
