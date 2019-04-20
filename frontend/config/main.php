@@ -55,6 +55,9 @@ $config = [
         'dbCommandHelper' => [
             'class' => 'frontend\components\db\DbCommandHelper'
         ],
+        'dbCommandHelperOptimizer' => [
+            'class' => 'frontend\components\db\DbCommandHelperOptimizer'
+        ],
 //        'mailer' => [
 //            'class' => 'yii\swiftmailer\Mailer',
 ////            One more suggestion is to use port "465" and encryption as "ssl" instead of port "587", encryption "tls".

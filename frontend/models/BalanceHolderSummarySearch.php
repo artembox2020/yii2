@@ -842,7 +842,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 $nextBindingTimestamp >= $timestamp + $intervalStep
             )
             {
-                $imei = Imei::find()->where(['id' => $imeiInfo['imei_id']])->one();
+                $imeiQuery = Imei::find()->where(['id' => $imeiInfo['imei_id']])->limit(1);
+                $imei = QueryOptimizer::getItemByQuery($imeiQuery);
             }
             elseif (
                 !empty($imeiInfo) && $nextBindingTimestamp < $timestamp + $intervalStep
@@ -862,7 +863,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 }
 
                 if (!empty($imeiInfo)) {
-                    $imei = Imei::find()->where(['id' => $imeiInfo['imei_id']])->one();
+                    $imeiQuery = Imei::find()->where(['id' => $imeiInfo['imei_id']])->limit(1);
+                    $imei = QueryOptimizer::getItemByQuery($imeiQuery);
                 }
             }
 

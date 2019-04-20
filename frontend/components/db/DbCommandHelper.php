@@ -10,6 +10,8 @@ use yii\base\Component;
  */
 class DbCommandHelper extends DbCommandBase
 {
+    const ZERO = 0;
+
     /**
      * Makes base unit query
      * 
@@ -29,6 +31,91 @@ class DbCommandHelper extends DbCommandBase
 
         $bindValues = [':fieldInst' => $bInst->id, ':start' => $start, ':end' => $end];
         $this->setFields($queryString, $bindValues);
+    }
+
+    /**
+     * Gets last item query from `j_temp`table 
+     * 
+     * @param string $type
+     * @param string $param_type
+     * @param int $entity_id
+     * 
+     * @return \yii\db\Command
+     */
+    public function getUnitLastTempItemQuery($type, $param_type, $entity_id)
+    {
+        $queryString = "SELECT id, start, end, value, other FROM j_temp WHERE type = :type AND param_type = :param_type AND entity_id = :entity_id";
+        $queryString .= " ORDER BY end DESC LIMIT 1";
+        $bindValues = [':type' => $type, ':param_type' => $param_type, ':entity_id' => $entity_id];
+
+        $command = Yii::$app->db->createCommand($queryString)->bindValues($bindValues);
+
+        return $command;
+    }
+
+    /**
+     * Gets last item from `j_temp` table 
+     * 
+     * @param string $type
+     * @param string $param_type
+     * @param int $entity_id
+     * 
+     * @return array
+     */
+    public function getUnitLastTempItem($type, $param_type, $entity_id)
+    {
+        $command  = $this->getUnitLastTempItemQuery($type, $param_type, $entity_id);
+        $item = $command->queryOne();
+
+        if (empty($item)) {
+
+            return false;
+        }
+
+        return $item;
+    }
+
+    /**
+     * Inserts/Updates `j_temp` table 
+     * 
+     * @param array $item
+     */
+    public function upsertUnitTempItem(array $item)
+    {
+        Yii::$app->db->createCommand()->upsert('j_temp', $item, true)->execute();
+    }
+
+    /**
+     * Deletes item query from `j_temp` table 
+     * 
+     * @param string $type
+     * @param string $param_type
+     * @param int $entity_id
+     */
+    public function deleteUnitTempByEntityIdQuery($type, $param_type, $entity_id)
+    {
+        return Yii::$app->db->createCommand()->delete(
+            'j_temp',
+            [
+                'type' => $type,
+                'param_type' => $param_type,
+                'entity_id' =>$entity_id
+            ]
+        );
+    }
+
+    /**
+     * Deletes item from `j_temp` table 
+     * 
+     * @param string $type
+     * @param string $param_type
+     * @param int $entity_id
+     */
+    public function deleteUnitTempByEntityId($type, $param_type, $entity_id)
+    {
+        $command = $this->deleteUnitTempByEntityIdQuery($type, $param_type, $entity_id);
+
+        return $command->execute();
     }
 
     /**
