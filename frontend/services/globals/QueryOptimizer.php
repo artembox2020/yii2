@@ -8,7 +8,7 @@ namespace frontend\services\globals;
  */
 class QueryOptimizer implements QueryOptimizerInterface
 {
-    const MEMORY_USAGE_LIMIT = 80 * 1024 * 1024;
+    const MEMORY_USAGE_LIMIT = 100 * 1024 * 1024;
 
     /**
      * Fetches one item by given query

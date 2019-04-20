@@ -510,29 +510,61 @@ class EntityHelper implements EntityHelperInterface
     }
 
     /**
-     * Base calculation unit idle hours by timestamps
+     * Gets unit temp value from `j_temp` table
      * 
-     * @param timestamp $start
-     * @param timestamp $end
-     * @param Instance $inst
+     * @param int $start
+     * @param int $end
      * @param Instance $bInst
-     * @param string $fieldInst
-     * @param string $select
-     * @param int $timeIdleHours
-     * @param string|false $queryCondition
+     * @param string $param_type
+     * @param int $stepInterval
+     * 
      * @return array
      */
-    public function getUnitIdleHoursByTimestamps(
-        $start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition =false
-    )
+    public function getUnitTempValue($start, $end, $bInst, $param_type, $stepInterval)
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $className = str_replace(["\\"], ["/"], $bInst::className());
+        $tempIdleData = $dbHelper->getUnitLastTempItem($className, $param_type, $bInst->id);
+
+        if (!$tempIdleData || $tempIdleData['start'] != $start) {
+            $dbHelper->deleteUnitTempByEntityId($className, $param_type, $bInst->id);
+
+            return false;
+        }
+
+        if (empty($tempIdleData['other'])) {
+            $tempIdleData['other'] = $tempIdleData['start'];
+        }
+
+        $diff = $tempIdleData['end'] - $tempIdleData['other'];
+
+        if ($diff > 0 && $diff < $stepInterval) {
+            $tempIdleData['end'] -= $diff;
+            $tempIdleData['value'] -= ($diff / 3600);
+        }
+
+        return $tempIdleData;
+    }
+
+    /**
+     * Makes and returns unit timestamps
+     * 
+     * @param int $start
+     * @param int $end
+     * @param Instance $bInst
+     * @param double $timeIdleHours
+     * 
+     * @return array
+     */
+    public function makeUnitTimestamps($start, $end, $bInst, $timeIdleHours)
     {
         $stepInterval = $timeIdleHours * 3600;
-        $idleHours = 0.00;
-        $bhSummarySearch = new BalanceHolderSummarySearch();
 
         $nowTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
         $unitCreationTimestamp = $this->getUnitCreationTimestamp($bInst);
         $unitDeletionTimestamp = $this->getUnitDeletionTimestamp($bInst);
+        $dateTimeHelper = new DateTimeHelper();
+        $todayBeginning = $dateTimeHelper->getDayBeginningTimestamp($nowTimestamp);
 
         if ($start < $unitCreationTimestamp) {
             $start = $unitCreationTimestamp;
@@ -556,14 +588,38 @@ class EntityHelper implements EntityHelperInterface
             $endTimestamp = $unitDeletionTimestamp;
         }
 
-        $allHours = $bhSummarySearch->parseFloat(($end - $start) / 3600, 2);
+        return [
+            'start' => $start,
+            'end' => $end,
+            'endTimestamp' => $endTimestamp,
+            'todayBeginning' => $todayBeginning
+        ];
+    }
 
-        if ($start + $stepInterval > $end) {
-
-            return ['idleHours' => 0, 'allHours' => $allHours];
-        }
-
-        $dbHelper = Yii::$app->dbCommandHelper;
+    /**
+     * Unit idle hours base method
+     * 
+     * @param int $start
+     * @param int $end
+     * @param int $endTimestamp
+     * @param int $stepInterval
+     * @param double $idleHours
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param double $timeIdleHours
+     * @param sring|bool $queryCondition
+     * 
+     * @return array
+     */
+    public function getUnitIdleHoursByTimestampsBase(
+        $start, $end, $endTimestamp, $stepInterval, $idleHours,
+        $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition
+    )
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $item = null;
 
         for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
             $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, $inst, $bInst, $fieldInst, $select);
@@ -594,6 +650,84 @@ class EntityHelper implements EntityHelperInterface
                     continue;
                 }
             }
+        }
+
+        return [$idleHours, $item];
+    }
+
+    /**
+     * Base calculation unit idle hours by timestamps
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param double $timeIdleHours
+     * @param string|false $queryCondition
+     * @return array
+     */
+    public function getUnitIdleHoursByTimestamps(
+        $start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition =false
+    )
+    {
+        $paramType = "idleHours";
+        $idleHours = 0.00;
+        $stepInterval = $timeIdleHours * 3600;
+        $timestampsData = $this->makeUnitTimestamps($start, $end, $bInst, $timeIdleHours);
+        extract($timestampsData);
+
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        $allHours = $bhSummarySearch->parseFloat(($end - $start) / 3600, 2);
+
+        if ($start + $stepInterval > $end) {
+
+            return ['idleHours' => 0, 'allHours' => $allHours];
+        }
+
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $baseStart = $start;
+
+        $tempIdleData = $this->getUnitTempValue($start, $end, $bInst, $paramType, $stepInterval);
+
+        if ($tempIdleData && $start >= $todayBeginning) {
+            $idleHours = $tempIdleData['value'];
+            $start = $tempIdleData['end'];
+            $endTimestamp = $start + $stepInterval;
+
+            if ($start + $stepInterval > $end) {
+                $idleHours += ($idleHours/$allHours)*(($end - $start) / 3600);
+
+                if ($idleHours > $allHours) {
+                    $idleHours = $allHours;
+                }
+
+                return ['idleHours' => $idleHours, 'allHours' => $allHours];
+            }
+        }
+
+        list($idleHours, $record) = $this->getUnitIdleHoursByTimestampsBase(
+            $start, $end, $endTimestamp, $stepInterval, $idleHours,
+            $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition
+        );
+
+        if ($start >= $todayBeginning) {
+            $item = [
+                'value' => $idleHours, 
+                'start' => $baseStart,
+                'end' => $end,
+                'entity_id' => $bInst->id,
+                'type' => str_replace(["\\"], ["/"], $bInst::className()),
+                'param_type' => $paramType,
+                'other' => $record ? $record->created_at : null
+            ];
+
+            if ($tempIdleData) {
+                $item['id'] = $tempIdleData['id'];
+            }
+
+            $dbHelper->upsertUnitTempItem($item);
         }
 
         return ['idleHours' => $idleHours, 'allHours' => $allHours];

@@ -716,4 +716,21 @@ class WmMashine extends \yii\db\ActiveRecord
             $this->ping = $wm_mashine_data->ping;
         }
     }
+
+    /**
+     * @return bool
+     */
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+
+            return false;
+        }
+
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $className = str_replace(["\\"], ["/"], self::className());
+        $dbHelper->deleteUnitTempByEntityId($className, 'idleHours', $this->id);
+
+        return true;
+    }
 }

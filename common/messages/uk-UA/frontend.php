@@ -250,6 +250,7 @@ return [
     'he heater' => 'Помилка нагрівача (hE)',
     'History' => 'Історія',
     'Hour that date' => 'Час та дата',
+    'Hour that date log' => 'Час та дата лог',
     'ID device' => 'Ідентифікатор пристрою',
     'ID' => 'Номер',
     'Idle Damages' => 'Сума збитків',
