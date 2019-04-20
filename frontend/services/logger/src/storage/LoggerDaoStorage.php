@@ -2,6 +2,9 @@
 
 namespace frontend\services\logger\src\storage;
 
+use common\models\User;
+use frontend\models\Company;
+use Yii;
 use yii\db\Connection;
 
 /**
@@ -31,7 +34,11 @@ class LoggerDaoStorage implements StorageInterface
      */
     public function load()
     {
-        return $this->connection->createCommand('SELECT * FROM logger order by created_at desc')
+        $user = User::find()->where(['id' => Yii::$app->user->id])->one();
+
+        return $this->connection->createCommand(
+            'SELECT * FROM logger WHERE company_id=:company_id order by created_at desc')
+            ->bindValue(':company_id', $user->company_id)
             ->queryAll();
     }
 

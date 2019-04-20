@@ -227,11 +227,14 @@ class NetManagerController extends \yii\web\Controller
 
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
             $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
-            $isValid = $user->validate(false);
+            $isValid = $user->validate();
             $isValid = $profile->validate(false) && $isValid;
             if ($isValid) {
                 $user->save();
                 $profile->save(false);
+                $this->service->createLog($user);
+                $this->service->createLog($profile);die;
+                //        $this->service->createLog($profile);
                 return $this->redirect(['/net-manager/employees']);
             }
         }
@@ -264,6 +267,8 @@ class NetManagerController extends \yii\web\Controller
 
         $model = $this->findModel($id, new User());
         $model->softDelete();
+
+        $this->service->createLog($model);
 
         return $this->redirect("/net-manager/employees");
     }

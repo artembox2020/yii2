@@ -220,15 +220,6 @@ class DefaultController extends Controller
 
                 $user->save(false);
 
-                $messageLog = [
-                    'status' => 'Получен платеж.',
-                    'post' => $model
-                ];
-
-                $a = Yii::info($messageLog, '');
-
-                Debugger::dd($a);
-
                 $this->service->createLog($user);
                 
                 $profile = UserProfile::findOne($user->id);
@@ -308,7 +299,8 @@ class DefaultController extends Controller
 
                 $user = User::findOne(Yii::$app->user->id);
                 $user->company_id = $get['Company'];
-                $user->update();
+
+                $user->update(false);
 
                 return $this->redirect('tt');
             }

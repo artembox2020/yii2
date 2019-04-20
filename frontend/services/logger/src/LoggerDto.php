@@ -9,13 +9,18 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
+/**
+ * Class LoggerDto
+ * @package frontend\services\logger\src
+ */
 class LoggerDto implements LoggerDtoInterface
 {
     const MINUS_ONE = -1;
     const ZERO = 0;
     const ONE = 1;
-    const FORMAT = 'Y-m-d H:i:s';
+    const FORMAT = 'H:i:s Y-m-d';
 
+    public $company_id;
     public $name;
     public $number;
     public $event;
@@ -28,7 +33,7 @@ class LoggerDto implements LoggerDtoInterface
     public function createDto($data)
     {
        return $dto = [
-            'company_id' => $data->company_id,
+            'company_id' => $this->getWhoIs()->company_id,
             'type' => $this->getClassName($data),
             'name' => $this->getName($data),
             'number' => $this->getNumber($data),
@@ -36,10 +41,16 @@ class LoggerDto implements LoggerDtoInterface
             'new_state' => $this->getNewState($data),
             'old_state' => $this->getOldState($data),
             'address' => $this->getAddress($data),
-            'who_is' => $this->getWhoIs(),
+            'who_is' => $this->getWhoIs()->username,
             'created_at' => time(),
             'is_deleted' => self::ZERO,
         ];
+    }
+
+
+    public function getCompanyId()
+    {
+        return $this->getWhoIs()->company_id;
     }
 
     /**
@@ -56,7 +67,7 @@ class LoggerDto implements LoggerDtoInterface
      * @param $object
      * @return mixed
      */
-    public function getName($object)
+    public function getName($object): string
     {
         if (isset($object->username)) {
             $this->name = $object->username;
@@ -78,14 +89,22 @@ class LoggerDto implements LoggerDtoInterface
         return $this->name;
     }
 
+    /**
+     * @param $object
+     * @return string
+     * @throws \yii\db\Exception
+     */
     public function getAddress($object)
     {
         if ($this->getClassName($object) == 'User') {
             return $this->address = 'empty';
         }
 
-        $params = [':id' => $object->id, ':is_deleted' => false];
+        if ($this->getClassName($object) == 'UserForm') {
+            return $this->address = 'empty';
+        }
 
+        $params = [':id' => $object->id, ':is_deleted' => false];
         $address = Yii::$app->db->createCommand('
                         SELECT * 
                         FROM address_balance_holder 
@@ -96,9 +115,17 @@ class LoggerDto implements LoggerDtoInterface
         return $address['address'];
     }
 
+    /**
+     * @param $object
+     * @return string
+     */
     public function getNumber($object)
     {
         if ($this->getClassName($object) == 'User') {
+            $this->number = $object->id;
+        }
+
+        if ($this->getClassName($object) == 'UserForm') {
             $this->number = $object->id;
         }
 
@@ -109,6 +136,11 @@ class LoggerDto implements LoggerDtoInterface
         return $this->number;
     }
 
+    /**
+     * @param $object
+     * @return string
+     * @throws \Exception
+     */
     public function getEvent($object)
     {
         $cur_time = date(self::FORMAT);
@@ -119,17 +151,27 @@ class LoggerDto implements LoggerDtoInterface
         if ($difference < self::ONE) {
             $this->event = 'New';
         } else {
-            $this->event = 'Old';
+            if ($object->is_deleted == self::ONE) {
+                $this->event = 'Delete';
+            } else {
+                $this->event = 'Update';
+            }
         }
 
         return $this->event;
     }
 
+    /**
+     * @param $object
+     * @return string
+     * @throws \Exception
+     */
     public function getOldState($object)
     {
         if ($this->getEvent($object) == 'New') {
             $this->old_state = '---';
         } else {
+            Debugger::d($object->attributes);
             $this->old_state = 'getOldState';
         }
         return $this->old_state;
@@ -145,7 +187,10 @@ class LoggerDto implements LoggerDtoInterface
     {
         $this->who_is = User::find()
             ->andWhere(['id' => Yii::$app->user->id])
+            ->limit(1)
             ->one();
-        return $this->who_is->username;
+
+//        Debugger::dd($this->who_is->company_id);
+        return $this->who_is;
     }
 }
