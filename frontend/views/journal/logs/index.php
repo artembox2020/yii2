@@ -21,7 +21,7 @@ use \frontend\models\AddressBalanceHolder;
     'columns' => [
         [
             'attribute' => 'unix_time_offset',
-            'label' => Yii::t('frontend', 'Hour that date'),
+            'label' => Yii::t('frontend', 'Hour that date log'),
             'value' => function($model) use ($searchModel)
             {
 
