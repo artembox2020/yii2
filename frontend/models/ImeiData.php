@@ -72,7 +72,7 @@ class ImeiData extends \yii\db\ActiveRecord
         '4' => 'ErrLogFormat',
         '5' => 'ErrSettings',
         '6' => 'Err6LowPan',
-        '7' => 'OK'
+        '7' => 'Terminal works'
     ];
 
     public $status_bill_acceptor = [
