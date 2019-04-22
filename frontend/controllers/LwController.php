@@ -56,6 +56,9 @@ class LwController extends Controller
                 $wml->intensive_wash = $LwmDto->intensive_wash;
                 $wml->is_deleted = false;
                 $wml->save();
+
+                $imei->ping = time();
+                $imei->save();
                 echo 'wml data save!';
             } else {
                 echo 'Imei not Active';exit;

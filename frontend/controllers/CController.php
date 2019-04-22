@@ -627,6 +627,9 @@ class CController extends Controller
                     $cbl->coin_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->coin_face_values);
                     $cbl->is_deleted = false;
                     $cbl->save();
+
+                    $imei->ping = time();
+                    $imei->save();
                     echo 'cbl encashment data save!';
                     exit;
                 } else {
