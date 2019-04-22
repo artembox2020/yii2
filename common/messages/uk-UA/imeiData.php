@@ -21,5 +21,6 @@ return [
     'Event Bill Acceptance' => 'стан купюроприйомника',
     'Imei not active' => 'Імей не активний',
     'Imei not exists' => 'Імей не існує',
-    'OK' => 'OK'
+    'OK' => 'OK',
+    'This terminal is not online' => 'Такого терміналу немає в мережі'
 ];

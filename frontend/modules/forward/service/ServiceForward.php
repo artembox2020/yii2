@@ -105,7 +105,7 @@ class ServiceForward implements ServiceForwardInterface
         $this->result['wash_machine'] = $this->array;
 
         if (!$address) {
-            $this->result = ['address' => Yii::t('common', 'Not found')];
+            $this->result = ['address' => Yii::t('imeiData', 'This terminal is not online')];
         }
 
         return $this->result;
