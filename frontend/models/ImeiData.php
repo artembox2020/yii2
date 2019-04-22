@@ -63,6 +63,8 @@ class ImeiData extends \yii\db\ActiveRecord
     const TYPE_BILL_ERRBILLJAMMED = 4;
     const TYPE_BILL_ERRUNEXP = 5;
     const TYPE_BILL_ERRVALIDFULL = 6;
+    
+    const TYPE_DATE_FORMAT = 'd.m.Y H:i';
 
     public $status_central_board = [
         '1' => 'ErrFram',
@@ -176,7 +178,9 @@ class ImeiData extends \yii\db\ActiveRecord
      */
     public function getImeiRelation()
     {
-        return $this->hasOne(Imei::className(), ['id' => 'imei_id']);
+        $query = Imei::find()->andWhere(['id' => $this->imei_id])->limit(1);
+
+        return QueryOptimizer::getItemByQuery($query);
     }
 
     public static function find()
@@ -263,13 +267,23 @@ class ImeiData extends \yii\db\ActiveRecord
     /**
      * Gets last encashment date  and sum, before timestamp accepted
      *
-     * @param $imeiId
-     * @param $timestampBefore
+     * @param int $imeiId
+     * @param int $timestampBefore
      * @return array|bool
      */
-    public function getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore)
+    public function getDateAndSumLastEncashmentByImeiId(int $imeiId, int $timestampBefore)
     {
-        $query = ImeiData::find()->andWhere(['imei_id' => $imeiId])
+        $cbLogSearch = new CbLogSearch();
+        $data = $cbLogSearch->getLastEncashmentInfoByImeiId($imeiId, $timestampBefore);
+
+        if (!empty($data['created_at'])) {
+
+            return $data;
+        }
+
+        return false;
+
+        /*$query = ImeiData::find()->andWhere(['imei_id' => $imeiId])
                                  ->andWhere(['money_in_banknotes' => 0])
                                  ->andWhere(['<', 'created_at', $timestampBefore])
                                  ->orderBy(['created_at' => SORT_DESC])
@@ -295,6 +309,7 @@ class ImeiData extends \yii\db\ActiveRecord
         }
 
         return false;
+        */
     }
 
     /**
@@ -336,7 +351,7 @@ class ImeiData extends \yii\db\ActiveRecord
         $dateSumLastEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
         if ($dateSumLastEncashment) {
             $dateSumPreLastEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $dateSumLastEncashment['created_at']);
-            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumPreLastEncashment['created_at'], 'short');
+            $dateEncashment = $dateEncashment = date(self::TYPE_DATE_FORMAT, $dateSumPreLastEncashment['created_at']);
 
             return  $dateEncashment . '<br>' . $dateSumPreLastEncashment['money_in_banknotes'] . ' грн';
         }
@@ -356,7 +371,7 @@ class ImeiData extends \yii\db\ActiveRecord
         $dateSumEncashment = $this->getDateAndSumLastEncashmentByImeiId($imeiId, $timestampBefore);
 
         if ($dateSumEncashment) {
-            $dateEncashment =  \Yii::$app->formatter->asDate($dateSumEncashment['created_at'], 'short');
+            $dateEncashment = date(self::TYPE_DATE_FORMAT, $dateSumEncashment['created_at']);
 
             return  $dateEncashment.'<br>'.$dateSumEncashment['money_in_banknotes'].' грн';
         }

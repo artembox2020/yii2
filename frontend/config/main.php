@@ -52,6 +52,12 @@ $config = [
         ],
         'urlManager' => require __DIR__ . '/_urlManager.php',
         'cache' => require __DIR__ . '/_cache.php',
+        'dbCommandHelper' => [
+            'class' => 'frontend\components\db\DbCommandHelper'
+        ],
+        'dbCommandHelperOptimizer' => [
+            'class' => 'frontend\components\db\DbCommandHelperOptimizer'
+        ],
 //        'mailer' => [
 //            'class' => 'yii\swiftmailer\Mailer',
 ////            One more suggestion is to use port "465" and encryption as "ssl" instead of port "587", encryption "tls".
@@ -82,7 +88,7 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        'allowedIPs' => ['127.0.0.1', '::1', '95.47.114.243'],
+        'allowedIPs' => ['127.0.0.1', '::1', '95.47.114.243', '134.249.146.11'],
     ];
 }
 

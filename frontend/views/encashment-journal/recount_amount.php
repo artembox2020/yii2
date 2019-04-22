@@ -32,7 +32,19 @@
 
                         var hidden = currentRa.closest('tr').querySelector('td.cell-difference input[type=hidden]');
                         var difference = currentRa.closest('tr').querySelector('td.cell-difference span');
-                        difference.innerHTML = parseFloat(hidden.value) - parseInt(currentRa.value);
+                        var diff = parseFloat(hidden.value) - parseInt(currentRa.value);
+                        difference.innerHTML = diff;
+
+                        if (diff > 0) {
+                            difference.classList.remove('difference');
+                            difference.classList.add('difference-green');
+                        } else if (diff < 0) {
+                            difference.classList.add('difference');
+                            difference.classList.remove('difference-green');
+                        } else {
+                            difference.classList.remove('difference');
+                            difference.classList.remove('difference-green');
+                        }
                     } else {
                         console.error(AjaxHandler.ajax.statusText);
                     }

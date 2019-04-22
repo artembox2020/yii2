@@ -93,8 +93,7 @@ class NetManagerController extends \yii\web\Controller
     {
 
         if (!\Yii::$app->user->can('net-manager/index', ['class'=>static::class])) {
-            $session = Yii::$app->session;
-            $session->setFlash('AccessDenied', Yii::t('common', 'Access denied'));
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
 
@@ -279,7 +278,7 @@ class NetManagerController extends \yii\web\Controller
     private function accessDenied()
     {
         return Yii::$app->session->setFlash(
-            'error',
+            'AccessDenied',
             Yii::t('frontend', 'Access denied')
         );
     }

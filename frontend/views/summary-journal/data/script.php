@@ -36,7 +36,7 @@
         echo "<script>Builder.makeJournalByIdles();</script>";
     } else {
         echo "<script>Builder.eraseAll();</script>";
-        \Yii::$app->getSession()->setFlash('error', 'Access denied');
+        \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
         echo \Yii::$app->view->render('@app/modules/account/views/denied/access-denied');
     }
 ?>

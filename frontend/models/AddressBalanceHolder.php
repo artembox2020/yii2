@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use frontend\services\globals\Entity;
+use frontend\services\globals\DateTimeHelper;
 
 /**
  * This is the model class for table "address_balance_holder".
@@ -69,6 +70,8 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['name', 'trim'],
+            ['name', 'unique', 'targetClass' => AddressBalanceHolder::className()],
             ['date_inserted', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             [['company_id', 'balance_holder_id', 'number_of_floors', 'created_at', 'updated_at', 'deleted_at', 'number_of_citizens'], 'integer'],
@@ -307,5 +310,27 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
             '/monitoring/render-terminal-data-by-imei-id',
             ['imeiId' => $imei->id, 'searchModel' => $imeiDataSearch]
         );
+    }
+
+    /**
+     * Gets income by the current day
+     *
+     */
+    public function getCurrentDayIncome()
+    {
+        $addressImeiData = new AddressImeiData();
+        $imei = $addressImeiData->getCurrentImeiIdByAddress($this->id, $this->status);
+        
+        if (!$imei) {
+
+            return 0;
+        }
+
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        $dateTimeHelper = new DateTimeHelper();
+        $start = $dateTimeHelper->getTodayBeginningTimestamp();
+        $end = $dateTimeHelper->getRealUnixTimeOffset(0);
+
+        return $bhSummarySearch->getIncomeByImeiAndTimestamps($start, $end, $imei, $this);
     }
 }

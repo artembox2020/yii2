@@ -80,7 +80,7 @@ class AddressBalanceHolderController extends Controller
             $balanceHolderId, new BalanceHolder()
         );
         
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->created_at = Time();
             $model->status = AddressBalanceHolder::STATUS_FREE;
             $model->is_deleted = false;

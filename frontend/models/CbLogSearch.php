@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
+use frontend\services\globals\QueryOptimizer;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -759,6 +760,9 @@ class CbLogSearch extends CbLog
         if (($difference = $this->getDifference($model)) < 0) {
 
             return "<span class='difference'>".$difference."</span>";
+        } elseif ($difference > 0) {
+
+            return "<span class='difference-green'>".$difference."</span>";
         }
 
         return "<span>".$difference."</span>";
@@ -1092,5 +1096,56 @@ class CbLogSearch extends CbLog
                 'dataProvider' => $dataProvider
             ]
         );
+    }
+
+    /**
+     * Gets last encashment sum and date, as array, before timestampBefore
+     * 
+     * @param int $imeiId
+     * @param int $timestampBefore
+     * @return array
+     */
+    public function getLastEncashmentInfoByImeiId(int $imeiId, int $timestampBefore): array
+    {
+        $query = (new \yii\db\Query())
+            ->select([
+                'id',
+                'unix_time_offset',
+                'address_id',
+                'imei_id',
+                'imei',
+                'status',
+                'banknote_face_values',
+                'coin_face_values'
+            ])
+            ->from('cb_encashment')
+            ->andWhere(['status' => self::TYPE_ENCASHMENT_STATUS])
+            ->andWhere(['imei_id' => $imeiId])
+            ->andWhere(['<', 'unix_time_offset', $timestampBefore])
+            ->orderBy(['unix_time_offset' => SORT_DESC])
+            ->limit(1);
+
+        $model = QueryOptimizer::getItemByQuery($query);
+        $sum = $this->getNominalsTotal($model);
+        $sum += $this->getCoinNominalsTotal($model);
+
+        return ['created_at' => $model['unix_time_offset'], 'money_in_banknotes' => $sum];
+    }
+
+    /**
+     * Gets date by timestamp, using UTC timezone
+     * 
+     * @param int $timestamp
+     * @param string $dateFormat
+     * @return string
+     */
+    public function getDateByTimestamp($timestamp, $dateFormat)
+    {
+        $currentTimezone = date_default_timezone_get();
+        date_default_timezone_set('UTC');
+        $date = date($dateFormat, $timestamp);
+        date_default_timezone_set($currentTimezone);
+
+        return $date;
     }
 }

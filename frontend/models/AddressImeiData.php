@@ -143,6 +143,7 @@ class AddressImeiData extends ActiveRecord
         $query = AddressImeiData::find();
         $itemQuery = $query->andWhere(['address_id' => $addressId])
                       ->andWhere(['>', 'created_at', $timestamp])
+                      ->andWhere(['not', ['imei_id' => null]])
                       ->orderBy(['created_at' => SORT_ASC])
                       ->limit(1);
 
@@ -160,6 +161,7 @@ class AddressImeiData extends ActiveRecord
         $query = AddressImeiData::find();
         $query = $query->andWhere(['address_id' => $addressId])
                        ->andWhere(['<', 'created_at', $nextDayTimestamp])
+                       ->andWhere(['not', ['imei_id' => null]])
                        ->orderBy(['created_at' => SORT_DESC])
                        ->limit(1);
 
@@ -179,6 +181,7 @@ class AddressImeiData extends ActiveRecord
         $query = AddressImeiData::find();
         $query = $query->andWhere(['imei_id' => $item->imei_id])
                        ->andWhere(['<', 'created_at', $nextDayTimestamp])
+                       ->andWhere(['not', ['imei_id' => null]])
                        ->orderBy(['created_at' => SORT_DESC])
                        ->limit(1);
 
@@ -251,6 +254,7 @@ class AddressImeiData extends ActiveRecord
     {
         $query = AddressImeiData::find();
         $item = $query->andWhere(['imei_id' => $imeiId])
+                      ->andWhere(['not', ['imei_id' => null]])
                       ->andWhere(['>', 'created_at', $timestamp])
                       ->orderBy(['created_at' => SORT_ASC])
                       ->limit(1)
@@ -265,6 +269,7 @@ class AddressImeiData extends ActiveRecord
 
         $query = AddressImeiData::find();
         $item = $query->andWhere(['imei_id' => $imeiId])
+                      ->andWhere(['not', ['imei_id' => null]])
                       ->andWhere(['<', 'created_at', $nextDayTimestamp])
                       ->orderBy(['created_at' => SORT_DESC])
                       ->limit(1)
@@ -282,6 +287,7 @@ class AddressImeiData extends ActiveRecord
         $query = AddressImeiData::find();
         $itemImei = $query->andWhere(['address_id' => $item->address_id])
                       ->andWhere(['<', 'created_at', $nextDayTimestamp])
+                      ->andWhere(['not', ['imei_id' => null]])
                       ->orderBy(['created_at' => SORT_DESC])
                       ->limit(1)
                       ->one();
@@ -442,6 +448,7 @@ class AddressImeiData extends ActiveRecord
             if (empty($queryInfo['query'])) {
                 continue;
             }
+            
 
             $mashines = QueryOptimizer::getItemsByQuery($queryInfo['query']);
             $mashineIds = array_merge($mashineIds, array_diff(ArrayHelper::getColumn($mashines, 'id'), $mashineIds));

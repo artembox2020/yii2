@@ -5,6 +5,7 @@ use yii\db\ActiveRecord;
 use frontend\services\globals\Entity;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\QueryOptimizer;
+use frontend\services\globals\DateTimeHelper;
 use Yii;
 
 /**
@@ -40,7 +41,7 @@ class Jsummary extends ActiveRecord
         return [
             [['imei_id', 'start_timestamp', 'end_timestamp'], 'required'],
             [['imei_id', 'created', 'active', 'deleted', 'all', 'encashment_date'], 'integer'],
-            [['income', 'idleHours', 'allHours', 'encashment_sum'] , 'double']
+            [['income', 'idleHours', 'allHours', 'damageIdleHours', 'encashment_sum'] , 'double']
         ];
     }
 
@@ -106,12 +107,14 @@ class Jsummary extends ActiveRecord
         $allHours = isset($parts[5]) ? $parts[5] : null;
         $encashment_date = isset($parts[6]) ? $parts[6] : null;
         $encashment_sum = isset($parts[7]) ? explode("`", $parts[7])[0] : null;
+        $damageIdleHours = isset($parts[8]) ? explode("`", $parts[8])[0] : null;
 
         return [
             'created' => $created,
             'deleted' => $deleted,
             'income' => $income,
             'idleHours' => $idleHours,
+            'damageIdleHours' => $damageIdleHours,
             'allHours' => $allHours,
             'encashment_date' => $encashment_date,
             'encashment_sum' => $encashment_sum
@@ -226,6 +229,7 @@ class Jsummary extends ActiveRecord
                         'deleted' => 0,
                         'all' => 0,
                         'idleHours' => null,
+                        'damageIdleHours' => null,
                         'allHours' => null,
                         'encashment_date' => null,
                         'encashment_sum' => null,
@@ -245,6 +249,7 @@ class Jsummary extends ActiveRecord
                         'active' => $item->active,
                         'all'=> $item->all,
                         'idleHours' => $item->idleHours,
+                        'damageIdleHours' => $item->damageIdleHours,
                         'allHours' => $item->allHours,
                         'encashment_date' => $item->encashment_date,
                         'encashment_sum' => $item->encashment_sum,
@@ -422,5 +427,47 @@ class Jsummary extends ActiveRecord
         $query = AddressBalanceHolder::find()->andWhere(['id' => $id])->limit(1);
 
         return QueryOptimizer::getItemByQuery($query);
+    }
+
+    /**
+     * Gets income by address id and timestamps
+     *
+     * @param int $start
+     * @param int $end
+     * @return int $addressId
+     */
+    public function getIncomeByAddressIdAndTimestamps($start, $end, $addressId)
+    {
+        $dateTimeHelper = new DateTimeHelper();
+        $incomeTotal = 0;
+        $todayTimestamp = $dateTimeHelper->getRealUnixTimeOffset(0);
+        $todayTimestamp = $dateTimeHelper->getDayBeginningTimestamp($todayTimestamp);
+        $month = date('m', $start);
+        $year = date('Y', $start);
+        $addressQuery = AddressBalanceHolder::find()->where(['id' => $addressId])->limit(1);
+        $address = QueryOptimizer::getItemByQuery($addressQuery);
+
+        $addressImeiData = new AddressImeiData();
+
+        $nextMonthBeginning = $dateTimeHelper->getNextMonthBeginningByTimestamp($start);
+        $wmMashinesCount = $addressImeiData->getWmMashinesCountByYearMonth($year, $month, $address);
+
+        if ($nextMonthBeginning < $end) {
+            $incomeNextMonth = $this->getIncomeByAddressIdAndTimestamps($nextMonthBeginning, $end, $addressId);
+            $incomeThisMonth = $this->getIncomeByAddressIdAndTimestamps($start, $nextMonthBeginning, $addressId);
+
+            return $incomeThisMonth + $incomeNextMonth;
+        } elseif ($wmMashinesCount == 0) {
+
+            return 0;
+        }
+
+        $incomes = $this->getIncomes($start, $end, $todayTimestamp, $addressId, false);
+
+        foreach ($incomes as $day => $income) {
+            $incomeTotal += $income['income'] ?? 0;
+        }
+
+        return $incomeTotal;
     }
 }

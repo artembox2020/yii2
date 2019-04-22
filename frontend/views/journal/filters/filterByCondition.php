@@ -15,7 +15,9 @@ $filterConditions = JlogSearch::getAccessibleFiltersByColumnName($columnName);
     <div class="filter-group">
         <div class="form-group">
             <?= Html::dropDownList("filterCondition[{$columnName}]", 
-                    $params['filterCondition'][$columnName], $filterConditions
+                    $params['filterCondition'][$columnName],
+                    $filterConditions,
+                    ['class' => 'form-control']
                 );
             ?>
         </div>

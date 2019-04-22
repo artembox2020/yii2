@@ -4,6 +4,17 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
 use frontend\services\custom\Debugger;
+use frontend\storages\GoogleGraphStorage;
+use frontend\storages\MashineStatStorage;
+use frontend\models\WmMashineDataSearch;
+use frontend\services\globals\DateTimeHelper;
+use frontend\models\Jsummary;
+use frontend\models\BalanceHolder;
+use frontend\models\BalanceHolderSummarySearch;
+use frontend\models\AddressBalanceHolder;
+use frontend\services\globals\EntityHelper;
+use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
 /* @var $users common\models\User */
@@ -74,4 +85,37 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="balance-holders-list">
         <?= Yii::$app->view->render('balance_holders', ['balanceHolders' => $balanceHolders, 'balanceHoldersData' => $balanceHoldersData]) ?>
     </div>
+
+    <br>
+    <b><?= Yii::t('graph', 'WM Mashine Statistics'); ?></b>
+
+    <div class="chart-container graph-block">
+        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+    </div>
+
+    <?php echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container',
+            'action' => '/dashboard/all-green-grey-work-error', 
+            'active' => 'current day'
+        ]);
+    ?>
+
+    <b><?= Yii::t('graph', 'Balance Holders Incomes'); ?></b>
+    <br>
+
+    <div class="chart-container-bh graph-block">
+        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+    </div>
+
+    <?php echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container-bh',
+            'action' => '/dashboard/balance-holder-incomes', 
+            'active' => 'current day'
+        ]);
+    ?>
 </div>
+<div class="margin-bottom-274"></div>

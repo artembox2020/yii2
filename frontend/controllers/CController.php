@@ -473,6 +473,7 @@ class CController extends Controller
     public function updateWmMashine($wm_mashine, $wm_mashine_data)
     {
         $wm_mashine_data->mashine_id = $wm_mashine->id;
+        $wm_mashine->setLastPing($wm_mashine_data);
         $wm_mashine->type_mashine = $wm_mashine_data->type_mashine;
         $wm_mashine->number_device = $wm_mashine_data->number_device;
         $wm_mashine->level_signal = $wm_mashine_data->level_signal;
@@ -482,7 +483,6 @@ class CController extends Controller
         $wm_mashine->current_status = $wm_mashine_data->current_status;
         $wm_mashine->display = $wm_mashine_data->display;
         $wm_mashine_data->is_deleted = false;
-        $wm_mashine->ping = $wm_mashine_data->ping;
         $wm_mashine->is_deleted = false;
         $wm_mashine->status = WmMashine::STATUS_ACTIVE;
         $wm_mashine->update(false);
@@ -564,7 +564,7 @@ class CController extends Controller
     public function disableNotAvailableWmMashines($wm_mashine_ids, $imei_id)
     {
         $entity = new Entity();
-        $query = $entity->getUnitsQueryPertainCompany(new WmMashine());
+        $query = WmMashine::find();
         $query = $query->andFilterWhere(['imei_id' => $imei_id]);
         $query = $query->andFilterWhere(['not in', 'id', $wm_mashine_ids]);
 
@@ -573,7 +573,7 @@ class CController extends Controller
             $mashine->save(false);
         }
     }
-    
+
     /**
      * Disables GdMashines, except ones in the list
      * 

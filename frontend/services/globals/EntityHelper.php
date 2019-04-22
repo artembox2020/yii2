@@ -510,36 +510,75 @@ class EntityHelper implements EntityHelperInterface
     }
 
     /**
-     * Calculates unit idle hours bytimestamps
+     * Gets unit temp value from `j_temp` table
      * 
-     * @param timestamp $start
-     * @param timestamp $end
-     * @param Instance $inst
+     * @param int $start
+     * @param int $end
      * @param Instance $bInst
-     * @param string $fieldInst
-     * @param string $select
-     * @param int $timeIdleHours
-     * @return decimal
+     * @param string $param_type
+     * @param int $stepInterval
+     * 
+     * @return array
      */
-    public function getUnitIdleHoursByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours)
+    public function getUnitTempValue($start, $end, $bInst, $param_type, $stepInterval)
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $className = str_replace(["\\"], ["/"], $bInst::className());
+        $tempIdleData = $dbHelper->getUnitLastTempItem($className, $param_type, $bInst->id);
+
+        if (!$tempIdleData || $tempIdleData['start'] != $start) {
+            $dbHelper->deleteUnitTempByEntityId($className, $param_type, $bInst->id);
+
+            return false;
+        }
+
+        if (empty($tempIdleData['other'])) {
+            $tempIdleData['other'] = $tempIdleData['start'];
+        }
+
+        $diff = $tempIdleData['end'] - $tempIdleData['other'];
+
+        if ($diff > 0 && $diff < $stepInterval) {
+            $tempIdleData['end'] -= $diff;
+            $tempIdleData['value'] -= ($diff / 3600);
+        }
+
+        return $tempIdleData;
+    }
+
+    /**
+     * Makes and returns unit timestamps
+     * 
+     * @param int $start
+     * @param int $end
+     * @param Instance $bInst
+     * @param double $timeIdleHours
+     * 
+     * @return array
+     */
+    public function makeUnitTimestamps($start, $end, $bInst, $timeIdleHours)
     {
         $stepInterval = $timeIdleHours * 3600;
-        $idleHours = 0.00;
-        $bhSummarySearch = new BalanceHolderSummarySearch();
 
         $nowTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
         $unitCreationTimestamp = $this->getUnitCreationTimestamp($bInst);
         $unitDeletionTimestamp = $this->getUnitDeletionTimestamp($bInst);
+        $dateTimeHelper = new DateTimeHelper();
+        $todayBeginning = $dateTimeHelper->getDayBeginningTimestamp($nowTimestamp);
 
         if ($start < $unitCreationTimestamp) {
             $start = $unitCreationTimestamp;
         }
 
-        $endTimestamp = $start + $stepInterval;
-
         if ($end > $nowTimestamp) {
             $end = $nowTimestamp;
         }
+
+        if ($end > $unitDeletionTimestamp) {
+            $end = $unitDeletionTimestamp;
+        }
+
+        $endTimestamp = $start + $stepInterval;
 
         if ($endTimestamp > $nowTimestamp) {
             $endTimestamp = $nowTimestamp;
@@ -549,10 +588,97 @@ class EntityHelper implements EntityHelperInterface
             $endTimestamp = $unitDeletionTimestamp;
         }
 
-        if ($end > $unitDeletionTimestamp) {
-            $end = $unitDeletionTimestamp;
+        return [
+            'start' => $start,
+            'end' => $end,
+            'endTimestamp' => $endTimestamp,
+            'todayBeginning' => $todayBeginning
+        ];
+    }
+
+    /**
+     * Unit idle hours base method
+     * 
+     * @param int $start
+     * @param int $end
+     * @param int $endTimestamp
+     * @param int $stepInterval
+     * @param double $idleHours
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param double $timeIdleHours
+     * @param sring|bool $queryCondition
+     * 
+     * @return array
+     */
+    public function getUnitIdleHoursByTimestampsBase(
+        $start, $end, $endTimestamp, $stepInterval, $idleHours,
+        $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition
+    )
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $item = null;
+
+        for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
+            $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, $inst, $bInst, $fieldInst, $select);
+
+            if ($queryCondition) {
+                $dbHelper->addQueryString($queryCondition);
+            }
+
+            if ($dbHelper->getCount() > 0) {
+                $dbHelper->addQueryString("ORDER BY created_at DESC LIMIT 1 ");
+                $item = $dbHelper->getItem();
+                $item = (object)$item;
+                $timestamp = $item->created_at - $stepInterval + 1;
+                continue;
+            } else {
+                $dbHelper->getBaseUnitQueryByTimestamps($endTimestamp, $end, $inst, $bInst, $fieldInst, $select);
+
+                if ($dbHelper->getCount() == 0) {
+                    $idleHours += ((float)$end - $timestamp) / 3600;
+                    break;
+                } else {
+                    $dbHelper->addQueryString("ORDER BY created_at ASC LIMIT 1 ");
+                    $item = $dbHelper->getItem();
+                    $item = (object)$item;
+                    $timeDiff = ($item->created_at < $end ? $item->created_at : $end) - $endTimestamp;
+                    $idleHours += $timeIdleHours + ((float)$timeDiff / 3600);
+                    $timestamp = $item->created_at - $stepInterval + 1;
+                    continue;
+                }
+            }
         }
 
+        return [$idleHours, $item];
+    }
+
+    /**
+     * Base calculation unit idle hours by timestamps
+     * 
+     * @param timestamp $start
+     * @param timestamp $end
+     * @param Instance $inst
+     * @param Instance $bInst
+     * @param string $fieldInst
+     * @param string $select
+     * @param double $timeIdleHours
+     * @param string|false $queryCondition
+     * @return array
+     */
+    public function getUnitIdleHoursByTimestamps(
+        $start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition =false
+    )
+    {
+        $paramType = "idleHours";
+        $idleHours = 0.00;
+        $stepInterval = $timeIdleHours * 3600;
+        $timestampsData = $this->makeUnitTimestamps($start, $end, $bInst, $timeIdleHours);
+        extract($timestampsData);
+
+        $bhSummarySearch = new BalanceHolderSummarySearch();
         $allHours = $bhSummarySearch->parseFloat(($end - $start) / 3600, 2);
 
         if ($start + $stepInterval > $end) {
@@ -560,25 +686,48 @@ class EntityHelper implements EntityHelperInterface
             return ['idleHours' => 0, 'allHours' => $allHours];
         }
 
-        for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
-            $query = $this->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, $inst, $bInst, $fieldInst, $select);
-            if (QueryOptimizer::getItemsCountByQuery($query) > 0) {
-                $item = $query->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
-                $timestamp = $item->created_at - $stepInterval + 1;
-                continue;
-            } else {
-                $query = $this->getBaseUnitQueryByTimestamps($endTimestamp, $end, $inst, $bInst, $fieldInst, $select);
-                if (QueryOptimizer::getItemsCountByQuery($query) == 0) {
-                    $idleHours += ((float)$end - $timestamp) / 3600;
-                    break;
-                } else {
-                    $item = $query->orderBy(['created_at' => SORT_ASC])->limit(1)->one();
-                    $timeDiff = ($item->created_at < $end ? $item->created_at : $end) - $endTimestamp;
-                    $idleHours += $timeIdleHours + ((float)$timeDiff / 3600);
-                    $timestamp = $item->created_at - $stepInterval + 1;
-                    continue;
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $baseStart = $start;
+
+        $tempIdleData = $this->getUnitTempValue($start, $end, $bInst, $paramType, $stepInterval);
+
+        if ($tempIdleData && $start >= $todayBeginning) {
+            $idleHours = $tempIdleData['value'];
+            $start = $tempIdleData['end'];
+            $endTimestamp = $start + $stepInterval;
+
+            if ($start + $stepInterval > $end) {
+                $idleHours += ($idleHours/$allHours)*(($end - $start) / 3600);
+
+                if ($idleHours > $allHours) {
+                    $idleHours = $allHours;
                 }
+
+                return ['idleHours' => $idleHours, 'allHours' => $allHours];
             }
+        }
+
+        list($idleHours, $record) = $this->getUnitIdleHoursByTimestampsBase(
+            $start, $end, $endTimestamp, $stepInterval, $idleHours,
+            $inst, $bInst, $fieldInst, $select, $timeIdleHours, $queryCondition
+        );
+
+        if ($start >= $todayBeginning) {
+            $item = [
+                'value' => $idleHours, 
+                'start' => $baseStart,
+                'end' => $end,
+                'entity_id' => $bInst->id,
+                'type' => str_replace(["\\"], ["/"], $bInst::className()),
+                'param_type' => $paramType,
+                'other' => $record ? $record->created_at : null
+            ];
+
+            if ($tempIdleData) {
+                $item['id'] = $tempIdleData['id'];
+            }
+
+            $dbHelper->upsertUnitTempItem($item);
         }
 
         return ['idleHours' => $idleHours, 'allHours' => $allHours];
@@ -609,5 +758,45 @@ class EntityHelper implements EntityHelperInterface
     public function getUnitCreationTimestamp($bInst) {
 
         return $bInst->created_at;
+    }
+
+    /**
+     * Gets unit query by timestamps
+     * 
+     * @param instance $instance
+     * @param int $start
+     * @param int $end
+     * @param array $select
+     * @param array $compareCondition
+     *
+     * @return ActiveDbQuery
+     */
+    public function getUnitQueryByTimestamps($instance, $start, $end, $select = false, $compareCondition = false)
+    {
+        $entity = new Entity();
+        $query = $entity->getUnitsQueryPertainCompany($instance);
+
+        if ($select) {
+            $query = $query->select($select);
+        }
+
+        $query = $query->where(['company_id' => $entity->getCompanyId()]);
+
+        if ($compareCondition) {
+            $query = $query->andWhere($compareCondition);
+        }
+
+        $query = $query->andWhere(['<=', 'created_at', $end]);
+        $query = $query->andWhere(new \yii\db\conditions\OrCondition([
+                            new \yii\db\conditions\AndCondition([
+                                ['=', 'is_deleted', false],
+                            ]),
+                            new \yii\db\conditions\AndCondition([
+                                ['=', 'is_deleted', true],
+                                ['>', 'deleted_at', $start]
+                            ])
+                        ]));
+
+        return $query;
     }
 }

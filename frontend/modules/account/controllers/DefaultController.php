@@ -299,7 +299,6 @@ class DefaultController extends Controller
 
                 $user = User::findOne(Yii::$app->user->id);
                 $user->company_id = $get['Company'];
-
                 $user->update(false);
 
                 return $this->redirect('tt');
