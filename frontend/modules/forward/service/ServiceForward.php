@@ -6,6 +6,7 @@ use frontend\models\AddressBalanceHolder;
 use frontend\models\BalanceHolder;
 use frontend\models\Imei;
 use frontend\models\ImeiData;
+use frontend\models\Jlog;
 use frontend\models\WmMashine;
 use frontend\modules\forward\interfaces\ServiceForwardInterface;
 use frontend\services\custom\Debugger;
@@ -20,6 +21,7 @@ use yii\db\Query;
 class ServiceForward implements ServiceForwardInterface
 {
     const DATE_FORMAT = 'H:i d.m.Y';
+    const TYPE_HALF_HOUR = 1800;
     public $array = array();
     public $result = array();
     
@@ -61,6 +63,7 @@ class ServiceForward implements ServiceForwardInterface
         $imei = Imei::find()
             ->andWhere(['address_id' => $address->id])
             ->andWhere(['imei.status' => Imei::STATUS_ACTIVE])
+            ->limit(1)
             ->one();
 
         $wm_machine = WmMashine::find()
@@ -75,11 +78,18 @@ class ServiceForward implements ServiceForwardInterface
 
         $imeiData = new ImeiData();
 
+        $status_central_board = $imeiData->status_central_board[$res['packet']];
+        $status_central_board = Yii::t('imeiData', $status_central_board);
+
+        if ($this->getRelevanceStatusCB($res['created_at'])) {
+            $status_central_board = $this->getRelevanceStatusCB($res['created_at']);
+        }
+
         $this->result['param'] = [
             'balance_holder' => $address->balanceHolder->name,
             'address' => $address->address,
             'floor' => $address->floor,
-            'central_board_status' => Yii::t('imeiData', $imeiData->status_central_board[$res['packet']]),
+            'central_board_status' => Yii::t('imeiData', $status_central_board),
             'bill_acceptor_status' => Yii::t('imeiData', $imeiData->status_bill_acceptor[$res['evt_bill_validator']])
         ];
 
@@ -99,5 +109,17 @@ class ServiceForward implements ServiceForwardInterface
         }
 
         return $this->result;
+    }
+
+    /**
+     * @param $time
+     * @return string
+     */
+    public function getRelevanceStatusCB($time)
+    {
+        if (time() + Jlog::TYPE_TIME_OFFSET - $time > self::TYPE_HALF_HOUR) {
+
+            return 'ErrTerminal';
+        }
     }
 }
