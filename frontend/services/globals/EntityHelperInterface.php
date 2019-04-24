@@ -143,18 +143,4 @@ interface EntityHelperInterface
      * @return decimal
      */
     public function getUnitIncomeByNonZeroTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $field, $isFirst);
-
-    /**
-     * Calculates unit idle hours by timestamps
-     * 
-     * @param timestamp $start
-     * @param timestamp $end
-     * @param Instance $inst
-     * @param Instance $bInst
-     * @param string $fieldInst
-     * @param string $select
-     * @param int $timeIdleHours
-     * @return decimal
-     */
-    public function getUnitIdleHoursByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select, $timeIdleHours);
 }

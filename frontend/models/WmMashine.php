@@ -6,6 +6,7 @@ use common\models\User;
 use DateTime;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
+use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -63,6 +64,10 @@ class WmMashine extends \yii\db\ActiveRecord
     const LEVEL_SIGNAL_MAX = 10000;
 
     const STATUS_DISCONNECTED = 0;
+    
+    const TYPE_IDLES_OK = 0;
+    const TYPE_CP_ERROR = 1;
+    const MASHINE_ERROR = 2;
 
     private $wm;
 
@@ -729,8 +734,358 @@ class WmMashine extends \yii\db\ActiveRecord
 
         $dbHelper = Yii::$app->dbCommandHelperOptimizer;
         $className = str_replace(["\\"], ["/"], self::className());
-        $dbHelper->deleteUnitTempByEntityId($className, 'idleHours', $this->id);
+        $dbHelper->deleteUnitTempByEntityId($className, 'idleHoursReasons', $this->id);
 
         return true;
+    }
+
+    /**
+     * Gets if Central Board idles
+     * 
+     * @param int $timestamp
+     * @param int $endTimestamp
+     * @param Imei $imei
+     * 
+     * @return bool
+     */
+    public function getIfCpIdles($timestamp, $endTimestamp, $imei)
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $cpErrors = '1,2,3,4,5,6';
+        $queryCpErrorCondition = "AND packet IN (".$cpErrors.")";
+        $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, new ImeiData(), $imei, 'imei_id', 'created_at, imei_id');
+        $dbHelper->addQueryString($queryCpErrorCondition);
+
+        return $dbHelper->getCount() ? false : true;
+    }
+
+    /**
+     * Gets if Mashine Connection idles
+     * 
+     * @param int $timestamp
+     * @param int $endTimestamp
+     * @param Imei $imei
+     * 
+     * @return bool
+     */
+    public function getIfMashineConnectionIdles($timestamp, $endTimestamp, $imei)
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $connectionErrors = '0, 16';
+        $queryEvtBillErrorCondition = "AND current_status IN (".$connectionErrors.")";
+        $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, new WmMashineData(), $imei, 'mashine_id', 'created_at, imei_id');
+        $dbHelper->addQueryString($queryEvtBillErrorCondition);
+
+        return $dbHelper->getCount() ? false : true;
+    }
+
+    /**
+     * Gets whether has no idling
+     * 
+     * @param int $timestamp
+     * @param int $endTimestamp
+     * @param Imei $imei
+     * 
+     * @return bool
+     */
+    public function getIfIdlesOk($timestamp, $endTimestamp, $imei)
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $evtBillErrors = '1,2,3,4,5,6';
+        $cpErrors = '1,2,3,4,5,6';
+        $wmMashineConnectionErrors = '0, 16';
+        $wmMashineWorkErrors = '9, 10, 11, 12, 13, 14, 21, 25';
+        $queryCpOk = "AND packet NOT IN (".$cpErrors.") AND evt_bill_validator NOT IN (".$evtBillErrors.")";
+        $queryMashineOk = "AND current_status NOT IN (".$wmMashineConnectionErrors.",".$wmMashineWorkErrors.")";
+
+        $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, new ImeiData(), $imei, 'imei_id', 'created_at, imei_id');
+
+        $dbHelper->addQueryString($queryCpOk);
+
+        if ($dbHelper->getCount() == 0) {
+    
+            return ['error' => self::TYPE_CP_ERROR];
+        }
+
+        $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, new WmMashineData(), $this, 'mashine_id', 'created_at, mashine_id');
+        $dbHelper->addQueryString($queryMashineOk);
+
+        if ($dbHelper->getCount() == 0) {
+
+            return ['error' => self::MASHINE_ERROR];
+        }
+
+        return ['error' => self::TYPE_IDLES_OK];
+    }
+    
+    /**
+     * Gets idle key by results of 'getIfIdlesOk' method
+     * 
+     * @param int $timestamp
+     * @param int $endTimestamp
+     * @param Imei $imei
+     * @param array $idlesResult
+     * 
+     * @return string
+     */
+    public function getIdleKey($timestamp, $endTimestamp, $imei, $idlesResult)
+    {
+        if ($idlesResult['error'] == self::TYPE_CP_ERROR) {
+            if ($this->getIfCpIdles($timestamp, $endTimestamp, $imei)) {
+
+                return 'cbIdleHours';
+            }
+
+            return 'baIdleHours';
+        }
+
+        if ($this->getIfMashineConnectionIdles($timestamp, $endTimestamp, $imei)) {
+
+            return 'connectIdleHours';
+        }
+
+        return 'workIdleHours';
+    }
+
+    /**
+     * Basic idle hours method
+     * 
+     * @param int $start
+     * @param int $end
+     * @param int $endTimestamp
+     * @param double $timeIdleHours
+     *
+     * @return array
+     */
+    public function getWmMashineIdleHoursBase(
+        $start, $end, $endTimestamp, $timeIdleHours
+    ) {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $item = null;
+        $stepInterval = $timeIdleHours*3600;
+        $fieldInst = 'mashine_id';
+        $select = 'created_at, mashine_id';
+
+        $baIdleHours = 0.00;
+        $cbIdleHours = 0.00;
+        $connectIdleHours = 0.00;
+        $workIdleHours = 0.00;
+
+        $imei = Imei::find()->where(['id' => $this->imei_id])->limit(1)->one();
+
+        for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
+
+            $idlesResult = $this->getIfIdlesOk($timestamp, $endTimestamp, $imei);
+
+            if ($idlesResult['error'] == self::TYPE_IDLES_OK) {
+                $dbHelper->addQueryString("ORDER BY created_at DESC LIMIT 1 ");
+                $item = $dbHelper->getItem();
+                $item = (object)$item;
+
+                $timestamp = $item->created_at - $stepInterval + 1;
+                continue;
+            } else {
+                $idlesKey = $this->getIdleKey($timestamp, $endTimestamp, $imei, $idlesResult);
+                $dbHelper->getBaseUnitQueryByTimestamps($endTimestamp, $end, new WmMashineData(), $this, $fieldInst, $select);
+
+                if ($dbHelper->getCount() == 0) {
+                    $$idlesKey += ((float)$end - $timestamp) / 3600;
+                    break;
+                } else {
+                    $dbHelper->addQueryString("ORDER BY created_at ASC LIMIT 1 ");
+                    $item = $dbHelper->getItem();
+                    $item = (object)$item;
+                    $timeDiff = ($item->created_at < $end ? $item->created_at : $end) - $endTimestamp;
+                    $$idlesKey += $timeIdleHours + ((float)$timeDiff / 3600);
+                    $timestamp = $item->created_at - $stepInterval + 1;
+                    continue;
+                }
+            }
+        }
+
+        $idleHours = $workIdleHours + $connectIdleHours + $baIdleHours + $cbIdleHours;
+
+        return [
+            'workIdleHours' => $workIdleHours,
+            'connectIdleHours' => $connectIdleHours,
+            'baIdleHours' => $baIdleHours,
+            'cbIdleHours' => $cbIdleHours,
+            'idleHours' => $idleHours,
+            'record' => $item
+        ];
+    }
+
+    /**
+     * Gets idle hours data from `j_temp`
+     * 
+     * @param int $start
+     * @param int $end
+     * @param array $baseIdlesKeys
+     * @param double $allHours
+     * @param string $paramType
+     * @param double $stepInterval
+     * @param int $todayBeginning
+     * @param EntityHelper $entityHelper
+     * 
+     * @return array|bool
+     */
+    public function getIdleHoursDataFromTemp(
+        $start, $end, $baseIdlesKeys, $allHours, $paramType, $stepInterval, $todayBeginning, $entityHelper
+    )
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+
+        if ($start >= $todayBeginning &&
+            ($tempIdleData = $entityHelper->getUnitTempValue($start, $end, $this, $paramType, $stepInterval))
+        ) {
+            $baseIdlesData = json_decode($tempIdleData['value'], true);
+            $start = $tempIdleData['end'];
+            $endTimestamp = $start + $stepInterval;
+
+            if ($start + $stepInterval > $end) {
+                $delta = ($baseIdlesData['idleHours']/$allHours)*(($end - $start) / 3600);
+
+                if ($delta + $baseIdlesData['idleHours'] > $allHours) {
+                    $delta = $allHours - $baseIdlesData['idleHours'];
+                }
+
+                foreach ($baseIdlesKeys as $key) {
+                    $baseIdlesData[$key] += ($baseIdlesData[$key]/$baseIdlesData['idleHours']) * $delta;
+                }
+
+                $baseIdlesData['allHours'] = $allHours;
+
+                return ['data' => $baseIdlesData, 'id' => $tempIdleData['id'], 'start' => $start, 'endTimestamp' => $endTimestamp, 'isFinal' => true];
+            }
+
+            return ['data' => $baseIdlesData, 'id' => $tempIdleData['id'], 'start' => $start, 'endTimestamp' => $endTimestamp, 'isFinal' => false];
+        }
+
+        return false;
+    }
+
+    /**
+     * Puts idle hours data to `j_temp`
+     * 
+     * @param array $idlesData
+     * @param array $baseIdlesKeys
+     * @param int $id
+     * @param int $start
+     * @param int $end
+     * @param int $baseStart
+     * @param string $paramType
+     * @param int $todayBeginning
+     * @param BalanceHolderSummarySearch $bhSummarySearch
+     * 
+     * @return array
+     */
+    public function putIdleHoursDataToTemp(
+        $idlesData, $baseIdlesKeys, $id, $start, $end, $baseStart, $paramType, $todayBeginning, $bhSummarySearch
+    )
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+
+        if ($start >= $todayBeginning) {
+            $other = !is_null($idlesData['record']) ? $idlesData['record']->created_at : null;
+            unset($idlesData['record']);
+
+            foreach ($baseIdlesKeys as $key) {
+                $idlesData[$key] = $bhSummarySearch->parseFloat($idlesData[$key], 2);
+            }
+
+            $item = [
+                'value' => json_encode($idlesData), 
+                'start' => $baseStart,
+                'end' => $end,
+                'entity_id' => $this->id,
+                'type' => str_replace(["\\"], ["/"], self::className()),
+                'param_type' => $paramType,
+                'other' => $other
+            ];
+
+            if ($id) {
+                $item['id'] = $id;
+            }
+
+            $dbHelper->upsertUnitTempItem($item);
+        } else {
+            unset($idlesData['record']);
+        }
+
+        return $idlesData;
+    }
+
+    /**
+     * Main method to get idle hours by types
+     * 
+     * @param int $start
+     * @param int $end
+     * @param double $timeIdleHours
+     * 
+     * @return array
+     */
+    public function getIdleHoursByTimestamps($start, $end, $timeIdleHours)
+    {
+        $paramType = "idleHoursReasons";
+        $idleHours = 0.00;
+        $stepInterval = $timeIdleHours * 3600;
+        $entityHelper = new EntityHelper();
+        $timestampsData = $entityHelper->makeUnitTimestamps($start, $end, $this, $timeIdleHours);
+        extract($timestampsData);
+
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+        $allHours = $bhSummarySearch->parseFloat(($end - $start) / 3600, 2);
+
+        $baseIdlesData =  [
+            'workIdleHours' => 0,
+            'connectIdleHours' => 0,
+            'baIdleHours' => 0,
+            'cbIdleHours' => 0,
+            'idleHours' => 0,
+            'allHours' => $allHours
+        ];
+
+        $baseIdlesKeys = [
+            'workIdleHours',
+            'connectIdleHours',
+            'baIdleHours',
+            'cbIdleHours',
+            'idleHours'
+        ];
+
+        if ($start + $stepInterval > $end) {
+
+            return $baseIdlesData;
+        }
+
+        $baseStart = $start;
+        $id = null;
+
+        $tempData = $this->getIdleHoursDataFromTemp(
+            $start, $end, $baseIdlesKeys, $allHours, $paramType, $stepInterval, $todayBeginning, $entityHelper
+        );
+
+        if ($tempData && $tempData['isFinal']) {
+
+            return $tempData['data'];
+        } elseif ($tempData) {
+            $baseIdlesData = $tempData['data'];
+            $id = $tempData['id'];
+            $start = $tempData['start'];
+            $endTimestamp = $tempData['endTimestamp'];
+        }
+
+        $idlesData = $this->getWmMashineIdleHoursBase($start, $end, $endTimestamp, $timeIdleHours);
+
+        foreach ($baseIdlesKeys as $key) {
+            $idlesData[$key] += $baseIdlesData[$key];
+        }
+
+        $idlesData['allHours'] = $allHours;
+
+        return $this->putIdleHoursDataToTemp(
+            $idlesData, $baseIdlesKeys, $id, $start, $end,
+            $baseStart, $paramType, $todayBeginning, $bhSummarySearch
+        );
     }
 }

@@ -24,7 +24,6 @@ class BalanceHolderSummarySearch extends BalanceHolder
     const IDLE_TIME_HOURS = 0.25;
     const TYPE_GENERAL = 0;
     const TYPE_DETAILED = 1;
-    const TYPE_WM_MIN_ERROR_CODE = 9;
     const TYPE_DAMAGE_IDLE_HOURS = 8;
 
     /**
@@ -688,29 +687,34 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $totalIdleHours = 0.00;
         $totalHours = 0.00;
         $totalDamageIdleHours = 0.00;
+        $totalWorkIdleHours = 0.00;
+        $totalConnectIdleHours = 0.00;
+        $totalBaIdleHours = 0.00;
+        $totalCbIdleHours = 0.00;
         foreach ($mashines as $mashine) {
-            $idleHoursInfo = $entityHelper->getUnitIdleHoursByTimestamps(
-                $timestamp,
-                $timestampEnd,
-                new WmMashineData(),
-                $mashine,
-                'mashine_id',
-                'created_at, mashine_id',
-                self::IDLE_TIME_HOURS,
-                "AND current_status < ".self::TYPE_WM_MIN_ERROR_CODE
-            );
-            list($idleHours, $allHours) = [$idleHoursInfo['idleHours'], $idleHoursInfo['allHours']];
+            $idleHoursInfo = $mashine->getIdleHoursByTimestamps($timestamp, $timestampEnd, self::IDLE_TIME_HOURS);
+            extract($idleHoursInfo);
             $damageIdleHours = $idleHoursInfo['idleHours'] >= self::TYPE_DAMAGE_IDLE_HOURS ? $idleHoursInfo['idleHours'] : 0;
 
             if ($idleHours >= self::IDLE_TIME_HOURS) {
                 $totalIdleHours += $idleHours;
             }
+
             $totalHours += $allHours;
+            $totalWorkIdleHours += $workIdleHours;
+            $totalConnectIdleHours += $connectIdleHours;
+            $totalBaIdleHours += $baIdleHours;
+            $totalCbIdleHours += $cbIdleHours;
             $totalDamageIdleHours += $damageIdleHours;
         }
 
         $totalIdleHours = $this->parseFloat($totalIdleHours, 2);
+        $totalWorkIdleHours = $this->parseFloat($totalWorkIdleHours, 2);
+        $totalConnectIdleHours = $this->parseFloat($totalConnectIdleHours, 2);
+        $totalBaIdleHours = $this->parseFloat($totalBaIdleHours, 2);
+        $totalCbIdleHours = $this->parseFloat($totalCbIdleHours, 2);
         $totalHours = $this->parseFloat($totalHours, 2);
+        $idleHoursReasons = $totalWorkIdleHours.'**'.$totalConnectIdleHours.'**'.$totalBaIdleHours.'**'.$totalCbIdleHours;
 
         $mashineStatistics = [
             'created' => $mashinesCreated,
@@ -719,6 +723,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
             'all' => $mashinesAll,
             'idleHours' => !is_null($totalIdleHours) ? $totalIdleHours : null,
             'damageIdleHours' => $totalDamageIdleHours,
+            'idleHoursReasons' => $idleHoursReasons,
             'allHours' => $totalHours,
             'encashment_date' => empty($encashmentInfo['encashment_date']) ? null : $encashmentInfo['encashment_date'],
             'encashment_sum' => empty($encashmentInfo['encashment_sum']) ? null : $encashmentInfo['encashment_sum'],
@@ -737,49 +742,6 @@ class BalanceHolderSummarySearch extends BalanceHolder
     }
 
     /**
-     * Makes imei binding info as array by address and timestamp 
-     *
-     * @param AddressImeiData $addressImeiData
-     * @param Address $address
-     * @param timestamp $timestamp
-     * @return array
-     */
-    public function makeImeiInfo($addressImeiData, $address, $timestamp)
-    {
-        $imeiInfo = $addressImeiData->getNextImeiIdByAddressAndTimestamp($address->id, $timestamp);
-
-        return $this->makeImeiInfoByData($addressImeiData, $address, $imeiInfo, [], 0);
-    }
-
-    /**
-     * Makes imei info by data ($imeiInfo, $nextImeiInfo, $nextBindingTimestamp)
-     *
-     * @param AddressImeiData $addressImeiData
-     * @param Address $address
-     * @param array $imeiInfo
-     * @param array $nextImeiInfo
-     * @param timestamp $nextBindingTimestamp
-     * @return array
-     */
-    public function makeImeiInfoByData($addressImeiData, $address, $imeiInfo, $nextImeiInfo, $nextBindingTimestamp)
-    {
-        if (!empty($imeiInfo) && !empty($imeiInfo['imei_id'])) {
-            $nextImeiInfo = $addressImeiData->getNextImeiIdByAddressAndTimestamp($address->id, $imeiInfo['created_at']);
-            if (empty($nextImeiInfo)) {
-                $nextBindingTimestamp = AddressImeiData::INFINITY;
-            } else {
-                $nextBindingTimestamp = $nextImeiInfo['created_at'];
-            }
-        }
-
-        return [
-            'imeiInfo' => $imeiInfo,
-            'nextImeiInfo' => $nextImeiInfo,
-            'nextBindingTimestamp' => $nextBindingTimestamp
-        ];
-    }
-
-    /**
      * Gets incomes by year, month and address
      *
      * @param int $year
@@ -792,6 +754,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $entity = new Entity();
         $jSummary = new Jsummary();
         $addressImeiData = new AddressImeiData();
+        $historyBeginning = $addressImeiData->getHistoryBeginning($address->id);
 
         if ($addressImeiData->getWmMashinesCountByYearMonth($year, $month, $address) == 0) {
 
@@ -799,7 +762,6 @@ class BalanceHolderSummarySearch extends BalanceHolder
         }
 
         $imeiQuery = $entity->getUnitsQueryPertainCompany(new Imei());
-        $imei = $addressImeiData->getCurrentImeiIdByAddress($address->id, $address->status);
         $incomes = [];
         $timestamps = $this->getTimestampByYearMonth($year, $month);
 
@@ -821,11 +783,6 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
         $bindingHistoryBeginning = $addressImeiData->getHistoryBeginning($address->id);
 
-        $imeiInfoData = $this->makeImeiInfo($addressImeiData, $address, $timestamps['start']);
-        list ($imeiInfo, $nextImeiInfo, $nextBindingTimestamp) = [
-            $imeiInfoData['imeiInfo'], $imeiInfoData['nextImeiInfo'], $imeiInfoData['nextBindingTimestamp']
-        ];
-
         foreach ($emptyDays as $day)
         {
             $timestamp = $timestamps['start'] + ($day - 1) *$intervalStep;
@@ -834,39 +791,9 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 break;
             }
 
-            // determine the appropriate imei
-            if (
-                !empty($imeiInfo) &&
-                ((empty($imei)) || $imei->id != $imeiInfo['imei_id']) &&
-                $imeiInfo['created_at'] < $timestamp + $intervalStep && 
-                $nextBindingTimestamp >= $timestamp + $intervalStep
-            )
-            {
-                $imeiQuery = Imei::find()->where(['id' => $imeiInfo['imei_id']])->limit(1);
-                $imei = QueryOptimizer::getItemByQuery($imeiQuery);
-            }
-            elseif (
-                !empty($imeiInfo) && $nextBindingTimestamp < $timestamp + $intervalStep
-            )
-            {
-                while (!empty($imeiInfo) && $nextBindingTimestamp < $timestamp + $intervalStep) {
-                    $imeiInfo = $nextImeiInfo;
-
-                    if (!empty($imeiInfo)) {
-                        $nextImeiInfo = $addressImeiData->getNextImeiIdByAddressAndTimestamp($address->id, $imeiInfo['created_at']);
-                        if (empty($nextImeiInfo)) {
-                            $nextBindingTimestamp = AddressImeiData::INFINITY;
-                        } else {
-                            $nextBindingTimestamp = $nextImeiInfo['created_at'];
-                        }
-                    }
-                }
-
-                if (!empty($imeiInfo)) {
-                    $imeiQuery = Imei::find()->where(['id' => $imeiInfo['imei_id']])->limit(1);
-                    $imei = QueryOptimizer::getItemByQuery($imeiQuery);
-                }
-            }
+            $imei = $addressImeiData->getImeiByAddressAndTimestamps(
+                $timestamp, $timestamp + $intervalStep, $address, $historyBeginning
+            );
 
             if (empty($imei)) {
 
