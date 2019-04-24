@@ -7,6 +7,7 @@ use DateTime;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
+use frontend\services\globals\QueryOptimizer;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -871,7 +872,8 @@ class WmMashine extends \yii\db\ActiveRecord
         $connectIdleHours = 0.00;
         $workIdleHours = 0.00;
 
-        $imei = Imei::find()->where(['id' => $this->imei_id])->limit(1)->one();
+        $imeiQuery = Imei::find()->where(['id' => $this->imei_id])->limit(1);
+        $imei = QueryOptimizer::getItemByQuery($imeiQuery);
 
         for ($timestamp = $start; $endTimestamp <= $end; $timestamp += $stepInterval, $endTimestamp = $timestamp + $stepInterval) {
 

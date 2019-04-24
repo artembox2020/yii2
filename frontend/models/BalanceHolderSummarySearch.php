@@ -781,8 +781,6 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
         $emptyDays = array_diff($daysArray, array_keys($incomesFromHistory));
 
-        $bindingHistoryBeginning = $addressImeiData->getHistoryBeginning($address->id);
-
         foreach ($emptyDays as $day)
         {
             $timestamp = $timestamps['start'] + ($day - 1) *$intervalStep;
