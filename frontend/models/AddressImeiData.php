@@ -652,4 +652,35 @@ class AddressImeiData extends ActiveRecord
 
         return $historyInfo;
     }
+
+    /**
+     * Gets imei by address and timestamps
+     * @param int $start
+     * @param int $end
+     * @param \frontend\models\AddressBalanceHolder $address
+     * @param int $historyBeginning
+     * 
+     * @return \frontend\models\Imei|null
+     */
+    public function getImeiByAddressAndTimestamps($start, $end, $address, $historyBeginning)
+    {
+        $imei = null;
+        $imeiData = $this->getNextImeiIdByAddressAndTimestamp($address->id, $start);
+
+        if (!empty($imeiData) && $imeiData['created_at'] < $end) {
+
+            $imeiQuery = Imei::find()->where(['id' => $imeiData['imei_id']])->limit(1);
+            $imei = QueryOptimizer::getItemByQuery($imeiQuery);
+        } else {
+            $imeiId = $this->getImeiIdByAddressTimestamp($address->id, $start);
+            $imeiQuery = Imei::find()->where(['id' => $imeiId])->limit(1);
+            $imei = QueryOptimizer::getItemByQuery($imeiQuery);
+        }
+
+        if ($historyBeginning > $end) {
+            $imei = $this->getCurrentImeiIdByAddress($address->id, $address->status);
+        }
+
+        return $imei;
+    }
 }

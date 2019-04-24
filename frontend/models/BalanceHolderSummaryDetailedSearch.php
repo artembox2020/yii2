@@ -217,17 +217,9 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
     public function getMashineDetailedStatisticsByTimestamps($startTimestamp, $endTimestamp, $mashine)
     {
         $entityHelper = new EntityHelper();
-        $idleHoursInfo = $entityHelper->getUnitIdleHoursByTimestamps(
-            $startTimestamp,
-            $endTimestamp,
-            new WmMashineData(),
-            $mashine,
-            'mashine_id',
-            'created_at, mashine_id',
-            self::IDLE_TIME_HOURS,
-            "AND current_status < ".self::TYPE_WM_MIN_ERROR_CODE
-        );
-        list($idleHours, $allHours) = [$idleHoursInfo['idleHours'], $idleHoursInfo['allHours']];
+        $idleHoursInfo = $mashine->getIdleHoursByTimestamps($startTimestamp, $endTimestamp, self::IDLE_TIME_HOURS);
+        extract($idleHoursInfo);
+
         $idleHours = $this->parseFloat($idleHours, 2);
 
         if ($idleHours < self::IDLE_TIME_HOURS) {
@@ -252,8 +244,24 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
         list($encashment_date, $encashment_sum) = [$encashmentInfo['encashment_date'], $encashmentInfo['encashment_sum']];
 
         $damageIdleHours = $idleHours >= self::TYPE_DAMAGE_IDLE_HOURS ? $idleHours : 0;
+        $workIdleHours = $this->parseFloat($workIdleHours, 2);
+        $connectIdleHours = $this->parseFloat($connectIdleHours, 2);
+        $baIdleHours = $this->parseFloat($baIdleHours, 2);
+        $cbIdleHours = $this->parseFloat($cbIdleHours, 2);
 
-        return [$idleHours, $allHours, $is_deleted, $is_created, $encashment_date, $encashment_sum, $damageIdleHours];
+        return [
+            $idleHours,
+            $allHours,
+            $is_deleted,
+            $is_created,
+            $encashment_date,
+            $encashment_sum,
+            $damageIdleHours,
+            $workIdleHours,
+            $connectIdleHours,
+            $baIdleHours,
+            $cbIdleHours
+        ];
     }
 
     /**
@@ -349,9 +357,13 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     $income = $this->getAverageIncome($lastMonthIncomes);
                 }
 
-                list($idleHours, $allHours, $is_deleted, $is_created, $encashment_date, $encashment_sum, $damageIdleHours)
+                list(
+                    $idleHours, $allHours, $is_deleted, $is_created, $encashment_date, $encashment_sum,
+                    $damageIdleHours, $workIdleHours, $connectIdleHours, $baIdleHours, $cbIdleHours)
                  = 
                 $this->getMashineDetailedStatisticsByTimestamps($startTimestamp, $endTimestamp, $mashine);
+
+                $idleHoursReasons = $workIdleHours.'**'.$connectIdleHours.'**'.$baIdleHours.'**'.$cbIdleHours;
 
                 $incomes[$i] = [
                     'income' => $income,
@@ -359,6 +371,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     'created' => $is_created,
                     'idleHours' => $idleHours,
                     'damageIdleHours' => $damageIdleHours,
+                    'idleHoursReasons' => $idleHoursReasons,
                     'allHours' => $allHours,
                     'imei' => !empty($imei) ? $imei->imei : false,
                     'mashine_id' => $mashine->id,
@@ -406,9 +419,13 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
 
             $income = $this->getMashineIncomeValueByTimestamps($startTimestamp, $endTimestamp, $mashine);
 
-            list($idleHours, $allHours, $is_deleted, $is_created, $encashment_date, $encashment_sum, $damageIdleHours)
-             = 
+            list(
+                $idleHours, $allHours, $is_deleted, $is_created, $encashment_date, $encashment_sum,
+                $damageIdleHours, $workIdleHours, $connectIdleHours, $baIdleHours, $cbIdleHours)
+                = 
             $this->getMashineDetailedStatisticsByTimestamps($startTimestamp, $endTimestamp, $mashine);
+
+            $idleHoursReasons = $workIdleHours.'**'.$connectIdleHours.'**'.$baIdleHours.'**'.$cbIdleHours;
 
             $incomes[$i] = [
                 'income' => $income,
@@ -416,6 +433,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 'created' => $is_created,
                 'idleHours' => $idleHours,
                 'damageIdleHours' => $damageIdleHours,
+                'idleHoursReasons' => $idleHoursReasons,
                 'allHours' => $allHours,
                 'imei' => !empty($imei) ? $imei->imei : false,
                 'address_id' => $mashine->address_id,
@@ -464,6 +482,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
     {
         $jSummary = new Jsummary();
         $stepInterval = 3600 * 24;
+        list($workIdleHours, $connectIdleHours, $baIdleHours, $cbIdleHours) = explode('**', $incomes['idleHoursReasons']);
 
         $incomeByMashines = 
                 '`'
@@ -475,7 +494,11 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                 .$incomes['allHours'].'**'
                 .$incomes['encashment_date'].'**'
                 .$incomes['encashment_sum'].'**'
-                .$incomes['damageIdleHours']
+                .$incomes['damageIdleHours'].'**'
+                .$workIdleHours.'**'
+                .$connectIdleHours.'**'
+                .$baIdleHours.'**'
+                .$cbIdleHours
                 .'`';
         $jSummary->saveItemDetailed($imeiId, $addressId, $start,  $end, [], $incomeByMashines);
     }

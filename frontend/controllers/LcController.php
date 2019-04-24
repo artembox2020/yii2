@@ -27,7 +27,7 @@ class LcController extends Controller
     {
         $result = $this->iParse($p);
         $centralBoardDto = new CentralBoardDto($result);
-        $dateTimeHelper = new DateTimeHelper(); 
+        $dateTimeHelper = new DateTimeHelper();
 
         $cbLogSearch = new CbLogSearch();
 
@@ -54,6 +54,8 @@ class LcController extends Controller
                 $cbl->banknote_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->banknote_face_values);
                 $cbl->is_deleted = false;
                 $cbl->save();
+                $imei->ping = time();
+                $imei->save();
                 echo 'cbl data save!';exit;
             } else {
                 echo 'Imei not Active';exit;

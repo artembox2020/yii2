@@ -21,3 +21,11 @@
 <?= Yii::t('frontend', 'Imei') ?>: <?= $params['imei'] ?><br>
 
 <?= Yii::t('frontend', 'Events') ?>: <?= $searchModel->getEventsAsString($params) ?><br>
+
+<br>
+<?= Yii::t('summaryJournal', 'Idle Reasons Hours') ?><br><br>
+
+<?= Yii::t('summaryJournal', 'Idle Work Hours') ?>: <?= explode("**", $params['idleHoursReasons'])[0] ?><br>
+<?= Yii::t('summaryJournal', 'Idle Connect Hours') ?>: <?= explode("**", $params['idleHoursReasons'])[1] ?><br>
+<?= Yii::t('summaryJournal', 'Idle Bill Acceptance Hours') ?>: <?= explode("**", $params['idleHoursReasons'])[2] ?><br>
+<?= Yii::t('summaryJournal', 'Idle Central Board Hours') ?>: <?= explode("**", $params['idleHoursReasons'])[3] ?><br>
