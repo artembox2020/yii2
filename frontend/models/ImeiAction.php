@@ -177,6 +177,10 @@ class ImeiAction extends \yii\db\ActiveRecord
         $imeiAction->unix_time_offset = time() + Jlog::TYPE_TIME_OFFSET;
         $imeiAction->save();
 
+        $imei = Imei::find()->where(['id' => $imeiId])->one();
+        $imei->ping = time();
+        $imei->save();
+
         return $imeiAction;
     }
 
