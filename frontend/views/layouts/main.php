@@ -1,6 +1,7 @@
 <?php
 
 use common\models\User;
+use frontend\services\custom\Debugger;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\helpers\ArrayHelper;
@@ -95,17 +96,16 @@ AppAsset::register($this);
         $menuItems[] = ['label' => Yii::t('frontend', 'Login'), 'url' => ['/account/sign-in/login']];
     } else {
         $role = ArrayHelper::map(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'description', 'description');
-//        \frontend\services\custom\Debugger::dd($role);
         foreach ($role as $key => $val) {
-            $role_name = $key;
+            $role_description = $key;
         }
         $role_name = Yii::$app->user->identity->username;
         $userRole = \Yii::$app->authManager->getRolesByUser(Yii::$app->user->id);
 
-        if (empty($userRole)) {
+        if (empty($role_description)) {
             $userRole = '';
         } else {
-            $userRole = array_keys($userRole)[0];
+            $userRole = $role_description;
         }
 
         $menuItems = [
@@ -165,7 +165,7 @@ AppAsset::register($this);
         }
 
         $menuItems[] = [
-            'label' => $role_name . ' ('.$userRole.')',
+            'label' => $role_name . ' (' . $userRole .')',
             'url' => '#',
             'items' => [
                 [
