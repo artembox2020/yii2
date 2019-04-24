@@ -943,9 +943,9 @@ class WmMashine extends \yii\db\ActiveRecord
             $baseIdlesData = json_decode($tempIdleData['value'], true);
             $start = $tempIdleData['end'];
             $endTimestamp = $start + $stepInterval;
-            $baseIdlesData['allHours'] = $allHours;
 
             if ($start + $stepInterval > $end) {
+                $baseIdlesData['allHours'] = $allHours;
                 $delta = ($baseIdlesData['idleHours']/$allHours)*(($end - $start) / 3600);
 
                 if ($delta + $baseIdlesData['idleHours'] > $allHours) {
@@ -1085,9 +1085,12 @@ class WmMashine extends \yii\db\ActiveRecord
 
         $idlesData['allHours'] = $allHours;
 
-        return $this->putIdleHoursDataToTemp(
+        $idlesData = $this->putIdleHoursDataToTemp(
             $idlesData, $baseIdlesKeys, $id, $start, $end,
             $baseStart, $paramType, $todayBeginning, $bhSummarySearch
         );
+        $idlesData['allHours'] = $allHours;
+
+        return $idlesData;
     }
 }
