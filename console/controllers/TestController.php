@@ -1,14 +1,12 @@
 <?php
-
 namespace console\controllers;
 
-use Yii;
-use yii\console\Controller;
-use yii\helpers\Console;
 use common\models\User;
 use common\rbac\OwnModelRule;
+use Yii;
+use yii\helpers\Console;
 
-class RbacController extends Controller
+class TestController extends \yii\console\Controller
 {
     public function actionIndex()
     {
