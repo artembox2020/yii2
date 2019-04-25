@@ -918,6 +918,33 @@ class WmMashine extends \yii\db\ActiveRecord
     }
 
     /**
+     * Processing temp value decreasing
+     * 
+     * @param string $value
+     * @param double $diff
+     * 
+     * @return array
+     */
+    private function makeTempValueDiff($value, $diff)
+    {
+        $hoursData = json_decode($value, true);
+        $keys = ['workIdleHours', 'connectIdleHours', 'baIdleHours', 'cbIdleHours', 'idleHours'];
+        $newHoursData = [];
+
+        if ($hoursData['idleHours'] > 0) {
+
+            foreach ($keys as $key) {
+                $hoursData[$key] -= ($hoursData[$key] / $hoursData['idleHours']) * $diff;
+                $hoursData[$key] = round($hoursData[$key], 2);
+            }
+        }
+
+        $hoursData['allHours'] -= $diff;
+
+        return json_encode($hoursData);
+    }
+
+    /**
      * Gets idle hours data from `j_temp`
      * 
      * @param int $start
@@ -937,9 +964,20 @@ class WmMashine extends \yii\db\ActiveRecord
     {
         $dbHelper = Yii::$app->dbCommandHelperOptimizer;
 
-        if ($start >= $todayBeginning &&
-            ($tempIdleData = $entityHelper->getUnitTempValue($start, $end, $this, $paramType, $stepInterval))
-        ) {
+        if ($start >= $todayBeginning) {
+            $procFunction = function($value, $diff)
+            {
+
+                return $this->makeTempValueDiff($value, $diff);
+            };
+
+            $tempIdleData = $entityHelper->getUnitTempValue($start, $end, $this, $paramType, $stepInterval, $procFunction);
+
+            if (!$tempIdleData) {
+
+                return false;
+            }
+
             $baseIdlesData = json_decode($tempIdleData['value'], true);
             $start = $tempIdleData['end'];
             $endTimestamp = $start + $stepInterval;
@@ -952,8 +990,11 @@ class WmMashine extends \yii\db\ActiveRecord
                     $delta = $allHours - $baseIdlesData['idleHours'];
                 }
 
-                foreach ($baseIdlesKeys as $key) {
-                    $baseIdlesData[$key] += ($baseIdlesData[$key]/$baseIdlesData['idleHours']) * $delta;
+                if ($baseIdlesData['idleHours'] > 0) {
+
+                    foreach ($baseIdlesKeys as $key) {
+                        $baseIdlesData[$key] += ($baseIdlesData[$key]/$baseIdlesData['idleHours']) * $delta;
+                    }
                 }
 
                 return ['data' => $baseIdlesData, 'id' => $tempIdleData['id'], 'start' => $start, 'endTimestamp' => $endTimestamp, 'isFinal' => true];
