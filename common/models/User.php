@@ -358,7 +358,7 @@ class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
     {
         $countAll = $this->getUserCount();
         $countRoles = $this->getUserCountByRoles(
-            [User::ROLE_FINANCIER, User::ROLE_TECHNICIAN, User::ROLE_MANAGER]
+            [User::ROLE_FINANCIER, User::ROLE_TECHNICIAN, User::ROLE_ADMINISTRATOR]
         );
                     
         return $countAll - $countRoles;

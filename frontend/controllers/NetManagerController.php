@@ -215,7 +215,7 @@ class NetManagerController extends \yii\web\Controller
     {
         $array = array();
 
-        if (!\Yii::$app->user->can('manager')) {
+        if (!\Yii::$app->user->can('administrator')) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
