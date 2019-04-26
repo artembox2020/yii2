@@ -11,10 +11,11 @@
         'Idle Hours Expectation' => 'Очікування',
         'Idle Hours Expectation By Balance Holders' => 
         'Очікування по балансоутримувачам',
-        'Idle Central Board Hours' => 'Помилки ЦП',
-        'Idle Connect Hours' => 'Помилки зв\'язку з ПМ',
+        'Idle Central Board Hours' => 'Помилки термінала',
+        'Idle Connect Central Board Hours' => 'Немає зв\'язку з терміналом',
+        'Idle Connect Hours' => 'Немає зв\'язку з ПМ',
         'Idle Reasons Hours' => '---Причини простою, год---',
-        'Idle Work Hours' => 'Помилки роботи ПМ',
+        'Idle Work Hours' => 'Помилки ПМ',
         'Idle Bill Acceptance Hours' => 'Помилки купюроприймача',
         'Wrap Idles' => 'Згорнути підсумки по простою',
         'Wrap Incomes' => 'Згорнути підсумки'

@@ -111,9 +111,9 @@ class Jsummary extends ActiveRecord
         $damageIdleHours = isset($parts[8]) ? explode("`", $parts[8])[0] : null;
         $workIdleHours = isset($parts[9]) ? explode("`", $parts[9])[0] : null;
         $connectIdleHours = isset($parts[10]) ? explode("`", $parts[10])[0] : null;
-        $baIdleHours = isset($parts[11]) ? explode("`", $parts[11])[0] : null;
+        $cbConnectionIdleHours = isset($parts[11]) ? explode("`", $parts[11])[0] : null;
         $cbIdleHours = isset($parts[12]) ? explode("`", $parts[12])[0] : null;
-        $idleHoursReasons = $workIdleHours.'**'.$connectIdleHours.'**'.$baIdleHours.'**'.$cbIdleHours;
+        $idleHoursReasons = $workIdleHours.'**'.$connectIdleHours.'**'.$cbConnectionIdleHours.'**'.$cbIdleHours;
 
         return [
             'created' => $created,

@@ -741,7 +741,7 @@ class WmMashine extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets if Central Board idles
+     * Gets if Central Board connection idles
      * 
      * @param int $timestamp
      * @param int $endTimestamp
@@ -749,13 +749,10 @@ class WmMashine extends \yii\db\ActiveRecord
      * 
      * @return bool
      */
-    public function getIfCpIdles($timestamp, $endTimestamp, $imei)
+    public function getIfCbConnectionIdles($timestamp, $endTimestamp, $imei)
     {
-        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
-        $cpErrors = '1,2,3,4,5,6';
-        $queryCpErrorCondition = "AND packet IN (".$cpErrors.")";
+        $dbHelper = Yii::$app->dbCommandHelper;
         $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, new ImeiData(), $imei, 'imei_id', 'created_at, imei_id');
-        $dbHelper->addQueryString($queryCpErrorCondition);
 
         return $dbHelper->getCount() ? false : true;
     }
@@ -791,9 +788,9 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public function getIfIdlesOk($timestamp, $endTimestamp, $imei)
     {
-        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
-        $evtBillErrors = '1,2,3,4,5,6';
+        $dbHelper = Yii::$app->dbCommandHelper;
         $cpErrors = '1,2,3,4,5,6';
+        $evtBillErrors = '1,2,3,4,5,6';
         $wmMashineConnectionErrors = '0, 16';
         $wmMashineWorkErrors = '9, 10, 11, 12, 13, 14, 21, 25';
         $queryCpOk = "AND packet NOT IN (".$cpErrors.") AND evt_bill_validator NOT IN (".$evtBillErrors.")";
@@ -804,9 +801,11 @@ class WmMashine extends \yii\db\ActiveRecord
         $dbHelper->addQueryString($queryCpOk);
 
         if ($dbHelper->getCount() == 0) {
-    
+
             return ['error' => self::TYPE_CP_ERROR];
         }
+
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
 
         $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, new WmMashineData(), $this, 'mashine_id', 'created_at, mashine_id');
         $dbHelper->addQueryString($queryMashineOk);
@@ -818,7 +817,7 @@ class WmMashine extends \yii\db\ActiveRecord
 
         return ['error' => self::TYPE_IDLES_OK];
     }
-    
+
     /**
      * Gets idle key by results of 'getIfIdlesOk' method
      * 
@@ -832,12 +831,12 @@ class WmMashine extends \yii\db\ActiveRecord
     public function getIdleKey($timestamp, $endTimestamp, $imei, $idlesResult)
     {
         if ($idlesResult['error'] == self::TYPE_CP_ERROR) {
-            if ($this->getIfCpIdles($timestamp, $endTimestamp, $imei)) {
+            if ($this->getIfCbConnectionIdles($timestamp, $endTimestamp, $imei)) {
 
-                return 'cbIdleHours';
+                return 'cbConnectionIdleHours';
             }
 
-            return 'baIdleHours';
+            return 'cbIdleHours';
         }
 
         if ($this->getIfMashineConnectionIdles($timestamp, $endTimestamp, $imei)) {
@@ -867,7 +866,7 @@ class WmMashine extends \yii\db\ActiveRecord
         $fieldInst = 'mashine_id';
         $select = 'created_at, mashine_id';
 
-        $baIdleHours = 0.00;
+        $cbConnectionIdleHours = 0.00;
         $cbIdleHours = 0.00;
         $connectIdleHours = 0.00;
         $workIdleHours = 0.00;
@@ -905,12 +904,12 @@ class WmMashine extends \yii\db\ActiveRecord
             }
         }
 
-        $idleHours = $workIdleHours + $connectIdleHours + $baIdleHours + $cbIdleHours;
+        $idleHours = $workIdleHours + $connectIdleHours + $cbConnectionIdleHours + $cbIdleHours;
 
         return [
             'workIdleHours' => $workIdleHours,
             'connectIdleHours' => $connectIdleHours,
-            'baIdleHours' => $baIdleHours,
+            'cbConnectionIdleHours' => $cbConnectionIdleHours,
             'cbIdleHours' => $cbIdleHours,
             'idleHours' => $idleHours,
             'record' => $item
@@ -928,7 +927,7 @@ class WmMashine extends \yii\db\ActiveRecord
     private function makeTempValueDiff($value, $diff)
     {
         $hoursData = json_decode($value, true);
-        $keys = ['workIdleHours', 'connectIdleHours', 'baIdleHours', 'cbIdleHours', 'idleHours'];
+        $keys = ['workIdleHours', 'connectIdleHours', 'cbConnectionIdleHours', 'cbIdleHours', 'idleHours'];
         $newHoursData = [];
 
         if ($hoursData['idleHours'] > 0) {
@@ -1081,7 +1080,7 @@ class WmMashine extends \yii\db\ActiveRecord
         $baseIdlesData =  [
             'workIdleHours' => 0,
             'connectIdleHours' => 0,
-            'baIdleHours' => 0,
+            'cbConnectionIdleHours' => 0,
             'cbIdleHours' => 0,
             'idleHours' => 0,
             'allHours' => $allHours
@@ -1090,7 +1089,7 @@ class WmMashine extends \yii\db\ActiveRecord
         $baseIdlesKeys = [
             'workIdleHours',
             'connectIdleHours',
-            'baIdleHours',
+            'cbConnectionIdleHours',
             'cbIdleHours',
             'idleHours'
         ];

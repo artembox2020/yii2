@@ -37,13 +37,14 @@
 
 <span class="cancel-income"><?= Yii::t('frontend', 'Cancel Statistics') ?></span><br/>
 
-<br>
-<?= Yii::t('summaryJournal', 'Idle Reasons Hours') ?><br><br>
+<?php
+if (!empty($params['idleHours'])) { 
 
-<?= Yii::t('summaryJournal', 'Idle Work Hours') ?>: <?= explode("**", $params['idleHoursReasons'])[0] ?><br>
-<?= Yii::t('summaryJournal', 'Idle Connect Hours') ?>: <?= explode("**", $params['idleHoursReasons'])[1] ?><br>
-<?= Yii::t('summaryJournal', 'Idle Bill Acceptance Hours') ?>: <?= explode("**", $params['idleHoursReasons'])[2] ?><br>
-<?= Yii::t('summaryJournal', 'Idle Central Board Hours') ?>: <?= explode("**", $params['idleHoursReasons'])[3] ?><br>
+    echo Yii::$app->view->render('/summary-journal/idle-hours-reasons', [
+        'idleHoursReasons' => $params['idleHoursReasons']
+    ]);
+}
+?>
 
 <?= Yii::$app->view->render('/summary-journal/data/pjax_form', [
     'params' => $params,

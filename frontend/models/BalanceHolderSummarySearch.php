@@ -689,7 +689,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $totalDamageIdleHours = 0.00;
         $totalWorkIdleHours = 0.00;
         $totalConnectIdleHours = 0.00;
-        $totalBaIdleHours = 0.00;
+        $totalCbConnectionIdleHours = 0.00;
         $totalCbIdleHours = 0.00;
         foreach ($mashines as $mashine) {
             $idleHoursInfo = $mashine->getIdleHoursByTimestamps($timestamp, $timestampEnd, self::IDLE_TIME_HOURS);
@@ -703,7 +703,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
             $totalHours += $allHours;
             $totalWorkIdleHours += $workIdleHours;
             $totalConnectIdleHours += $connectIdleHours;
-            $totalBaIdleHours += $baIdleHours;
+            $totalCbConnectionIdleHours += $cbConnectionIdleHours;
             $totalCbIdleHours += $cbIdleHours;
             $totalDamageIdleHours += $damageIdleHours;
         }
@@ -711,10 +711,10 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $totalIdleHours = $this->parseFloat($totalIdleHours, 2);
         $totalWorkIdleHours = $this->parseFloat($totalWorkIdleHours, 2);
         $totalConnectIdleHours = $this->parseFloat($totalConnectIdleHours, 2);
-        $totalBaIdleHours = $this->parseFloat($totalBaIdleHours, 2);
+        $totalCbConnectionIdleHours = $this->parseFloat($totalCbConnectionIdleHours, 2);
         $totalCbIdleHours = $this->parseFloat($totalCbIdleHours, 2);
         $totalHours = $this->parseFloat($totalHours, 2);
-        $idleHoursReasons = $totalWorkIdleHours.'**'.$totalConnectIdleHours.'**'.$totalBaIdleHours.'**'.$totalCbIdleHours;
+        $idleHoursReasons = $totalWorkIdleHours.'**'.$totalConnectIdleHours.'**'.$totalCbConnectionIdleHours.'**'.$totalCbIdleHours;
 
         $mashineStatistics = [
             'created' => $mashinesCreated,
