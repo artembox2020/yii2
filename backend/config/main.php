@@ -145,7 +145,7 @@ $config = [
             ],
             [
                 'allow' => true,
-                'roles' => ['manager'],
+                'roles' => ['super_administrator'],
             ],
         ],
     ],
