@@ -123,4 +123,26 @@ class DbCommandHelperOptimizer extends DbCommandHelper
 
         return $this->putDataByHash($hash, $query, 'execute');
     }
+
+    /**
+     * Gets items count, based on query string
+     * 
+     * @return int
+     */
+    public function getCount()
+    {
+        $queryString = $this->queryString;
+        $queryString = preg_replace("/SELECT\s.*\sFROM\s/", "SELECT COUNT(*) FROM ", $queryString);
+        $command = Yii::$app->db->createCommand($queryString)->bindValues($this->bindValues);
+
+        $hash = $this->getHashByQuery($command);
+        $item = $this->getDataByHash($hash);
+
+        if ($item) {
+
+            return $item;
+        }
+
+        return $this->putDataByHash($hash, $command, 'queryScalar');
+    }
 }

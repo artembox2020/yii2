@@ -517,10 +517,11 @@ class EntityHelper implements EntityHelperInterface
      * @param Instance $bInst
      * @param string $param_type
      * @param int $stepInterval
+     * @param function|bool $procFunc
      * 
      * @return array
      */
-    public function getUnitTempValue($start, $end, $bInst, $param_type, $stepInterval)
+    public function getUnitTempValue($start, $end, $bInst, $param_type, $stepInterval, $procFunc = false)
     {
         $dbHelper = Yii::$app->dbCommandHelperOptimizer;
         $className = str_replace(["\\"], ["/"], $bInst::className());
@@ -540,7 +541,12 @@ class EntityHelper implements EntityHelperInterface
 
         if ($diff > 0 && $diff < $stepInterval) {
             $tempIdleData['end'] -= $diff;
-            $tempIdleData['value'] -= ($diff / 3600);
+
+            if (!empty($procFunc) && is_callable($procFunc)) {
+                $tempIdleData['value'] = $procFunc($tempIdleData['value'], ($diff/3600));
+            } else {
+                $tempIdleData['value'] -= ($diff / 3600);
+            }
         }
 
         return $tempIdleData;
