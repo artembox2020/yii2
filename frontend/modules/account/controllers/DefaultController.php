@@ -220,7 +220,7 @@ class DefaultController extends Controller
 
                 $user->save(false);
 
-                $this->service->createLog($user);
+                $this->service->createLog($user, 'Create');
                 
                 $profile = UserProfile::findOne($user->id);
                 if ($profile->load(Yii::$app->request->post())) {
@@ -241,8 +241,12 @@ class DefaultController extends Controller
 
             $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
 
-            unset($roles[array_search('administrator', $roles)]);
-            unset($roles[array_search('manager', $roles)]);
+            $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+
+            if (!array_key_exists('super_administrator', $now)) {
+                unset($roles[array_search('administrator', $roles)]);
+            }
+            unset($roles[array_search('super_administrator', $roles)]);
             unset($roles[array_search('user', $roles)]);
 
             foreach ($roles as $key => $role) {

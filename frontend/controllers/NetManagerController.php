@@ -215,7 +215,7 @@ class NetManagerController extends \yii\web\Controller
     {
         $array = array();
 
-        if (!\Yii::$app->user->can('administrator')) {
+        if (!\Yii::$app->user->can('net-manager/delete-employee', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -231,8 +231,8 @@ class NetManagerController extends \yii\web\Controller
             if ($isValid) {
                 $user->save();
                 $profile->save(false);
-                $this->service->createLog($user);
-                $this->service->createLog($profile);die;
+                $this->service->createLog($user, 'Update');
+                $this->service->createLog($profile, 'Update');
                 //        $this->service->createLog($profile);
                 return $this->redirect(['/net-manager/employees']);
             }
@@ -259,15 +259,15 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionDeleteEmployee($id) 
     {
-        if (!\Yii::$app->user->can('manager')) {
+        if (!\Yii::$app->user->can('net-manager/delete-employee', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
 
         $model = $this->findModel($id, new User());
+        $this->service->createLog($model, 'Delete');
         $model->softDelete();
 
-        $this->service->createLog($model);
 
         return $this->redirect("/net-manager/employees");
     }

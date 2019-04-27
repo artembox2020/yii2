@@ -28,14 +28,12 @@ class LoggerService
         $this->dto = $dto;
     }
 
-    /**
-     * @param $data
-     */
-    public function createLog($data): void
+
+    public function createLog($data, $event): void
     {
-//        $dto = $this->dto->createDto($data);
+//        $dto = $this->dto->createDto($data, $event);
 //        Debugger::dd($dto);
-        $this->storage->save($this->dto->createDto($data));
+        $this->storage->save($this->dto->createDto($data, $event));
     }
 
     /**

@@ -30,16 +30,16 @@ class LoggerDto implements LoggerDtoInterface
     public $who_is;
     public $created_at;
 
-    public function createDto($data)
+    public function createDto($data, $event)
     {
        return $dto = [
             'company_id' => $this->getWhoIs()->company_id,
             'type' => $this->getClassName($data),
             'name' => $this->getName($data),
             'number' => $this->getNumber($data),
-            'event' => $this->getEvent($data),
+            'event' => $event,
             'new_state' => $this->getNewState($data),
-            'old_state' => $this->getOldState($data),
+            'old_state' => 'old_stat',
             'address' => $this->getAddress($data),
             'who_is' => $this->getWhoIs()->username,
             'created_at' => time(),
@@ -104,6 +104,10 @@ class LoggerDto implements LoggerDtoInterface
             return $this->address = 'empty';
         }
 
+        if ($this->getClassName($object) == 'UserProfile') {
+            return $this->address = 'empty';
+        }
+
         $params = [':id' => $object->id, ':is_deleted' => false];
         $address = Yii::$app->db->createCommand('
                         SELECT * 
@@ -129,6 +133,10 @@ class LoggerDto implements LoggerDtoInterface
             $this->number = $object->id;
         }
 
+        if ($this->getClassName($object) == 'UserProfile') {
+            $this->number = $object->user_id;
+        }
+
         if ($this->getClassName($object) == 'WashMachine') {
             $this->number = $object->serial_number . '/' . $object->id . '/' . $object->inventory_number;
         }
@@ -143,20 +151,25 @@ class LoggerDto implements LoggerDtoInterface
      */
     public function getEvent($object)
     {
-        $cur_time = date(self::FORMAT);
-        $currentDate = new DateTime($cur_time);
-        $usr_time = date(self::FORMAT, $object->created_at);
-        $difference = $currentDate->diff(new DateTime($usr_time))->h;
+        if (property_exists($object,'created_at')) {
+            $cur_time = date(self::FORMAT);
+            $currentDate = new DateTime($cur_time);
+            $usr_time = date(self::FORMAT, $object->created_at);
+            $difference = $currentDate->diff(new DateTime($usr_time))->h;
 
-        if ($difference < self::ONE) {
-            $this->event = 'New';
-        } else {
-            if ($object->is_deleted == self::ONE) {
-                $this->event = 'Delete';
+            if ($difference < self::ONE) {
+                $this->event = 'New';
             } else {
-                $this->event = 'Update';
+                if ($object->is_deleted == self::ONE) {
+                    $this->event = 'Delete';
+                } else {
+                    $this->event = 'Update';
+                }
             }
+
+            return $this->event;
         }
+        $this->event = 'empty';
 
         return $this->event;
     }
@@ -171,6 +184,7 @@ class LoggerDto implements LoggerDtoInterface
         if ($this->getEvent($object) == 'New') {
             $this->old_state = '---';
         } else {
+            echo '<pre>';
             Debugger::d($object->attributes);
             $this->old_state = 'getOldState';
         }
