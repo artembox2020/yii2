@@ -55,6 +55,8 @@ return [
     'Address List' => 'Список адрес',
     'Address Logs' => 'Логи адреси',
     'Address Name' => 'Коротка назва',
+    'Address Was Created' => 'адреса створена',
+    'Address Was Deleted' => 'адреса видалена',
     'Address amount' => 'Кількість адрес',
     'Add IMEI' => 'Додати IMEI',
     'Add Washpay' => 'Додати WASHPAY',

@@ -55,7 +55,7 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
                     for ($j = 1; $j <= $days; ++$j) {
                         $summaryTotal[$j] += $this->parseFloat($income[$j]['income'], 2);
                         $idlesTotal[$j] += $this->parseFloat($income[$j]['idleHours'], 2);
-                        $class = $this->makeClassByIncome($income[$j]);
+                        $class = $this->makeClassByIncome($income[$j], null, null, null);
                         $data[$k][$j] = [
                             'timestampStart' => $this->getTimestampByYearMonthDay($year, $month, $j, true),
                             'timestampEnd' => $this->getTimestampByYearMonthDay($year, $month, $j, false),
@@ -508,8 +508,8 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
      *
      * @param array $incomeData
      * @return string
-     */ 
-    public function getEventsAsString($incomeData)
+     */
+    public function getEventsAsString($incomeData, $addressId, $start, $end)
     {
         $eventsString = '';
 
