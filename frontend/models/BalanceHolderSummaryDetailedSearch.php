@@ -507,6 +507,10 @@ class BalanceHolderSummaryDetailedSearch extends BalanceHolderSummarySearch
      * Makes events string 
      *
      * @param array $incomeData
+     * @param int $addressId
+     * @param int $start
+     * @param int $end
+     * 
      * @return string
      */
     public function getEventsAsString($incomeData, $addressId, $start, $end)
