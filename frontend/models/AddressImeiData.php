@@ -4,6 +4,7 @@ namespace frontend\models;
 use yii\db\ActiveRecord;
 use frontend\services\globals\Entity;
 use frontend\services\globals\QueryOptimizer;
+use frontend\services\globals\DateTimeHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -406,9 +407,14 @@ class AddressImeiData extends ActiveRecord
     {
         $wmMashinesQueries = [];
         $imeiId = $this->getImeiIdByAddressTimestamp($addressId, $start);
+        $dateHelper = new DateTimeHelper();
 
         while (!empty($imeiInfo = $this->getNextImeiIdByAddressAndTimestamp($addressId, $start))) {
-            $wmMashinesQueries[] = $this->makeWmMashineQueryItem($start-1, $imeiInfo['created_at'], $imeiId);
+
+            if (!$dateHelper->isSameDay($start, $imeiInfo['created_at'])) {
+                $wmMashinesQueries[] = $this->makeWmMashineQueryItem($start-1, $imeiInfo['created_at'], $imeiId);
+            }
+
             $imeiId = $imeiInfo['imei_id'];
             $start = $imeiInfo['created_at'];
 
@@ -420,14 +426,17 @@ class AddressImeiData extends ActiveRecord
             $lastImeiInfo = $imeiInfo;
         }
 
-        if (!empty($lastImeiInfo)) {
+        if (!empty($lastImeiInfo) && !$dateHelper->isSameDay($start, $end)) {
             $wmMashinesQueries[] = $this->makeWmMashineQueryItem($start-1, $end, $imeiId);
         }
 
         if (empty($wmMashinesQueries) && !empty($imei = $this->getCurrentImeiIdByAddress($addressId, $addressStatus))) {
             $bhSummarySearch = new BalanceHolderSummarySearch();
-            $query = $bhSummarySearch->getAllMashinesQueryByTimestamps($start-1, $end, $imei->id);
-            $wmMashinesQueries[] = [ 'created_at' => $start, 'query' => $query, 'imei_id' => $imei->id];
+
+            if (!$dateHelper->isSameDay($start, $end)) {
+                $query = $bhSummarySearch->getAllMashinesQueryByTimestamps($start-1, $end, $imei->id);
+                $wmMashinesQueries[] = [ 'created_at' => $start, 'query' => $query, 'imei_id' => $imei->id];
+            }
         }
 
         return $wmMashinesQueries;

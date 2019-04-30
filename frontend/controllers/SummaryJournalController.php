@@ -468,16 +468,18 @@ class SummaryJournalController extends \yii\web\Controller
      * @param array $params
      * @param timestamp $timestampStart
      * @param timestamp $timestampEnd
+     * @param int $addressId
      * @return string
      */
-    public function renderPopupLabel($params, $timestampStart, $timestampEnd)
+    public function renderPopupLabel($params, $timestampStart, $timestampEnd, $addressId)
     {
         return $this->renderPartial('/summary-journal/popup-label', [
             'params' => $params,
             'start' => $timestampStart,
             'end' => $timestampEnd,
             'random' => rand(),
-            'searchModel' => new BalanceHolderSummarySearch()
+            'searchModel' => new BalanceHolderSummarySearch(),
+            'addressId' => $addressId
         ]);
     }
 

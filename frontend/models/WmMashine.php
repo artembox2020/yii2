@@ -751,7 +751,7 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public function getIfCbConnectionIdles($timestamp, $endTimestamp, $imei)
     {
-        $dbHelper = Yii::$app->dbCommandHelper;
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
         $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, new ImeiData(), $imei, 'imei_id', 'created_at, imei_id');
 
         return $dbHelper->getCount() ? false : true;
@@ -788,7 +788,7 @@ class WmMashine extends \yii\db\ActiveRecord
      */
     public function getIfIdlesOk($timestamp, $endTimestamp, $imei)
     {
-        $dbHelper = Yii::$app->dbCommandHelper;
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
         $cpErrors = '1,2,3,4,5,6';
         $evtBillErrors = '1,2,3,4,5,6';
         $wmMashineConnectionErrors = '0, 16';
@@ -804,8 +804,6 @@ class WmMashine extends \yii\db\ActiveRecord
 
             return ['error' => self::TYPE_CP_ERROR];
         }
-
-        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
 
         $dbHelper->getBaseUnitQueryByTimestamps($timestamp, $endTimestamp, new WmMashineData(), $this, 'mashine_id', 'created_at, mashine_id');
         $dbHelper->addQueryString($queryMashineOk);
