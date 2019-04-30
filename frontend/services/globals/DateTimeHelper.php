@@ -162,4 +162,19 @@ class DateTimeHelper
 
         return strtotime($year.'-'.$month.'-01 00:00:00');
     }
+
+    /**
+     * Gets whether is the same day
+     * 
+     * @param int $timestamp
+     * @param int $timestamp2
+     * @return int
+     */
+    public function isSameDay($timestamp, $timestamp2)
+    {
+        $timestampDayBeginning = $this->getDayBeginningTimestamp($timestamp);
+        $timestampDayBeginning2 = $this->getDayBeginningTimestamp($timestamp2);
+
+        return $timestampDayBeginning == $timestampDayBeginning2 ? true : false;
+    }
 }
