@@ -536,6 +536,8 @@ class NetManagerController extends \yii\web\Controller
             $imei->is_deleted = false;
             $imei->bindToAddressIfActive($imei->address_id);
             $imei->save();
+
+            $this->service->createLog($imei, 'Update');
             
             $addressImeiData = new AddressImeiData();
 
@@ -583,6 +585,8 @@ class NetManagerController extends \yii\web\Controller
             $imei->is_deleted = false;
             $imei->bindToAddressIfActive($imei->address_id);
             $imei->save();
+
+            $this->service->createLog($imei, 'Create');
 
             $addressImeiData = new AddressImeiData();
             $addressImeiData->createLog($imei->id, $imei->address_id);
@@ -667,6 +671,7 @@ class NetManagerController extends \yii\web\Controller
 
             if ($model->validate()) {
                 $model->save(false);
+                $this->service->createLog($model, 'Create');
             } else {
 
                 return $this->render('wm-machine/wm-machine-add', [
@@ -708,6 +713,7 @@ class NetManagerController extends \yii\web\Controller
         if ($model->load(Yii::$app->request->post())) {
           if ($model->validate()) {
                 $model->update(false);
+                $this->service->createLog($model, 'Update');
                 if ($model->status > self::ONE) {
                     $storage = new StorageHistory();
                     $storage->company_id = $model->company_id;

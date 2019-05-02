@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\services\logger\src\service\LoggerService;
 use Yii;
 use frontend\models\WmMashine;
 use frontend\models\WmMashineSearch;
@@ -14,6 +15,15 @@ use yii\filters\VerbFilter;
  */
 class WmMashineController extends Controller
 {
+    /** @var LoggerService  */
+    private $service;
+
+    public function __construct($id, $module, LoggerService $service, $config = [])
+    {
+        $this->service = $service;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @inheritdoc
      */
@@ -104,9 +114,13 @@ class WmMashineController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->softDelete();
+        if ($this->findModel($id)) {
+            $model = $this->findModel($id);
+            $this->service->createLog($model, 'Delete');
+            $this->findModel($id)->softDelete();
 
-        return $this->redirect(['/net-manager/osnovnizasoby']);
+            return $this->redirect(['/net-manager/osnovnizasoby']);
+        }
     }
 
     /**
