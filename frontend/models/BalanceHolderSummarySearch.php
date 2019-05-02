@@ -868,10 +868,19 @@ class BalanceHolderSummarySearch extends BalanceHolder
      * Gets class label by incomes
      *
      * @param array $income
+     * @param \frontend\models\AddressBalanceHolder $address
+     * @param int $start
+     * @param int $end
+     * 
      * @return string
      */ 
-    public function makeClassByIncome($income)
+    public function makeClassByIncome($income, $address, $start, $end)
     {
+        if ($address) {
+            $isAddressCreated = $address->isCreatedByTimestamps($start, $end);
+            $isAddressDeleted = $address->isDeletedByTimestamps($start, $end);
+        }
+
         if (!is_null($income)) {
 
             while (is_array($income['income'])) {
@@ -885,11 +894,11 @@ class BalanceHolderSummarySearch extends BalanceHolder
             if (!empty($income['created'])) {
                 $class .= ' green-color';
             }
-        
+
             if (!empty($income['deleted'])) {
                 $class .= ' red-color';
             }
-            
+
             if (!empty($income['encashment_date'])) {
                 $class.= ' blue-color';
             }
@@ -918,6 +927,14 @@ class BalanceHolderSummarySearch extends BalanceHolder
             }
         } else {
             $class = ' not-set-income';
+        }
+
+        if ($isAddressCreated) {
+            $class .= ' address-green-color';
+        }
+
+        if ($isAddressDeleted) {
+            $class .= ' address-red-color';
         }
 
         return $class;
@@ -954,11 +971,14 @@ class BalanceHolderSummarySearch extends BalanceHolder
                 for ($i = 1, $j = 0; $i <= $days; ++$i) {
                     $summaryTotal[$i] += $this->parseFloat($incomes[$i]['income'], 2);
                     $idlesTotal[$i] += $this->parseFloat($incomes[$i]['idleHours'], 2);
-                    $class = $this->makeClassByIncome($incomes[$i]);
+                    $start = $this->getTimestampByYearMonthDay($year, $month, $i, true);
+                    $end = $this->getTimestampByYearMonthDay($year, $month, $i, false);
+                    $class = $this->makeClassByIncome($incomes[$i], $address, $start, $end);
                     $data[$k][$i] = [
                         'timestampStart' => $this->getTimestampByYearMonthDay($year, $month, $i, true),
                         'timestampEnd' => $this->getTimestampByYearMonthDay($year, $month, $i, false),
-                        'class' => $class
+                        'class' => $class,
+                        'address_id' => $address->id
                     ];
                 }
                 $data[$k]['incomes'] = $incomes;
@@ -1052,11 +1072,17 @@ class BalanceHolderSummarySearch extends BalanceHolder
      * Makes events string 
      *
      * @param array $incomeData
+     * @param int $addressId
+     * @param int $start
+     * @param int $end
+     * 
      * @return string
      */ 
-    public function getEventsAsString($incomeData)
+    public function getEventsAsString($incomeData, $addressId, $start, $end)
     {
         $eventsString = '';
+        $addressQuery = AddressBalanceHolder::find()->where(['id' => $addressId])->limit(1);
+        $address = QueryOptimizer::getItemByQuery($addressQuery);
 
         if (!empty($incomeData['created'])) {
             $eventsString .= Yii::t('frontend', 'Addition').', ';
@@ -1068,6 +1094,14 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
         if (!empty($incomeData['encashment_date'])) {
             $eventsString .= Yii::t('frontend', 'Encashment').', ';
+        }
+
+        if ($address && $address->isCreatedByTimestamps($start, $end)) {
+             $eventsString .= Yii::t('frontend', 'Address Was Created').', ';
+        }
+
+        if ($address && $address->isDeletedByTimestamps($start, $end)) {
+             $eventsString .= Yii::t('frontend', 'Address Was Deleted').', ';
         }
 
         $eventsString = trim($eventsString);

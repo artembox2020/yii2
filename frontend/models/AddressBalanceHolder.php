@@ -333,4 +333,38 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
 
         return $bhSummarySearch->getIncomeByImeiAndTimestamps($start, $end, $imei, $this);
     }
+
+    /**
+     * Gets whether address was deleted between start and end timestamps
+     * @param int $start
+     * @param int $end
+     *
+     * @return bool 
+     */
+    public function isDeletedByTimestamps($start, $end)
+    {
+        if ($this->is_deleted && $this->deleted_at <= $end && $this->deleted_at >= $start) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets whether address was created between start and end timestamps
+     * @param int $start
+     * @param int $end
+     *
+     * @return bool 
+     */
+    public function isCreatedByTimestamps($start, $end)
+    {
+        if ($this->created_at <= $end && $this->created_at >= $start) {
+
+            return true;
+        }
+
+        return false;
+    }
 }

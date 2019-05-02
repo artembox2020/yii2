@@ -33,7 +33,7 @@ use frontend\services\globals\EntityHelper;
                     data-cp-idle-hours = "<?= explode("**", $data[$j]['incomes'][$i]['idleHoursReasons'])[3] ?>"
                     data-damage-idle-hours = "<?= $data[$j]['incomes'][$i]['damageIdleHours'] ?>"
                     data-all-hours = "<?= $data[$j]['incomes'][$i]['allHours'] ?>"
-                    data-address-id = "<?= $data[$j]['incomes'][$i]['address_id'] ?>"
+                    data-address-id = "<?= $data[$j][$i]['address_id'] ?>"
                     class = "timestamp <?= $data[$j][$i]['class'] ?>"
                 >
                 <?php
@@ -43,7 +43,12 @@ use frontend\services\globals\EntityHelper;
                     ).
                     EntityHelper::makePopupWindow(
                         [],
-                        $summaryJournalController->renderPopupLabel($data[$j]['incomes'][$i], $data[$j][$i]['timestampStart'], $data[$j][$i]['timestampEnd']),
+                        $summaryJournalController->renderPopupLabel(
+                            $data[$j]['incomes'][$i],
+                            $data[$j][$i]['timestampStart'],
+                            $data[$j][$i]['timestampEnd'],
+                            $data[$j][$i]['address_id']
+                        ),
                         'color: black; text-align: left;',
                         'height: 10px; position: absolute;'
                     );

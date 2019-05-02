@@ -372,7 +372,7 @@ class Jsummary extends ActiveRecord
     public function getImeiFromGlobalById($id)
     {
 
-        $query = Imei::find()->where(['id' => $id]);
+        $query = Imei::find()->where(['id' => $id])->limit(1);
 
         return QueryOptimizer::getItemByQuery($query);
     }

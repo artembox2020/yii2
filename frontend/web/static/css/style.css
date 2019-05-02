@@ -368,6 +368,8 @@ div.required label:after {
 }
 .monitoring .popup-block:hover > .label,
 .summary-journal .timestamp.white-color:not([class*=not-set-income]):hover .label,
+.summary-journal .timestamp.address-green-color:hover .label,
+.summary-journal .timestamp.address-red-color:hover .label,
 .summary-journal .timestamp.light-grey:hover .label,
 .summary-journal .timestamp.middle-grey:hover .label,
 .summary-journal .timestamp.heavy-grey:hover .label,
@@ -512,27 +514,6 @@ div.required label:after {
 .summary-journal .table-container {
     font-weight: bold;
 }
-.summary-journal .green-color,
-.summary-journal .timestamp.green-color.light-grey,
-.summary-journal .timestamp.green-color.middle-grey,
-.summary-journal .timestamp.green-color.heavy-grey,
-.summary-journal .timestamp.green-color.dark-grey {
-    background-color: #00C251;
-}
-.summary-journal .red-color,
-.summary-journal .timestamp.red-color.light-grey,
-.summary-journal .timestamp.red-color.middle-grey,
-.summary-journal .timestamp.red-color.heavy-grey,
-.summary-journal .timestamp.red-color.dark-grey {
-    background-color: red;
-}
-.summary-journal .green-color.red-color,
-.summary-journal .timestamp.green-color.red-color.light-grey,
-.summary-journal .timestamp.green-color.red-color.middle-grey,
-.summary-journal .timestamp.green-color.red-color.heavy-grey,
-.summary-journal .timestamp.green-color.red-color.dark-grey {
-    background-color: #ffcc66;
-}
 .summary-journal .timestamp.light-grey {
     background-color: #d3d3d3;
 }
@@ -545,7 +526,29 @@ div.required label:after {
 .summary-journal .timestamp.dark-grey {
     background-color: #696969;
 }
-
+.summary-journal .green-color,
+.summary-journal .address-green-color,
+.summary-journal .timestamp.green-color.light-grey,
+.summary-journal .timestamp.green-color.middle-grey,
+.summary-journal .timestamp.green-color.heavy-grey,
+.summary-journal .timestamp.green-color.dark-grey {
+    background-color: #00C251!important;
+}
+.summary-journal .red-color,
+.summary-journal .address-red-color,
+.summary-journal .timestamp.red-color.light-grey,
+.summary-journal .timestamp.red-color.middle-grey,
+.summary-journal .timestamp.red-color.heavy-grey,
+.summary-journal .timestamp.red-color.dark-grey {
+    background-color: red!important;
+}
+.summary-journal .green-color.red-color,
+.summary-journal .timestamp.green-color.red-color.light-grey,
+.summary-journal .timestamp.green-color.red-color.middle-grey,
+.summary-journal .timestamp.green-color.red-color.heavy-grey,
+.summary-journal .timestamp.green-color.red-color.dark-grey {
+    background-color: #ffcc66!important;
+}
 .summary-journal .timestamp.blue-color,
 .summary-journal .mashine-count.blue-color,
 .summary-journal .mashine-number-device.blue-color {
