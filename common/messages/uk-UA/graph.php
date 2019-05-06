@@ -13,6 +13,7 @@ return [
     'Current year' => 'Поточний рік',
     'Date' => 'Дата',
     'Filter By Date' => 'Фільтр по даті',
+    'Modem Level Signal' => 'Рівень сигналу по пунктам',
     'Show by the certain period' => 'Показувати за конкретний період',
     'Show by the last days' => 'Показувати за останні дні',
     'WM At Work' => 'ПМ в роботі',

@@ -858,4 +858,19 @@ class JlogSearch extends Jlog
 
         return $params;
     }
+
+    public function getInitializationHistoryBeginningByImeiId($imeiId)
+    {
+        $query = Jlog::find()->select(['unix_time_offset'])->andWhere(['imei_id' => $imeiId, 'type_packet' => self::TYPE_PACKET_INITIALIZATION]);
+        $query = $query->orderBy(['unix_time_offset' => SORT_ASC])->limit(1);
+
+        $item = $query->one();
+
+        if ($item) {
+
+            return $item->unix_time_offset;
+        }
+
+        return self::INFINITY;
+    }
 }

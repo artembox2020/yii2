@@ -46,4 +46,15 @@ class GoogleGraphStorage implements GraphStorageInterface
     {
         return Yii::$app->view->render($this->storagePath.'/drawHistogram', ['storage' => $this, 'data' => $data, 'selector' => $selector]);
     }
+
+    /**
+     * Draws line by input data, inside container by selector
+     * 
+     * @param array $data
+     * @param string $selector
+     */ 
+    public function drawLine(array $data, string $selector)
+    {
+        return Yii::$app->view->render($this->storagePath.'/drawLine', ['storage' => $this, 'data' => $data, 'selector' => $selector]);
+    }
 }

@@ -9,6 +9,7 @@ use Yii;
 use yii\web\Controller;
 use frontend\storages\GoogleGraphStorage;
 use frontend\storages\MashineStatStorage;
+use frontend\storages\ModemStatStorage;
 use frontend\services\globals\DateTimeHelper;
 use frontend\models\Jlog;
 
@@ -35,6 +36,11 @@ class DashboardController extends Controller
         $mss->setStepByTimestamps($start, $end);
         $options = ['colors' => ['cyan', 'green', 'grey', '#00ff7f', 'red']];
         $data = $mss->aggregateAllGreenGreyWorkErrorForGoogleGraphByTimestamps($start, $end, $options);
+        /*echo '<pre>';
+        print_r($data);
+        echo '<br>';
+        echo 'start='.$start.', end='.$end.', action='.$action.', selector='.$selector.', active='.$active.'<br>';
+        echo '</pre>';*/
         $histogram = $ggs->drawHistogram($data, $selector);
         $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active);
 
@@ -212,5 +218,79 @@ class DashboardController extends Controller
         return $this->renderPartial('render-engine', [
             'params' => $params
         ]);
+    }
+
+    /**
+     * Renders modem level signal statistics
+     * Accepts data as post params
+     * 
+     * @return string
+     */  
+    public function actionModemLevelSignal()
+    {
+        $post = Yii::$app->request->post();
+        list($start, $end, $action, $selector, $active) = [
+            $post['start'], $post['end'], $post['action'], $post['selector'], $post['active']
+        ];
+        $ggs = new GoogleGraphStorage();
+        $mss = new ModemStatStorage();
+        $options = [
+            'colors' => [
+                'red',
+                'green'
+            ]
+        ];
+
+        if ($active == 'current day') {
+        $data = [
+            'titles' => [
+                '',
+                'street Kotovskiy',
+                'street Mikhail'
+            ],
+            'lines' => [
+                [
+                    'ab',
+                    -64,
+                    -128,
+                ],
+                [
+                    'cd',
+                    '-64',
+                    '-64',
+                ],
+                [
+                    '',
+                    '-50',
+                    '-50',
+                ],
+                [
+                    'ef',
+                    '-64',
+                    '-64',
+                ]
+            ],
+            'options' => $options
+        ];
+        } else {
+            $data = $mss->aggregateModemLevelSignalsForGoogleGraph($start, $end, $options);
+        }
+        
+        /*ob_start();
+        echo '<pre>';
+        print_r($data);
+        echo '<pre/>';
+        
+        return ob_get_clean();*/
+
+        /*echo '<pre>';
+        print_r($data);
+        echo '<br>';*/
+        //echo '<pre>start='.$start.', end='.$end.', action='.$action.', selector='.$selector.', active='.$active.'<br>';
+        //echo '</pre>';
+        $histogram = $ggs->drawLine($data, $selector);
+        $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active);
+
+        return $histogram.$actionBuilder;
     }
 }

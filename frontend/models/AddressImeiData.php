@@ -692,4 +692,29 @@ class AddressImeiData extends ActiveRecord
 
         return $imei;
     }
+
+    public function getImeiIdByAddressHistory($address, $timestamp, $addressHistory)
+    {
+        foreach ($addressHistory as $historyItem) {
+            if ($historyItem['created_at'] <= $timestamp) {
+                $imeiId = $historyItem['imei_id'];
+            } else {
+                break;
+            }
+        }
+
+        if (empty($imeiId)) {
+
+            $imei = $this->getCurrentImeiIdByAddress($address->id, $address->status);
+
+            if ($imei) {
+
+                return $imei->id;
+            }
+
+            return false;
+        }
+
+        return $imeiId;
+    }
 }
