@@ -34,6 +34,28 @@ class DbCommandHelper extends DbCommandBase
     }
 
     /**
+     * Makes existing unit query by timestamps
+     * 
+     * @param int $start
+     * @param int $end
+     * @param ActiveRecord $inst
+     * @param ActiveRecord $bInst
+     * @param string $fieldInst
+     * @param string $select
+     */
+    public function getExistingUnitQueryByTimestamps($start, $end, $inst, $bInst, $fieldInst, $select)
+    {
+        $tableName = $inst::tableName();
+
+        $queryString = "SELECT $select FROM $tableName WHERE ";
+        $queryString .= "$fieldInst = :fieldInst AND created_at < :end ";
+        $queryString .= " AND (is_deleted = false OR (is_deleted = true AND deleted_at > :start))";
+
+        $bindValues = [':fieldInst' => $bInst->id, ':start' => $start, ':end' => $end];
+        $this->setFields($queryString, $bindValues);
+    }
+
+    /**
      * Gets last item query from `j_temp`table 
      * 
      * @param string $type

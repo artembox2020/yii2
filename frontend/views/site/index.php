@@ -13,6 +13,7 @@ use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSummarySearch;
 use frontend\models\AddressBalanceHolder;
 use frontend\services\globals\EntityHelper;
+use console\controllers\ModemLevelSignalController;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -117,5 +118,23 @@ $this->params['breadcrumbs'][] = $this->title;
             'active' => 'current day'
         ]);
     ?>
+
+    <b><?= Yii::t('graph', 'Modem Level Signal'); ?></b>
+    <br>
+
+    <div class="chart-container-mls graph-block">
+        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+    </div>
+
+    <?php echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container-mls',
+            'action' => '/dashboard/modem-level-signal', 
+            'active' => 'current day',
+            'actionBuilder' => 'builds/action-mls-builder'
+        ]);
+    ?>
+
 </div>
 <div class="margin-bottom-274"></div>
