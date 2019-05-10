@@ -30,21 +30,19 @@ class LoggerDto implements LoggerDtoInterface
     public $who_is;
     public $created_at;
 
+    private $_event;
+
     public function createDto($data, $event)
     {
-       return $dto = [
-            'company_id' => $this->getWhoIs()->company_id,
-            'type' => $this->getClassName($data),
-            'name' => $this->getName($data),
-            'number' => $this->getNumber($data),
-            'event' => $event,
-            'new_state' => $this->getNewState($data),
-            'old_state' => 'old_stat',
-            'address' => $this->getAddress($data),
-            'who_is' => $this->getWhoIs()->username,
-            'created_at' => time(),
-            'is_deleted' => self::ZERO,
-        ];
+        $this->_event = $event;
+
+        switch ($event) {
+            case $this->getClassName($data) == 'BalanceHolder':
+                return $this->getBalanceHolderDto($data, $event);
+                break;
+            default:
+                echo "Not list";
+        }
     }
 
 
@@ -181,19 +179,63 @@ class LoggerDto implements LoggerDtoInterface
      */
     public function getOldState($object)
     {
-        if ($this->getEvent($object) == 'New') {
-            $this->old_state = '---';
-        } else {
-            echo '<pre>';
-            Debugger::d($object->attributes);
-            $this->old_state = 'getOldState';
+        if ($this->getClassName($object) == 'BalanceHolder') {
+            return $this->getOldStateBalanceHolder($object);
+//            $long = strtotime($object->date_start_cooperation);
+//            $object->setAttribute('date_start_cooperation', $long);
+//            $long = strtotime($object->date_connection_monitoring);
+//            $object->setAttribute('date_connection_monitoring', $long);
+//            $newAttributes = $object->getDirtyAttributes();
+//            $oldAttributes = $object->getOldAttributes();
+//            Debugger::d($oldAttributes['date_start_cooperation']);
+//            Debugger::dd($newAttributes);
         }
+
+        if ($this->_event == 'Update' && $object->getDirtyAttributes()) {
+        $newAttributes = $object->getDirtyAttributes();
+        $oldAttributes = $object->getOldAttributes();
+
+        foreach ($newAttributes as $key => $value) {
+            if (array_key_exists($key, $newAttributes)) {
+                $array[] = $oldAttributes[$key];
+            }
+        }
+
+        $comma_separated = implode('<br />', $array);
+        $this->old_state = $comma_separated;
+        } else {
+            $this->old_state = '---';
+        }
+
+//        Debugger::d($newAttributes);
+//        Debugger::d($oldAttributes);
+//        Debugger::dd($this->old_state);
+
         return $this->old_state;
     }
 
     public function getNewState($object)
     {
-        $this->new_state = 'new';
+
+//        $oldAttributes = $object->getOldAttributes();
+//        $newAttributes = $object->getDirtyAttributes();
+//            Debugger::d($newAttributes);
+//            Debugger::dd($oldAttributes);
+
+        if ($this->_event == 'Update' && $object->getDirtyAttributes()) {
+            $newAttributes = $object->getDirtyAttributes();
+            foreach ($newAttributes as $key => $value) {
+                if (array_key_exists($key, $newAttributes)) {
+                    $array[] = $newAttributes[$key];
+                }
+            }
+
+            $comma_separated = implode('<br />', $array);
+            $this->new_state = $comma_separated;
+        } else {
+            $this->new_state = 'new or empty update';
+        }
+
         return $this->new_state;
     }
 
@@ -204,7 +246,103 @@ class LoggerDto implements LoggerDtoInterface
             ->limit(1)
             ->one();
 
-//        Debugger::dd($this->who_is->company_id);
         return $this->who_is;
+    }
+
+    public function getBalanceHolderDto($data, $event)
+    {
+        return $dto = [
+            'company_id' => $this->getWhoIs()->company_id,
+            'type' => $this->getClassName($data),
+            'name' => $this->getName($data),
+            'number' => $this->getNumber($data),
+            'event' => $event,
+            'new_state' => $this->getNewState($data),
+            'old_state' => $this->getOldState($data),
+            'address' => $this->getAddress($data),
+            'who_is' => $this->getWhoIs()->username,
+            'created_at' => time(),
+            'is_deleted' => self::ZERO,
+        ];
+    }
+
+    public function getOldStateBalanceHolder($object)
+    {
+        if ($this->_event == 'Create') {
+
+            return $this->old_state = 'empty';
+        }
+//        $oldAttributes = $object->getOldAttributes();
+//        $newAttributes = $object->getDirtyAttributes();
+//////            Debugger::d($a);
+//        Debugger::d($newAttributes);
+//        Debugger::dd($oldAttributes);
+        if (empty($object->getDirtyAttributes())) {
+            $this->old_state = 'nothing update';
+            return $this->old_state;
+        }
+
+        if ($this->_event == 'Update') {
+            if (empty($object->date_start_cooperation)) {
+                $object->setAttribute('date_start_cooperation', null);
+            }
+
+            if (isset($object->date_start_cooperation)) {
+                $long = strtotime($object->date_start_cooperation);
+                Debugger::d($long);
+                Debugger::d($object->getDirtyAttributes(['date_start_cooperation']));
+                Debugger::d($object->getOldAttribute('date_start_cooperation'));
+                if ($long == $object->getOldAttribute('date_start_cooperation')) {
+                    $arr = $object->getDirtyAttributes(['date_start_cooperation']);
+                    echo 'yes';
+                    unset($arr["date_start_cooperation"]);
+                }
+                Debugger::d($object->getDirtyAttributes(['date_start_cooperation']));
+                Debugger::dd($object->date_start_cooperation);
+                $object->setAttribute('date_start_cooperation', $long);
+            }
+
+            if (empty($object->date_connection_monitoring)) {
+                $object->setAttribute('date_connection_monitoring', null);
+            }
+
+            if (isset($object->date_connection_monitoring)) {
+//                $long = strtotime($object->date_connection_monitoring);
+//                $object->setAttribute('date_connection_monitoring', $long);
+            }
+
+            if (empty($object->getDirtyAttributes())) {
+                $this->old_state = 'nothing update';
+                return $this->old_state;
+            }
+
+//            $long = strtotime($object->date_start_cooperation);
+//            $object->setAttribute('date_start_cooperation', $long);
+//            $long = strtotime($object->date_connection_monitoring);
+//            $object->setAttribute('date_connection_monitoring', $long);
+
+//            $oldAttributes = $object->getOldAttributes();
+//            $newAttributes = $object->getDirtyAttributes();
+//////            Debugger::d($a);
+//            Debugger::d($newAttributes);
+//            Debugger::dd($oldAttributes);
+
+
+
+            if ($object->getDirtyAttributes()) {
+                $oldAttributes = $object->getOldAttributes();
+                $newAttributes = $object->getDirtyAttributes();
+                foreach ($oldAttributes as $key => $value) {
+                    if (array_key_exists($key, $newAttributes)) {
+                        $array[] = $oldAttributes[$key];
+                    }
+                }
+            }
+
+            $comma_separated = implode('<br />', $array);
+            $this->old_state = $comma_separated;
+
+            return $this->old_state;
+        }
     }
 }

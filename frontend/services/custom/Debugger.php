@@ -7,7 +7,7 @@ class Debugger
 {
     public static function d($element)
     {
-//        echo '<pre>';
+        echo '<pre>';
         var_dump($element);
     }
 

@@ -111,9 +111,8 @@ class BalanceHolderController extends Controller
             $user = User::findOne(Yii::$app->user->id);
             $model->company_id = $user->company_id;
             $model->is_deleted = false;
-            $model->save();
-
             $this->service->createLog($model, 'Create');
+            $model->save();
 
             return $this->redirect(['/net-manager/view-balance-holder', 'id' => $model->id]);
         }
@@ -144,8 +143,9 @@ class BalanceHolderController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
             $this->service->createLog($model, 'Update');
+            $model->save();
 
             return $this->redirect(['net-manager/view-balance-holder', 'id' => $model->id]);
         }

@@ -31,8 +31,10 @@ class LoggerService
 
     public function createLog($data, $event): void
     {
-//        $dto = $this->dto->createDto($data, $event);
-//        Debugger::dd($dto);
+//        $res = $this->dto->createDto($data, $event);
+//
+//        Debugger::dd($res);
+
         $this->storage->save($this->dto->createDto($data, $event));
     }
 
@@ -52,5 +54,18 @@ class LoggerService
     private function loadItems(): void
     {
         $this->_items = $this->storage->load();
+    }
+
+    public function getArray($data)
+    {
+        $long = strtotime($data->date_start_cooperation);
+        $data->setAttribute('date_start_cooperation', $long);
+        $long = strtotime($data->date_connection_monitoring);
+        $data->setAttribute('date_connection_monitoring', $long);
+
+        $newAttributes = $data->getDirtyAttributes();
+//        $oldAttributes = $data->getOldAttributes();
+
+        return $newAttributes;
     }
 }

@@ -55,11 +55,13 @@ $menu = [];
                 'attribute' => 'new_state',
                 'label' => Yii::t('logger', 'New state'),
                 'value' => 'new_state',
+                'format' => 'raw'
             ],
             [
                 'attribute' => 'old_state',
                 'label' => Yii::t('logger', 'Old state'),
                 'value' => 'old_state',
+                'format' => 'raw'
             ],
             [
                 'attribute' => 'address',
