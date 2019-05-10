@@ -36,11 +36,6 @@ class DashboardController extends Controller
         $mss->setStepByTimestamps($start, $end);
         $options = ['colors' => ['cyan', 'green', 'grey', '#00ff7f', 'red']];
         $data = $mss->aggregateAllGreenGreyWorkErrorForGoogleGraphByTimestamps($start, $end, $options);
-        /*echo '<pre>';
-        print_r($data);
-        echo '<br>';
-        echo 'start='.$start.', end='.$end.', action='.$action.', selector='.$selector.', active='.$active.'<br>';
-        echo '</pre>';*/
         $histogram = $ggs->drawHistogram($data, $selector);
         $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active);
 
@@ -77,13 +72,15 @@ class DashboardController extends Controller
      * @param string $action
      * @param string $selector
      * @param string $active
+     * @param string $other
+     * @param string $actionBuilder
      * 
      * @return string
      */  
-    public function actionRenderAjaxFormSubmission(int $start, int $end, string $action, string $selector, string $active)
+    public function actionRenderAjaxFormSubmission(int $start, int $end, string $action, string $selector, string $active, string $other = null, string $actionBuilder = null)
     {
 
-        return $this->renderAjaxFormSubmission($start, $end, $action, $selector, $active);
+        return $this->renderAjaxFormSubmission($start, $end, $action, $selector, $active, $other, $actionBuilder);
     }
 
     /**
@@ -91,14 +88,15 @@ class DashboardController extends Controller
      * 
      * @param string $active
      * @param string $date
+     * @param string $other
      * 
      * @return string
      */    
-    public function actionGetTimestampsByDropDown(string $active, string $date)
+    public function actionGetTimestampsByDropDown(string $active, string $date, $other = null)
     {
-        $mss = new MashineStatStorage();
+        $mss = new ModemStatStorage();
 
-        return json_encode($mss->getTimeIntervalsByDropDown($active, $date)); 
+        return json_encode($mss->getTimeIntervalsByDropDown($active, $date, $other)); 
     }
 
     /**
@@ -107,14 +105,15 @@ class DashboardController extends Controller
      * @param string $active
      * @param string $dateStart
      * @param string $dateEnd
+     * @param string $other
      * 
      * @return string
      */
-    public function actionGetTimestampsByDatesBetween(string $active, string $dateStart, string $dateEnd)
+    public function actionGetTimestampsByDatesBetween(string $active, string $dateStart, string $dateEnd, $other = null)
     {
-        $mss = new MashineStatStorage();
+        $mss = new ModemStatStorage();
 
-        return json_encode($mss->getTimeIntervalsByDatesBetween($active, $dateStart, $dateEnd)); 
+        return json_encode($mss->getTimeIntervalsByDatesBetween($active, $dateStart, $dateEnd, $other)); 
     }
 
     /**
@@ -125,22 +124,29 @@ class DashboardController extends Controller
      * @param string $action
      * @param string $selector
      * @param string $active
+     * @param string $other
+     * @param string $actionBuilder
      * 
      * @return string
      */
-    public function actionRenderActionBuilder(int $start, int $end, string $action, string $selector, string $active)
+    public function actionRenderActionBuilder(
+        int $start, int $end, string $action, string $selector, string $active,
+        $other = null, $actionBuilder = 'builds/action-builder'
+    )
     {
-        $mss = new MashineStatStorage();
+        $mss = new ModemStatStorage();
         $currentTimestamp = time() + Jlog::TYPE_TIME_OFFSET;
         global $randToken;
         $randToken = rand();
 
-        return $this->renderPartial('builds/action-builder', [
+        return $this->renderPartial($actionBuilder, [
             'start' => $start,
             'end' => $end,
             'action' => $action,
             'selector' => $selector,
             'active' => $active,
+            'other' => $other,
+            'actionBuilder' => $actionBuilder,
             'controller' => $this,
             'model' => $mss,
             'currentTimestamp' => $currentTimestamp,
@@ -156,10 +162,15 @@ class DashboardController extends Controller
      * @param string $action
      * @param string $selector
      * @param string $active
+     * @param string $other
+     * @param string $actionBuilder
      * 
      * @return string
      */
-    public function renderAjaxFormSubmission(int $start, int $end, string $action, string $selector, string $active)
+    public function renderAjaxFormSubmission(
+        int $start, int $end, string $action, string $selector, string $active, 
+        string $other = null, string $actionBuilder = null
+    )
     {
 
         return Yii::$app->view->render('/dashboard/forms/submission', [
@@ -167,7 +178,9 @@ class DashboardController extends Controller
             'end' => $end,
             'action' => $action,
             'selector' => $selector,
-            'active' => $active
+            'active' => $active,
+            'other' => $other,
+            'actionBuilder' => $actionBuilder
         ]);
     }
 
@@ -207,13 +220,17 @@ class DashboardController extends Controller
      * @param string $selector
      * @param string $action
      * @param string $active
+     * @param string $other
+     * @param string $actionBuilder
      * 
      * @return string
      */
-    public function actionRenderEngine(string $selector, string $action, string $active)
+    public function actionRenderEngine(string $selector, string $action, string $active, string $other = null, string $actionBuilder = null)
     {
-        $mss = new MashineStatStorage();
+        $mss = new ModemStatStorage();
         $params = $mss->getInitialParams($selector, $action, $active);
+        $params['other'] = $other;
+        $params['actionBuilder'] = $actionBuilder ?? 'builds/action-builder';
 
         return $this->renderPartial('render-engine', [
             'params' => $params
@@ -229,9 +246,11 @@ class DashboardController extends Controller
     public function actionModemLevelSignal()
     {
         $post = Yii::$app->request->post();
-        list($start, $end, $action, $selector, $active) = [
-            $post['start'], $post['end'], $post['action'], $post['selector'], $post['active']
+        list($start, $end, $action, $selector, $active, $other, $actionBuilder) = [
+            $post['start'], $post['end'], $post['action'], $post['selector'], $post['active'],
+            $post['other'], $post['actionBuilder']
         ];
+
         $ggs = new GoogleGraphStorage();
         $mss = new ModemStatStorage();
         $options = [
@@ -242,54 +261,13 @@ class DashboardController extends Controller
         ];
 
         if ($active == 'current day') {
-        $data = [
-            'titles' => [
-                '',
-                'street Kotovskiy',
-                'street Mikhail'
-            ],
-            'lines' => [
-                [
-                    'ab',
-                    -64,
-                    -128,
-                ],
-                [
-                    'cd',
-                    '-64',
-                    '-64',
-                ],
-                [
-                    '',
-                    '-50',
-                    '-50',
-                ],
-                [
-                    'ef',
-                    '-64',
-                    '-64',
-                ]
-            ],
-            'options' => $options
-        ];
+            $data = $mss->aggregateCurrentModemLevelSignalsForGoogleGraph($other, $options);
         } else {
-            $data = $mss->aggregateModemLevelSignalsForGoogleGraph($start, $end, $options);
+            $data = $mss->aggregateModemLevelSignalsForGoogleGraph($start, $end, $other, $options);
         }
-        
-        /*ob_start();
-        echo '<pre>';
-        print_r($data);
-        echo '<pre/>';
-        
-        return ob_get_clean();*/
 
-        /*echo '<pre>';
-        print_r($data);
-        echo '<br>';*/
-        //echo '<pre>start='.$start.', end='.$end.', action='.$action.', selector='.$selector.', active='.$active.'<br>';
-        //echo '</pre>';
         $histogram = $ggs->drawLine($data, $selector);
-        $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active);
+        $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active, $other, $actionBuilder);
 
         return $histogram.$actionBuilder;
     }

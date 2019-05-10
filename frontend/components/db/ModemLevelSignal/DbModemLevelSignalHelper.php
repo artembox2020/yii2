@@ -13,12 +13,15 @@ use frontend\models\AddressBalanceHolder;
  */
 class DbModemLevelSignalHelper extends DbCommandHelper
 {
-    public function getTest()
-    {
-
-        return 'test';
-    }
-
+    /**
+     * Erases data by address id and timestamp intervals
+     * 
+     * @param int $addressId
+     * @param int $start
+     * @param int $end
+     * 
+     * @return int
+     */
     public function eraseData($addressId, $start, $end)
     {
         $queryString = "DELETE FROM modem_level_signal WHERE address_id = :address_id ";
@@ -29,6 +32,19 @@ class DbModemLevelSignalHelper extends DbCommandHelper
         return $command->execute();
     }
 
+    /**
+     * Inserts row into table `modem_level_signal`
+     * 
+     * @param int $imeiId
+     * @param int $addressId
+     * @param int $balanceHolderId
+     * @param int $companyId
+     * @param int $start
+     * @param int $end
+     * @param int $levelSignal
+     * 
+     * @return int
+     */
     public function insertData($imeiId, $addressId, $balanceHolderId, $companyId, $start, $end, $levelSignal)
     {
         $queryString = "INSERT INTO modem_level_signal(imei_id, address_id, balance_holder_id, company_id, start, end, level_signal)".
@@ -58,6 +74,16 @@ class DbModemLevelSignalHelper extends DbCommandHelper
         return $id ?? false;
     }
 
+    /**
+     * Updates row of the table `modem_level_signal`
+     * 
+     * @param int $id
+     * @param int $start
+     * @param int $end
+     * @param int $levelSignal
+     * 
+     * @return int
+     */
     public function updateData($id, $start, $end, $levelSignal)
     {
         $queryString = "UPDATE modem_level_signal SET start = :start, end = :end, level_signal = :level_signal ".
@@ -68,6 +94,15 @@ class DbModemLevelSignalHelper extends DbCommandHelper
         return $command->execute();
     }
 
+    /**
+     * Gets data by address and timestamps 
+     * 
+     * @param int $addressId
+     * @param int $start
+     * @param int $end
+     * 
+     * @return array
+     */
     public function getDataByAddressIdAndTimestamps($addressId, $start, $end)
     {
         $queryString = "SELECT start, end, level_signal FROM modem_level_signal WHERE ".
@@ -78,13 +113,29 @@ class DbModemLevelSignalHelper extends DbCommandHelper
         return $command->queryAll();
     }
 
-    public function getAddressesByTimestampsAndCompanyId($start, $end, $companyId)
+    /**
+     * Gets addresses by company and timestamps and within address list given
+     * 
+     * @param int $start
+     * @param int $end
+     * @param int $companyId
+     * @param string $addressIds
+     * 
+     * @return array
+     */
+    public function getAddressesByTimestampsAndCompanyId($start, $end, $companyId, $addressIds)
     {
-        $select = "id, name";
+        $select = "id, name, address";
         $bInst = Company::find()->where(['id' => $companyId])->limit(1)->one();
         $inst = new AddressBalanceHolder();
         $this->getExistingUnitQueryByTimestamps($start, $end, $inst, $bInst, 'company_id', $select);
 
-        return $this->getItems();//Yii::$app->db->createCommand($this->queryString)->bindValues($this->bindValues)->rawSql;
+        if (!empty($addressIds)) {
+            $this->queryString .= " AND id IN (".$addressIds.")";
+        }
+
+        $this->queryString.= " ORDER BY name ASC";
+
+        return $this->getItems();
     }
 }

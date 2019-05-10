@@ -12,6 +12,7 @@ return [
     'Current week' => 'Поточний тиждень',
     'Current year' => 'Поточний рік',
     'Date' => 'Дата',
+    'Filter By Address' => 'Фільтр за адресою',
     'Filter By Date' => 'Фільтр по даті',
     'Modem Level Signal' => 'Рівень сигналу по пунктам',
     'Show by the certain period' => 'Показувати за конкретний період',

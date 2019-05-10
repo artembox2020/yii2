@@ -526,7 +526,7 @@ class AddressImeiData extends ActiveRecord
     /**
      * @return array
      */
-    public function getImeiHistoryByAddress($address)
+    public function getImeiHistoryByAddress($address, $sortDirection = [SORT_DESC])
     {
         if (empty($address)) {
 
@@ -549,11 +549,11 @@ class AddressImeiData extends ActiveRecord
             $imeiInfo = $this->getNextImeiIdByAddressAndTimestamp($address->id, $timestamp);
         }
 
-        ArrayHelper::multisort($historyInfo, ['created_at'], [SORT_DESC]);
+        ArrayHelper::multisort($historyInfo, ['created_at'], $sortDirection);
 
         return $historyInfo;
     }
-    
+
     public function makeHistoryFromItems($items)
     {
         $historyInfo = [];

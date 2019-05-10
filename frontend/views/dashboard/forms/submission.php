@@ -22,6 +22,7 @@ use yii\widgets\Pjax;
 <input type="hidden" name="end" value="<?= $end ?>"/>
 <input type="hidden" name="active" value="<?= $active ?>" />
 <input type="hidden" name = "other" value= "<?= $other ?? null ?>" />
+<input type="hidden" name = "actionBuilder" value= "<?= $actionBuilder ?>" />
 <button type="submit"></button>
 
 <?php

@@ -859,9 +859,16 @@ class JlogSearch extends Jlog
         return $params;
     }
 
-    public function getInitializationHistoryBeginningByImeiId($imeiId)
+    /**
+     * Gets initialization history beginning by address string
+     * 
+     * @param string $addressString
+     * 
+     * @return int
+     */
+    public function getInitializationHistoryBeginningByAddressString($addressString)
     {
-        $query = Jlog::find()->select(['unix_time_offset'])->andWhere(['imei_id' => $imeiId, 'type_packet' => self::TYPE_PACKET_INITIALIZATION]);
+        $query = Jlog::find()->select(['unix_time_offset'])->andWhere(['address' => $addressString, 'type_packet' => self::TYPE_PACKET_INITIALIZATION]);
         $query = $query->orderBy(['unix_time_offset' => SORT_ASC])->limit(1);
 
         $item = $query->one();
@@ -872,5 +879,29 @@ class JlogSearch extends Jlog
         }
 
         return self::INFINITY;
+    }
+
+    /**
+     * Gets imei id by address string and initial timestamp
+     * 
+     * @param string $addressString
+     * @param int $start
+     * 
+     * @return int
+     */
+    public function getImeiIdByAddressStringAndInitialTimestamp($addressString, $start)
+    {
+        $query = Jlog::find()->select(['imei_id'])->andWhere(['address' => $addressString, 'type_packet' => self::TYPE_PACKET_INITIALIZATION]);
+        $query->andWhere(['>=', 'unix_time_offset', $start]);
+        $query = $query->orderBy(['unix_time_offset' => SORT_ASC])->limit(1);
+
+        $item = $query->one();
+
+        if ($item) {
+
+            return $item->imei_id;
+        }
+
+        return 0;
     }
 }

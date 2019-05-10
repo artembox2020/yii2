@@ -7,7 +7,7 @@
     var dataArray = makeDataForHistogram();
     var options = {
         curveType: 'function',
-        legend: { position: 'right' }
+        legend: { position: 'top' }
     };
 
     //draws line

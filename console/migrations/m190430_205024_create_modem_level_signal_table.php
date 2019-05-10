@@ -20,8 +20,7 @@ class m190430_205024_create_modem_level_signal_table extends Migration
             'balance_holder_id' => $this->integer(11),
             'start' => $this->integer(11)->notNull(),
             'end' => $this->integer(11)->notNull(),
-            'level_signal' => $this->integer(11),
-            'is_calculated' => $this->boolean()
+            'level_signal' => $this->integer(11)
         ]);
 
         // add foreign key for table `modem_level_signal`

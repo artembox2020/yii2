@@ -2,6 +2,7 @@
     var graphBuilder = {};
     
     graphBuilder.isGraphBusy = false; // global indicator whether graph is busy
+    graphBuilder.isIndicatorForModem = 0;
 
     // universal form submission function
     graphBuilder.submitAjaxForm = function(form, responseText) {
@@ -9,9 +10,16 @@
         var start = response['start'];
         var end = response['end'];
         var active = response['active'];
+        var other = response['other'];
+
         form.querySelector('input[name=start]').value = start;
         form.querySelector('input[name=end]').value = end;
         form.querySelector('input[name=active]').value = active;
+        form.querySelector('input[name=other]').value = other;
+
+        if (response['actionBuilder']) {
+            form.querySelector('input[name=actionBuilder]').value = response['actionBuilder'];
+        }
 
         form.querySelector('button').click();
     };
@@ -72,7 +80,7 @@
     }
 
     // submit last days processing
-    graphBuilder.submitLastDaysBtnProcess = function(button, random, selector, filterPrompt)
+    graphBuilder.submitLastDaysBtnProcess = function(button, random, selector, filterPrompt, additionalString)
     {
             graphBuilder.isGraphBusy = true;
             var active = button.closest(".graph-container").querySelector("select[name=dateOptions" + random + "]").value;
@@ -87,12 +95,17 @@
             });
 
             var queryString = "active=" + active + "&date=" + date;
+
+            if (additionalString) {
+                queryString += additionalString;
+            }
+
             ajax.open("GET", "/dashboard/get-timestamps-by-drop-down?" + queryString, true);
             ajax.send();
     }
 
     // submit days between processing
-    graphBuilder.submitDaysBetweenBtnProcess = function(button, random, selector, filterPrompt)
+    graphBuilder.submitDaysBetweenBtnProcess = function(button, random, selector, filterPrompt, additionalString)
     {
             var graphContainer = document.querySelector(".graph-container.r" + random);
             var fromDate = graphContainer.querySelector('.timestamp-interval-block input[name=from_date]');
@@ -112,12 +125,17 @@
             });
 
             var queryString = "active=" + active + "&dateStart=" +fromDate.value + "&dateEnd=" + toDate.value;
+
+            if (additionalString) {
+                queryString += additionalString;
+            }
+
             ajax.open("GET", "/dashboard/get-timestamps-by-dates-between?" + queryString, true);
             ajax.send();
     }
 
     // submit button click processing
-    graphBuilder.submitBtnProcess = function(button, random, selector, filterPrompt)
+    graphBuilder.submitBtnProcess = function(button, random, selector, filterPrompt, additionalString)
     {
         button.onclick = function()
         {
@@ -126,12 +144,12 @@
             var toDate = graphContainer.querySelector('.timestamp-interval-block input[name=to_date]');
 
             if (!fromDate.value) {
-                graphBuilder.submitLastDaysBtnProcess(button, random, selector, filterPrompt);
+                graphBuilder.submitLastDaysBtnProcess(button, random, selector, filterPrompt, additionalString);
                 return;
             }
 
             if (!toDate.value) {
-                graphBuilder.submitLastDaysBtnProcess(button, random, selector, filterPrompt);
+                graphBuilder.submitLastDaysBtnProcess(button, random, selector, filterPrompt, additionalString);
                 return;
             }
 
@@ -139,11 +157,43 @@
             var fromTimestamp = (new Date(fromDate.value)).getTime() / 1000;
 
             if (fromTimestamp > toTimestamp) {
-                graphBuilder.submitLastDaysBtnProcess(button, random, selector, filterPrompt);
+                graphBuilder.submitLastDaysBtnProcess(button, random, selector, filterPrompt, additionalString);
                 return;
             }
 
-            graphBuilder.submitDaysBetweenBtnProcess(button, random, selector, filterPrompt);
+            graphBuilder.submitDaysBetweenBtnProcess(button, random, selector, filterPrompt, additionalString);
+        }
+    }
+
+    // submit button modem level click processing
+    graphBuilder.submitBtnModemLevelProcess = function(button, random, selector, filterPrompt, checkBoxes)
+    {
+        button.onclick = function()
+        {
+            if (graphBuilder.isIndicatorForModem % 2 == 1) {
+                graphBuilder.isIndicatorForModem = 0;
+
+                return;
+            }
+            
+            ++graphBuilder.isIndicatorForModem;
+
+            var addressIds = '';
+            for (var i = 0; i < checkBoxes.length; ++i) {
+
+                if (checkBoxes[i].checked) {
+                    addressIds += checkBoxes[i].value + ',';
+                }
+            }
+
+            if (addressIds.length > 0) {
+                addressIds = addressIds.substring(0, addressIds.length - 1);
+            }
+
+            var additionalString = "&other=" + addressIds;
+
+            graphBuilder.submitBtnProcess(button, random, selector, filterPrompt, additionalString);
+            button.click();
         }
     }
 
@@ -169,6 +219,7 @@
 
                 var graphContainer = document.querySelector(".graph-container.r" + random);
                 var button = graphContainer.querySelector(".submit-container button");
+                button.click();
                 button.click();
 
                 clearInterval(hInt);                

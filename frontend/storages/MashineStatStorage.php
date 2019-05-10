@@ -349,7 +349,7 @@ class MashineStatStorage implements MashineStatStorageInterface
      * 
      * @return array
      */
-    public function getTimeIntervalsByDropDown(string $active, string $date): array
+    public function getTimeIntervalsByDropDown(string $active, string $date, $other = null): array
     {
         $dateTimeHelper = new DateTimeHelper();
         $currentTimestamp = $dateTimeHelper->getRealUnixTimeOffset(0);
@@ -378,7 +378,7 @@ class MashineStatStorage implements MashineStatStorageInterface
                 break;
         }
 
-        return ['start' => $start, 'active' => $active, 'end' => $end];
+        return ['start' => $start, 'active' => $active, 'end' => $end, 'other' => $other];
     }
 
     /**
@@ -390,7 +390,7 @@ class MashineStatStorage implements MashineStatStorageInterface
      * 
      * @return array
      */
-    public function getTimeIntervalsByDatesBetween($active, $dateStart, $dateEnd)
+    public function getTimeIntervalsByDatesBetween($active, $dateStart, $dateEnd, $other = null)
     {
         $dateTimeHelper = new DateTimeHelper();
         $timestamp = strtotime($dateStart);
@@ -399,6 +399,6 @@ class MashineStatStorage implements MashineStatStorageInterface
         $timestamp = strtotime($dateEnd);
         $end = $dateTimeHelper->getDayBeginningTimestamp($timestamp) + DateTimeHelper::DAY_TIMESTAMP;
 
-        return ['start' => $start, 'end' => $end, 'active' => $active];
+        return ['start' => $start, 'end' => $end, 'active' => $active, 'other' => $other];
     }
 }

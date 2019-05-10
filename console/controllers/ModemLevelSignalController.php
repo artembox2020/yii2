@@ -20,92 +20,77 @@ class ModemLevelSignalController extends Controller
 {
     const MIN_SIGNAL_LEVEL = -128;
 
-    public function actionTest()
-    {
-
-        return 'test';
-    }
-
+    /**
+     * Aggregates level signal by MIN value
+     * 
+     * @param array $signalData
+     * 
+     * @return int
+     */
     public function getAggregatedLevelSignal(array $signalData)
     {
-        $signal = 0;
+        $signal = 10000;
         $count = 0;
+        $hasAssigned = false;
 
         foreach ($signalData as $value) {
-            if (!is_null($value)) {
-                $signal += (int)$value;
-            } else {
-                $signal += self::MIN_SIGNAL_LEVEL;
-            }
+            if (is_null($value)) {
 
-            ++$count;
+                return self::MIN_SIGNAL_LEVEL;
+            } elseif ($signal > $value) {
+                $signal = $value;
+                $hasAssigned = true;
+            }
         }
 
-        return $count > 0 ? (int)$signal/$count : self::MIN_SIGNAL_LEVEL;
+        return $hasAssigned ? $signal : self::MIN_SIGNAL_LEVEL;
     }
 
+    /**
+     * Updates data by address id and timestamps 
+     * 
+     * @param int $addressId
+     * @param int $start
+     * @param int $end
+     * @param int $step
+     */
     public function actionUpdateData($addressId, $start, $end, $step)
     {
         $address = AddressBalanceHolder::find()->where(['id' => $addressId])->limit(1)->one();
-        $addressImeiData = new AddressImeiData();
-
-        if (!$address || 
-            (!$companyId = $address->company_id) ||
-            (!$imeiId = $addressImeiData->getImeiIdByAddressTimestamp($address->id, $start + $step))
-        ) {
-
-            return false;
-        }
+        $addressString = $address->address.", ".$address->floor;
 
         $dbHelper = new DbModemLevelSignalHelper();
         $parser = new CParser();
         $jlogSearch = new JlogSearch();
         $dateTimeHelper = new DateTimeHelper();
         $dbHelper->eraseData($address->id, $start, $end);
-        $start = ($stamp = $jlogSearch->getInitializationHistoryBeginningByImeiId($imeiId)) > $start ? $stamp : $start;
+        $stamp = $jlogSearch->getInitializationHistoryBeginningByAddressString($addressString);
+        $start = $stamp > $start ? ($stamp < $end ? $stamp : $start) : $start;
         $start = $dateTimeHelper->getDayBeginningTimestamp($start);
-        $baseStart = $start;
-        $hasIterated = false;
-        $prevImeiId = 0;
-        $imeiHistory = $addressImeiData->getImeiHistoryByAddress($address);
-        $imeiId = $addressImeiData->getImeiIdByAddressTimestamp($address->id, $start + $step);
+        $prevAggregatedLevelSignal = null;
+        $imeiId = $jlogSearch->getImeiIdByAddressStringAndInitialTimestamp($addressString, $start);
 
         for (; $start + $step <= $end; $start += $step) {
-            $imeiId = $addressImeiData->getImeiIdByAddressHistory($address, $start + $step, $imeiHistory);
-
-            if (empty($imeiId)) {
-
-                $imeiChanged = true;
-                continue;
-            }
-
-            if ($imeiId != $prevImeiId) {
-                $prevImeiId = $imeiId;
-                $imeiChanged = true;
-            }
-
-            $allData = Jlog::find()->andWhere(['type_packet' => Jlog::TYPE_PACKET_INITIALIZATION,'imei_id' => $imeiId]);
+            $allData = Jlog::find()->andWhere(['type_packet' => Jlog::TYPE_PACKET_INITIALIZATION, 'address' => $addressString]);
             $condition = new \yii\db\conditions\BetweenCondition(
                 'unix_time_offset', 'BETWEEN', $start, $start + $step
             );
 
             $allData = $allData->andWhere($condition)->orderBy(['unix_time_offset' => SORT_ASC])->all();
-
             $signalData = [];
 
             foreach ($allData as $item) {
                 $parseData = $parser->iParse($item->packet);
                 $signalData[] = $parseData['level_signal'];
-
-                //Console::output($levelSignal."\n");
+                $imeiId = $item->imei_id;
             }
 
             $aggregatedLevelSignal = $this->getAggregatedLevelSignal($signalData);
+            $newRecordCondition = 
+                is_null($prevAggregatedLevelSignal) || $prevAggregatedLevelSignal != $aggregatedLevelSignal
+                || !$insertId;
 
-            if (
-                !$prevAggregatedLevelSignal || $prevAggregatedLevelSignal != $aggregatedLevelSignal
-                || $imeiChanged || !$insertId
-            ) {
+            if ($newRecordCondition) {
                 $prevAggregatedLevelSignal = $aggregatedLevelSignal;
                 $insertId = $dbHelper->insertData(
                     $imeiId, $address->id, $address->balance_holder_id, $address->company_id, 
@@ -115,29 +100,73 @@ class ModemLevelSignalController extends Controller
             } else {
                 $dbHelper->updateData($insertId, $baseStart, $start+$step, $aggregatedLevelSignal);
             }
-
-            $imeiChanged = false;
         }
-
-        return true;
     }
-    
-    public function actionUpdateDataAll($start, $end, $step, $companyId)
+
+    /**
+     * Updates data by company id and timestamps 
+     * 
+     * @param int $start
+     * @param int $end
+     * @param int $step
+     * @param int $companyId
+     * 
+     * @return bool
+     */
+    public function actionUpdateDataByCompanyId($start, $end, $step, $companyId)
     {
         $dbHelper = new DbModemLevelSignalHelper();
         $entityHelper = new EntityHelper();
         $select = "id, address";
         $bInst = Company::find()->where(['id' => $companyId])->limit(1)->one();
         $inst = new AddressBalanceHolder();
-        $dbHelper->getBaseUnitQueryByTimestamps($start, $end, $inst, $bInst, 'company_id', $select);
+        $dbHelper->getExistingUnitQueryByTimestamps($start, $end, $inst, $bInst, 'company_id', $select);
         $items = $dbHelper->getItems();
 
         foreach ($items as $item) {
             $address = AddressBalanceHolder::find()->where(['id' => $item['id']])->limit(1)->one();
             $addressTimestamps = $entityHelper->makeUnitTimestamps($start, $end, $address, ($step/3600));
-            list($start, $end) = [$addressTimestamps['start'], $addressTimestamps['end']];
-            $this->actionUpdateData($item['id'], $start, $end, $step);
-            Console::output("address ".$item['address']." has been passed\n");
+            list($baseStart, $baseEnd) = [$addressTimestamps['start'], $addressTimestamps['end']];
+            $this->actionUpdateData($item['id'], $baseStart, $baseEnd, $step);
+            Console::output("address ".$item['address']." has been processed\n");
+        }
+    }
+
+    /**
+     * Updates data by meta timestamp 
+     * 
+     * @param string $meta
+     * @param int $step
+     */
+    public function actionUpdateDataByMeta($meta, $step)
+    {
+        $dateTimeHelper = new DateTimeHelper();
+        $dbHelper = new DbModemLevelSignalHelper();
+
+        switch ($meta) {
+            case "today":
+                $start = $dateTimeHelper->getDayBeginningTimestamp($end=time());
+                break;
+            case "lastday":
+                $end = $dateTimeHelper->getDayBeginningTimestamp(time());
+                $start = $end - 3600*24;
+                break;
+            case "all":
+                $start = 0;
+                $end = time();
+                break;
+        }
+
+        $queryString = "SELECT id,name FROM company WHERE created_at < :end ".
+                       "AND (is_deleted = false OR (is_deleted = true AND deleted_at > :start))".
+                       "ORDER BY id";
+        $bindValues = [':start' => $start, ':end' => $end];
+        $command = Yii::$app->db->createCommand($queryString)->bindValues($bindValues);
+        $items = $command->queryAll();
+
+        foreach ($items as $item) {
+            $this->actionUpdateDataByCompanyId($start, $end, $step, $item['id']);
+            Console::output("company ".$item['name']." has been processed\n\n");
         }
     }
 }

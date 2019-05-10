@@ -131,7 +131,8 @@ $this->params['breadcrumbs'][] = $this->title;
         [
             'selector' => '.chart-container-mls',
             'action' => '/dashboard/modem-level-signal', 
-            'active' => 'current week'
+            'active' => 'current day',
+            'actionBuilder' => 'builds/action-mls-builder'
         ]);
     ?>
 
