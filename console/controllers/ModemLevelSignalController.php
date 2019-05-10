@@ -69,6 +69,8 @@ class ModemLevelSignalController extends Controller
         $start = $dateTimeHelper->getDayBeginningTimestamp($start);
         $prevAggregatedLevelSignal = null;
         $imeiId = $jlogSearch->getImeiIdByAddressStringAndInitialTimestamp($addressString, $start);
+        $baseStart = $start;
+        $insertId = 0;
 
         for (; $start + $step <= $end; $start += $step) {
             $allData = Jlog::find()->andWhere(['type_packet' => Jlog::TYPE_PACKET_INITIALIZATION, 'address' => $addressString]);
