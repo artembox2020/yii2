@@ -18,6 +18,7 @@ class ModemStatStorage extends MashineStatStorage
 {
     const STEP = 1800;
     const MIN_LEVEL_SIGNAL = -128;
+    const MAX_POINTS_NUMBER = 2500;
 
     /**
      * Aggregates modem level signals for google graph
@@ -68,8 +69,13 @@ class ModemStatStorage extends MashineStatStorage
             $titles[] = $addressInfo['address'];
             ++$iterationCounter;
         }
+        $numberOfPoints = ($iterationCounter - 1) * count($lines);
 
-        return ['titles' => $titles, 'lines' => $this->mergeLines($lines), 'options' => $options];
+        if ($numberOfPoints > self::MAX_POINTS_NUMBER) {
+            $lines = $this->mergeLines($lines);
+        }
+
+        return ['titles' => $titles, 'lines' => $lines, 'options' => $options];
     }
 
     /**
@@ -81,7 +87,6 @@ class ModemStatStorage extends MashineStatStorage
      */
     public function mergeLines($lines)
     {
-
         $indexStart = -1;
         $indexEnd = -1;
         $values = [];
