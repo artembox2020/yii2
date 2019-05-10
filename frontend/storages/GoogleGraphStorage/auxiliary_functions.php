@@ -1,4 +1,6 @@
 <script>
+    var maxValue = 100000; // max value
+
     // prepares data, ready for histogram
     function makeDataForHistogram()
     {
@@ -54,5 +56,31 @@
         }
 
         return options;
+    }
+
+    // get minimal value
+    function getMinValue(defaultValue)
+    {
+        var minValue = maxValue;
+        var isInitialized = false;
+        <?php foreach ($data['lines'] as $line): ?>
+            <?php foreach ($line as $item): ?>
+
+                <?php if (is_numeric($item)): ?>
+                    var value = <?= $item ?>;
+                    isInitialized = true;
+                    if (value < minValue) {
+                        minValue = value; 
+                    }
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+
+        if (isInitialized) {
+
+            return minValue;
+        }
+
+        return defaultValue;
     }
 </script>

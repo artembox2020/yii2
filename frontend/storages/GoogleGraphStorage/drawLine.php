@@ -5,9 +5,22 @@
     google.charts.setOnLoadCallback(drawLine);
 
     var dataArray = makeDataForHistogram();
+    var min = getMinValue(-128) - 8;
     var options = {
         curveType: 'function',
-        legend: { position: 'top' }
+        legend: { position: 'top' },
+        hAxis: {
+            textStyle: {
+                fontSize: 8
+            }
+        },
+        vAxis: { 
+            minValue: min,
+            viewWindow: { min: min},
+            viewWindowMode: 'pretty',
+            baseline: -128,
+            baselineColor: "black"
+        }
     };
 
     //draws line
