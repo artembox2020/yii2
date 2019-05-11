@@ -16,7 +16,7 @@ use console\controllers\ModemLevelSignalController;
  */
 class ModemStatStorage extends MashineStatStorage
 {
-    const STEP = 1800;
+    const STEP = 300;
     const MIN_LEVEL_SIGNAL = -128;
     const MAX_POINTS_NUMBER = 2500;
 
