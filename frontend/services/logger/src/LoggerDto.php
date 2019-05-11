@@ -268,6 +268,7 @@ class LoggerDto implements LoggerDtoInterface
 
     public function getOldStateBalanceHolder($object)
     {
+        $array = [];
         if ($this->_event == 'Create') {
 
             return $this->old_state = 'empty';
@@ -283,6 +284,7 @@ class LoggerDto implements LoggerDtoInterface
         }
 
         if ($this->_event == 'Update') {
+
             if (empty($object->date_start_cooperation)) {
                 $object->setAttribute('date_start_cooperation', null);
             }
@@ -295,12 +297,12 @@ class LoggerDto implements LoggerDtoInterface
 //                Debugger::d($object->getDirtyAttributes(['date_start_cooperation']));
 //                Debugger::d($object->getOldAttribute('date_start_cooperation'));
                 if ($long == $object->getOldAttribute('date_start_cooperation')) {
-                    $object->setAttribute('date_start_cooperation', $long);
+//                    $object->setAttribute('date_start_cooperation', $long);
+//                    $object->markAttributeDirty('date_start_cooperation');
                     echo 'yes';
                 }
 //                Debugger::d($object->getDirtyAttributes(['date_start_cooperation']));
 //                Debugger::dd($object->date_start_cooperation);
-                $object->setAttribute('date_start_cooperation', $long);
             }
 
             if (empty($object->date_connection_monitoring)) {
@@ -317,18 +319,22 @@ class LoggerDto implements LoggerDtoInterface
                 return $this->old_state;
             }
 
+
+//            $a = $object->getDirtyAttributes();
+//            $b = $object->getOldAttributes();
+//            Debugger::d($a);
+//            Debugger::dd($b);
+
 //            $long = strtotime($object->date_start_cooperation);
 //            $object->setAttribute('date_start_cooperation', $long);
 //            $long = strtotime($object->date_connection_monitoring);
 //            $object->setAttribute('date_connection_monitoring', $long);
 
-//            $oldAttributes = $object->getOldAttributes();
-//            $newAttributes = $object->getDirtyAttributes();
-//////            Debugger::d($a);
-//            Debugger::d($newAttributes);
-//            Debugger::dd($oldAttributes);
-            Debugger::dd($object->getDirtyAttributes());
-
+            $oldAttributes = $object->getOldAttributes();
+            $newAttributes = $object->getDirtyAttributes();
+////            Debugger::d($a);
+//            Debugger::d($oldAttributes);
+//            Debugger::dd($newAttributes);
 
 
             if ($object->getDirtyAttributes()) {
@@ -340,8 +346,6 @@ class LoggerDto implements LoggerDtoInterface
                     }
                 }
             }
-
-            $object->setAttribute('date_start_cooperation', $short);
 
             $comma_separated = implode('<br />', $array);
             $this->old_state = $comma_separated;
