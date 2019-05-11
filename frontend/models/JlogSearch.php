@@ -11,6 +11,7 @@ use frontend\models\Imei;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
+use frontend\services\parser\CParser;
 
 /**
  * JlogSearch represents the model behind the search form of `frontend\models\Jlog`.
@@ -903,5 +904,30 @@ class JlogSearch extends Jlog
         }
 
         return 0;
+    }
+
+    /**
+     * Gets last level signal by address string and initial timestamp
+     * 
+     * @param string $addressString
+     * @param int $start
+     * 
+     * @return int|null
+     */
+    public function getLastLevelSignalByAddressAndTimestamp($addressString, $start)
+    {
+        $query = Jlog::find()->select(['packet'])->andWhere(['address' => $addressString, 'type_packet' => self::TYPE_PACKET_INITIALIZATION]);
+        $query->andWhere(['<', 'unix_time_offset', $start]);
+        $query = $query->orderBy(['unix_time_offset' => SORT_DESC])->limit(1);
+        $item = $query->one();
+
+        if ($item && $item->packet) {
+            $parser = new CParser();
+            $parseData = $parser->iParse($item->packet);
+
+            return $parseData['level_signal'];
+        }
+
+        return null;
     }
 }
