@@ -289,16 +289,17 @@ class LoggerDto implements LoggerDtoInterface
 
             if (isset($object->date_start_cooperation)) {
                 $long = strtotime($object->date_start_cooperation);
-                Debugger::d($long);
-                Debugger::d($object->getDirtyAttributes(['date_start_cooperation']));
-                Debugger::d($object->getOldAttribute('date_start_cooperation'));
+                $short = $object->date_start_cooperation;
+//                Debugger::d($long);
+//                Debugger::d($short);
+//                Debugger::d($object->getDirtyAttributes(['date_start_cooperation']));
+//                Debugger::d($object->getOldAttribute('date_start_cooperation'));
                 if ($long == $object->getOldAttribute('date_start_cooperation')) {
-                    $arr = $object->getDirtyAttributes(['date_start_cooperation']);
+                    $object->setAttribute('date_start_cooperation', $long);
                     echo 'yes';
-                    unset($arr["date_start_cooperation"]);
                 }
-                Debugger::d($object->getDirtyAttributes(['date_start_cooperation']));
-                Debugger::dd($object->date_start_cooperation);
+//                Debugger::d($object->getDirtyAttributes(['date_start_cooperation']));
+//                Debugger::dd($object->date_start_cooperation);
                 $object->setAttribute('date_start_cooperation', $long);
             }
 
@@ -326,6 +327,7 @@ class LoggerDto implements LoggerDtoInterface
 //////            Debugger::d($a);
 //            Debugger::d($newAttributes);
 //            Debugger::dd($oldAttributes);
+            Debugger::dd($object->getDirtyAttributes());
 
 
 
@@ -338,6 +340,8 @@ class LoggerDto implements LoggerDtoInterface
                     }
                 }
             }
+
+            $object->setAttribute('date_start_cooperation', $short);
 
             $comma_separated = implode('<br />', $array);
             $this->old_state = $comma_separated;
