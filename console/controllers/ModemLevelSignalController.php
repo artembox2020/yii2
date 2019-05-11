@@ -68,6 +68,7 @@ class ModemLevelSignalController extends Controller
         $start = $stamp > $start ? ($stamp < $end ? $stamp : $start) : $start;
         $start = $dateTimeHelper->getDayBeginningTimestamp($start);
         $prevAggregatedLevelSignal = null;
+        $prevNonMinSignalLevel = $jlogSearch->getLastLevelSignalByAddressAndTimestamp($addressString, $start);
         $imeiId = $jlogSearch->getImeiIdByAddressStringAndInitialTimestamp($addressString, $start);
         $baseStart = $start;
         $insertId = 0;
@@ -88,12 +89,22 @@ class ModemLevelSignalController extends Controller
             }
 
             $aggregatedLevelSignal = $this->getAggregatedLevelSignal($signalData);
+            if ($aggregatedLevelSignal == self::MIN_SIGNAL_LEVEL && !empty($prevNonMinSignalLevel)) {
+                $aggregatedLevelSignal = $this->getAggregatedLevelSignalByDataPacket(
+                    $imeiId, $start, $start + $step, $prevNonMinSignalLevel
+                );
+            }
+
             $newRecordCondition = 
                 is_null($prevAggregatedLevelSignal) || $prevAggregatedLevelSignal != $aggregatedLevelSignal
                 || !$insertId;
 
             if ($newRecordCondition) {
                 $prevAggregatedLevelSignal = $aggregatedLevelSignal;
+                if ($aggregatedLevelSignal != self::MIN_SIGNAL_LEVEL) {
+                    $prevNonMinSignalLevel = $aggregatedLevelSignal;
+                }
+
                 $insertId = $dbHelper->insertData(
                     $imeiId, $address->id, $address->balance_holder_id, $address->company_id, 
                     $start, $start+$step, $aggregatedLevelSignal
@@ -170,5 +181,25 @@ class ModemLevelSignalController extends Controller
             $this->actionUpdateDataByCompanyId($start, $end, $step, $item['id']);
             Console::output("company ".$item['name']." has been processed\n\n");
         }
+    }
+
+    /**
+     * Gets level signal depending on whether data packet exist
+     * 
+     * @param int $imeiId
+     * @param int $start
+     * @param int $end
+     * @param int $prevSignal
+     * 
+     * @return int
+     */
+    public function getAggregatedLevelSignalByDataPacket($imeiId, $start, $end, $prevSignal)
+    {
+        $queryString = "SELECT COUNT(*) FROM imei_data WHERE created_at >= :start AND created_at <= :end ";
+        $queryString .= "AND imei_id = :imei_id";
+        $bindValues = [':start' => $start, ':end' => $end, ':imei_id' => $imeiId];
+        $command = Yii::$app->db->createCommand($queryString)->bindValues($bindValues);
+
+        return $command->queryScalar() > 0 ? $prevSignal : self::MIN_SIGNAL_LEVEL;
     }
 }
