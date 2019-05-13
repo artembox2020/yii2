@@ -28,14 +28,18 @@ class LoggerService
         $this->dto = $dto;
     }
 
-
+    /**
+     * Если объект изменился то, сделать запись в table 'logger'.
+     * Если объект не изменился то, записи в таблицу 'logger' не будет. Но
+     * AR - обновит автоматом поле 'updated_at'.
+     * @param $data
+     * @param $event
+     */
     public function createLog($data, $event): void
     {
-//        $res = $this->dto->createDto($data, $event);
-//
-//        Debugger::dd($res);
-
-        $this->storage->save($this->dto->createDto($data, $event));
+        if ($this->dto->createDto($data, $event)) {
+            $this->storage->save($this->dto->createDto($data, $event));
+        }
     }
 
     /**
