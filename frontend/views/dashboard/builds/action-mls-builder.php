@@ -9,13 +9,16 @@ use yii\widgets\Pjax;
 /* @var $active string */
 /* @var $selector */
 /* @var $controller frontend\controllers\DashboardController */
-/* @var $model frontend\storages\MashineStatStorage */
+/* @var $model frontend\storages\ModemStatStorage */
 
 ?>
 
 <div class="graph-container r<?= $random ?>" >
-    <?= $controller->renderAjaxFormSubmission($start, $end, $action, $selector, $active, $other, $actionBuilder) ?>
-    <?= $controller->renderGraphBuilder(); ?>
+    <?php echo $controller->renderAjaxFormSubmission(
+        $start, $end, $action, $selector, $active, $other, $actionBuilder
+    )
+    ?>
+    <?php echo $controller->renderGraphBuilder(); ?>
     <div class="filter-prompt">
         <i class="glyphicon glyphicon-cog"></i>
     </div>
@@ -57,6 +60,12 @@ use yii\widgets\Pjax;
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
+            <h4 align=center><?= Yii::t('graph', 'Filter By Address') ?></h4>
+            <div class="col-md-12 col-xs-12 address-points">
+                <?= $model->makeAddressPoints($start, $end, $other) ?>
+            </div>    
             <div class="submit-container">
                 <div class="from-group">
                     <button type="submit" class="form-control btn btn-success">
@@ -64,12 +73,13 @@ use yii\widgets\Pjax;
                     </button>
                 </div>
             </div>
-        </div>
+        </div>    
     </div>
 </div>
 <script>
     var graphContainer = document.querySelector(".graph-container.r<?= $random ?>");
     var filterBlock = graphContainer.querySelector('.timestamp-interval-block');
+    var checkBoxes = graphContainer.querySelectorAll('.address-points input[type=checkbox]');
 
     var playButtons = filterBlock.querySelectorAll('.glyphicon.glyphicon-play');
     graphBuilder.playButtonGroupClick(playButtons);
@@ -78,6 +88,6 @@ use yii\widgets\Pjax;
     graphBuilder.filterPromptGroupClick(filterPrompts, "<?= $random ?>");
 
     var submitBtn = graphContainer.querySelector(".timestamp-interval-block button[type=submit]");
-    graphBuilder.submitBtnProcess(submitBtn, <?= $random ?>, "<?= $selector ?>", filterPrompts[0]);
+    graphBuilder.submitBtnModemLevelProcess(submitBtn, <?= $random ?>, "<?= $selector ?>", filterPrompts[0], checkBoxes);
 
 </script>

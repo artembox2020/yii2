@@ -811,6 +811,21 @@ div.required label:after {
     position: relative;
     z-index: 3;
 }
+.chart-container-mls.graph-block {
+    margin-left: -90px;
+    min-width: 110%;
+    overflow: visible!important;
+}
+@media (max-width: 767px) {
+    .chart-container-mls.graph-block {
+        margin-left: -45px;
+        min-width: 110%;
+        overflow: visible!important;
+    }
+}
+.chart-container-mls.graph-block  svg {
+    overflow: visible!important;
+}
 .margin-bottom-274 {
     margin-bottom: 274px;
 }

@@ -89,7 +89,7 @@ interface MashineStatStorageInterface
      * 
      * @return array
      */
-    public function getTimeIntervalsByDropDown(string $active, string $date): array;
+    public function getTimeIntervalsByDropDown(string $active, string $date, $other): array;
     
     /**
      * Gets time intervals by dates between
@@ -98,5 +98,5 @@ interface MashineStatStorageInterface
      * 
      * @return array
      */
-    public function getTimeIntervalsByDatesBetween($active, $start, $end);
+    public function getTimeIntervalsByDatesBetween($active, $start, $end, $other);
 }

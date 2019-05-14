@@ -13,6 +13,7 @@ use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSummarySearch;
 use frontend\models\AddressBalanceHolder;
 use frontend\services\globals\EntityHelper;
+use console\controllers\ModemLevelSignalController;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -45,6 +46,55 @@ $this->params['breadcrumbs'][] = $this->title;
             'website',
         ],
     ]) ?>
+
+    <br>
+    <b><?= Yii::t('graph', 'WM Mashine Statistics'); ?></b>
+
+    <div class="chart-container graph-block">
+        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+    </div>
+
+    <?php echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container',
+            'action' => '/dashboard/all-green-grey-work-error', 
+            'active' => 'current day'
+        ]);
+    ?>
+
+    <b><?= Yii::t('graph', 'Balance Holders Incomes'); ?></b>
+    <br>
+
+    <div class="chart-container-bh graph-block">
+        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+    </div>
+
+    <?php echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container-bh',
+            'action' => '/dashboard/balance-holder-incomes', 
+            'active' => 'current day'
+        ]);
+    ?>
+
+    <b><?= Yii::t('graph', 'Modem Level Signal'); ?></b>
+    <br>
+
+    <div class="chart-container-mls graph-block">
+        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+    </div>
+
+    <?php echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container-mls',
+            'action' => '/dashboard/modem-level-signal', 
+            'active' => 'current day',
+            'actionBuilder' => 'builds/action-mls-builder'
+        ]);
+    ?>
 
     <b><?= Yii::t('frontend', 'Employees company') ?></b>
 
@@ -86,36 +136,5 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Yii::$app->view->render('balance_holders', ['balanceHolders' => $balanceHolders, 'balanceHoldersData' => $balanceHoldersData]) ?>
     </div>
 
-    <br>
-    <b><?= Yii::t('graph', 'WM Mashine Statistics'); ?></b>
-
-    <div class="chart-container graph-block">
-        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
-    </div>
-
-    <?php echo Yii::$app->runAction(
-        '/dashboard/render-engine',
-        [
-            'selector' => '.chart-container',
-            'action' => '/dashboard/all-green-grey-work-error', 
-            'active' => 'current day'
-        ]);
-    ?>
-
-    <b><?= Yii::t('graph', 'Balance Holders Incomes'); ?></b>
-    <br>
-
-    <div class="chart-container-bh graph-block">
-        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
-    </div>
-
-    <?php echo Yii::$app->runAction(
-        '/dashboard/render-engine',
-        [
-            'selector' => '.chart-container-bh',
-            'action' => '/dashboard/balance-holder-incomes', 
-            'active' => 'current day'
-        ]);
-    ?>
 </div>
 <div class="margin-bottom-274"></div>
