@@ -1134,6 +1134,7 @@ class CbLogSearch extends CbLog
 
     /**
      * Gets date by timestamp, using UTC timezone
+     * Заменили UTC на Europe/Kiev из .env
      * 
      * @param int $timestamp
      * @param string $dateFormat
