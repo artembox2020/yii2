@@ -79,5 +79,6 @@
         display:none;
     }
     .jlog-index table tr td.aggregated-status-info span.ZERO_WORK {
-        color: red;
+        background-color: red;
+        background-size: cover;
     }
