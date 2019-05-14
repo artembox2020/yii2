@@ -78,3 +78,6 @@
     .jlog-index #journal-pjax-container h1 {
         display:none;
     }
+    .jlog-index table tr td.aggregated-status-info span.ZERO_WORK {
+        color: red;
+    }
