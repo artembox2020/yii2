@@ -1141,10 +1141,10 @@ class CbLogSearch extends CbLog
      */
     public function getDateByTimestamp($timestamp, $dateFormat)
     {
-        $currentTimezone = date_default_timezone_get();
-        date_default_timezone_set('UTC');
+//        $currentTimezone = date_default_timezone_get();
+//        date_default_timezone_set('UTC');
         $date = date($dateFormat, $timestamp);
-        date_default_timezone_set($currentTimezone);
+//        date_default_timezone_set($currentTimezone);
 
         return $date;
     }

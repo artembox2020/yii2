@@ -325,16 +325,17 @@ class LoggerDto implements LoggerDtoInterface
 //            }
 
 
-//            $a = $object->getDirtyAttributes();
-//            $b = $object->getOldAttributes();
-//            Debugger::d($a);
-//            Debugger::dd($b);
+            $a = $object->getDirtyAttributes();
+            $b = $object->getOldAttributes();
+            Debugger::d($a);
+            Debugger::dd($b);
 
             if ($object->getDirtyAttributes()) {
                 $oldAttributes = $object->getOldAttributes();
                 $newAttributes = $object->getDirtyAttributes();
                 foreach ($oldAttributes as $key => $value) {
                     if (array_key_exists($key, $newAttributes)) {
+                        if ($key == 'date_start_cooperation')
                         $array[] = $oldAttributes[$key];
                     }
                 }
