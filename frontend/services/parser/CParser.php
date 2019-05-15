@@ -274,4 +274,58 @@ class CParser implements CParserInterface
 
         return $mashineData;
     }
+
+    /**
+     * Check is new initialization packet
+     * 
+     * @param string $p
+     *
+     * @return bool
+     */
+    public function checkNewInitializationPacket($p)
+    {
+        if (count(explode("*", $p)) == 9) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Replaces level signal
+     * 
+     * @param string $p
+     * @param int $levelSignal
+     *
+     * @return string
+     */
+    public function replaceLevelSignal($p, $signalLevel)
+    {
+        $dataParts = explode("*", $p);
+        $count = count($dataParts);
+        $dataParts[$count-1] = $signalLevel;
+
+        return implode("*", $dataParts);
+    }
+
+    /**
+     * Replaces CB status
+     * 
+     * @param string $p
+     * @param int $cpStatus
+     *
+     * @return string
+     */
+    public function replaceCpStatus($p, $cpStatus)
+    {
+        $imeiString = explode("_", $p)[0];
+        $restString = substr($p, strlen($imeiString));
+        $imeiParts = explode("*", $imeiString);
+        $count = count($imeiParts);
+        $imeiParts[$count-1] = $cpStatus;
+        $newImeiString = implode("*", $imeiParts);
+
+        return $newImeiString.$restString;
+    }
 }

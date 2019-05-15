@@ -62,8 +62,10 @@ class ImeiData extends \yii\db\ActiveRecord
     const TYPE_BILL_ERRBILLJAMMED = 4;
     const TYPE_BILL_ERRUNEXP = 5;
     const TYPE_BILL_ERRVALIDFULL = 6;
-    
+
     const TYPE_DATE_FORMAT = 'd.m.Y H:i';
+
+    const CP_STATUS_TERMINAL_NOT_IN_TOUCH = 8;
 
     public $status_central_board = [
         '1' => 'ErrFram',
@@ -72,7 +74,8 @@ class ImeiData extends \yii\db\ActiveRecord
         '4' => 'ErrLogFormat',
         '5' => 'ErrSettings',
         '6' => 'Err6LowPan',
-        '7' => 'OK'
+        '7' => 'OK',
+        self::CP_STATUS_TERMINAL_NOT_IN_TOUCH => 'ErrTerminalNotInTouch'
     ];
 
     public $status_bill_acceptor = [
