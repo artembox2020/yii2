@@ -893,8 +893,8 @@ class JlogSearch extends Jlog
     public function getImeiIdByAddressStringAndInitialTimestamp($addressString, $start)
     {
         $query = Jlog::find()->select(['imei_id'])->andWhere(['address' => $addressString, 'type_packet' => self::TYPE_PACKET_INITIALIZATION]);
-        $query->andWhere(['>=', 'unix_time_offset', $start]);
-        $query = $query->orderBy(['unix_time_offset' => SORT_ASC])->limit(1);
+        $query->andWhere(['<=', 'unix_time_offset', $start]);
+        $query = $query->orderBy(['unix_time_offset' => SORT_DESC])->limit(1);
 
         $item = $query->one();
 
@@ -929,5 +929,35 @@ class JlogSearch extends Jlog
         }
 
         return null;
+    }
+
+    /**
+     * Gets last initialization item by address string and timestamp
+     * 
+     * @param string $addressString
+     * @param int $start
+     */
+    public function getLastInitializationItemByAddressAndTimestamp($addressString, $start)
+    {
+        $query = Jlog::find()->andWhere(['address' => $addressString, 'type_packet' => self::TYPE_PACKET_INITIALIZATION]);
+        $query->andWhere(['<', 'unix_time_offset', $start]);
+        $query = $query->orderBy(['unix_time_offset' => SORT_DESC])->limit(1);
+
+        return $query->one();
+    }
+
+    /**
+     * Gets last data item by address string and timestamp
+     * 
+     * @param string $addressString
+     * @param int $start
+     */
+    public function getLastDataItemByAddressAndTimestamp($addressString, $start)
+    {
+        $query = Jlog::find()->andWhere(['address' => $addressString, 'type_packet' => self::TYPE_PACKET_DATA]);
+        $query->andWhere(['<', 'unix_time_offset', $start]);
+        $query = $query->orderBy(['unix_time_offset' => SORT_DESC])->limit(1);
+
+        return $query->one();
     }
 }

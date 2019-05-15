@@ -32,6 +32,7 @@ class ModemStatStorage extends MashineStatStorage
      */
     public function aggregateModemLevelSignalsForGoogleGraph($start, $end, $other, $options)
     {
+        $end -= self::STEP;
         $dbHelper = new DbModemLevelSignalHelper();
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
@@ -42,7 +43,7 @@ class ModemStatStorage extends MashineStatStorage
 
         for ($baseStart = $start; $baseStart <= $end; $baseStart+= self::STEP) {
             $item = [];
-            $item[] = date("d.m H:i", $baseStart);
+            $item[] = date("d.m H:i", $baseStart + self::STEP);
 
             foreach ($addressesInfo as $addressInfo) {
                 $item[]= self::MIN_LEVEL_SIGNAL;

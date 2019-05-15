@@ -30,6 +30,8 @@ class Jlog extends ActiveRecord
     const TYPE_PACKET_ENCASHMENT = 6;
 
     const TYPE_TIME_OFFSET = 0;
+    
+    
 
     /**
      * @inheritdoc
@@ -476,5 +478,66 @@ class Jlog extends ActiveRecord
             200 => 200,
             500 => 500
         ];
+    }
+
+    /**
+     * Makes initialization record by existing item
+     * 
+     * @param Jlog $item
+     * @param int $start
+     * @param int $signalLevel
+     */
+    public function makeInitializationLogByItem($item, $start, $signalLevel)
+    {
+        $parser = new CParser();
+        if ($item && $parser->checkNewInitializationPacket($item->packet)) {
+            $oldItem = Jlog::find()
+                ->andWhere([
+                    'imei_id' => $item->imei_id, 'type_packet' => $item->type_packet, 'unix_time_offset' => $start
+                ])
+                ->limit(1)
+                ->one();
+
+            if ($oldItem) {
+                $oldItem->delete();
+            }
+
+            $item->packet = $parser->replaceLevelSignal($item->packet, $signalLevel);
+            $item->date = Yii::$app->formatter->asDate($start, Imei::DATE_TIME_FORMAT);
+            $item->unix_time_offset = $start;
+            $item->isNewRecord = true;
+            unset($item->id);
+            $item->save();
+        }
+    }
+
+    /**
+     * Makes data record by existing item
+     * 
+     * @param \frontend\models\Jlog $item
+     * @param int $start
+     * @param int $cpStatus
+     */
+    public function makeDataLogByItem($item, $start, $cpStatus)
+    {
+        $parser = new CParser();
+        $oldItem = Jlog::find()
+                ->andWhere([
+                    'imei_id' => $item->imei_id, 'type_packet' => $item->type_packet, 'unix_time_offset' => $start
+                ])
+                ->limit(1)
+                ->one();
+
+        if ($oldItem) {
+            $oldItem->delete();
+        }
+
+        $item->packet = $parser->replaceCpStatus($item->packet, $cpStatus);
+        $item->date = Yii::$app->formatter->asDate($start, Imei::DATE_TIME_FORMAT);
+        $item->date_end = $item->date; 
+        $item->unix_time_offset = $start;
+        $item->isNewRecord = true;
+        unset($item->id);
+        $item->save();
     }
 }
