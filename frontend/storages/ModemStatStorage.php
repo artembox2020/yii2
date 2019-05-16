@@ -16,7 +16,7 @@ use console\controllers\ModemLevelSignalController;
  */
 class ModemStatStorage extends MashineStatStorage
 {
-    const STEP = 1800;
+    const STEP = 300;
     const MIN_LEVEL_SIGNAL = -128;
     const MAX_POINTS_NUMBER = 2500;
 
@@ -32,7 +32,6 @@ class ModemStatStorage extends MashineStatStorage
      */
     public function aggregateModemLevelSignalsForGoogleGraph($start, $end, $other, $options)
     {
-        $end -= self::STEP;
         $dbHelper = new DbModemLevelSignalHelper();
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
@@ -74,6 +73,11 @@ class ModemStatStorage extends MashineStatStorage
 
         if ($numberOfPoints > self::MAX_POINTS_NUMBER) {
             $lines = $this->mergeLines($lines);
+        }
+        $linesCount = count($lines);
+
+        if ($linesCount > 0) {
+            unset($lines[$linesCount-1]);
         }
 
         return ['titles' => $titles, 'lines' => $lines, 'options' => $options];

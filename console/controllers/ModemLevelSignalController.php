@@ -73,11 +73,13 @@ class ModemLevelSignalController extends Controller
         $imeiId = $jlogSearch->getImeiIdByAddressStringAndInitialTimestamp($addressString, $start);
         $baseStart = $start;
         $insertId = 0;
+        $monitoringStep = 1800;
 
         for (; $start + $step <= $end; $start += $step) {
             $allData = Jlog::find()->andWhere(['type_packet' => Jlog::TYPE_PACKET_INITIALIZATION, 'address' => $addressString]);
+            $startStamp = $start + $step - $monitoringStep;
             $condition = new \yii\db\conditions\BetweenCondition(
-                'unix_time_offset', 'BETWEEN', $start, $start + $step
+                'unix_time_offset', 'BETWEEN', $startStamp, $start + $step
             );
 
             $allData = $allData->andWhere($condition)->orderBy(['unix_time_offset' => SORT_ASC])->all();
@@ -92,7 +94,7 @@ class ModemLevelSignalController extends Controller
             $aggregatedLevelSignal = $this->getAggregatedLevelSignal($signalData);
             if (empty($signalData) && !empty($prevNonMinSignalLevel)) {
                 $aggregatedLevelSignal = $this->getAggregatedLevelSignalByDataPacket(
-                    $imeiId, $start, $start + $step, $prevNonMinSignalLevel
+                    $imeiId, $startStamp, $start + $step, $prevNonMinSignalLevel
                 );
             }
 
