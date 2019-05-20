@@ -57,7 +57,17 @@ class ModemStatStorage extends MashineStatStorage
             $data = $dbHelper->getDataByAddressIdAndTimestamps($addressInfo['id'], $start, $end);
             foreach ($data as $item) {
                 $stamp = $item['start'];
+
+                if ($stamp < $start) {
+                    $stamp = $start;
+                }
+
                 $stampEnd = $item['end'];
+
+                if ($stampEnd > $end) {
+                    $stampEnd = $end;
+                }
+
                 $index = ($stamp - $start) / self::STEP;
                 $number = ($stampEnd - $stamp) / self::STEP;
 

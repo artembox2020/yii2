@@ -5,6 +5,8 @@
                 <b><?= Yii::t('frontend', 'Indicator') ?>:</b>
                 <br>
                 <b><?= $model->getCPStatus() ?></b>
+                <br>
+                <?= $model->imeiRelation->getLastPing() ?>
             </td>
         </tr>
         <tr>

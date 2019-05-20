@@ -322,10 +322,39 @@ class CParser implements CParserInterface
         $imeiString = explode("_", $p)[0];
         $restString = substr($p, strlen($imeiString));
         $imeiParts = explode("*", $imeiString);
-        $count = count($imeiParts);
-        $imeiParts[$count-1] = $cpStatus;
+        $imeiParts[self::SEVEN - 2] = $cpStatus;
         $newImeiString = implode("*", $imeiParts);
 
         return $newImeiString.$restString;
+    }
+
+    /**
+     * Gets CB status
+     * 
+     * @param string $p
+     *
+     * @return string
+     */
+    public function getCpStatus($p)
+    {
+        $imeiString = explode("_", $p)[0];
+        $imeiParts = explode("*", $imeiString);
+
+        return $imeiParts[self::SEVEN - 2];
+    }
+
+    /**
+     * Gets level signal
+     * 
+     * @param string $p
+     *
+     * @return string
+     */
+    public function getLevelSignal($p)
+    {
+        $dataParts = explode("*", $p);
+        $count = count($dataParts);
+
+        return $dataParts[$count-1];
     }
 }
