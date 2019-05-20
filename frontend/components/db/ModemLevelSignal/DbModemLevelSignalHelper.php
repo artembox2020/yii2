@@ -106,7 +106,7 @@ class DbModemLevelSignalHelper extends DbCommandHelper
     public function getDataByAddressIdAndTimestamps($addressId, $start, $end)
     {
         $queryString = "SELECT start, end, level_signal FROM modem_level_signal WHERE ".
-                       "address_id = :address_id AND start >= :start AND end <= :end ORDER BY start ASC";
+                       "address_id = :address_id AND start < :end AND end > :start ORDER BY start ASC";
         $bindValues = [':address_id' => $addressId, ':start' => $start, ':end' => $end];
         $command = Yii::$app->db->createCommand($queryString)->bindValues($bindValues);
 

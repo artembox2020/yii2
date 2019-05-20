@@ -58,6 +58,8 @@ class Imei extends \yii\db\ActiveRecord
     const MYSQL_DATE_TIME_FORMAT = '%d.%m.%Y %H:%i:%s';
     const DATE_PICKER_FORMAT = 'dd.MM.yyyy';
 
+    const ZERO = null;
+
 //    public $id;
     public $current_status = [
         'Off',
@@ -562,6 +564,7 @@ class Imei extends \yii\db\ActiveRecord
 
             return "<span class='ping-not-actual'>".self::checkStatus($this->status)."</span>";
         }
+
         $actualityClass = 'ping-not-actual';
         $getInitResult = $this->getInit();
         if ($getInitResult == 'Ok') {
@@ -576,6 +579,28 @@ class Imei extends \yii\db\ActiveRecord
 
             return "<span class='$actualityClass'>".$getInitResult."</span>";
         }
+    }
+
+    /**
+     * Gets last ping value
+     * 
+     * @return int|null
+     */
+    public function getLastPingValue()
+    {
+        if ($this->status != self::STATUS_ACTIVE) {
+
+            return self::ZERO;
+        }
+
+        $getInitResult = $this->getInit();
+
+        if ($getInitResult == 'Ok') {
+
+            return $this->ping;
+        }
+
+        return self::ZERO;
     }
 
     /**

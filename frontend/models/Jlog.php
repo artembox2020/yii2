@@ -30,8 +30,9 @@ class Jlog extends ActiveRecord
     const TYPE_PACKET_ENCASHMENT = 6;
 
     const TYPE_TIME_OFFSET = 0;
-    
-    
+
+    const PACKET_DATA_DURATION = 300;
+    const PACKET_DATA_TIME_INTERVAL = 1800;
 
     /**
      * @inheritdoc
@@ -110,13 +111,21 @@ class Jlog extends ActiveRecord
         $time = time() + self::TYPE_TIME_OFFSET;
 
         $jlog->date = Yii::$app->formatter->asDate($time, Imei::DATE_TIME_FORMAT);
+        $jlog->date_end = Yii::$app->formatter->asDate($time + self::PACKET_DATA_DURATION, Imei::DATE_TIME_FORMAT);
         $jlog->unix_time_offset = $time;
 
         // update item if previous item is the same
         if (in_array($params['type_packet'], [self::TYPE_PACKET_DATA ,self::TYPE_PACKET_DATA_CP])) {
             $previousItem = $this->getLastItem($params['imei_id'], $params['type_packet']);
 
-            if (!empty($previousItem) && $this->checkItemsEqual($jlog, $previousItem)) {
+            $previousDate = empty($previousItem) ? false : $previousItem->date_end;
+            $previousDate = $previousDate ?? $previousItem->date;
+
+            if (
+                !empty($previousDate) &&
+                $time - strtotime($previousDate) <= self::PACKET_DATA_TIME_INTERVAL &&
+                $this->checkItemsEqual($jlog, $previousItem)
+            ) {
                 $previousItem->date_end = $jlog->date;
 
                 return $previousItem->update();
@@ -517,6 +526,8 @@ class Jlog extends ActiveRecord
      * @param \frontend\models\Jlog $item
      * @param int $start
      * @param int $cpStatus
+     * 
+     * @return int
      */
     public function makeDataLogByItem($item, $start, $cpStatus)
     {
@@ -532,12 +543,24 @@ class Jlog extends ActiveRecord
             $oldItem->delete();
         }
 
+        $date = Yii::$app->formatter->asDate($start, Imei::DATE_TIME_FORMAT);
+        $dateEnd = Yii::$app->formatter->asDate($start + self::PACKET_DATA_DURATION, Imei::DATE_TIME_FORMAT);
+        $oldCpStatus = $parser->getCpStatus($item->packet);
         $item->packet = $parser->replaceCpStatus($item->packet, $cpStatus);
-        $item->date = Yii::$app->formatter->asDate($start, Imei::DATE_TIME_FORMAT);
-        $item->date_end = $item->date; 
+        $previousEnd = $item->date_end ? $item->date_end : $item->date;
+        $previousEndStamp = strtotime($previousEnd);
+        if ($oldCpStatus == $cpStatus && $start - $previousEndStamp <= self::PACKET_DATA_TIME_INTERVAL) {
+            $item->date_end = $date;
+
+            return $item->update();
+        }
+
+        $item->date = $date;
+        $item->date_end = $dateEnd;
         $item->unix_time_offset = $start;
         $item->isNewRecord = true;
         unset($item->id);
-        $item->save();
+
+        return $item->save();
     }
 }
