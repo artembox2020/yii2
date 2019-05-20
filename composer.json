@@ -52,7 +52,8 @@
         "ramsey/uuid": "^3.8",
         "samdark/hydrator": "^1.0",
         "ocramius/proxy-manager": "^2.2",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "gugglegum/yii2-cookie-language-selector": "^1.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",

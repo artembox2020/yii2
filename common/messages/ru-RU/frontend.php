@@ -167,6 +167,7 @@ return [
     'Edit' => 'Редактировать',
     'end cycle' => 'Конец цикла',
     'Female' => 'Женский',
+    'Male' => 'Мужской',
     'Filter' => 'Фильтр',
     'Filter By Condition' => 'Фильтр по условию',
     'Filter By Value' => 'Фильтр по значению',
@@ -348,6 +349,7 @@ return [
     'Update Wm Mashine: {nameAttribute}' => 'Редактировать стиральную машину: {nameAttribute}',
     'Username' => 'Имя пользователя',
     'Users' => 'Пользователи',
+    'User' => 'Пользователь',
     'ue loading cloth' => 'Ошибка дисбаланса',
     'Value' => 'значение',
     'Verification code' => 'Проверочный код',
@@ -433,5 +435,7 @@ return [
     'Roles' => 'Роли',
     'rising' => 'Полоскание',
     'Permissions' => 'Правила',
-    'Yesterday' => 'Вчера'
+    'Yesterday' => 'Вчера',
+    'Language' => 'Язык',
+    'Current language' => 'Текущий язык',
 ];
