@@ -61,7 +61,7 @@ $config = [
         'cookieLanguageSelector' => [
             'class' => 'gugglegum\Yii2\Extension\CookieLanguageSelector\Component',
             'defaultLanguage' => 'uk-UA',
-            'validLanguages' => ['uk-UA', 'ru-RU'],
+            'validLanguages' => ['uk-UA', 'ru-RU', 'en-US'],
         ],
 //        'mailer' => [
 //            'class' => 'yii\swiftmailer\Mailer',
