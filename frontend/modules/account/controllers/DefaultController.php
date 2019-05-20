@@ -88,6 +88,52 @@ class DefaultController extends Controller
     }
 
     /**
+     * User credentials settings
+     */
+    public function actionUser()
+    {
+        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
+        $model = Yii::$app->user->identity->userProfile;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => Yii::$app->user->id]);
+        } else {
+            return $this->render('user', ['model' => $model]);
+        }
+    }
+
+    /**
+     * Switch language form
+     */
+    public function actionLanguage()
+    {
+        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+        
+        return $this->render('language');
+    }
+
+    /**
+     * Switches the language and redirects back
+     */
+    public function actionSwitchLanguage()
+    {
+        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
+        Yii::$app->cookieLanguageSelector->setLanguage(Yii::$app->request->post('language'));
+        $this->redirect(Yii::$app->request->post('redirectTo', ['settings']));
+    }
+
+    /**
      * @inheritdoc
      */
     public function actionPassword()
@@ -128,6 +174,8 @@ class DefaultController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+
+
 
     /**
      * @param $id

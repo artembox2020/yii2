@@ -58,6 +58,11 @@ $config = [
         'dbCommandHelperOptimizer' => [
             'class' => 'frontend\components\db\DbCommandHelperOptimizer'
         ],
+        'cookieLanguageSelector' => [
+            'class' => 'gugglegum\Yii2\Extension\CookieLanguageSelector\Component',
+            'defaultLanguage' => 'uk-UA',
+            'validLanguages' => ['uk-UA', 'ru-RU'],
+        ],
 //        'mailer' => [
 //            'class' => 'yii\swiftmailer\Mailer',
 ////            One more suggestion is to use port "465" and encryption as "ssl" instead of port "587", encryption "tls".
@@ -86,6 +91,7 @@ if (YII_ENV_DEV) {
         'allowedIPs' => ['127.0.0.1', '::1', '95.47.114.243', '134.249.146.11'],
     ];
     $config['bootstrap'][] = 'gii';
+    $config['bootstrap'][] = 'cookieLanguageSelector';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
         'allowedIPs' => ['127.0.0.1', '::1', '95.47.114.243', '134.249.146.11'],

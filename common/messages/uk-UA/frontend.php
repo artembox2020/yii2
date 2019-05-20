@@ -201,6 +201,7 @@ return [
     'Edit' => 'Редагувати',
     'Edit contact person' => 'Редагувати контактну особу',
     'end cycle' => 'Кінець циклу',
+    'Male' => 'Чоловічий',
     'Female' => 'Жіночий',
     'Filter' => 'Фільтр',
     'Filter By Condition' => 'Фільтр за умовою',
@@ -417,6 +418,7 @@ return [
     'Update Wm Mashine: {nameAttribute}' => 'Редагувати пральну машину: {nameAttribute}',
     'Username' => 'Ім\'я користувача',
     'Users' => 'Користувачі',
+    'User' => 'Користувач',
     'ue loading cloth' => 'Помилка дисбалансу',
     'Up to 1 year' => 'До 1 року',
     'Up to 2 years' => 'До 2х років',
@@ -500,4 +502,6 @@ return [
     'Up-To 5 years' => 'До 5 років',
     'Manager' => 'Менеджер',
     'Role not defined' => 'Роль не визначена',
+    'Language' => 'Язик',
+    'Current language' => 'Вибрана мова',
 ];
