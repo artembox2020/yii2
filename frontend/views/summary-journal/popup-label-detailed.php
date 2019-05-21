@@ -45,7 +45,8 @@
 if (!empty($params['idleHours'])) {
 
     echo Yii::$app->view->render('/summary-journal/idle-hours-reasons', [
-        'idleHoursReasons' => $params['idleHoursReasons']
+        'idleHoursReasons' => $params['idleHoursReasons'],
+        'all' => 1
     ]);
 }
 ?>

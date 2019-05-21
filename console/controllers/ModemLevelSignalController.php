@@ -322,7 +322,7 @@ class ModemLevelSignalController extends Controller
 
             if (!$hasData) {
 
-                return $this->makeDataLog($addressString, $start, $jlog, $jlogSearch);
+                return $this->makeDataLog($addressString, $end, $jlog, $jlogSearch);
             }
         }
 
@@ -349,7 +349,7 @@ class ModemLevelSignalController extends Controller
 
             if (empty($ping) || $end - $ping > self::PING_TIME_INTERVAL) {
 
-                return $this->makeDataLog($addressString, $start, $jlog, $jlogSearch);
+                return $this->makeDataLog($addressString, $end, $jlog, $jlogSearch);
             }
         }
 
@@ -378,7 +378,12 @@ class ModemLevelSignalController extends Controller
             list($baseStart, $baseEnd) = [$addressTimestamps['start'], $addressTimestamps['end']];
 
             for (; $baseStart < $baseEnd; $baseStart += $rate) {
-                $this->actionMakeNotInTouchLog($address->id, $baseStart, $baseStart + $step);
+
+                if ($baseStart + $step <= $baseEnd) {
+                    $this->actionMakeNotInTouchLog($address->id, $baseStart, $baseStart + $step);
+                } else {
+                    break;
+                }
             }
 
             Console::output("Address ".$item['address']." has been processed\n\n");
