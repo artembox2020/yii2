@@ -361,19 +361,33 @@ class MashineStatStorage implements MashineStatStorageInterface
                 break;
             case "current week":
                 $start = $dateTimeHelper->getWeekBeginningByTimestamp($currentTimestamp);
+                $end = time();
                 break;
             case "current month":
                 $start = $dateTimeHelper->getMonthBeginningByTimestamp($currentTimestamp);
+                $end = time();
                 break;
             case "current quarter":
                 $start = $dateTimeHelper->getQuarterBeginningByTimestamp($currentTimestamp);
+                $end = time();
             case "current year":
                 $start = $dateTimeHelper->getYearBeginningByTimestamp($currentTimestamp);
+                $end = time();
                 break;
             case "any":
                 $timestamp = strtotime($date);
+
+                if ($timestamp > time()) {
+                    $timestamp = time();
+                }
+
                 $start = $dateTimeHelper->getDayBeginningTimestamp($timestamp);
                 $end = $start + DateTimeHelper::DAY_TIMESTAMP;
+
+                if ($end > time()) {
+                    $end = time();
+                }
+
                 $active.= "*".$date;
                 break;
         }
@@ -398,6 +412,10 @@ class MashineStatStorage implements MashineStatStorageInterface
 
         $timestamp = strtotime($dateEnd);
         $end = $dateTimeHelper->getDayBeginningTimestamp($timestamp) + DateTimeHelper::DAY_TIMESTAMP;
+
+        if (time() < $end) {
+            $end = time();
+        }
 
         return ['start' => $start, 'end' => $end, 'active' => $active, 'other' => $other];
     }
