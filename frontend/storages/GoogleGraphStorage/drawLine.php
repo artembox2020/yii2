@@ -6,6 +6,7 @@
 
     var dataArray = makeDataForHistogram();
     var min = getMinValue(-128) - 8;
+
     var options = {
         curveType: 'function',
         legend: { position: 'top' },
@@ -36,6 +37,16 @@
         }
 
         var chart = new google.visualization.LineChart(document.querySelector('<?= $selector ?>'));
+
+        google.visualization.events.addListener(chart, 'select', function () {
+            var sel = chart.getSelection();
+            if (sel.length > 0 && sel[0].row === null) {
+                var dataArray = makeDataForHistogramByActive(sel[0].column, min - 6);
+                var data = google.visualization.arrayToDataTable(dataArray);
+                chart.draw(data, options);
+            }
+        });
+
         chart.draw(data, options);
         graphBuilder.isGraphBusy = false;
     }
