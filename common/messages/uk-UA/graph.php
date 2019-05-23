@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'All WM' => 'Усі ПМ',
+    'All WM' => 'Усі підключені ПМ',
     'Any date' => 'Будь-яка дата',
     'At Work' => 'В роботі',
     'Balance Holders Incomes' => 'Доходи по балансотримачам',
