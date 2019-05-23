@@ -116,7 +116,7 @@ class WmMashineDataSearch extends WmMashineData
     {
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
-        $statuses = [WmMashine::STATUS_OFF, WmMashine::STATUS_ACTIVE, WmMashine::STATUS_UNDER_REPAIR];
+        $statuses = [WmMashine::STATUS_ACTIVE];
         $query = WmMashine::find()->select(['wm_mashine.id']);
         $query = $query->where(['<', 'wm_mashine.created_at', $end]);
         $query = $query->andWhere(['wm_mashine.company_id' => $companyId, 'wm_mashine.status' => $statuses])
@@ -141,6 +141,8 @@ class WmMashineDataSearch extends WmMashineData
                         ])
                     ])
                 );
+
+        $query->andWhere(['imei.status' => Imei::STATUS_ACTIVE]);
 
         return $query;
     }
@@ -285,11 +287,12 @@ class WmMashineDataSearch extends WmMashineData
     {
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
-        $statuses = [WmMashine::STATUS_OFF, WmMashine::STATUS_ACTIVE, WmMashine::STATUS_UNDER_REPAIR];
+        $statuses = [WmMashine::STATUS_ACTIVE];
         $query = WmMashine::find()->select(['wm_mashine.id', 'current_status', 'wm_mashine.ping'])
                                   ->andWhere(['wm_mashine.status' => $statuses, 'wm_mashine.company_id' => $companyId]);
         $query->leftJoin('imei', 'wm_mashine.imei_id = imei.id');
         $query->andWhere(['imei.is_deleted' => false]);
+        $query->andWhere(['imei.status' => Imei::STATUS_ACTIVE]);
 
         return $query;
     }
