@@ -116,18 +116,30 @@ class WmMashineDataSearch extends WmMashineData
     {
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
-        $query = WmMashine::find()->select(['id']);
+        $statuses = [WmMashine::STATUS_OFF, WmMashine::STATUS_ACTIVE, WmMashine::STATUS_UNDER_REPAIR];
+        $query = WmMashine::find()->select(['wm_mashine.id']);
         $query = $query->where(['<', 'created_at', $end]);
-        $query = $query->andWhere(['company_id' => $companyId])
+        $query = $query->andWhere(['company_id' => $companyId, 'wm_mashine.status' => $statuses])
                         ->andWhere(
                             new \yii\db\conditions\OrCondition([
-                                ['is_deleted' => false],
+                                ['wm_mashine.is_deleted' => false],
                                 new \yii\db\conditions\AndCondition([
-                                    ['is_deleted' => true],
-                                    ['>', 'deleted_at', $start]
+                                    ['wm_mashine.is_deleted' => true],
+                                    ['>', 'wm_mashine.deleted_at', $start]
                                 ])
                             ])
                         );
+
+        $query->leftJoin('imei', 'wm_mashine.imei_id = imei.id');
+        $query->where(
+                    new \yii\db\conditions\OrCondition([
+                        ['imei.is_deleted' => false],
+                        new \yii\db\conditions\AndCondition([
+                            ['imei.is_deleted' => true],
+                            ['>', 'imei.deleted_at', $start]
+                        ])
+                    ])
+                );
 
         return $query;
     }
@@ -273,7 +285,10 @@ class WmMashineDataSearch extends WmMashineData
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
         $statuses = [WmMashine::STATUS_OFF, WmMashine::STATUS_ACTIVE, WmMashine::STATUS_UNDER_REPAIR];
-        $query = WmMashine::find()->select(['id', 'current_status', 'ping'])->andWhere(['status' => $statuses, 'company_id' => $companyId]);
+        $query = WmMashine::find()->select(['wm_mashine.id', 'current_status', 'wm_mashine.ping'])
+                                  ->andWhere(['wm_mashine.status' => $statuses, 'wm_mashine.company_id' => $companyId]);
+        $query->leftJoin('imei', 'wm_mashine.imei_id = imei.id');
+        $query->where(['imei.is_deleted' => false]);
 
         return $query;
     }
@@ -299,9 +314,9 @@ class WmMashineDataSearch extends WmMashineData
     {
         $statuses = [WmMashine::STATUS_ACTIVE];
         $query = $this->getAllCurrentMashinesQuery();
-        $query = $query->andWhere(['!=', 'current_status', self::TYPE_STATUS_DISCONNECTED]);
-        $query = $query->andWhere(['<=', 'current_status', self::TYPE_MAX_STATUS_CODE]);
-        $query = $query->andWhere(['>=', 'current_status', self::TYPE_MIN_STATUS_CODE]);
+        $query = $query->andWhere(['!=', 'wm_mashine.current_status', self::TYPE_STATUS_DISCONNECTED]);
+        $query = $query->andWhere(['<=', 'wm_mashine.current_status', self::TYPE_MAX_STATUS_CODE]);
+        $query = $query->andWhere(['>=', 'wm_mashine.current_status', self::TYPE_MIN_STATUS_CODE]);
         $mashines = $query->all();
         $count = 0;
 
@@ -337,7 +352,7 @@ class WmMashineDataSearch extends WmMashineData
         $statuses = [WmMashine::STATUS_ACTIVE];
         $allowedStatuses = [2, 3, 4, 5, 6, 7, 8];
         $query = $this->getAllCurrentMashinesQuery();
-        $query = $query->andWhere(['status' => $statuses, 'current_status' => $allowedStatuses]);
+        $query = $query->andWhere(['wm_mashine.status' => $statuses, 'current_status' => $allowedStatuses]);
         $mashines = $query->all();
         $count = 0;
 
@@ -360,7 +375,7 @@ class WmMashineDataSearch extends WmMashineData
         $statuses = [WmMashine::STATUS_ACTIVE];
         $allowedStatuses = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26];
         $query = $this->getAllCurrentMashinesQuery();
-        $query = $query->andWhere(['status' => $statuses, 'current_status' => $allowedStatuses]);
+        $query = $query->andWhere(['wm_mashine.status' => $statuses, 'current_status' => $allowedStatuses]);
         $mashines = $query->all();
         $count = 0;
 

@@ -19,7 +19,7 @@ return [
     'Show by the last days' => 'Показувати за останні дні',
     'WM At Work' => 'ПМ в роботі',
     'WM In Touch' => 'ПМ на звязку',
-    'WM Mashine Statistics' => 'Статистика по ПМ',
+    'WM Mashine Statistics' => 'ПМ в роботі',
     'WM Not In Touch' => 'ПМ не на звязку',
     'WM With Errors' => 'ПМ з помилками'
 ];
