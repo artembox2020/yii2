@@ -266,9 +266,25 @@ class DashboardController extends Controller
             $data = $mss->aggregateModemLevelSignalsForGoogleGraph($start, $end, $other, $options);
         }
 
-        $histogram = $ggs->drawLine($data, $selector);
+        $histogram = $ggs->drawLine($data, $selector, $start, $end);
         $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active, $other, $actionBuilder);
 
         return $histogram.$actionBuilder;
+    }
+
+    /**
+     * Gets initialization data
+     *
+     * @param string $addressString
+     * @param int $start
+     * @param int $end
+     * 
+     * @return string
+     */  
+    public function actionGetInitializationData($addressString, $start, $end)
+    {
+        $mss = new ModemStatStorage();
+
+        return json_encode($mss->getInitializationData($addressString, $start, $end));
     }
 }

@@ -229,4 +229,21 @@
             filterPrompt.click();
         });
     }
+
+    // get initialization packet data
+    graphBuilder.getInitializationData = function(addressString, start, end)
+    {
+        var ajax = new XMLHttpRequest();
+        var queryString = "addressString=" + addressString + "&start=" + start + "&end=" + end;
+        var data = null;
+
+        ajax.addEventListener("load", function() {
+            data = this.responseText;
+        });
+
+        ajax.open("GET", "/dashboard/get-initialization-data?" + queryString, false);
+        ajax.send();
+
+        return data;
+    }
 </script>
