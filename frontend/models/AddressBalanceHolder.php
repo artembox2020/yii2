@@ -7,6 +7,7 @@ use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use frontend\services\globals\Entity;
 use frontend\services\globals\DateTimeHelper;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "address_balance_holder".
@@ -364,5 +365,18 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
         }
 
         return false;
+    }
+
+    /**
+     * Gets address ids by company id
+     * @param int $companyId
+     *
+     * @return array
+     */
+    public function getAddressIdsByCompanyId(int $companyId)
+    {
+        $items = AddressBalanceHolder::find()->select(['id'])->where(['company_id' => $companyId])->all();
+
+        return ArrayHelper::getColumn($items, 'id');
     }
 }

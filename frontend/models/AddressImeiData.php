@@ -609,11 +609,16 @@ class AddressImeiData extends ActiveRecord
     public function getHistoryByTimestamp($timestamp)
     {
         $bhSummarySearch = new BalanceHolderSummarySearch();
+        $addressBalanceHolder = new AddressBalanceHolder();
+        $entity = new Entity();
+        $companyId = $entity->getCompanyId();
         $startTimestamp = $bhSummarySearch->getDayBeginningTimestampByTimestamp($timestamp);
         $endTimestamp = $startTimestamp + 3600*24;
+        $addressIds = $addressBalanceHolder->getAddressIdsByCompanyId($companyId);
         $query = AddressImeiData::find();
         $items = $query->andWhere(['>=', 'created_at', $startTimestamp])
                        ->andWhere(['<', 'created_at', $endTimestamp])
+                       ->andWhere(['address_id' => $addressIds])
                        ->orderBy(['created_at' => SORT_DESC])
                        ->all();
 
