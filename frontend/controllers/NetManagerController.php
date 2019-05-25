@@ -19,6 +19,7 @@ use frontend\models\OtherContactPerson;
 use frontend\models\WmMashineSearch;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
+use frontend\services\logger\src\service\LoggerService;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
@@ -60,6 +61,15 @@ class NetManagerController extends \yii\web\Controller
     const DATA_MODEM_HISTORY_FORMAT = 'H:i:s d.m.y';
 
     const ADMINISTRATOR = 'administrator';
+
+    /** @var LoggerService  */
+    private $service;
+
+    public function __construct($id, $module, LoggerService $service, $config = [])
+    {
+        $this->service = $service;
+        parent::__construct($id, $module, $config);
+    }
     
     public function behaviors()
     {
@@ -130,58 +140,57 @@ class NetManagerController extends \yii\web\Controller
      * @return string|\yii\web\Response
      * @throws \Exception
      */
-    public function actionCreateEmployee()
-    {
-
-        if (Yii::$app->user->can('create_employee')) {
-            $model = new UserForm();
-            $model->setScenario('create');
-
-            if ($model->load(Yii::$app->request->post())) {
-                $model->other = $model->password;
-                $model->save();
-
-                $manager = User::findOne(Yii::$app->user->id);
-                $user = User::findOne(['email' => $model->email]);
-
-                $user->company_id = $manager->company_id;
-                $user->save();
-
-                // send invite mail
-                $password = $model->other;
-                $sendMail = new MailSender();
-                $company = Company::findOne(['id' => $manager->company_id]);
-                $user = User::findOne(['email' => $model->email]);
-                $sendMail->sendInviteToCompany($user, $company, $password);
-
-                Yii::$app->session->setFlash('success', Yii::t('backend', 'Send ' . $model->username . ' invite'));
-
-                return $this->redirect(['users']);
-            }
-
-            $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
-
-            unset($roles[array_search('administrator', $roles)]);
-            unset($roles[array_search('manager', $roles)]);
-            unset($roles[array_search('user', $roles)]);
-
-            foreach ($roles as $key => $role) {
-                $roles[$key] = Yii::t('backend', $role);
-            }
-
-            $model->status = self::ONE;
-
-            return $this->render('create', [
-                'model' => $model,
-                'roles' => $roles
-            ]);
-
-        }
-
-        return $this->render('/denied/access-denied', [
-            $this->accessDenied()
-        ]);
-    }
+//    public function actionCreateEmployee()
+//    {
+//        if (Yii::$app->user->can('create_employee')) {
+//            $model = new UserForm();
+//            $model->setScenario('create');
+//
+//            if ($model->load(Yii::$app->request->post())) {
+//                $model->other = $model->password;
+//                $model->save();
+//
+//                $manager = User::findOne(Yii::$app->user->id);
+//                $user = User::findOne(['email' => $model->email]);
+//
+//                $user->company_id = $manager->company_id;
+//                $user->save();
+//
+//                // send invite mail
+//                $password = $model->other;
+//                $sendMail = new MailSender();
+//                $company = Company::findOne(['id' => $manager->company_id]);
+//                $user = User::findOne(['email' => $model->email]);
+//                $sendMail->sendInviteToCompany($user, $company, $password);
+//
+//                Yii::$app->session->setFlash('success', Yii::t('backend', 'Send ' . $model->username . ' invite'));
+//
+//                return $this->redirect(['users']);
+//            }
+//
+//            $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
+//
+//            unset($roles[array_search('administrator', $roles)]);
+//            unset($roles[array_search('manager', $roles)]);
+//            unset($roles[array_search('user', $roles)]);
+//
+//            foreach ($roles as $key => $role) {
+//                $roles[$key] = Yii::t('backend', $role);
+//            }
+//
+//            $model->status = self::ONE;
+//
+//            return $this->render('create', [
+//                'model' => $model,
+//                'roles' => $roles
+//            ]);
+//
+//        }
+//
+//        return $this->render('/denied/access-denied', [
+//            $this->accessDenied()
+//        ]);
+//    }
 
     /**
      * @param null $id
@@ -199,14 +208,14 @@ class NetManagerController extends \yii\web\Controller
 
     /**
      * @param $id
-     * @return string|\yii\web\Response
+     * @return array|string|\yii\web\Response
      * @throws NotFoundHttpException
      */
     public function actionEditEmployee($id)
     {
         $array = array();
 
-        if (!\Yii::$app->user->can('manager')) {
+        if (!\Yii::$app->user->can('net-manager/delete-employee', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -214,15 +223,19 @@ class NetManagerController extends \yii\web\Controller
         $user = new UserForm();
         $user->setModel($this->findModel($id, new User()));
         $profile = UserProfile::findOne($id);
+
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
             $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
-            $isValid = $user->validate(false);
+            $isValid = $user->validate();
             $isValid = $profile->validate(false) && $isValid;
             if ($isValid) {
-                $user->save(false);
+                $user->save();
                 $profile->save(false);
+                $this->service->createLog($user, 'Update');
+                $this->service->createLog($profile, 'Update');
+                //        $this->service->createLog($profile);
                 return $this->redirect(['/net-manager/employees']);
-            }    
+            }
         }
 
         if (!array_key_exists(self::ADMINISTRATOR, Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId()))) {
@@ -246,13 +259,15 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionDeleteEmployee($id) 
     {
-        if (!\Yii::$app->user->can('manager')) {
+        if (!\Yii::$app->user->can('net-manager/delete-employee', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
 
         $model = $this->findModel($id, new User());
+        $this->service->createLog($model, 'Delete');
         $model->softDelete();
+
 
         return $this->redirect("/net-manager/employees");
     }
@@ -521,6 +536,8 @@ class NetManagerController extends \yii\web\Controller
             $imei->is_deleted = false;
             $imei->bindToAddressIfActive($imei->address_id);
             $imei->save();
+
+            $this->service->createLog($imei, 'Update');
             
             $addressImeiData = new AddressImeiData();
 
@@ -568,6 +585,8 @@ class NetManagerController extends \yii\web\Controller
             $imei->is_deleted = false;
             $imei->bindToAddressIfActive($imei->address_id);
             $imei->save();
+
+            $this->service->createLog($imei, 'Create');
 
             $addressImeiData = new AddressImeiData();
             $addressImeiData->createLog($imei->id, $imei->address_id);
@@ -652,6 +671,7 @@ class NetManagerController extends \yii\web\Controller
 
             if ($model->validate()) {
                 $model->save(false);
+                $this->service->createLog($model, 'Create');
             } else {
 
                 return $this->render('wm-machine/wm-machine-add', [
@@ -693,6 +713,7 @@ class NetManagerController extends \yii\web\Controller
         if ($model->load(Yii::$app->request->post())) {
           if ($model->validate()) {
                 $model->update(false);
+                $this->service->createLog($model, 'Update');
                 if ($model->status > self::ONE) {
                     $storage = new StorageHistory();
                     $storage->company_id = $model->company_id;
@@ -925,6 +946,12 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionLogger()
     {
-        return $this->render('logger/index');
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $this->service->getItems(),
+        ]);
+
+        return $this->render('logger/index', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

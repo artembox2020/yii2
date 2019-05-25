@@ -51,8 +51,8 @@ class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
     const ROLE_USER = 'user';
     const ROLE_FINANCIER = 'financier';
     const ROLE_TECHNICIAN = 'technician';
-    const ROLE_MANAGER = 'manager';
     const ROLE_ADMINISTRATOR = 'administrator';
+    const ROLE_SUPER_ADMINISTRATOR = 'super_administrator';
 
     const EVENT_AFTER_SIGNUP = 'afterSignup';
 
@@ -358,7 +358,7 @@ class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
     {
         $countAll = $this->getUserCount();
         $countRoles = $this->getUserCountByRoles(
-            [User::ROLE_FINANCIER, User::ROLE_TECHNICIAN, User::ROLE_MANAGER]
+            [User::ROLE_FINANCIER, User::ROLE_TECHNICIAN, User::ROLE_ADMINISTRATOR]
         );
                     
         return $countAll - $countRoles;

@@ -83,7 +83,7 @@ $config = [
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['administrator'],
+                        'roles' => ['super_administrator'],
                     ],
                 ],
             ],
@@ -95,7 +95,7 @@ $config = [
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['administrator'],
+                        'roles' => ['super_administrator'],
                     ],
                 ],
             ],
@@ -107,7 +107,7 @@ $config = [
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['administrator'],
+                        'roles' => ['super_administrator'],
                     ],
                 ],
             ],
@@ -137,7 +137,7 @@ $config = [
             [
                 'controllers' => ['user'],
                 'allow' => true,
-                'roles' => ['administrator'],
+                'roles' => ['super_administrator'],
             ],
             [
                 'controllers' => ['user'],
@@ -145,7 +145,7 @@ $config = [
             ],
             [
                 'allow' => true,
-                'roles' => ['manager'],
+                'roles' => ['super_administrator'],
             ],
         ],
     ],

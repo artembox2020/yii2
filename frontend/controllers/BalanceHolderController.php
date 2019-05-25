@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use frontend\services\custom\Debugger;
+use frontend\services\logger\src\service\LoggerService;
 use Yii;
 use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
@@ -18,6 +19,16 @@ use vova07\fileapi\actions\UploadAction as FileAPIUpload;
  */
 class BalanceHolderController extends Controller
 {
+
+    /** @var LoggerService  */
+    private $service;
+
+    public function __construct($id, $module, LoggerService $service, $config = [])
+    {
+        $this->service = $service;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @return array
      */
@@ -100,7 +111,9 @@ class BalanceHolderController extends Controller
             $user = User::findOne(Yii::$app->user->id);
             $model->company_id = $user->company_id;
             $model->is_deleted = false;
+            $this->service->createLog($model, 'Create');
             $model->save();
+
             return $this->redirect(['/net-manager/view-balance-holder', 'id' => $model->id]);
         }
 
@@ -130,7 +143,10 @@ class BalanceHolderController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $this->service->createLog($model, 'Update');
+            $model->save();
+
             return $this->redirect(['net-manager/view-balance-holder', 'id' => $model->id]);
         }
 
@@ -150,24 +166,25 @@ class BalanceHolderController extends Controller
     }
 
     /**
-     * Deletes an existing BalanceHolder model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->softDelete();
+        if ($this->findModel($id)) {
+            $model = $this->findModel($id);
+            $this->service->createLog($model, 'Delete');
+            $this->findModel($id)->softDelete();
 
-        return $this->redirect(['/net-manager/balance-holders']);
+            return $this->redirect(['/net-manager/balance-holders']);
+        }
     }
 
     /**
-     * Finds the BalanceHolder model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return BalanceHolder the loaded model
+     * @param $id
+     * @return \yii\di\Instance|null
+     * @throws NotFoundHttpException
      */
     protected function findModel($id)
     {

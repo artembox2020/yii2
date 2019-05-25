@@ -10,7 +10,7 @@ use common\rbac\OwnModelRule;
 
 class RbacController extends Controller
 {
-    public function actionInit()
+    public function actionIndex()
     {
         $auth = Yii::$app->authManager;
         $auth->removeAll();
@@ -33,8 +33,8 @@ class RbacController extends Controller
         $auth->add($manager);
         $auth->addChild($manager, $user);
 
-        $manager = $auth->createRole(User::ROLE_MANAGER);
-        $manager->description = 'Manager';
+        $manager = $auth->createRole(User::ROLE_ADMINISTRATOR);
+        $manager->description = 'Administrator';
         $auth->add($manager);
         $auth->addChild($manager, $user);
 
@@ -44,8 +44,8 @@ class RbacController extends Controller
         $auth->add($loginToBackend);
         $auth->addChild($manager, $loginToBackend);
 
-        $admin = $auth->createRole(User::ROLE_ADMINISTRATOR);
-        $admin->description = 'Administrator';
+        $admin = $auth->createRole(User::ROLE_SUPER_ADMINISTRATOR);
+        $admin->description = 'Super Administrator';
         $auth->add($admin);
         $auth->addChild($admin, $manager);
 

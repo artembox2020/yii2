@@ -5,7 +5,7 @@ namespace frontend\modules\account\controllers;
 use backend\services\mail\MailSender;
 use frontend\models\Company;
 use frontend\services\custom\Debugger;
-use tests\models\Tag;
+use frontend\services\logger\src\service\LoggerService;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -20,10 +20,28 @@ use frontend\modules\account\models\search\UserSearch;
 use backend\models\UserForm;
 
 /**
- * Default controller.
+ * Class DefaultController
+ * @package frontend\modules\account\controllers
  */
 class DefaultController extends Controller
 {
+
+    /** @var LoggerService  */
+    private $service;
+
+    /**
+     * DefaultController constructor.
+     * @param $id
+     * @param $module
+     * @param LoggerService $service
+     * @param array $config
+     */
+    public function __construct($id, $module, LoggerService $service, $config = [])
+    {
+        $this->service = $service;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @inheritdoc
      */
@@ -56,7 +74,7 @@ class DefaultController extends Controller
     public function actionSettings()
     {
         if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
-            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
 
@@ -67,6 +85,52 @@ class DefaultController extends Controller
         } else {
             return $this->render('settings', ['model' => $model]);
         }
+    }
+
+    /**
+     * User credentials settings
+     */
+    public function actionUser()
+    {
+        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
+        $model = Yii::$app->user->identity->userProfile;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => Yii::$app->user->id]);
+        } else {
+            return $this->render('user', ['model' => $model]);
+        }
+    }
+
+    /**
+     * Switch language form
+     */
+    public function actionLanguage()
+    {
+        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+        
+        return $this->render('language');
+    }
+
+    /**
+     * Switches the language and redirects back
+     */
+    public function actionSwitchLanguage()
+    {
+        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
+        Yii::$app->cookieLanguageSelector->setLanguage(Yii::$app->request->post('language'));
+        $this->redirect(Yii::$app->request->post('redirectTo', ['settings']));
     }
 
     /**
@@ -94,7 +158,7 @@ class DefaultController extends Controller
     public function actionUsers()
     {
         if (!\Yii::$app->user->can('account/default/users', ['class'=>static::class])) {
-            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
 
@@ -111,6 +175,8 @@ class DefaultController extends Controller
         ]);
     }
 
+
+
     /**
      * @param $id
      * @return string
@@ -125,9 +191,9 @@ class DefaultController extends Controller
     }
 
     /**
-     * Displays message page.
-     *
-     * @return mixed
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionMessage($id)
     {
@@ -176,9 +242,8 @@ class DefaultController extends Controller
      */
     public function actionCreate()
     {
-
         if (!\Yii::$app->user->can('account/default/create', ['class'=>static::class])) {
-            \Yii::$app->getSession()->setFlash('error', 'Access denied');
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
 
@@ -193,17 +258,21 @@ class DefaultController extends Controller
             
             if ($model->load(Yii::$app->request->post())) {
                 $model->other = $model->password;
+
                 $model->save();
 
                 $manager = User::findOne(Yii::$app->user->id);
                 $user = User::findOne(['email' => $model->email]);
 
                 $user->company_id = $manager->company_id;
+
                 $user->save(false);
+
+                $this->service->createLog($user, 'Create');
                 
                 $profile = UserProfile::findOne($user->id);
                 if ($profile->load(Yii::$app->request->post())) {
-                    $profile->save();
+                    $profile->save(false);
                 }
 
                 // send invite mail
@@ -220,8 +289,12 @@ class DefaultController extends Controller
 
             $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
 
-            unset($roles[array_search('administrator', $roles)]);
-            unset($roles[array_search('manager', $roles)]);
+            $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+
+            if (!array_key_exists('super_administrator', $now)) {
+                unset($roles[array_search('administrator', $roles)]);
+            }
+            unset($roles[array_search('super_administrator', $roles)]);
             unset($roles[array_search('user', $roles)]);
 
             foreach ($roles as $key => $role) {
@@ -229,6 +302,7 @@ class DefaultController extends Controller
             }
 
             $model->status = 1;
+
             return $this->render('create', [
                 'model' => $model,
                 'roles' => $roles,
@@ -260,6 +334,8 @@ class DefaultController extends Controller
     }
 
     /**
+     * Secret action view for ADMINISTRATOR (changed company)
+     *
      * @return string|\yii\web\Response
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
@@ -275,7 +351,7 @@ class DefaultController extends Controller
 
                 $user = User::findOne(Yii::$app->user->id);
                 $user->company_id = $get['Company'];
-                $user->update();
+                $user->update(false);
 
                 return $this->redirect('tt');
             }

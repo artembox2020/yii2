@@ -71,6 +71,8 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['name', 'trim'],
+            ['name', 'unique', 'targetClass' => AddressBalanceHolder::className()],
             ['date_inserted', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             ['date_connection_monitoring', 'filter', 'filter' => 'strtotime', 'skipOnEmpty' => true],
             [['company_id', 'balance_holder_id', 'number_of_floors', 'created_at', 'updated_at', 'deleted_at', 'number_of_citizens'], 'integer'],

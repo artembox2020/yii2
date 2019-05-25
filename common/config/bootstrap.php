@@ -1,5 +1,5 @@
 <?php
-
+require __DIR__ . '/../../common/env.php';
 /**
  * Setting path aliases
  */

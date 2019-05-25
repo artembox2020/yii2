@@ -7,7 +7,7 @@ $config = [
     'timeZone' => env('TIMEZONE'),
     'sourceLanguage' => 'en-US',
     'language' => env('LANGUAGE'),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['frontend\config\LoggerBootstrap',],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -19,6 +19,9 @@ $config = [
             'params' => [
                 'userClass' => 'common\models\User'
             ]
+        ],
+        'noty' => [
+            'class' => 'lo\modules\noty\Module',
         ],
     ],
     'components' => [
@@ -102,7 +105,7 @@ $config = [
                 'port' => '25',
 //                'encryption' => 'tls',
             ],
-            'useFileTransport' => false,
+            'useFileTransport' => true,
         ],
         'cache' => [
             //'class' => YII_ENV_DEV ? 'yii\caching\DummyCache' : 'yii\caching\FileCache',

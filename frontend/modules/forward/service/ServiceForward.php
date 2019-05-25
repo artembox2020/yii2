@@ -6,10 +6,13 @@ use frontend\models\AddressBalanceHolder;
 use frontend\models\BalanceHolder;
 use frontend\models\Imei;
 use frontend\models\ImeiData;
+use frontend\models\Jlog;
 use frontend\models\WmMashine;
 use frontend\modules\forward\interfaces\ServiceForwardInterface;
 use frontend\services\custom\Debugger;
+use http\Exception;
 use Yii;
+use yii\db\Query;
 
 /**
  * Class ServiceForward
@@ -17,18 +20,20 @@ use Yii;
  */
 class ServiceForward implements ServiceForwardInterface
 {
-    const DATE_FORMAT = 'h:i d.m.Y';
+    const DATE_FORMAT = 'H:i d.m.Y';
+    const TYPE_HALF_HOUR = 1800;
     public $array = array();
     public $result = array();
-
+    
     /**
+     *
      * getStaff принимает строку (короткий адрес) возвращает связанные объекты в сформированном
      * массиве
      * array(3) {
     ["param"]=>array(2) {
-       ["central_board_status"]=>string(2) "OK"
-       ["bill_acceptor_status"]=>string(2) "OK"
-        }
+    ["central_board_status"]=>string(2) "OK"
+    ["bill_acceptor_status"]=>string(2) "OK"
+    }
     ["BalanceHolder"]=>string(8) "КІМО"
     ["вул. Мельникова 36/1 5"]=>array(2) {
     [1]=>array(4) {
@@ -42,12 +47,12 @@ class ServiceForward implements ServiceForwardInterface
     ["display"]=>string(2) "  "
     ["date"]=>string(16) "12:31 12.04.2019"
     ["status"]=>string(32) "Готовий до роботи"
-            }
-        }
     }
-    ...
+    }
+    }
      * @param string $address_name
      * @return array
+     * @throws \yii\db\Exception
      */
     public function getStaff(string $address_name): array
     {
@@ -55,11 +60,10 @@ class ServiceForward implements ServiceForwardInterface
             ->andWhere(['name' => $address_name])
             ->one();
 
-        $balanceHolderName = $address->balanceHolder->name;
-
         $imei = Imei::find()
             ->andWhere(['address_id' => $address->id])
             ->andWhere(['imei.status' => Imei::STATUS_ACTIVE])
+            ->limit(1)
             ->one();
 
         $wm_machine = WmMashine::find()
@@ -67,28 +71,55 @@ class ServiceForward implements ServiceForwardInterface
             ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])
             ->all();
 
-        $imeiData = ImeiData::find()
-            ->andWhere(['imei_id' => $imei->id])
-            ->orderBy('created_at DESC')
-            ->one();
+        $res = Yii::$app->db->createCommand('SELECT *
+          FROM imei_data WHERE imei_id = :imei_id ORDER BY created_at DESC LIMIT 1')
+            ->bindValue(':imei_id', $imei->id)
+            ->queryOne();
+
+        $imeiData = new ImeiData();
+
+        $status_central_board = $imeiData->status_central_board[$res['packet']];
+        $status_central_board = Yii::t('imeiData', $status_central_board);
+
+        if ($this->getRelevanceStatusCB($res['created_at'])) {
+            $status_central_board = $this->getRelevanceStatusCB($res['created_at']);
+        }
 
         $this->result['param'] = [
-            'central_board_status' => Yii::t('imeiData', $imeiData->status_central_board[$imeiData->packet]),
-            'bill_acceptor_status' => Yii::t('imeiData', $imeiData->status_bill_acceptor[$imeiData->evt_bill_validator])
+            'balance_holder' => $address->balanceHolder->name,
+            'address' => $address->address,
+            'floor' => $address->floor,
+            'central_board_status' => Yii::t('imeiData', $status_central_board),
+            'bill_acceptor_status' => Yii::t('imeiData', $imeiData->status_bill_acceptor[$res['evt_bill_validator']])
         ];
-
-        $this->result['BalanceHolder'] = $balanceHolderName;
 
         foreach ($wm_machine as $key => $value) {
             $this->array[$value->number_device] = [
                 'device_number' => $value->number_device,
                 'display' => $value->display,
                 'date' => date(self::DATE_FORMAT, $value->ping),
-                'status' => Yii::t('frontend', $value->current_state[$value->current_status])];
+                'status' => Yii::t('frontend', $value->current_state[$value->current_status])
+            ];
         }
 
-        $this->result[$address->address . ' ' . $address->floor] = $this->array;
-        
+        $this->result['wash_machine'] = $this->array;
+
+        if (!$address) {
+            $this->result = ['address' => Yii::t('imeiData', 'This terminal is not online')];
+        }
+
         return $this->result;
+    }
+
+    /**
+     * @param $time
+     * @return string
+     */
+    public function getRelevanceStatusCB($time)
+    {
+        if (time() + Jlog::TYPE_TIME_OFFSET - $time > self::TYPE_HALF_HOUR) {
+
+            return 'ErrTerminal';
+        }
     }
 }

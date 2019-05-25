@@ -1135,6 +1135,7 @@ class CbLogSearch extends CbLog
 
     /**
      * Gets date by timestamp, using UTC timezone
+     * Заменили UTC на Europe/Kiev из .env
      * 
      * @param int $timestamp
      * @param string $dateFormat
@@ -1142,10 +1143,10 @@ class CbLogSearch extends CbLog
      */
     public function getDateByTimestamp($timestamp, $dateFormat)
     {
-        $currentTimezone = date_default_timezone_get();
-        date_default_timezone_set('UTC');
+//        $currentTimezone = date_default_timezone_get();
+//        date_default_timezone_set('UTC');
         $date = date($dateFormat, $timestamp);
-        date_default_timezone_set($currentTimezone);
+//        date_default_timezone_set($currentTimezone);
 
         return $date;
     }

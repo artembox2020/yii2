@@ -7,6 +7,7 @@ use frontend\models\AddressBalanceHolder;
 use frontend\models\AddressImeiData;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
+use frontend\services\logger\src\service\LoggerService;
 use Yii;
 use frontend\models\Imei;
 use frontend\models\ImeiSearch;
@@ -20,6 +21,15 @@ use yii\helpers\ArrayHelper;
  */
 class ImeiController extends Controller
 {
+    /** @var LoggerService  */
+    private $service;
+
+    public function __construct($id, $module, LoggerService $service, $config = [])
+    {
+        $this->service = $service;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @inheritdoc
      */
@@ -163,9 +173,13 @@ class ImeiController extends Controller
             $addressImeiData->createLog($id, 0);
         }
 
-        $this->findModel($id)->softDelete();
+        if ($this->findModel($id)) {
+            $model = $this->findModel($id);
+            $this->service->createLog($model, 'Delete');
+            $this->findModel($id)->softDelete();
 
-        return $this->redirect(['/net-manager/washpay']);
+            return $this->redirect(['/net-manager/washpay']);
+        }
     }
 
     /**

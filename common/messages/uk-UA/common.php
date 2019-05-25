@@ -19,6 +19,7 @@
 return [
     'Access' => 'Доступ',
     'Access Forbidden or user not exist' => 'Доступ заборонений або користувач не інує',
+    'Access denied' => 'Доступ заборонений',
     'Actions' => 'Дії',
     'Active' => 'Активний',
     'Administration' => 'Адміністрування',
@@ -47,6 +48,7 @@ return [
     'May' => 'Травень',
     'Name' => 'Ім\'я',
     'Not Set' => 'Не визначено',
+    'Not found' => 'Не знайдено',
     'November' => 'Листопад',
     'Number' => '№',
     'October' => 'Жовтень',

@@ -105,7 +105,7 @@ use common\models\User;
             ],
             [
                 'label' => Yii::t('frontend', 'Count Administrative Employee'),
-                'value' => $model->getUserCountByRoles([User::ROLE_MANAGER])
+                'value' => $model->getUserCountByRoles([User::ROLE_ADMINISTRATOR])
             ],
             [
                 'label' => Yii::t('frontend', 'Count Technical Employee'),

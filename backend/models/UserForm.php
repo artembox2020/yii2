@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use frontend\services\custom\Debugger;
 use Yii;
 use yii\base\Model;
 use yii\db\ActiveRecord;
@@ -16,6 +17,7 @@ class UserForm extends Model
 {
     const ZERO = 0;
 
+    public $id;
     public $username;
     public $email;
     public $password;
@@ -23,6 +25,8 @@ class UserForm extends Model
     public $roles;
     public $company_id;
     public $other;
+    public $created_at;
+    public $is_deleted;
 
     private $model;
 
@@ -95,6 +99,7 @@ class UserForm extends Model
         $this->status = $model->status;
         $this->model = $model;
         $this->roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($model->getId()), 'name');
+        $this->created_at = $model->created_at;
 
         return $this->model;
     }
@@ -120,7 +125,10 @@ class UserForm extends Model
         if ($this->validate()) {
             $model = $this->getModel();
             $isNewRecord = $model->getIsNewRecord();
+
+//            Debugger::dd($this->username);
             $model->username = $this->username;
+//            Debugger::dd($model->username);
             $model->email = $this->email;
             $model->status = $this->status;
             $model->company_id =$this->company_id;
@@ -134,6 +142,7 @@ class UserForm extends Model
             if ($model->save() && $isNewRecord) {
                 $model->afterSignup();
             }
+            $model->save(false);
             $auth = Yii::$app->authManager;
             $auth->revokeAll($model->getId());
 

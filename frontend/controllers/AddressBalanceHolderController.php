@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\models\User;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
+use frontend\services\logger\src\service\LoggerService;
 use Yii;
 use frontend\models\BalanceHolder;
 use frontend\models\AddressBalanceHolder;
@@ -19,6 +20,16 @@ use yii\filters\VerbFilter;
  */
 class AddressBalanceHolderController extends Controller
 {
+
+    /** @var LoggerService  */
+    private $service;
+
+    public function __construct($id, $module, LoggerService $service, $config = [])
+    {
+        $this->service = $service;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @inheritdoc
      */
@@ -80,12 +91,14 @@ class AddressBalanceHolderController extends Controller
             $balanceHolderId, new BalanceHolder()
         );
         
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->created_at = Time();
             $model->status = AddressBalanceHolder::STATUS_FREE;
             $model->is_deleted = false;
             $model->deleted_at = time();
             $model->save();
+            $this->service->createLog($model, 'Create');
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -113,6 +126,8 @@ class AddressBalanceHolderController extends Controller
         $balanceHolders = $company->balanceHolders;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->service->createLog($model, 'Update');
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -140,9 +155,13 @@ class AddressBalanceHolderController extends Controller
             $addressImeiData->createLog(0, $id);
         }
 
-        $this->findModel($id)->softDelete();
+        if ($this->findModel($id)) {
+            $model = $this->findModel($id);
+            $this->service->createLog($model, 'Delete');
+            $this->findModel($id)->softDelete();
 
-        return $this->redirect(['/net-manager/addresses']);
+            return $this->redirect(['/net-manager/addresses']);
+        }
     }
 
     /**
