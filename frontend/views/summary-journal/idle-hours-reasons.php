@@ -3,7 +3,7 @@
 
 <?php
 if (($reason=explode("**", $idleHoursReasons)[2])) {
-    echo Yii::t('summaryJournal', 'Idle Connect Central Board Hours').': '.$reason.'<br>';
+    echo Yii::t('summaryJournal', 'Idle Connect Central Board Hours').': '.round($reason/$all, 2).'<br>';
 }
 
 ?>

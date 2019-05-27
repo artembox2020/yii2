@@ -5,6 +5,7 @@ namespace frontend\components\db\ModemLevelSignal;
 use Yii;
 use frontend\components\db\DbCommandHelper;
 use frontend\models\Company;
+use frontend\models\Jlog;
 use frontend\models\AddressBalanceHolder;
 
 /**
@@ -125,7 +126,7 @@ class DbModemLevelSignalHelper extends DbCommandHelper
      */
     public function getAddressesByTimestampsAndCompanyId($start, $end, $companyId, $addressIds)
     {
-        $select = "id, name, address";
+        $select = "id, name, address, floor";
         $bInst = Company::find()->where(['id' => $companyId])->limit(1)->one();
         $inst = new AddressBalanceHolder();
         $this->getExistingUnitQueryByTimestamps($start, $end, $inst, $bInst, 'company_id', $select);
@@ -135,6 +136,32 @@ class DbModemLevelSignalHelper extends DbCommandHelper
         }
 
         $this->queryString.= " ORDER BY name ASC";
+
+        return $this->getItems();
+    }
+
+    /**
+     * Gets initialization data by address and start and end timestamps
+     * 
+     * @param string $addressString
+     * @param int $start
+     * @param int $end
+     * 
+     * @return array
+     */
+    public function getInitializationData($addressString, $start, $end)
+    {
+        $this->queryString = "SELECT packet, unix_time_offset FROM j_log WHERE ".
+                             "unix_time_offset >= :start AND unix_time_offset <= :end ".
+                             "AND type_packet = :type_packet AND address LIKE :addressString ".
+                             "ORDER BY unix_time_offset ASC";
+
+        $this->bindValues = [
+            ':start' => $start,
+            ':end' => $end,
+            ':type_packet' => Jlog::TYPE_PACKET_INITIALIZATION,
+            ':addressString' => '%'.$addressString.'%'
+        ];
 
         return $this->getItems();
     }

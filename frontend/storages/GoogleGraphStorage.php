@@ -52,9 +52,20 @@ class GoogleGraphStorage implements GraphStorageInterface
      * 
      * @param array $data
      * @param string $selector
+     * @param int $start
+     * @param int $end
+     * 
+     * @return string
      */ 
-    public function drawLine(array $data, string $selector)
+    public function drawLine(array $data, string $selector, int $start, int $end)
     {
-        return Yii::$app->view->render($this->storagePath.'/drawLine', ['storage' => $this, 'data' => $data, 'selector' => $selector]);
+        if ($start == $end) {
+            $end = $start + 3600 * 24;
+        }
+
+        return Yii::$app->view->render(
+            $this->storagePath.'/drawLine',
+            ['storage' => $this, 'data' => $data, 'selector' => $selector, 'start' => $start, 'end' => $end]
+        );
     }
 }

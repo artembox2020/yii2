@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'All WM' => 'Усі ПМ',
+    'All WM' => 'Усі підключені ПМ',
     'Any date' => 'Будь-яка дата',
     'At Work' => 'В роботі',
     'Balance Holders Incomes' => 'Доходи по балансотримачам',
@@ -19,7 +19,7 @@ return [
     'Show by the last days' => 'Показувати за останні дні',
     'WM At Work' => 'ПМ в роботі',
     'WM In Touch' => 'ПМ на звязку',
-    'WM Mashine Statistics' => 'Статистика по ПМ',
+    'WM Mashine Statistics' => 'ПМ в роботі',
     'WM Not In Touch' => 'ПМ не на звязку',
     'WM With Errors' => 'ПМ з помилками'
 ];

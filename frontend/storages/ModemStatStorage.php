@@ -7,6 +7,7 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use frontend\services\globals\DateTimeHelper;
 use frontend\services\globals\Entity;
+use frontend\services\parser\CParser;
 use frontend\components\db\ModemLevelSignal\DbModemLevelSignalHelper;
 use console\controllers\ModemLevelSignalController;
 
@@ -42,7 +43,7 @@ class ModemStatStorage extends MashineStatStorage
 
         for ($baseStart = $start; $baseStart <= $end; $baseStart+= self::STEP) {
             $item = [];
-            $item[] = date("d.m H:i", $baseStart + self::STEP);
+            $item[] = date("d.m.Y H:i", $baseStart + self::STEP);
 
             foreach ($addressesInfo as $addressInfo) {
                 $item[]= self::MIN_LEVEL_SIGNAL;
@@ -76,7 +77,7 @@ class ModemStatStorage extends MashineStatStorage
                 }
             }
 
-            $titles[] = $addressInfo['address'];
+            $titles[] = $addressInfo['address'].(!empty($addressInfo['floor']) ? ", {$addressInfo['floor']}": "");
             ++$iterationCounter;
         }
         $numberOfPoints = ($iterationCounter - 1) * count($lines);
@@ -200,5 +201,30 @@ class ModemStatStorage extends MashineStatStorage
         }
 
         return Yii::$app->view->render("/dashboard/templates/address-points", ['data' => $data]);
+    }
+
+    /**
+     * Gets initialization data from `j_log` table
+     * 
+     * @param string $addressString
+     * @param int $start
+     * @param int $end
+     * 
+     * @return array
+     */
+    public function getInitializationData($addressString, $start, $end)
+    {
+        $dbHelper = new DbModemLevelSignalHelper();
+        $parser = new CParser();
+
+        $data = $dbHelper->getInitializationData($addressString, $start, $end);
+        $outputData = [];
+
+        foreach ($data as $item) {
+            $levelSignal = $parser->getLevelSignal($item['packet']);
+            $outputData[] = ['levelSignal' => $levelSignal, 'unix_time_offset' => $item['unix_time_offset']];
+        }
+
+        return $outputData;
     }
 }
