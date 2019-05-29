@@ -25,8 +25,8 @@
 <?php
 
     // check privilleges for summary journal
-    $hasUserIncomesPermission = Yii::$app->user->can('summary-journal/incomes');
-    $hasUserIdlesPermission = Yii::$app->user->can('summary-journal/idle');
+    $hasUserIncomesPermission = Yii::$app->user->can('viewTechData');
+    $hasUserIdlesPermission = Yii::$app->user->can('viewTechData');
 
     if ($hasUserIncomesPermission && $hasUserIdlesPermission) {
         echo "<script>Builder.makeJournalByAll();</script>";

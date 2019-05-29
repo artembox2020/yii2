@@ -121,14 +121,17 @@ AppAsset::register($this);
                     [
                         'label' => Yii::t('frontend', 'Тechnical Data'),
                         'url' => ['/monitoring/technical'],
+                        'visible' => Yii::$app->user->can('viewTechData'),
                     ],
                     [
                         'label' => Yii::t('frontend', 'Financial Data'),
                         'url' => ['/monitoring/financial'],
+                        'visible' => Yii::$app->user->can('viewFinData'),
                     ],
                     [
                         'label' => Yii::t('frontend', 'All'),
                         'url' => ['/monitoring'],
+                        'visible' => Yii::$app->user->can('viewTechData'),
                     ],
                 ]
 //            'visible' => Yii::$app->user->can('mntr'),

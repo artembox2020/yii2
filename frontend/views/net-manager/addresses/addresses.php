@@ -21,7 +21,7 @@ use frontend\services\globals\EntityHelper;
         'menu' => $menu,
     ]) ?>
 </b><br><br>
-<b><?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder/create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
+<b><?php if ( yii::$app->user->can('editFinData') ) echo Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder/create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
 <br/>
 <?php \yii\widgets\Pjax::begin(['id' => 'address-pjax-container']); ?>
 <?= yii\grid\GridView::widget([
