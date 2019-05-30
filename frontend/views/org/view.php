@@ -8,8 +8,8 @@ use yii\widgets\DetailView;
 ?>
 <div class="org-view">
     <p>
-        <?php  if(Yii::$app->user->can('edit_org')) { echo Html::a(Yii::t('frontend', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']);} ?>
-        <?php  if(Yii::$app->user->can('edit_org')) { echo  Html::a(Yii::t('frontend', 'Удалить'), ['delete', 'id' => $model->id], [
+        <?php  if(Yii::$app->user->can('editCompanyData')) { echo Html::a(Yii::t('frontend', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']);} ?>
+        <?php  if(Yii::$app->user->can('editCompanyData')) { echo  Html::a(Yii::t('frontend', 'Удалить'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => Yii::t('frontend', 'Are you sure you want to delete this item?'),

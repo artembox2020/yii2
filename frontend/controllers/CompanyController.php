@@ -95,7 +95,7 @@ class CompanyController extends Controller
      */
     public function actionCreate()
     {
-        if (Yii::$app->user->can('create_company')) {
+        if (Yii::$app->user->can('editCompanyData')) {
             $model = new Company();
 
             if ($model->load(Yii::$app->request->post())) {

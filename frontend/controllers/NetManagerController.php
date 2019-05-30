@@ -215,7 +215,7 @@ class NetManagerController extends \yii\web\Controller
     {
         $array = array();
 
-        if (!\Yii::$app->user->can('net-manager/delete-employee', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -259,7 +259,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionDeleteEmployee($id) 
     {
-        if (!\Yii::$app->user->can('net-manager/delete-employee', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }

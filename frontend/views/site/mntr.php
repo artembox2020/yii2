@@ -68,17 +68,17 @@
         </div>
          <div class="w3-bar w3-black">
 		 
-            <?php if(Yii::$app->user->can('is_fin')) {?>
+            <?php if(Yii::$app->user->can('viewFinData')) {?>
             <button class="w3-bar-item btn btn-default w3-button" onclick="openCity('1')">Финансовая и фирменная информация автомата</button>
             <?php }?>
-            <?php if(Yii::$app->user->can('is_tech')) {?>
+            <?php if(Yii::$app->user->can('viewTechData')) {?>
             <button class="w3-bar-item btn btn-default w3-button" onclick="openCity('2')">Техническая информация автомата и действия</button>
             <?php }?>
          </div>
          <div class="container">
             <div class="row">
                <br>
-               <?php if(Yii::$app->user->can('is_fin')) {?>
+               <?php if(Yii::$app->user->can('viewFinData')) {?>
                <div id="1" class="city">
 			   <div class="menu">
        
@@ -154,7 +154,7 @@
                   </div>
                </div>
                <?php }?>
-               <?php if(Yii::$app->user->can('is_tech')) {?>
+               <?php if(Yii::$app->user->can('viewTechData')) {?>
                <div id="2" class="city" style="display:none;">
 			   <div class="menu">
        
@@ -177,7 +177,7 @@
                            <li> <input name="column" type="checkbox" value="9" /> СЧЕТЧИК ИНКАСАКЦИЙ</li>
                            <li> <input name="column" type="checkbox" value="10" /> КОЛ-ВО ДНЕЙ ПРОСТОЯ</li>
                            <li> <input name="column" type="checkbox" value="11" checked="checked" /> УСТРОЙСТВО  |  СЧЕТ | УРОВЕНЬ | СОСТОЯНИЕ</li>
-                           <?php if(Yii::$app->user->can('add_com')) {?>
+                           <?php if(Yii::$app->user->can('editTechData')) {?>
                            <li> <input name="column" type="checkbox" value="12" /> ДЕЙСТВИЕ</li>
                            <?php }?>
                         </ul>
@@ -281,7 +281,7 @@
                                        </div>
                                        <?php } } ?>
                                     </div>
-                                    <?php if(Yii::$app->user->can('add_com')) {?>
+                                    <?php if(Yii::$app->user->can('editTechData')) {?>
                                  <td><a href="#" onclick="openbox('box'); return false">Действия</a></td>
                                  <div class="hiden_box" id="box" style="display: none;">
                                     <div class="block">

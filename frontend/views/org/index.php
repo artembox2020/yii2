@@ -14,7 +14,7 @@ use yii\grid\GridView;
 
     <p>
         <?php 
-			if(Yii::$app->user->can('add_org')){
+			if(Yii::$app->user->can('editCompanyData')){
 				echo Html::a(Yii::t('frontend', 'Создать организацию'), ['create'], ['class' => 'btn btn-success']);
 			}
 		?>

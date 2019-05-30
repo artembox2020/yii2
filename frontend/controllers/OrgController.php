@@ -55,7 +55,7 @@ class OrgController extends Controller
      */
     public function actionView($id)
     {
-        if(Yii::$app->user->can('view_org')) {
+        if(Yii::$app->user->can('viewCompanyData')) {
             $id = Yii::$app->request->get('id', '');
             $model = Org::findOne($id);
             $org_name = $model['name_org'];
