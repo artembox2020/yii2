@@ -177,4 +177,24 @@ class DateTimeHelper
 
         return $timestampDayBeginning == $timestampDayBeginning2 ? true : false;
     }
+    
+    /**
+     * Gets timestamp rounded by stamp
+     * 
+     * @param int $timestamp
+     * @param int $byStamp
+     * @param bool $toDown
+     * 
+     * @return int
+     */
+    public function getRoundedTimestamp($timestamp, $byStamp, $toDown = false)
+    {
+        if ($timestamp % $byStamp > 0) {
+            $lowRoundedValue = $timestamp - ($timestamp % $byStamp);
+
+            return $toDown ? $lowRoundedValue : $lowRoundedValue + $byStamp;
+        }
+
+        return $timestamp;
+    }
 }

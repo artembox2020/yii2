@@ -6,7 +6,9 @@ use Yii;
 use frontend\components\db\DbCommandHelper;
 use frontend\models\Company;
 use frontend\models\Jlog;
+use frontend\models\JlogSearch;
 use frontend\models\AddressBalanceHolder;
+use frontend\services\parser\CParser;
 
 /**
  * Class DbModemLevelSignalHelper

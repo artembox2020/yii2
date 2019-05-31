@@ -85,9 +85,14 @@ use yii\widgets\Pjax;
     graphBuilder.playButtonGroupClick(playButtons);
 
     var filterPrompts = graphContainer.querySelectorAll('.filter-prompt');
-    graphBuilder.filterPromptGroupClick(filterPrompts, "<?= $random ?>");
+
+    for (var i = 0; i < filterPrompts.length; ++i) {
+        filterPrompts[i].onclick = function () {
+            graphBuilder.filterPromptClick(this, <?= $random ?>);
+        }
+        filterPrompts[i].click();
+    }
 
     var submitBtn = graphContainer.querySelector(".timestamp-interval-block button[type=submit]");
     graphBuilder.submitBtnModemLevelProcess(submitBtn, <?= $random ?>, "<?= $selector ?>", filterPrompts[0], checkBoxes);
-
 </script>

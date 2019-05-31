@@ -352,9 +352,8 @@ class CParser implements CParserInterface
      */
     public function getLevelSignal($p)
     {
-        $dataParts = explode("*", $p);
-        $count = count($dataParts);
+        $packetData = $this->iParse($p);
 
-        return $dataParts[$count-1];
+        return $packetData['level_signal'];
     }
 }

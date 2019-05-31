@@ -49,6 +49,8 @@ class JlogSearch extends Jlog
     
     const INFINITY = 9999999999999999;
     const ZERO = 0;
+    
+    const MIN_LEVEL_SIGNAL = -128;
 
     const ADDRESS_DELIMITER = ' - ';
     public $from_date;
@@ -951,6 +953,8 @@ class JlogSearch extends Jlog
      * 
      * @param string $addressString
      * @param int $start
+     * 
+     * @return \frontend\models\Jlog 
      */
     public function getLastDataItemByAddressAndTimestamp($addressString, $start)
     {
@@ -959,5 +963,108 @@ class JlogSearch extends Jlog
         $query = $query->orderBy(['unix_time_offset' => SORT_DESC])->limit(1);
 
         return $query->one();
+    }
+
+    /**
+     * Gets modem not in touch items by addresses and timestamps
+     * 
+     * @param string $addressesInfo
+     * @param int $start
+     * @param int $end
+     * @param int $monitoringStep
+     * 
+     * @return array 
+     */
+    public function getModemNotInTouchItemsByAddresses($addressesInfo, $start, $end, $monitoringStep)
+    {
+        $symbol = "_";
+        $searchString = "*".ImeiData::CP_STATUS_TERMINAL_NOT_IN_TOUCH;
+        $searchStringLength = strlen($searchString);
+        $addressStrings = [];
+        $addressesEndPoints = [];
+        $items = [];
+
+        foreach ($addressesInfo as $infoItem) {
+            $addressString = $infoItem['address'].', '.$infoItem['floor'];
+            $addressesEndPoints[$addressString] = $this->getFirstLastPacketItemsByAddress($addressString);
+
+            if ($addressesEndPoints[$addressString]['first'] > $start + $monitoringStep) {
+                $items[$addressString][] = [
+                    'start' => $start,
+                    'end' => $addressesEndPoints[$addressString]['first'] - 1
+                ];
+            }
+
+            $addressStrings[] = $addressString;
+        }
+
+        $query = Jlog::find()->select(['id', 'address', 'unix_time_offset', 'date_end'])
+                             ->andWhere(['address' => $addressStrings, 'type_packet' => self::TYPE_PACKET_DATA]);
+        $query->andWhere(['<', 'unix_time_offset', $end]);
+        $query->andWhere([">", "UNIX_TIMESTAMP(STR_TO_DATE(date_end, '".Imei::MYSQL_DATE_TIME_FORMAT."'))", $start]);
+        $query->andWhere([ "LOCATE('{$symbol}', packet)" => 0]);
+        $query->andWhere([
+                "LOCATE('{$searchString}', SUBSTRING(packet, CHAR_LENGTH(packet) -{$searchStringLength} + 1)
+                )" => 1]);
+        $query->orderBy(['address' => SORT_ASC, 'unix_time_offset' => SORT_ASC]);
+
+        foreach ($query->all() as $item) {
+            $startStamp = $item->unix_time_offset;
+            $endStamp = !empty($item->date_end) ? strtotime($item->date_end) : $startStamp + 300;
+            $items[$item->address][] = ['start' => $startStamp, 'end' => $endStamp];
+        }
+
+        foreach (array_keys($addressesEndPoints) as $addressString) {
+            if (($last=$addressesEndPoints[$addressString]['last']) < $end - $monitoringStep) {
+                $count = array_key_exists($addressString, $items) ? count($items[$addressString]) : 0;
+                if ($count && $items[$addressString][$count-1]['end'] == $last) {
+                    $items[$addressString][$count-1]['end'] = $end;
+                } else {
+                    $items[$addressString][] = ['start' => $last, 'end' => $end];
+                }
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Gets first and last packet items by address
+     * 
+     * @param string $addressString
+     *
+     * @return array
+     */
+    public function getFirstLastPacketItemsByAddress($addressString)
+    {
+        $query = Jlog::find()->select(['date'])
+                             ->andWhere(['address' => $addressString, 'type_packet' => self::TYPE_PACKET_DATA]);
+
+        $query->orderBy(["UNIX_TIMESTAMP(STR_TO_DATE(date, '".Imei::MYSQL_DATE_TIME_FORMAT."'))" => SORT_ASC])
+              ->limit(1);
+        $item = $query->one();
+
+        if (!$item || !$item->date) {
+
+            return ['first' => self::INFINITY, 'last' => self::INFINITY];
+        }
+
+        $first = strtotime($item->date);
+
+        $query = Jlog::find()->select(['date_end'])
+                             ->andWhere(['address' => $addressString, 'type_packet' => self::TYPE_PACKET_DATA]);
+
+        $query->orderBy(["UNIX_TIMESTAMP(STR_TO_DATE(date_end, '".Imei::MYSQL_DATE_TIME_FORMAT."'))" => SORT_DESC])
+              ->limit(1);
+        $item = $query->one();
+
+        if (empty($item->date_end)) {
+            $last = self::INFINITY;
+        } else {
+
+            $last = strtotime($item->date_end);
+        }
+
+        return ['first' => $first, 'last' => $last];
     }
 }

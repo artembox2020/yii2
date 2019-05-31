@@ -21,5 +21,5 @@ return [
     'WM In Touch' => 'ПМ на звязку',
     'WM Mashine Statistics' => 'ПМ в роботі',
     'WM Not In Touch' => 'ПМ не на звязку',
-    'WM With Errors' => 'ПМ з помилками'
+    'WM With Errors' => 'ПМ на зв\'язку, але з помилками'
 ];

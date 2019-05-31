@@ -3,6 +3,7 @@
     
     graphBuilder.isGraphBusy = false; // global indicator whether graph is busy
     graphBuilder.isIndicatorForModem = 0;
+    graphBuilder.initializationSign = true;
 
     // universal form submission function
     graphBuilder.submitAjaxForm = function(form, responseText) {
@@ -51,6 +52,12 @@
     graphBuilder.filterPromptClick = function(filterPrompt, random) {
         var graphContainer = document.querySelector(".graph-container.r" + random);
         var timestampBlock = graphContainer.querySelector('.timestamp-interval-block');
+
+        if (graphBuilder.initializationSign == true) {
+            setTimeout(function() { graphBuilder.initializationSign = false;}, 2500);
+
+            return;
+        }
 
         if (timestampBlock.style.display != 'none') {
             timestampBlock.style.display = 'none';
@@ -196,7 +203,7 @@
             button.click();
         }
     }
-
+    
     // init graph function
     graphBuilder.initGraph = function(random)
     {
@@ -219,11 +226,16 @@
 
                 var graphContainer = document.querySelector(".graph-container.r" + random);
                 var button = graphContainer.querySelector(".submit-container button");
-                button.click();
+                var graphContainers = document.querySelectorAll(".graph-container");
+                var i= 0;
+
+                for (i = 0; i < graphContainers.length; ++i) {
+                    button.click();
+                }
                 button.click();
 
                 clearInterval(hInt);                
-            }, 100);
+            }, 1000);
 
             var filterPrompt = graphContainer.querySelector('.filter-prompt');
             filterPrompt.click();
