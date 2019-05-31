@@ -20,7 +20,9 @@
 <?php endif; ?>
 
 <?php if (!empty($params['idleHours'])): ?>
-    <?php echo Yii::t('frontend', 'Idle Hours').': '.$params['idleHours'].'<br>'; ?>
+    <?php
+        echo Yii::t('frontend', 'Idle Hours').': '.$searchModel->getEstimatedIdleHours($params).'<br>';
+    ?>
 <?php endif; ?>
 
 <?php if (!empty($params['allHours'])): ?>

@@ -1112,4 +1112,24 @@ class BalanceHolderSummarySearch extends BalanceHolder
 
         return $eventsString;
     }
+
+    /**
+     * Gets estimated idle hours value, regarding cb connection is common for all WM
+     * 
+     * @param array $params
+     * 
+     * @return double
+     */
+    public function getEstimatedIdleHours($params)
+    {
+        $idleHours = $params['idleHours'];
+
+        if ($params['all'] > 1) {
+            $cbConnectionIdleHours = explode("**", $params['idleHoursReasons'])[2];
+            $idleHours -= ($params['all'] - 1)*($cbConnectionIdleHours/$params['all']);
+            $idleHours = $this->parseFloat($idleHours, 2);
+        }
+
+        return $idleHours;
+    }
 }

@@ -26,7 +26,7 @@ use frontend\services\globals\EntityHelper;
                     data-timestamp-start = "<?= $data[$j][$i]['timestampStart'] ?>"
                     data-timestamp-end = "<?= $data[$j][$i]['timestampEnd'] ?>"
                     data-income = "<?= $data[$j]['incomes'][$i]['income'] ?>"
-                    data-idle-hours = "<?= $data[$j]['incomes'][$i]['idleHours'] ?>"
+                    data-idle-hours = "<?= $searchModel->getEstimatedIdleHours($data[$j]['incomes'][$i]) ?>"
                     data-work-idle-hours = "<?= explode("**", $data[$j]['incomes'][$i]['idleHoursReasons'])[0] ?>"
                     data-connect-idle-hours = "<?= explode("**", $data[$j]['incomes'][$i]['idleHoursReasons'])[1] ?>"
                     data-connect-cb-idle-hours = "<?= explode("**", $data[$j]['incomes'][$i]['idleHoursReasons'])[2] ?>"

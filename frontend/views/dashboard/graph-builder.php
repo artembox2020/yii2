@@ -54,7 +54,7 @@
         var timestampBlock = graphContainer.querySelector('.timestamp-interval-block');
 
         if (graphBuilder.initializationSign == true) {
-            setTimeout(function() { graphBuilder.initializationSign = false;}, 2500);
+            setTimeout(function() { graphBuilder.initializationSign = false;}, 3000);
 
             return;
         }
@@ -235,7 +235,7 @@
                 button.click();
 
                 clearInterval(hInt);                
-            }, 1000);
+            }, 1500);
 
             var filterPrompt = graphContainer.querySelector('.filter-prompt');
             filterPrompt.click();
