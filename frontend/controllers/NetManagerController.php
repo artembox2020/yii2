@@ -265,7 +265,7 @@ class NetManagerController extends \yii\web\Controller
         }
 
         $model = $this->findModel($id, new User());
-        $this->service->createLog($model, 'Delete');
+//        $this->service->createLog($model, 'Delete');
         $model->softDelete();
 
 
