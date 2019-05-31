@@ -231,8 +231,8 @@ class NetManagerController extends \yii\web\Controller
             if ($isValid) {
                 $user->save();
                 $profile->save(false);
-                $this->service->createLog($user, 'Update');
-                $this->service->createLog($profile, 'Update');
+//                $this->service->createLog($user, 'Update');
+//                $this->service->createLog($profile, 'Update');
                 //        $this->service->createLog($profile);
                 return $this->redirect(['/net-manager/employees']);
             }

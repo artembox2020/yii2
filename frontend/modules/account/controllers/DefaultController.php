@@ -268,7 +268,7 @@ class DefaultController extends Controller
 
                 $user->save(false);
 
-                $this->service->createLog($user, 'Create');
+//                $this->service->createLog($user, 'Create');
                 
                 $profile = UserProfile::findOne($user->id);
                 if ($profile->load(Yii::$app->request->post())) {
