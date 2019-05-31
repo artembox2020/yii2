@@ -37,4 +37,7 @@ return [
     'Users' => 'Користувачі',
     'Main' => 'Головна',
     'Menu' => 'Меню',
+    'administrator' => 'Адміністратор',
+    'financier' => 'Фінанси',
+    'technician' => 'Технік',
 ];

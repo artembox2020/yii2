@@ -118,5 +118,8 @@ return [
     'Add Employee' => 'Добавить работника',
     'Basket' => 'Корзина',
     'Restore' => 'Восстановить',
-    'Date' => 'Дата'
+    'Date' => 'Дата',
+    'administrator' => 'Администратор',
+    'financier' => 'Финансы',
+    'technician' => 'Техник',
 ];
