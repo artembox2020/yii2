@@ -4,7 +4,7 @@ use frontend\models\Org;
 
 ?>
 <div class="panel panel-body">
-<?php if(Yii::$app->user->can('add_org')){?>
+<?php if(Yii::$app->user->can('editCompanyData')){?>
     <a href="<?= Url::toRoute('/site/orgadd')?>">
         <div class="btn btn-success"> ДОБАВИТЬ ОРГАНИЗАЦИЮ </div>
     </a>

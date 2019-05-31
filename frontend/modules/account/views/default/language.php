@@ -23,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::renderSelectOptions(\Yii::$app->language, [
             'uk-UA' => 'Ukraine',
             'ru-RU' => 'Russian',
+            'en-US' => 'English',
         ]) ?>
         <?= Html::endTag('select') ?>
         <?= Html::endForm() ?>

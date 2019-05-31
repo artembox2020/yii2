@@ -280,7 +280,7 @@ class SiteController extends Controller
      */
     public function actionDev()
     {
-        if (Yii::$app->user->can('edit_dev')) {
+        if (Yii::$app->user->can('editTechData')) {
             $id = $this->my_strip_text(Yii::$app->request->get('id', ''));
             if ($id != '') {
                 $device = Devices::find()->where(['id' => $id])->all();
@@ -298,7 +298,7 @@ class SiteController extends Controller
      */
     public function actionDeldev()
     {
-        if (Yii::$app->user->can('del_dev')) {
+        if (Yii::$app->user->can('editTechData')) {
             $id = Yii::$app->request->get('id', "");
 
             if ($id != '' and $id != '0') {
@@ -357,7 +357,7 @@ class SiteController extends Controller
      */
     public function actionAddcom()
     {
-        if (Yii::$app->user->can('add_com')) {
+        if (Yii::$app->user->can('editTechData')) {
             $imei = Yii::$app->request->get('imei', "");
             $comand = Yii::$app->request->get('comand', "");
 
@@ -405,7 +405,7 @@ class SiteController extends Controller
 
     public function actionOrg()
     {
-        if (Yii::$app->user->can('org')) {
+        if (Yii::$app->user->can('viewCompanyData')) {
             $org = Org::find()->all();
 
             return $this->render('Allorg', ['org' => $org]);
@@ -420,7 +420,7 @@ class SiteController extends Controller
      */
     public function actionOrgadd()
     {
-        if (Yii::$app->user->can('add_org')) {
+        if (Yii::$app->user->can('editCompanyData')) {
             $org = new Org();
             if (Yii::$app->request->post()) {
 
@@ -465,7 +465,7 @@ class SiteController extends Controller
      */
     public function actionVieworg()
     {
-        if (Yii::$app->user->can('view_org')) {
+        if (Yii::$app->user->can('viewCompanyData')) {
             $id = $this->my_strip_text(Yii::$app->request->get('id', ''));
             $model = Org::findOne($id);
             $org_name = $model['name_org'];
@@ -487,7 +487,7 @@ class SiteController extends Controller
      */
     public function actionEditorg()
     {
-        if (Yii::$app->user->can('edit_org')) {
+        if (Yii::$app->user->can('editCompanyData')) {
             $id = $this->my_strip_text(Yii::$app->request->get('id', ''));
             if ($id != '') {
                 $org = Org::find()->where(['id' => $id])->all();
@@ -536,7 +536,7 @@ class SiteController extends Controller
      */
     public function actionDelorg()
     {
-        if (Yii::$app->user->can('del_org')) {
+        if (Yii::$app->user->can('editCompanyData')) {
             $id = Yii::$app->request->get('id', "");
 
             if ($id != '' and $id != '0') {

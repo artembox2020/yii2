@@ -73,7 +73,7 @@ class DefaultController extends Controller
      */
     public function actionSettings()
     {
-        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -92,7 +92,7 @@ class DefaultController extends Controller
      */
     public function actionUser()
     {
-        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -111,7 +111,7 @@ class DefaultController extends Controller
      */
     public function actionLanguage()
     {
-        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -124,7 +124,7 @@ class DefaultController extends Controller
      */
     public function actionSwitchLanguage()
     {
-        if (!\Yii::$app->user->can('account/default/settings', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -157,7 +157,7 @@ class DefaultController extends Controller
      */
     public function actionUsers()
     {
-        if (!\Yii::$app->user->can('account/default/users', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -242,7 +242,7 @@ class DefaultController extends Controller
      */
     public function actionCreate()
     {
-        if (!\Yii::$app->user->can('account/default/create', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -268,7 +268,7 @@ class DefaultController extends Controller
 
                 $user->save(false);
 
-                $this->service->createLog($user, 'Create');
+//                $this->service->createLog($user, 'Create');
                 
                 $profile = UserProfile::findOne($user->id);
                 if ($profile->load(Yii::$app->request->post())) {

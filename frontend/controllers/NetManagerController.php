@@ -92,10 +92,10 @@ class NetManagerController extends \yii\web\Controller
     public function actionIndex()
     {
 
-        if (!\Yii::$app->user->can('net-manager/index', ['class'=>static::class])) {
-            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
-            return $this->render('@app/modules/account/views/denied/access-denied');
-        }
+//        if (!\Yii::$app->user->can('viewTechData', ['class'=>static::class])) {
+//            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+//            return $this->render('@app/modules/account/views/denied/access-denied');
+//        }
 
         $user = User::findOne(Yii::$app->user->id);
 
@@ -117,7 +117,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionEmployees()
     {
-        if (!\Yii::$app->user->can('net-manager/employees', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('viewCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -215,7 +215,7 @@ class NetManagerController extends \yii\web\Controller
     {
         $array = array();
 
-        if (!\Yii::$app->user->can('net-manager/delete-employee', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -231,8 +231,8 @@ class NetManagerController extends \yii\web\Controller
             if ($isValid) {
                 $user->save();
                 $profile->save(false);
-                $this->service->createLog($user, 'Update');
-                $this->service->createLog($profile, 'Update');
+//                $this->service->createLog($user, 'Update');
+//                $this->service->createLog($profile, 'Update');
                 //        $this->service->createLog($profile);
                 return $this->redirect(['/net-manager/employees']);
             }
@@ -259,13 +259,13 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionDeleteEmployee($id) 
     {
-        if (!\Yii::$app->user->can('net-manager/delete-employee', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
 
         $model = $this->findModel($id, new User());
-        $this->service->createLog($model, 'Delete');
+//        $this->service->createLog($model, 'Delete');
         $model->softDelete();
 
 
@@ -302,7 +302,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionBalanceHolders()
     {
-        if (!\Yii::$app->user->can('net-manager/balance-holders', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editFinData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -356,7 +356,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionAddresses($balanceHolderId = false)
     {
-        if (!\Yii::$app->user->can('net-manager/addresses', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('viewFinData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -426,7 +426,7 @@ class NetManagerController extends \yii\web\Controller
      */
     public function actionWashpay()
     {
-        if (!\Yii::$app->user->can('net-manager/washpay', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('viewFinData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -901,7 +901,7 @@ class NetManagerController extends \yii\web\Controller
     
     public function actionModemHistory()
     {
-        if (!\Yii::$app->user->can('net-manager/modem-history', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('viewTechData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }

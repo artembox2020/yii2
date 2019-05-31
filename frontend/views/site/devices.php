@@ -25,12 +25,12 @@ use yii\helpers\Url;
 					<?=stripslashes($device->organization)?> <?=stripslashes($device->city)?> <?=stripslashes($device->adress)?>
 				</td> 
 				<td>
-                <?php if(Yii::$app->user->can('edit_dev')){ ?>
+                <?php if(Yii::$app->user->can('editTechData')){ ?>
                     <a href="/site/dev?id=<?=$device->id?>" ><i class="fa fa-cogs" aria-hidden="true"></i> </a>
                 ....
 				<?php } ?>
                     <a href="/frontend/site/price&imei=<?=$device->id_dev?>" > <i class="fa fa-usd" aria-hidden="true"> </i> </a>
-					<?php if(Yii::$app->user->can('del_dev')){ ?>
+					<?php if(Yii::$app->user->can('editTechData')){ ?>
                 ....
                     <a href="#" data-id="<?=$device->id?>" class="dell-dev"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                 <?php } ?>

@@ -33,7 +33,9 @@ $gd_machine = array();
     <font size="4"><?= Yii::t('frontend', 'Address') ?>:</font>&#8195;<?= $model->address; ?><br>
     <font size="4"><?= Yii::t('frontend', 'Description') ?>:</font>&#8195;<?= $model->description; ?><br>
     <font size="4"><?= Yii::t('frontend', 'Site') ?>:</font>&#8195;<?= $model->website; ?><br/>
-    <?= Html::a("[".Yii::t('frontend', 'Update')."]", ['company/update'], ['style' => 'background-color: #5c87b2; color: aliceblue']) ?>
+    <?php if (Yii::$app->user->can('editCompanyData')) {
+        echo Html::a("[".Yii::t('frontend', 'Update')."]", ['company/update'], ['style' => 'background-color: #5c87b2; color: aliceblue']);
+    } ?>
 </div>
 </p>
 <p>
