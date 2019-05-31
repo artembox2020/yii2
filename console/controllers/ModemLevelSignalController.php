@@ -160,12 +160,16 @@ class ModemLevelSignalController extends Controller
         $items = Yii::$app->db->createCommand($queryString)->bindValues($bindValues)->queryAll();
         $entityHelper = new EntityHelper();
         $dateTimeHelper = new DateTimeHelper();
+        $jlogSearch = new JlogSearch();
         $byStamp = 300;
 
         foreach ($items as $item) {
             $address = AddressBalanceHolder::find()->where(['id' => $item['id']])->limit(1)->one();
+            $addressString = $address->address.", ".$address->floor;
             $addressTimestamps = $entityHelper->makeUnitTimestamps($start, $end, $address, ($step/3600));
             list($baseStart, $baseEnd) = [$addressTimestamps['start'], $addressTimestamps['end']];
+            $initialPoints = $jlogSearch->getFirstLastPacketItemsByAddress($addressString);
+            $baseStart = $baseStart < $initialPoints['first'] ? $initialPoints['first'] : $baseStart;
             $baseStart = $dateTimeHelper->getRoundedTimestamp($baseStart, $byStamp);
             $lastStatus = false;
 
