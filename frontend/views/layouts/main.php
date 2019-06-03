@@ -131,7 +131,7 @@ AppAsset::register($this);
                     [
                         'label' => Yii::t('frontend', 'All'),
                         'url' => ['/monitoring'],
-                        'visible' => Yii::$app->user->can('viewTechData'),
+                        'visible' => Yii::$app->user->can('viewFinData'),
                     ],
                 ]
 //            'visible' => Yii::$app->user->can('mntr'),
@@ -154,7 +154,7 @@ AppAsset::register($this);
             [
                 'label' => Yii::t('nav-items', 'Encashment'),
                 'url' => ['/encashment-journal/index'],
-//            'visible' => Yii::$app->user->can('zurnal'),
+                'visible' => Yii::$app->user->can('viewFinData'),
             ],
             [
                 'label' => Yii::t('frontend', 'Dlogs'),
