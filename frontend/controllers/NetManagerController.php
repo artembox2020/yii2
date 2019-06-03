@@ -248,10 +248,7 @@ class NetManagerController extends \yii\web\Controller
         $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
 
         $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-
-        if (!array_key_exists('administrator', $now)) {
-            unset($roles[array_search('administrator', $roles)]);
-        }
+        
         unset($roles[array_search('super_administrator', $roles)]);
         unset($roles[array_search('user', $roles)]);
 
