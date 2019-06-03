@@ -53,7 +53,7 @@ class JournalController extends Controller
      */
     public function actionIndex($isEncashment = false)
     {
-        if (!\Yii::$app->user->can('viewFinData', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('viewTechData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }

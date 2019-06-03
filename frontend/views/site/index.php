@@ -63,6 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]);
     ?>
 
+    <?php if (yii::$app->user->can('viewFinData')) { ?>
     <b><?= Yii::t('graph', 'Balance Holders Incomes'); ?></b>
     <br>
 
@@ -78,6 +79,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'active' => 'current day'
         ]);
     ?>
+
+    <?php } ?>
 
     <b><?= Yii::t('graph', 'Modem Level Signal'); ?></b>
     <br>
@@ -95,6 +98,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'actionBuilder' => 'builds/action-mls-builder'
         ]);
     ?>
+
+    <?php if (yii::$app->user->can('viewCompanyData')) { ?>
 
     <b><?= Yii::t('frontend', 'Employees company') ?></b>
 
@@ -128,6 +133,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]); ?>
     </div>
+
+    <?php } ?>
 
     <b><?= Yii::t('frontend', 'Balance Holders'); ?></b>
     <br>
