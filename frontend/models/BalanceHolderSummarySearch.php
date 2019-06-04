@@ -341,6 +341,7 @@ class BalanceHolderSummarySearch extends BalanceHolder
         $query = $entity->getUnitsQueryPertainCompany(new WmMashine());
         $query = $query->where(['imei_id' => $imeiId, 'company_id' => $entity->getCompanyId()]);
         $query = $query->andWhere(['<=', 'created_at', $end]);
+        $query = $query->andWhere(['status' => WmMashine::STATUS_ACTIVE]);
         $query = $query->andWhere(new \yii\db\conditions\OrCondition([
                             new \yii\db\conditions\AndCondition([
                               ['=', 'wm_mashine.is_deleted', false],
