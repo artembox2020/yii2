@@ -235,7 +235,7 @@
                 button.click();
 
                 clearInterval(hInt);                
-            }, 1500);
+            }, 2000);
 
             var filterPrompt = graphContainer.querySelector('.filter-prompt');
             filterPrompt.click();

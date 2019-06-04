@@ -250,6 +250,7 @@ class MashineStatStorage implements MashineStatStorageInterface
         return [
             'current day' => Yii::t('graph', 'Current'),
             'current week' => Yii::t('graph', 'Current week'),
+            'current ten' => Yii:: t('graph', 'Current ten'),
             'current month' => Yii::t('graph', 'Current month'),
             'current quarter' => Yii::t('graph', 'Current quarter'),
             'current year' => Yii::t('graph', 'Current year'),
@@ -361,6 +362,10 @@ class MashineStatStorage implements MashineStatStorageInterface
                 break;
             case "current week":
                 $start = $dateTimeHelper->getWeekBeginningByTimestamp($currentTimestamp);
+                $end = time();
+                break;
+            case "current ten":
+                $start = $dateTimeHelper->getLast10DaysTimestampByTimestamp($currentTimestamp);
                 $end = time();
                 break;
             case "current month":

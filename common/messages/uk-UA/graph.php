@@ -8,6 +8,7 @@ return [
     'Criteria' => 'Критерій',
     'Current' => 'Поточний день',
     'Current month' =>  'Поточний місяць',
+    'Current ten' => 'Попередні 10 днів',
     'Current quarter' => 'Поточний квартал',
     'Current week' => 'Поточний тиждень',
     'Current year' => 'Поточний рік',

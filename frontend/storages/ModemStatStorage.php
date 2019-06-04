@@ -22,7 +22,7 @@ class ModemStatStorage extends MashineStatStorage
 {
     const STEP = 300;
     const MIN_LEVEL_SIGNAL = -128;
-    const MAX_POINTS_NUMBER = 2500;
+    const MAX_POINTS_NUMBER = 7500;
 
     /**
      * Aggregates modem level signals for google graph

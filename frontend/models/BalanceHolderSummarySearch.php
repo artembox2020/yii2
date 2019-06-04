@@ -1130,6 +1130,6 @@ class BalanceHolderSummarySearch extends BalanceHolder
             $idleHours = $this->parseFloat($idleHours, 2);
         }
 
-        return $idleHours;
+        return $idleHours >= 0 ? $idleHours : 0;
     }
 }

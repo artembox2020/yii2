@@ -197,4 +197,19 @@ class DateTimeHelper
 
         return $timestamp;
     }
+
+    /**
+     * Gets last 10 days beginning timestamp
+     * 
+     * @param int $timestamp
+     * 
+     * @return int
+     */
+    public function getLast10DaysTimestampByTimestamp($timestamp)
+    {
+        $timestamp = $this->getDayBeginningTimestamp($timestamp);
+        $offset = self::DAY_TIMESTAMP * 10;
+
+        return $timestamp - $offset;
+    }
 }
