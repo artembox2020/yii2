@@ -64,7 +64,6 @@ class JournalController extends Controller
 
         $addresses = $searchModel->getAddressesMapped();
         $params = $searchModel->setParams($searchModel, $params, $params);
-        $dataProvider = $searchModel->search($params);
         $typePackets = Jlog::getTypePackets();
         $pageSizes = jlog::getPageSizes();
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
@@ -77,6 +76,8 @@ class JournalController extends Controller
         if (!empty($isEncashment)) {
             $params['type_packet'] = Jlog::TYPE_PACKET_ENCASHMENT;
         }
+
+        $dataProvider = $this->getDataProvider($searchModel, $params);
 
         $submitFormOnInputEvents = $entityHelper->submitFormOnInputEvents('.journal-filter-form', $eventSelectors);
         $removeRedundantGrids = $entityHelper->removeRedundantGrids('.journal-grid-view');
@@ -116,7 +117,6 @@ class JournalController extends Controller
         $params = $searchModel->setMashineNumber($searchModel, $params);
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
-        $dataProvider = $searchModel->searchByMashine($params, $mashine->id);
         $typePackets = Jlog::getTypePackets();
         $pageSizes = Jlog::getPageSizes();
         $eventSelectors = [
@@ -128,6 +128,8 @@ class JournalController extends Controller
         $submitFormOnInputEvents = $entityHelper->submitFormOnInputEvents('.journal-filter-form', $eventSelectors);
         $removeRedundantGrids = $entityHelper->removeRedundantGrids('.journal-grid-view');
         $columnFilterScript = $this->getColumnFilterScript($params);
+
+        $dataProvider = $this->getDataProvider($searchModel, $params);
 
         return $this->renderPartial('index-by-mashine', [
             'searchModel' => $searchModel,
@@ -156,13 +158,15 @@ class JournalController extends Controller
         $params = $this->makeParams($prms);
         $params = $searchModel->setParams($searchModel, $params, $prms);
         $dataProvider = $searchModel->search($params);
+        $dateFieldName = $searchFilter->getDateFieldNameByParams($params);
 
-        $searchModel->inputValue['date'] = $params['inputValue']['date'];
-        $searchModel->val2['date'] = $params['val2']['date'];
+        $searchModel->inputValue[$dateFieldName] = $params['inputValue'][$dateFieldName];
+        $searchModel->val2[$dateFieldName] = $params['val2'][$dateFieldName];
         $itemsCount = $searchModel->getLogTotalCount($entity, $searchFilter, $params);
 
         return $this->renderPartial('logs/index', [
             'searchModel' => $searchModel,
+            'searchFilter' => $searchFilter,
             'dataProvider' => $dataProvider,
             'params' => $params,
             'itemsCount' => $itemsCount
@@ -197,6 +201,7 @@ class JournalController extends Controller
     public function actionInit($params, $dataProvider)
     {
         $searchModel = new JLogInitSearch();
+        $searchFilter = new CbLogSearchFilter();
         $dataProvider->query->andWhere(['type_packet' => Jlog::TYPE_PACKET_INITIALIZATION]);
         $params = $this->makeParams($params);
 
@@ -207,6 +212,7 @@ class JournalController extends Controller
 
         return $this->renderPartial('init/index', [
             'searchModel' => $searchModel,
+            'searchFilter' => $searchFilter,
             'dataProvider' => $dataProvider,
             'params' => $params
         ]);
@@ -222,6 +228,7 @@ class JournalController extends Controller
     public function actionData($prms, $dataProvider)
     {
         $searchModel = new JLogDataSearch();
+        $searchFilter = new CbLogSearchFilter();
         $dataProvider->query->andWhere(['type_packet' => Jlog::TYPE_PACKET_DATA]);
         $arrayProvider = $searchModel->searchData($prms, $dataProvider->query);
 
@@ -230,6 +237,7 @@ class JournalController extends Controller
 
         return $this->renderPartial('data/index', [
             'searchModel' => $searchModel,
+            'searchFilter' => $searchFilter,
             'dataProvider' => $dataProvider,
             'arrayProvider' => $arrayProvider,
             'params' => $prms,
@@ -246,6 +254,7 @@ class JournalController extends Controller
     public function actionDataCp($params, $dataProvider)
     {
         $searchModel = new JLogDataCpSearch();
+        $searchFilter = new CbLogSearchFilter();
         $dataProvider->query->andWhere(['type_packet' => Jlog::TYPE_PACKET_DATA]);
 
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
@@ -253,6 +262,7 @@ class JournalController extends Controller
 
         return $this->renderPartial('data/cp', [
             'searchModel' => $searchModel,
+            'searchFilter' => $searchFilter,
             'dataProvider' => $dataProvider,
             'params' => $params,
         ]);
@@ -266,6 +276,7 @@ class JournalController extends Controller
      */
     public function actionEncashment($params)
     {
+
         return Yii::$app->runAction('encashment-journal/index', ['params' => array_merge($params, ['isEncashment' => 1])]);
     }
 
@@ -277,6 +288,8 @@ class JournalController extends Controller
      */
     private function getColumnFilterScript($params)
     {
+        $searchFilter = new CbLogSearchFilter();
+        $dateFieldName = $searchFilter->getDateFieldNameByParams($params);
 
         return Yii::$app->view->render(
             "/journal/filters/columnFilter",
@@ -289,7 +302,8 @@ class JournalController extends Controller
                 'lastyear' => Yii::t('frontend', 'Lastyear'),
                 'certain' => Yii::t('frontend', 'Certain'),
                 'params' => $params,
-                'pageSize' => $params['page_size'] ? $params['page_size'] : JlogDataSearch::TYPE_PAGE_SIZE
+                'pageSize' => $params['page_size'] ? $params['page_size'] : JlogDataSearch::TYPE_PAGE_SIZE,
+                'dateFieldName' => $dateFieldName
             ]
         );
     }
@@ -345,9 +359,9 @@ class JournalController extends Controller
         $searchModel->val2['date'] = $params['val2']['date'];
         $searchModel->from_date = $params['JlogSearch']['from_date'];
         $searchModel->to_date = $params['JlogSearch']['to_date'];
-        $dataProvider = $searchModel->search($params);
         $typePackets = Jlog::getTypePackets();
         $pageSizes = Jlog::getPageSizes();
+
         $eventSelectors = [
             'change' =>
                 '.journal-filter-form select,'.
@@ -356,8 +370,9 @@ class JournalController extends Controller
         ];
         $submitFormOnInputEvents = $entityHelper->submitFormOnInputEvents('.journal-filter-form', $eventSelectors);
         $removeRedundantGrids = $entityHelper->removeRedundantGrids('.journal-grid-view');
-
         $columnFilterScript = $this->getColumnFilterScript($params);
+
+        $dataProvider = $this->getDataProvider($searchModel, $params);
 
         return $this->renderPartial('index-by-address', [
             'searchModel' => $searchModel,
@@ -386,30 +401,31 @@ class JournalController extends Controller
             'wm_mashine_number',
             'filterCondition' => [
                 'date', 'type_packet', 'address', 'imei', 'id',
-                'number', 'number_device'
+                'number', 'number_device', 'created_at', 'unix_time_offset'
             ],
             'val1' => [
                 'date', 'type_packet', 'address', 'imei', 'id',
-                'number', 'number_device'
+                'number', 'number_device', 'created_at', 'unix_time_offset'
             ],
             'val2' => [
                 'date', 'type_packet', 'address', 'imei', 'id',
-                'number', 'number_device'
+                'number', 'number_device', 'created_at', 'unix_time_offset'
             ],
             'inputValue' => [
                 'date', 'type_packet', 'address', 'imei', 'id',
-                'number', 'number_device'
+                'number', 'number_device', 'created_at', 'unix_time_offset'
             ],
-            'sort',
+            'sort', 'dp-1-sort', 'dp-2-sort',
             'CbLogSearch' => [
-                'inputValue' => ['date'],
-                'val2' => ['date']
+                'inputValue' => ['date', 'created_at', 'unix_time_offset'],
+                'val2' => ['date', 'created_at', 'unix_time_offset']
             ],
             'JlogSearch' => [
-                'inputValue' => ['date'],
-                'val2' => ['date']
+                'inputValue' => ['date', 'created_at', 'unix_time_offset'],
+                'val2' => ['date', 'created_at', 'unix_time_offset']
             ],
-            'page_size'
+            'page_size',
+            'date_setting'
         ];
 
         return $entityHelper->makeParamsFromArray($requiredParams, $params);
@@ -439,5 +455,23 @@ class JournalController extends Controller
         if (!$markerIsActive) {
             $session->close();
         }
+    }
+
+    /**
+     * Gets dataProvider for non-encashment and non-log packets
+     *
+     * @param \frontend\models\JlogSearch $searchModel
+     * @param array $params
+     * 
+     * @return ActiveDataProvider|null
+     */
+    public function getDataProvider($searchModel, $params)
+    {
+        if (!in_array($params['type_packet'], [Jlog::TYPE_PACKET_LOG, Jlog::TYPE_PACKET_ENCASHMENT])) {
+
+            return $searchModel->search($params);
+        }
+
+        return null;
     }
 }

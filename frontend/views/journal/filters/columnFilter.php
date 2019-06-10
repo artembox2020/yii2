@@ -157,30 +157,37 @@
     {
         var filterMenu = element.closest(".filter-menu");
         var field = filterMenu.getAttribute('data-field');
-        var a = filterMenu.closest(".journal-grid-view").querySelector("th a[data-sort=" + field + "]");
-        
+        var a = filterMenu.closest("table").querySelector("th a[data-sort=" + field + "]");
+
         if (typeof a == 'undefined' || a == null) {
-            a = filterMenu.closest(".journal-grid-view").querySelector("th a[data-sort=-" + field + "]");
+            a = filterMenu.closest("table").querySelector("th a[data-sort=-" + field + "]");
         }
-        
+
         if (typeof a != 'undefined' && a != null) {
             a.click();
         }
     }
 
     var formElements = document.querySelectorAll(".grid-view-filter-form input, .grid-view-filter-form select");
-    
+
     disableDefaultBehaviorFormElements(formElements);
-        
-    
+
     var filterTypes = document.querySelectorAll(".grid-view-filter-form .filter-type");
     var filterExpandIcons = document.querySelectorAll(".grid-view-filter-form .filter-prompt .glyphicon");
     var filterValueContainers =  document.querySelectorAll(".grid-view-filter-form .filter-value-container");
     var filterHyperlinks = document.querySelectorAll(".grid-view-filter-form .left-hyperlink a");
-    var dateFilterSelects  = document.querySelectorAll(".grid-view-filter-form .filter-menu .filter-group select[name='filterCondition[date]']");
+    var dateFilterSelects  = document.querySelectorAll(
+        ".grid-view-filter-form .filter-menu .filter-group select[name='filterCondition[date]']," +
+        ".grid-view-filter-form .filter-menu .filter-group select[name='filterCondition[unix_time_offset]']," +
+        ".grid-view-filter-form .filter-menu .filter-group select[name='filterCondition[created_at]']"
+    );
     var dateFilterInputs  = document.querySelectorAll(
         ".grid-view-filter-form .filter-menu input[name='inputValue[date]']," +
-        ".grid-view-filter-form .filter-menu input[name='val2[date]']"
+        ".grid-view-filter-form .filter-menu input[name='inputValue[unix_time_offset]']," +
+        ".grid-view-filter-form .filter-menu input[name='inputValue[created_at]']," +
+        ".grid-view-filter-form .filter-menu input[name='val2[date]']," +
+        ".grid-view-filter-form .filter-menu input[name='val2[unix_time_offset]']," +
+        ".grid-view-filter-form .filter-menu input[name='val2[created_at]']"
     );
     var cancelButtons = document.querySelectorAll(".grid-view-filter-form .btn-cancel");
     var orderArrows = document.querySelectorAll(".grid-view-filter-form .filter-menu .order");
@@ -199,7 +206,7 @@
     {
         dateFilterSelects[i].onchange = function()
         {
-            filterDateSelectClickFunction(this, "<?= $params['val1']['date']  ?>");
+            filterDateSelectClickFunction(this, "<?= $params['val1'][$dateFieldName] ?>");
         };
         dateFilterSelects[i].onchange();
     }

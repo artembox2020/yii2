@@ -30,15 +30,17 @@ class CbLogSearchFilter extends JlogSearch
         }
 
         $entity = new Entity();
+        $dateFieldName = $this->getDateFieldNameByParams($params);
 
         if (in_array($columnName, ['address','imei'])) {
             $unitIds = $this->getIdsByColumnName($columnName, $params['inputValue'][$columnName], self::FILTER_TEXT_CONTAIN);
 
             return $query->andWhere([$columnName.'_id' => $unitIds]);
-        } elseif ($columnName == 'date') {
+        } elseif ($columnName == $dateFieldName) {
             $timestampStart = strtotime($params['inputValue'][$columnName]);
 
-            return $query->andWhere(['>=', 'unix_time_offset', $timestampStart])->andWhere(['<', 'unix_time_offset', $timestampStart + 3600*24]);
+            return $query->andWhere(['>=', $dateFieldName, $timestampStart])
+                         ->andWhere(['<', $dateFieldName, $timestampStart + 3600*24]);
         }
 
         return $query->andWhere(['like', $columnName, $params['inputValue'][$columnName]]);
@@ -60,17 +62,12 @@ class CbLogSearchFilter extends JlogSearch
             return $query;
         }
 
+        $dateFieldName = $this->getDateFieldNameByParams($params);
+
         if ($columnName == 'address') {
             $addressIds = $this->getIdsByColumnName($columnName, $params['val1'][$columnName], $params['filterCondition'][$columnName]);
 
             return $query->andWhere([$columnName.'_id' => $addressIds]);
-        }
-
-        if ($columnName == 'date') {
-            $columnName = 'unix_time_offset';
-            $params['val1'][$columnName] = $params['val1']['date'];
-            $params['val2'][$columnName] = $params['val2']['date'];
-            $params['filterCondition'][$columnName] = $params['filterCondition']['date'];
         }
 
         switch($filterCategory) {
@@ -242,5 +239,60 @@ class CbLogSearchFilter extends JlogSearch
         $operator = $operator === 'is' ? '=' : '!=';
 
         return [$columnName, $expression, $operator, $value];
+    }
+
+    /**
+     * Gets date field name by params
+     * 
+     * @param array $params
+
+     * @return array
+     */
+    public function getDateFieldNameByParams($params)
+    {
+        if (empty($params['type_packet']) || $params['type_packet'] == Jlog::TYPE_PACKET_ENCASHMENT) {
+
+            return 'unix_time_offset';
+        }
+
+        if ($params['type_packet'] != Jlog::TYPE_PACKET_LOG) {
+
+            return 'date';
+        }
+
+        return empty($params['date_setting']) ? 'unix_time_offset' : 'created_at';
+    }
+
+    /**
+     * Gets sort type glyphicon name by params
+     * 
+     * @param array $params
+     * @param string $name
+     * 
+     * @return array
+     */
+    public function getSortType($params, $name = false)
+    {
+        if (empty($params['sort'])) {
+
+            return 'tag';
+        }
+
+        if (!$name) {
+            $name = $this->getDateFieldNameByParams($params);
+        }
+
+        $sortType = $params['sort'] == $name ? 'arrow-up' : null;
+
+        if (empty($sortType)) {
+            $sortType = $params['sort'] == '-'.$name ? 'arrow-down' :  'tag';
+        }
+
+        if ($sortType == 'tag' && in_array($name, ['unix_time_offset', 'created_at'])) {
+            $firstChar = substr($params['sort'], 0, 1);
+            $sortType = $firstChar == '-' ? 'arrow-down' : 'arrow-up';
+        }
+
+        return $sortType;
     }
 }

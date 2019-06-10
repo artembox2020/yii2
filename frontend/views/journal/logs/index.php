@@ -6,12 +6,9 @@ use \frontend\models\AddressBalanceHolder;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\CbLogSearch */
+/* @var $searchFilter frontend\models\CbLogSearchFilter */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-?>
-<?php
 
-//$this->title = Yii::t('frontend', 'Events Journal');
-//$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="address-balance-holder-index logs-index">
 <?= GridView::widget([
@@ -20,14 +17,23 @@ use \frontend\models\AddressBalanceHolder;
     'summary' => "<b>".Yii::t('frontend', 'Shown')."</b> {begin} - {end} ".Yii::t('frontend', 'From')." {$itemsCount}",
     'columns' => [
         [
-            'attribute' => 'unix_time_offset',
+            'attribute' => $searchFilter->getDateFieldNameByParams($params),
             'label' => Yii::t('frontend', 'Hour that date log'),
-            'value' => function($model) use ($searchModel)
+            'format' => 'raw',
+            'value' => function($model) use ($searchModel, $params)
             {
 
-                return $searchModel->getDateByTimestamp($model['unix_time_offset'], 'd.m.Y H:i:s');
+                return $searchModel->getDateByTimestamp($model, 'd.m.Y H:i:s', $params);
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
+            'filter' => $this->render(
+                '/journal/filters/main',
+                [
+                    'name' => $searchFilter->getDateFieldNameByParams($params),
+                    'params' => $params,
+                    'searchModel' => $searchModel,
+                    'sortType' => $searchFilter->getSortType($params)
+                ]
+            ),
         ],
         [
             'attribute' => 'address',
@@ -36,7 +42,14 @@ use \frontend\models\AddressBalanceHolder;
 
                 return $searchModel->getAddressView($model);
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => $this->render(
+                '/journal/filters/main',
+                [
+                    'name'=> 'address',
+                    'params' => $params,
+                    'sortType' => $searchFilter->getSortType($params, 'address')
+                ]
+            ),
         ],
         [
             'attribute' => 'device',
@@ -45,7 +58,14 @@ use \frontend\models\AddressBalanceHolder;
 
                 return $searchModel->getDeviceView($model);
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'number', 'params' => $params]),
+            'filter' => $this->render(
+                '/journal/filters/main',
+                [
+                    'name'=> 'number',
+                    'params' => $params,
+                    'sortType' => $searchFilter->getSortType($params, 'number')
+                ]
+            ),
         ],
         [
             'attribute' => 'signal',

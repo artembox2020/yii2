@@ -12,11 +12,6 @@ echo Html::beginForm('', 'get', ['class' => 'grid-view-filter-form', 'data-pjax'
 $filterTypeCondition = Yii::t('frontend', 'Filter By Condition');
 $filterTypeValue = Yii::t('frontend', 'Filter By Value');
 
-$sortType = $params['sort'] == $name ? 'arrow-up' : null;
-if (empty($sortType)) {
-    $sortType = $params['sort'] == '-'.$name ? 'arrow-down' :  'tag';
-}
-
 ?>
 <div class="grid-view-filter">
     <div class="filter-prompt">

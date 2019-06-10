@@ -27,7 +27,15 @@ use frontend\services\parser\CParser;
                 'attribute' => 'date',
                 'format' => 'raw',
                 'label' => Yii::t('imeiData', 'Date Start'),
-                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
+                'filter' =>  $this->render(
+                    '/journal/filters/main',
+                    [
+                        'name'=> 'date',
+                        'params' => $params,
+                        'searchModel' => $searchModel,
+                        'sortType' => $searchFilter->getSortType($params, 'date')
+                    ]
+                ),
                 'value' => function($model) use ($searchModel)
                 {
 
@@ -50,7 +58,15 @@ use frontend\services\parser\CParser;
             [
                 'attribute' => 'address',
                 'format' => 'raw',
-                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params, 'searchModel' => $searchModel]),
+                'filter' =>  $this->render(
+                    '/journal/filters/main',
+                    [
+                        'name'=> 'address',
+                        'params' => $params,
+                        'searchModel' => $searchModel,
+                        'sortType' => $searchFilter->getSortType($params, 'address')
+                    ]
+                ),
                 'value' => function($model) use ($searchModel)
                 {
 
@@ -62,7 +78,15 @@ use frontend\services\parser\CParser;
                 'attribute' => 'number_device',
                 'label' => Yii::t('frontend', 'Number Device'),
                 'format' => 'raw',
-                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'number_device', 'params' => $params, 'searchModel' => $searchModel]),
+                'filter' => $this->render(
+                    '/journal/filters/main',
+                    [
+                        'name'=> 'number_device',
+                        'params' => $params,
+                        'searchModel' => $searchModel,
+                        'sortType' => $searchFilter->getSortType($params, 'number_device')
+                    ]
+                ),
                 'value' => function($model)
                 {
 

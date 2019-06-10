@@ -230,6 +230,8 @@ class JlogSearch extends Jlog
             'id' => self::getNumericFilters(),
             'type_packet' => self::getCommonFilters(),
             'date' => self::getDateFilters(),
+            'unix_time_offset' => self::getDateFilters(),
+            'created_at' => self::getDateFilters(),
             'cb_log.unix_time_offset' => self::getDateFilters(),
             'imei' => self::getCommonFilters(),
             'address' => self::getCommonFilters(),

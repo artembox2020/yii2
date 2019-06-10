@@ -33,7 +33,7 @@ $filterConditions = JlogSearch::getAccessibleFiltersByColumnName($columnName);
                 ?>
             </div>
             <div class="form-group">
-                <?php if ($columnName != 'date'): ?>
+                <?php if (!in_array($columnName, ['date', 'created_at', 'unix_time_offset'])): ?>
                 <?= 
                     Html::input("text",  "val2[{$columnName}]", 
                         $params['inputValue'][$columnName],

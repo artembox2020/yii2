@@ -7,6 +7,7 @@ use \frontend\models\AddressBalanceHolder;
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\CbLogSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+
 ?>
 
 <div class="address-balance-holder-index logs-index encashment-index">
@@ -28,12 +29,19 @@ use \frontend\models\AddressBalanceHolder;
             'attribute' => 'unix_time_offset',
             'format' => 'raw',
             'label' => Yii::t('frontend', 'Hour that date'),
-            'value' => function($model) use ($searchModel)
+            'value' => function($model) use ($searchModel, $params)
             {
 
-                return $searchModel->getDateByTimestamp($model['unix_time_offset'], 'd.m.Y');
+                return date("d.m.Y", $model['unix_time_offset']);
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
+            'filter' => $this->render(
+                '/journal/filters/main',
+                [
+                    'name'=> 'unix_time_offset',
+                    'params' => $params, 
+                    'searchModel' => $searchModel,
+                    'sortType' => $searchFilter->getSortType($params, 'unix_time_offset')
+                ]),
         ],
         [
             'attribute' => 'unix_time_offset_time',
@@ -41,7 +49,7 @@ use \frontend\models\AddressBalanceHolder;
             'value' => function($model) use ($searchModel)
             {
 
-                return $searchModel->getDateByTimestamp($model['unix_time_offset'], 'H:i');
+                return date("H:i", $model['unix_time_offset']);
             },
         ],
         [
@@ -51,7 +59,14 @@ use \frontend\models\AddressBalanceHolder;
 
                 return $searchModel->getAddressView($model);
             },
-            'filter' => $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+            'filter' => $this->render(
+                '/journal/filters/main',
+                [
+                    'name'=> 'address',
+                    'params' => $params,
+                    'sortType' => $searchFilter->getSortType($params, 'address')
+                ]
+            ),
         ],
         [
             'attribute' => 'encashment',

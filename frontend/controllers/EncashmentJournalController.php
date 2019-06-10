@@ -4,6 +4,8 @@ namespace frontend\controllers;
 
 use frontend\models\CbEncashment;
 use frontend\models\CbLogSearch;
+use frontend\models\CbLogSearchFilter;
+use frontend\models\Jlog;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\EntityHelper;
 use Yii;
@@ -70,41 +72,45 @@ class EncashmentJournalController extends Controller
         }
 
         $searchModel = new CbLogSearch();
+        $searchFilter = new CbLogSearchFilter();
         $entityHelper = new EntityHelper();
+
         $params = $entityHelper->makeParamsFromRequest(
             [
                 'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
                 'wm_mashine_number',
                 'filterCondition' => [
                     'date', 'type_packet', 'address', 'imei', 'id',
-                    'number',
+                    'number', 'unix_time_offset'
                 ],
                 'val1' => [
                     'date', 'type_packet', 'address', 'imei', 'id',
-                    'number',
+                    'number', 'unix_time_offset'
                 ],
                 'val2' => [
                     'date', 'type_packet', 'address', 'imei', 'id',
-                    'number',
+                    'number', 'unix_time_offset'
                 ],
                 'inputValue' => [
                     'date', 'type_packet', 'address', 'imei', 'id',
-                    'number',
+                    'number', 'unix_time_offset'
                 ],
                 'sort',
                 'CbLogSearch' => [
                     'from_date', 'to_date',
-                    'inputValue' => ['date'],
-                    'val2' => ['date']
+                    'inputValue' => ['date', 'unix_time_offset'],
+                    'val2' => ['date', 'unix_time_offset']
                 ]
             ]
         );
+        $params['type_packet'] = Jlog::TYPE_PACKET_ENCASHMENT;
 
         $params = $searchModel->setParams($searchModel, $params, $prms);
         $dataProvider = $searchModel->searchEncashment($params);
+        $dateFieldName = $searchFilter->getDateFieldNameByParams($params);
 
-        $searchModel->inputValue['date'] = $params['inputValue']['date'];
-        $searchModel->val2['date'] = $params['val2']['date'];
+        $searchModel->inputValue[$dateFieldName] = $params['inputValue'][$dateFieldName];
+        $searchModel->val2[$dateFieldName] = $params['val2'][$dateFieldName];
         $recountAmountScript = $this->getRecountAmountScript();
         $model = ['banknote_face_values' => '1-0'];
         $nominalsView = $searchModel->getNominalsView($model);
@@ -122,6 +128,7 @@ class EncashmentJournalController extends Controller
 
         return $this->renderPartial('index', [
             'searchModel' => $searchModel,
+            'searchFilter' => $searchFilter,
             'dataProvider' => $dataProvider,
             'params' => $params,
             'recountAmountScript' => $recountAmountScript,

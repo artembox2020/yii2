@@ -24,7 +24,15 @@ use frontend\services\parser\CParser;
             [
                 'attribute' => 'date',
                 'format' => 'raw',
-                'filter' => $this->render('/journal/filters/main', ['name'=> 'date', 'params' => $params, 'searchModel' => $searchModel]),
+                'filter' => $this->render(
+                    '/journal/filters/main',
+                    [
+                        'name'=> 'date',
+                        'params' => $params,
+                        'searchModel' => $searchModel,
+                        'sortType' => $searchFilter->getSortType($params, 'date')
+                    ]
+                ),
                 'value' => function($model) use ($searchModel)
                 {
 
@@ -34,7 +42,14 @@ use frontend\services\parser\CParser;
             ],
             [
                 'attribute' => 'address',
-                'filter' =>  $this->render('/journal/filters/main', ['name'=> 'address', 'params' => $params]),
+                'filter' =>  $this->render(
+                    '/journal/filters/main',
+                    [
+                        'name'=> 'address',
+                        'params' => $params,
+                        'sortType' => $searchFilter->getSortType($params, 'address')
+                    ]
+                ),
                 'value' => function($model) use ($searchModel)
                 {
                     

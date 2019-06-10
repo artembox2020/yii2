@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\Pjax;
 use \yii\jui\AutoComplete;
 use frontend\models\JlogSearch;
+use frontend\models\Jlog;
 
 /* @var $this yii\web\View */
 /* @var $params array */
@@ -62,9 +63,18 @@ use frontend\models\JlogSearch;
     ?>
 </div>
 
+<?
+    if ($params['type_packet'] == Jlog::TYPE_PACKET_LOG) {
+        echo Yii::$app->view->render(
+            '/journal/logs/setting-block',
+            $params
+        );
+    }
+?>
+
 <div class="form-group">
     <?= Html::hiddenInput('selectionName', $params['selectionName']); ?>
-</div>   
+</div>
 
 <div class="form-group">
     <?= Html::hiddenInput('selectionCaretPos', $params['selectionCaretPos']); ?>

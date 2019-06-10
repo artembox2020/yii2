@@ -17,7 +17,7 @@ use frontend\models\Imei;
                     <?php echo Html::a(Yii::t('frontend', 'Clear'), null, ['class' => 'd-inline']); ?>
                 </div>    
                 <br/>
-                <?php if ($columnName != 'date'): ?>
+                <?php if (!in_array($columnName, ['date', 'created_at', 'unix_time_offset'])): ?>
                 <?= 
                     Html::input("text",  "inputValue[{$columnName}]", 
                         $params['inputValue'][$columnName],

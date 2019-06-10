@@ -29,8 +29,8 @@ class CbLogSearch extends CbLog
     public $from_date;
     public $to_date;
     public $mashineNumber;
-    public $inputValue = ['date'];
-    public $val2 = ['date'];
+    public $inputValue = ['date', 'created_at', 'unix_time_offset'];
+    public $val2 = ['date', 'created_at', 'unix_time_offset'];
 
     /**
      * @inheritdoc
@@ -76,7 +76,8 @@ class CbLogSearch extends CbLog
                 'spin_type',
                 'prewash',
                 'rinsing',
-                'intensive_wash'
+                'intensive_wash',
+                'created_at'
             ])
             ->from('wm_log')
             ->where(['company_id' => $entity->getCompanyId()]);
@@ -117,7 +118,8 @@ class CbLogSearch extends CbLog
                 'collection_counter AS spin_type',
                 'last_collection_counter AS prewash', 
                 'rinsing',
-                'intensive_wash'
+                'intensive_wash',
+                'created_at'
             ])
             ->from('cb_log')
             ->where(['company_id' => $entity->getCompanyId()]);
@@ -129,27 +131,26 @@ class CbLogSearch extends CbLog
     }
 
     /**
-     * Appends orderBy sentence, considering default order and allowed order fields
+     * Appends orderBy sentence, considering order field name
      *
      * @param \yii\db\Query $query
      * @param array $params
-     * @param array $assocOrder
-     * @param array $orderFields
+     * @param array $orderFieldName
      *
      * @return \yii\db\Query
      */
-    public function applyOrder($query, $params, $assocOrder, $orderFields)
+    public function applyOrder($query, $params, $orderFieldName)
     {
         $sort = $params['sort'];
-        
+
         if (!empty($sort)) {
             $firstChar = substr($sort, 0, 1);
             $orderDirection = $firstChar == '-' ? SORT_DESC : SORT_ASC;
-            $sort = str_replace(['-', '+'], [''], $sort);
-            $assocOrder = in_array($sort, $orderFields) ? [$sort => $orderDirection] : $assocOrder;
+        } else {
+            $orderDirection = SORT_DESC;
         }
 
-        return $query->orderBy($assocOrder);
+        return $query->orderBy([$orderFieldName => $orderDirection]);
     }
 
     /**
@@ -181,20 +182,24 @@ class CbLogSearch extends CbLog
     {
         $entity = new Entity();
         $searchFilter = new CbLogSearchFilter();
-        $defaultOrderAssoc = ['unix_time_offset' => SORT_DESC];
-        $orderFields = ['unix_time_offset'];
+        $orderFieldName = $searchFilter->getDateFieldNameByParams($params);
+
+        $defaultOrderAssoc = [$orderFieldName => SORT_DESC];
+        $orderFields = [$orderFieldName];
 
         $wmLogQuery = $this->getWmLogQuery($entity, $searchFilter, $params);
-        $this->applyOrder($wmLogQuery, $params, $defaultOrderAssoc, $orderFields);
+        $this->applyOrder($wmLogQuery, $params, $orderFieldName);
         $wmLogQuery->limit(self::TYPE_ITEMS_LIMIT);
 
         $cbLogQuery = $this->getCbLogQuery($entity, $searchFilter, $params);
-        $this->applyOrder($cbLogQuery, $params, $defaultOrderAssoc, $orderFields);
+        $this->applyOrder($cbLogQuery, $params, $orderFieldName);
         $cbLogQuery->limit(self::TYPE_ITEMS_LIMIT);
 
         $query = new \yii\db\Query();
         $query->select('*')->from(['u' => $cbLogQuery->union($wmLogQuery, true)]);
-        $this->applyOrder($query, $params, $defaultOrderAssoc, $orderFields);
+        $this->applyOrder($query, $params, $orderFieldName);
+        
+        
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -202,9 +207,27 @@ class CbLogSearch extends CbLog
                 'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
             ],
             'sort' => [
-                'defaultOrder' => ['unix_time_offset' => SORT_DESC],
-                'attributes' => ['unix_time_offset']
+                'defaultOrder' => [$orderFieldName => SORT_DESC],
+                'attributes' => [$orderFieldName]
             ]
+        ]);
+
+        $dataProvider->setSort([
+        'attributes' => [
+            'unix_time_offset' => [
+                'asc' => ['unix_time_offset' => SORT_ASC],
+                'desc' => ['unix_time_offset' => SORT_DESC],
+                'default' => SORT_DESC
+            ],
+            'created_at' => [
+                'asc' => ['created_at' => SORT_ASC],
+                'desc' => ['created_at' => SORT_DESC],
+                'default' => SORT_DESC
+            ],
+        ],
+        'defaultOrder' => [
+            $orderFieldName => SORT_DESC
+        ]
         ]);
 
         $this->load($params);
@@ -223,14 +246,15 @@ class CbLogSearch extends CbLog
     public function applyCommonFilters($query, $params)
     {
         $searchFilter = new CbLogSearchFilter();
+        $dateFieldName = $searchFilter->getDateFieldNameByParams($params);
 
-        $query = $this->applyBetweenDateCondition($query);
+        $query = $this->applyBetweenDateCondition($query, $dateFieldName);
 
         $query = $searchFilter->applyFilterByValueMethod($query, 'address', $params);
         $query = $searchFilter->applyFilterByConditionMethod($query, 'address', $params, CbLogSearchFilter::FILTER_CATEGORY_COMMON);
 
-        $query = $searchFilter->applyFilterByValueMethod($query, 'date', $params);
-        $query = $searchFilter->applyFilterByConditionMethod($query, 'date', $params, CbLogSearchFilter::FILTER_CATEGORY_DATE);
+        $query = $searchFilter->applyFilterByValueMethod($query, $dateFieldName, $params);
+        $query = $searchFilter->applyFilterByConditionMethod($query, $dateFieldName, $params, CbLogSearchFilter::FILTER_CATEGORY_DATE);
 
         $query = $searchFilter->applyFilterByValueMethod($query, 'imei', $params);
         $query = $searchFilter->applyFilterByConditionMethod($query, 'imei', $params, CbLogSearchFilter::FILTER_CATEGORY_COMMON);
@@ -304,8 +328,51 @@ class CbLogSearch extends CbLog
     public function setParams($searchModel, $params, $prms)
     {
         $jlogSearchModel = new JlogSearch();
+        $searchFilter = new CbLogSearchFilter();
 
-        return $jlogSearchModel->setParams($searchModel, $params, $prms);
+        $params = $jlogSearchModel->setParams($searchModel, $params, $prms);
+        $params = $this->setLogParams($searchModel, $searchFilter, $params, $prms);
+
+        return $params;
+    }
+
+    /**
+     * Sets basic log parameters
+     * 
+     * @param CbLogSearch $searchModel
+     * @param CbLogSearchFilter $searchFilter
+     * @param array $params
+     * @param array $prms
+     * @return array
+     */
+    public function setLogParams($searchModel, $searchFilter, $params, $prms)
+    {
+        if ($params['type_packet'] == Jlog::TYPE_PACKET_LOG) {
+            $dateFieldName = $searchFilter->getDateFieldNameByParams($params);
+
+            if (!empty($params['dp-1-sort'])) {
+                if ($params['date_setting'] || (!$params['date_setting'] && empty($params['sort']))) {
+                     $params['sort'] = $params['dp-1-sort'];
+                }
+            }
+
+            if (!empty($params['filterCondition']['date'])) {
+
+                if (empty($params['filterCondition'][$dateFieldName])) {
+                    $params['filterCondition'][$dateFieldName] = $params['filterCondition']['date'];
+                }
+
+                if (empty($params['val1'][$dateFieldName])) {
+                    $params['val1'][$dateFieldName] = $params['val1']['date'];
+                }
+
+                if (empty($params['val2'][$dateFieldName])) {
+                    $params['val2'][$dateFieldName] = $params['val2']['date'];
+                }
+            }
+        }
+
+        return $params;
     }
 
     /**
@@ -621,13 +688,24 @@ class CbLogSearch extends CbLog
      * Applies between date condition to query 
      * 
      * @param ActiveDbQuery $query
+     * @param string $dateFieldName
+     * 
      * @return ActiveDbQuery
      */
-    public function applyBetweenDateCondition($query)
+    public function applyBetweenDateCondition($query, $dateFieldName)
     {
         $jlogSearch = new JlogSearch();
+        list($timeFrom, $timeTo) = $jlogSearch->makeTimeIntervals($this->from_date, $this->to_date);
 
-        return $jlogSearch->applyBetweenDateCondition($query, $this);
+        if ($timeFrom > self::ZERO) {
+            $query = $query->andWhere(['>=', $dateFieldName, $timeFrom]);
+        }
+
+        if ($timeTo < self::INFINITY) {
+            $query = $query->andWhere(['<=', $dateFieldName, $timeTo]);
+        }
+
+        return $query;
     }
 
     /**
@@ -1136,18 +1214,28 @@ class CbLogSearch extends CbLog
     /**
      * Gets date by timestamp, using UTC timezone
      * Заменили UTC на Europe/Kiev из .env
-     * 
-     * @param int $timestamp
+     *
+     * @param array $model
      * @param string $dateFormat
+     * @param array $params
+     * 
      * @return string
      */
-    public function getDateByTimestamp($timestamp, $dateFormat)
+    public function getDateByTimestamp($model, $dateFormat, $params)
     {
-//        $currentTimezone = date_default_timezone_get();
-//        date_default_timezone_set('UTC');
+        $timestamp = empty($params['date_setting']) ? $model['unix_time_offset'] : $model['created_at'];
+        $logTitle = empty($params['date_setting']) ? Yii::t('logs', 'Log Arrival Time') : Yii::t('logs', 'Log Event Time');
+        $logTitleTimestamp = empty($params['date_setting']) ? $model['created_at'] : $model['unix_time_offset'];
         $date = date($dateFormat, $timestamp);
-//        date_default_timezone_set($currentTimezone);
+        $logTitleDate = date($dateFormat, $logTitleTimestamp);
 
-        return $date;
+        return Yii::$app->view->render(
+            '/journal/logs/date-block',
+            [
+                'date' => $date,
+                'logTitle' => $logTitle,
+                'logTitleDate' => $logTitleDate
+            ]
+        );
     }
 }

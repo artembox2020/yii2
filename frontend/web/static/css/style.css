@@ -356,7 +356,8 @@ div.required label:after {
     margin-bottom: -5px;
 }
 .monitoring .popup-block > .label,
-.summary-journal .popup-block > .label{
+.summary-journal .popup-block > .label,
+.jlog-index .jlog-item .label {
     position: absolute;
     background: #fff;
     color: black;
@@ -374,7 +375,8 @@ div.required label:after {
 .summary-journal .timestamp.middle-grey:hover .label,
 .summary-journal .timestamp.heavy-grey:hover .label,
 .summary-journal .timestamp.dark-grey:hover .label,
-.summary-journal .timestamp.cancelled:hover .label {
+.summary-journal .timestamp.cancelled:hover .label,
+.jlog-index .jlog-item:hover .label{
     visibility: visible;
     cursor: pointer;
 }
@@ -670,6 +672,10 @@ div.required label:after {
 .logs-index .text-muted.order {
     display: none;
 }
+.logs-index .filter-menu[data-field=created_at] .text-muted.order,
+.logs-index .filter-menu[data-field=unix_time_offset] .text-muted.order {
+    display: block;
+}
 
 .encashment-index input[name=recount_amount] {
     display: inline-block;
@@ -828,4 +834,27 @@ div.required label:after {
 }
 .margin-bottom-274 {
     margin-bottom: 274px;
+}
+.grid-view-filter.grid-view-filter-setting {
+    display: inline-block;
+}
+.grid-view-filter.grid-view-filter-setting .filter-menu {
+    display: block!important;
+    text-align: center;
+}
+.grid-view-filter.grid-view-filter-setting .filter-menu.hidden {
+    display: none!important;
+}
+.grid-view-filter.grid-view-filter-setting .filter-menu .filter-container {
+    text-align: left;
+}
+.grid-view-filter.grid-view-filter-setting .filter-menu .filter-container span {
+    white-space: nowrap;
+}
+.grid-view-filter.grid-view-filter-setting .filter-menu .filter-container label {
+    font-weight: normal;
+    white-space: nowrap;
+}
+.jlog-index .jlog-item {
+    min-height: 10px;
 }
