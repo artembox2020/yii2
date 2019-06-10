@@ -6,6 +6,7 @@ use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
 use frontend\models\Imei;
 use frontend\models\Jlog;
+use frontend\models\JlogSearch;
 use frontend\services\globals\EntityHelper;
 use yii\widgets\Pjax;
 use \yii\jui\AutoComplete;
@@ -63,6 +64,19 @@ use yii\jui\DatePicker;
                     'autocomplete' => 'off'
                 ]
             ]);
+        ?>
+    </div>
+    
+    <div class="form-group">
+        <label for="page_size"><?= Yii::t('frontend', 'Page Size') ?></label>
+        <?= Html::dropDownList(
+            'page_size', 
+            $params['page_size'] ? $params['page_size'] : JlogSearch::PAGE_SIZE,
+            $pageSizes,
+            [
+                'class' => 'form-control'
+            ]
+        );
         ?>
     </div>
 
