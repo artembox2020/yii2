@@ -81,13 +81,13 @@ use yii\jui\DatePicker;
     ?>
     </div>
 
-    <?
-    if ($params['type_packet'] == Jlog::TYPE_PACKET_LOG) {
-        echo Yii::$app->view->render(
-            '/journal/logs/setting-block',
-            $params
-        );
-    }
+    <?php
+        if ($params['type_packet'] == Jlog::TYPE_PACKET_LOG) {
+            echo Yii::$app->view->render(
+                '/journal/logs/setting-block',
+                $params
+            );
+        }
     ?>
 
     <div class="form-group hidden">

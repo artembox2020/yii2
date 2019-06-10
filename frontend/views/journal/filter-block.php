@@ -63,7 +63,7 @@ use frontend\models\Jlog;
     ?>
 </div>
 
-<?
+<?php
     if ($params['type_packet'] == Jlog::TYPE_PACKET_LOG) {
         echo Yii::$app->view->render(
             '/journal/logs/setting-block',
