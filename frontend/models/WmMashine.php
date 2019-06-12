@@ -817,6 +817,60 @@ class WmMashine extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets whether has connection idling (cb or wm mashine connection idling)
+     * 
+     * @param int $start
+     * @param int $end
+     * @param \frontend\models\Imei $imei
+     * @param double $idleHours
+     * 
+     * @return array
+     */
+    public function getIfConnectionIdles($start, $end, $imei, $idleHours)
+    {
+        $dbHelper = Yii::$app->dbCommandHelperOptimizer;
+        $dbHelper->getBaseUnitQueryByTimestamps($start, $end, new ImeiData(), $imei, 'imei_id', 'created_at, imei_id');
+
+        if ($dbHelper->getCount() == 0) {
+
+            return ['error' => self::TYPE_CP_ERROR, 'idlesKey' => 'cbConnectionIdleHours', 'stamp' => $end + 1];
+        }
+
+        $dbHelper->addQueryString("ORDER BY created_at ASC LIMIT 1 ");
+        $item = $dbHelper->getItem();
+        $item = (object)$item;
+        
+        $stamp = $item->created_at;
+        
+        if (($stamp - $start)/3600 >= $idleHours) {
+
+            return ['error' => self::TYPE_CP_ERROR, 'idlesKey' => 'cbConnectionIdleHours', 'stamp' => $stamp];
+        }
+
+        $dbHelper->getBaseUnitQueryByTimestamps(
+            $start, $end, new WmMashineData(), $this, 'mashine_id', 'created_at, mashine_id'
+        );
+
+        if ($dbHelper->getCount() == 0) {
+
+            return ['error' => self::MASHINE_ERROR, 'idlesKey' => 'connectIdleHours', 'stamp' => $end + 1];
+        }
+
+        $dbHelper->addQueryString("ORDER BY created_at ASC LIMIT 1 ");
+        $item = $dbHelper->getItem();
+        $item = (object)$item;
+
+        $stamp = $item->created_at;
+
+        if (($stamp - $start)/3600 >= $idleHours) {
+
+            return ['error' => self::MASHINE_ERROR, 'idlesKey' => 'connectIdleHours', 'stamp' => $stamp];
+        }
+
+        return ['error' => self::TYPE_IDLES_OK, 'stamp' => $start];
+    }
+
+    /**
      * Gets idle key by results of 'getIfIdlesOk' method
      * 
      * @param int $timestamp
@@ -885,20 +939,17 @@ class WmMashine extends \yii\db\ActiveRecord
                 continue;
             } else {
                 $idlesKey = $this->getIdleKey($timestamp, $endTimestamp, $imei, $idlesResult);
-                $dbHelper->getBaseUnitQueryByTimestamps($endTimestamp, $end, new WmMashineData(), $this, $fieldInst, $select);
+                $$idlesKey += $timeIdleHours;
+                $connectionIdleHoursInfo = $this->getIfConnectionIdles($endTimestamp, $end, $imei, $timeIdleHours);
 
-                if ($dbHelper->getCount() == 0) {
-                    $$idlesKey += ((float)$end - $timestamp) / 3600;
-                    break;
-                } else {
-                    $dbHelper->addQueryString("ORDER BY created_at ASC LIMIT 1 ");
-                    $item = $dbHelper->getItem();
-                    $item = (object)$item;
-                    $timeDiff = ($item->created_at < $end ? $item->created_at : $end) - $endTimestamp;
-                    $$idlesKey += $timeIdleHours + ((float)$timeDiff / 3600);
-                    $timestamp = $item->created_at - $stepInterval + 1;
+                if ($connectionIdleHoursInfo['error'] == self::TYPE_IDLES_OK) {
                     continue;
                 }
+
+                $idlesValue = ($connectionIdleHoursInfo['stamp'] - $endTimestamp) / 3600;
+                $idlesKey = $connectionIdleHoursInfo['idlesKey'];
+                $timestamp = $connectionIdleHoursInfo['stamp'] - $stepInterval;
+                $$idlesKey += $idlesValue;
             }
         }
 
