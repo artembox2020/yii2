@@ -17,9 +17,9 @@ class DefaultController extends Controller
     //Private key LiqPay
     private const PRIVATE_KEY = 'sandbox_KrR2Tix1luE0fvJMDCLglurQD4Aaup2rxqxLGPT4';
     //URL в Вашем магазине на который покупатель будет переадресован после завершения покупки. Максимальная длина 510 символов.
-    private const RESULT_URL = 'http://molefirenko.pp.ua/payment/success';
+    private const RESULT_URL = 'http://molefirenko.pp.ua/payment/default/success';
     //URL API в Вашем магазине для уведомлений об изменении статуса платежа
-    private const SERVER_URL = 'http://molefirenko.pp.ua/payment/callback';
+    private const SERVER_URL = 'http://molefirenko.pp.ua/payment/default/callback';
     private const SIGN_FAIL = 'Signature fail';
     private const SUCCESS = 'Payment success';
 
@@ -73,6 +73,10 @@ class DefaultController extends Controller
 
     }
 
+    /**
+     * Переход после успешного платежа
+     * @return string
+     */
     public function actionSuccess()
     {
         return $this->render('success');
