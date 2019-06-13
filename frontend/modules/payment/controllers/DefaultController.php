@@ -21,6 +21,7 @@ class DefaultController extends Controller
     //URL API в Вашем магазине для уведомлений об изменении статуса платежа
     private const SERVER_URL = 'http://molefirenko.pp.ua/payment/default/callback';
     private const SIGN_FAIL = 'Signature fail';
+    private const DATA_FAIL = 'Data not found';
     private const SUCCESS = 'Payment success';
 
     /**
@@ -58,6 +59,14 @@ class DefaultController extends Controller
         $signature = $request->post('signature');
 
         $transaction = new Transactions();
+
+        if (is_null($data) || is_null($signature)) {
+            $transaction->comment = self::DATA_FAIL;
+            $transaction->operation = $transaction::OPERATION_FAIL;
+            $transaction->raw_data = $data;
+            $transaction->save();
+            return false;
+        }
 
         if ($this->validateSign($data, $signature)) {
             $transaction->comment = self::SUCCESS;
