@@ -20,6 +20,9 @@ $config = [
         'noty' => [
             'class' => 'lo\modules\noty\Module',
         ],
+        'payment' => [
+            'class' => 'app\modules\payment\Payment',
+        ],
     ],
     'components' => [
         'formatter' => [

@@ -17,11 +17,12 @@ class m190606_160646_create_transactions_table extends Migration
             'operation' => $this->integer(),
             'amount' => $this->decimal(4,2),
             'comment' => $this->text(),
+            'raw_data' => $this->text(),
             'operation_time' => $this->dateTime(),
             'created_at' => $this->integer(),
         ]);
     }
-    
+
     public function safeDown()
     {
         $this->dropTable('transactions');
