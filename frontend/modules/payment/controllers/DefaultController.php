@@ -110,7 +110,7 @@ class DefaultController extends Controller
             self::PRIVATE_KEY
             , 1 ));
 
-        if ($sign === $signature) {
+        if ($sign == $signature) {
             return true;
         } else {
             return false;
