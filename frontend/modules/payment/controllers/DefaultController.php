@@ -2,7 +2,9 @@
 
 namespace app\modules\payment\controllers;
 
+use app\models\Orders;
 use app\models\Transactions;
+use Ramsey\Uuid\Uuid;
 use yii\web\Controller;
 use yii\base\DynamicModel;
 use LiqPay;
@@ -31,16 +33,23 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-        $model = new DynamicModel(['card_id','amount']);
+        $model = new DynamicModel(['card_no','amount']);
 
         $model
-            ->addRule(['card_id', 'amount'],  'required')
-            ->addRule(['card_id'], 'string', ['max' => 50])
+            ->addRule(['card_no', 'amount'],  'required')
+            ->addRule(['card_no'], 'integer')
             ->addRule(['amount'], 'number', ['min' => 0,'max' => 200]);
 
         if($model->load(Yii::$app->request->post()) && $model->validate()){
-            $button = $this->createPaymentButton($model);
-            return $this->render('confirm', ['payment_button' => $button, 'model' => $model]);
+            $order = new Orders();
+            $uuid = Uuid::uuid4();
+            $order->order_uuid = $uuid->toString();
+            $order->card_no = $model->card_no;
+            $order->amount = $model->amount;
+            $order->status = Orders::STATUS_PENDING;
+            $order->save();
+            $button = $this->createPaymentButton($model, $order);
+            return $this->render('confirm', ['payment_button' => $button]);
         }
 
 
@@ -112,7 +121,7 @@ class DefaultController extends Controller
      * @param DynamicModel $model
      * @return string
      */
-    protected function createPaymentButton(DynamicModel $model): string
+    protected function createPaymentButton(DynamicModel $model, Orders $order): string
     {
         //https://www.liqpay.ua/documentation/ru/api/aquiring/checkout/doc
         $liqpay = new LiqPay(self::PUBLIC_KEY, self::PRIVATE_KEY);
@@ -121,10 +130,11 @@ class DefaultController extends Controller
             'amount'         => $model->amount,
             'currency'       => 'UAH',
             'description'    => Yii::t('payment','description'),
-            'order_id'       => $model->card_id,
+            'order_no'       => $order->order_uuid,
             'result_url'     => self::RESULT_URL,
             'server_url'     => self::SERVER_URL,
             'verifycode'     => 'Y',
+            'paytypes'       => 'card',
             'version'        => '3'
         ));
 

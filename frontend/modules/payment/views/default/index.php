@@ -9,7 +9,7 @@
     <div class="form">
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'card_id')->label(Yii::t('payment',  'card_id')) ?>
+        <?= $form->field($model, 'card_no')->label(Yii::t('payment',  'card_no')) ?>
 
         <?= $form->field($model, 'amount')->label(Yii::t('payment', 'amount')) ?>
 

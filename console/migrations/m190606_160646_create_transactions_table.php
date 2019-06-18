@@ -12,7 +12,7 @@ class m190606_160646_create_transactions_table extends Migration
     {
         $this->createTable('transactions', [
             'id' => $this->primaryKey(),
-            'card_id' => $this->integer(),
+            'card_no' => $this->integer(),
             'imei' => $this->string(50),
             'operation' => $this->integer(),
             'amount' => $this->decimal(4,2),
