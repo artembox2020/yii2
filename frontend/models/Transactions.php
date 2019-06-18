@@ -10,7 +10,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "transactions".
  *
  * @property int $id
- * @property int $card_id
+ * @property int $card_no
  * @property string $imei
  * @property int $operation
  * @property string $amount
@@ -50,7 +50,7 @@ class Transactions extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['card_id', 'operation', 'created_at'], 'integer'],
+            [['card_no', 'operation', 'created_at'], 'integer'],
             [['amount'], 'number'],
             [['comment', 'raw_data'], 'string'],
             [['operation_time'], 'safe'],
@@ -65,7 +65,7 @@ class Transactions extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'card_id' => 'Card ID',
+            'card_no' => 'Card no',
             'imei' => 'Imei',
             'operation' => 'Operation',
             'amount' => 'Amount',
