@@ -26,6 +26,11 @@ class DefaultController extends Controller
     private const DATA_FAIL = 'Data not found';
     private const SUCCESS = 'Payment success';
 
+    /**
+     * @param $action
+     * @return bool
+     * @throws \yii\web\BadRequestHttpException
+     */
     public function beforeAction($action)
     {
         if ($action->id === 'callback') {
