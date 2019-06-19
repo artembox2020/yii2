@@ -97,12 +97,16 @@ class DefaultController extends Controller
 
             if ($data_array['status'] == 'success') {
                 $transaction->comment = self::SUCCESS;
+
+
+
+                $amount = (float)$data_array['amount'];
             } else {
                 $transaction->comment = self::FAIL;
             }
-            
+
             $transaction->operation = $transaction::OPERATION_INCOME;
-            $transaction->raw_data = base64_decode($data);
+            $transaction->raw_data = $data;
             $transaction->save();
         } else {
             $transaction->comment = self::SIGN_FAIL;
@@ -164,7 +168,7 @@ class DefaultController extends Controller
             'amount'         => $model->amount,
             'currency'       => 'UAH',
             'description'    => Yii::t('payment','description'),
-            'order_no'       => $order->order_uuid,
+            'order_id'       => $order->order_uuid,
             'result_url'     => self::RESULT_URL,
             'server_url'     => self::SERVER_URL,
             'verifycode'     => 'Y',
