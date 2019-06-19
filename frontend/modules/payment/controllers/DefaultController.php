@@ -113,6 +113,7 @@ class DefaultController extends Controller
                     if ($card) {
                         $balance = (float)$card->balance;
                         $balance = $balance + $amount;
+                        $card->balance = $balance;
                         $card->save();
                     } else {
                         $order->status = Orders::STATUS_NO_CARD;
