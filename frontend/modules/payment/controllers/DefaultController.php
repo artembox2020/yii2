@@ -146,7 +146,7 @@ class DefaultController extends Controller
     {
         $request = Yii::$app->request;
 
-        return $this->render('success', ['post' => $request->post()]);
+        return $this->render('success');
     }
 
     protected function validateSign(string $data, string $signature): bool
