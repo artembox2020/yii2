@@ -25,6 +25,7 @@ class DefaultController extends Controller
     private const SIGN_FAIL = 'Signature fail';
     private const DATA_FAIL = 'Data not found';
     private const SUCCESS = 'Payment success';
+    private const FAIL = 'Payment fail';
 
     /**
      * @param $action
@@ -91,9 +92,17 @@ class DefaultController extends Controller
         }
 
         if ($this->validateSign($data, $signature)) {
-            $transaction->comment = self::SUCCESS;
+
+            $data_array = $this->decryptData($data);
+
+            if ($data_array['status'] == 'success') {
+                $transaction->comment = self::SUCCESS;
+            } else {
+                $transaction->comment = self::FAIL;
+            }
+            
             $transaction->operation = $transaction::OPERATION_INCOME;
-            $transaction->raw_data = $data;
+            $transaction->raw_data = base64_decode($data);
             $transaction->save();
         } else {
             $transaction->comment = self::SIGN_FAIL;
@@ -128,6 +137,18 @@ class DefaultController extends Controller
         } else {
             return false;
         }
+    }
+
+    /**
+     * Преобразовывает данные от платежной системы в массив
+     * @param string $data
+     * @return array
+     */
+    protected function decryptData(string $data): array
+    {
+        $json = base64_decode($data);
+
+        return json_decode($json, true);
     }
 
     /**
