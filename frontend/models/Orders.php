@@ -22,6 +22,7 @@ class Orders extends \yii\db\ActiveRecord
     public const STATUS_PENDING = 0;
     public const STATUS_SUCCESS = 1;
     public const STATUS_FAIL = 2;
+    public const STATUS_NO_CARD = 3;
 
     /**
      * {@inheritdoc}

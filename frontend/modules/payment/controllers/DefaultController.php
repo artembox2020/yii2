@@ -2,6 +2,7 @@
 
 namespace app\modules\payment\controllers;
 
+use app\models\CustomerCards;
 use app\models\Orders;
 use app\models\Transactions;
 use Ramsey\Uuid\Uuid;
@@ -98,9 +99,29 @@ class DefaultController extends Controller
             if ($data_array['status'] == 'success') {
                 $transaction->comment = self::SUCCESS;
 
-
-
+                $order_id = $data_array['order_id'];
                 $amount = (float)$data_array['amount'];
+                //Get order
+                $order = Orders::findOne(['order_uuid' => $order_id]);
+
+                if ($order) {
+                    $order->status = Orders::STATUS_SUCCESS;
+                    //Get card number
+                    $card_no = $order->card_no;
+                    //If card exists then add ammount to card balance
+                    $card = CustomerCards::findOne(['card_no' => $card_no]);
+                    if ($card) {
+                        $balance = (float)$card->balance;
+                        $balance = $balance + $amount;
+                        $card->save();
+                    } else {
+                        $order->status = Orders::STATUS_NO_CARD;
+                    }
+
+                    //Update order status
+                    $order->save();
+                }
+
             } else {
                 $transaction->comment = self::FAIL;
             }
