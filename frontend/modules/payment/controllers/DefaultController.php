@@ -15,14 +15,6 @@ use Yii;
  */
 class DefaultController extends Controller
 {
-    //Public key LiqPay
-    private const PUBLIC_KEY = 'sandbox_i70498452523';
-    //Private key LiqPay
-    private const PRIVATE_KEY = 'sandbox_KrR2Tix1luE0fvJMDCLglurQD4Aaup2rxqxLGPT4';
-    //URL в Вашем магазине на который покупатель будет переадресован после завершения покупки. Максимальная длина 510 символов.
-    private const RESULT_URL = 'http://molefirenko.pp.ua/payment/default/success';
-    //URL API в Вашем магазине для уведомлений об изменении статуса платежа
-    private const SERVER_URL = 'http://molefirenko.pp.ua/payment/default/callback';
     private const SIGN_FAIL = 'Signature fail';
     private const DATA_FAIL = 'Data not found';
     private const SUCCESS = 'Payment success';
@@ -156,9 +148,9 @@ class DefaultController extends Controller
     protected function validateSign(string $data, string $signature): bool
     {
         $sign = base64_encode( sha1(
-            self::PRIVATE_KEY .
+            env('PRIVATE_KEY') .
             $data .
-            self::PRIVATE_KEY
+            env('PRIVATE_KEY')
             , 1 ));
 
         if ($sign == $signature) {
@@ -187,15 +179,15 @@ class DefaultController extends Controller
     protected function createPaymentButton(DynamicModel $model, Orders $order): string
     {
         //https://www.liqpay.ua/documentation/ru/api/aquiring/checkout/doc
-        $liqpay = new LiqPay(self::PUBLIC_KEY, self::PRIVATE_KEY);
+        $liqpay = new LiqPay(env('PUBLIC_KEY'), env('PRIVATE_KEY'));
         $payment_button = $liqpay->cnb_form(array(
             'action'         => 'pay',
             'amount'         => $model->amount,
             'currency'       => 'UAH',
             'description'    => Yii::t('payment','description'),
             'order_id'       => $order->order_uuid,
-            'result_url'     => self::RESULT_URL,
-            'server_url'     => self::SERVER_URL,
+            'result_url'     => env('RESULT_URL'),
+            'server_url'     => env('SERVER_URL'),
             'verifycode'     => 'Y',
             'paytypes'       => 'card',
             'version'        => '3'
