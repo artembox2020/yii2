@@ -20,6 +20,9 @@ $config = [
         'noty' => [
             'class' => 'lo\modules\noty\Module',
         ],
+        'api' => [
+            'class' => 'frontend\modules\api\v1\Module',
+        ],
     ],
     'components' => [
         'formatter' => [
