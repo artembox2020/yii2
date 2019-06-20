@@ -28,6 +28,7 @@ class DefaultController extends Controller
     private const SUCCESS = 'Payment success';
     private const FAIL = 'Payment fail';
 
+    private const FALSE = 0;
     /**
      * @param $action
      * @return bool
@@ -50,9 +51,11 @@ class DefaultController extends Controller
     {
         $model = new DynamicModel(['card_no','amount']);
 
+        $cards = CustomerCards::find(['is_deleted' => self::FALSE])->select('card_no')->asArray()->column();
+
         $model
             ->addRule(['card_no', 'amount'],  'required')
-            ->addRule(['card_no'], 'integer')
+            ->addRule(['card_no'], 'in', ['range' => $cards])
             ->addRule(['amount'], 'number', ['min' => 0,'max' => 200]);
 
         if($model->load(Yii::$app->request->post()) && $model->validate()){
