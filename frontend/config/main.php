@@ -23,6 +23,9 @@ $config = [
         'api' => [
             'class' => 'frontend\modules\api\v1\Module',
         ],
+        'payment' => [
+            'class' => 'app\modules\payment\Payment',
+        ],
     ],
     'components' => [
         'formatter' => [

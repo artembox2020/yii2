@@ -53,7 +53,8 @@
         "samdark/hydrator": "^1.0",
         "ocramius/proxy-manager": "^2.2",
         "guzzlehttp/guzzle": "^6.3",
-        "gugglegum/yii2-cookie-language-selector": "^1.0"
+        "gugglegum/yii2-cookie-language-selector": "^1.0",
+        "liqpay/liqpay": "^1.2"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
