@@ -23,6 +23,9 @@ $config = [
         'noty' => [
             'class' => 'lo\modules\noty\Module',
         ],
+        'v1' => [
+            'class' => 'api\modules\v1\Module',
+        ],
     ],
     'components' => [
         'db' => [

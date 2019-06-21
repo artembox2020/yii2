@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\modules\api\v1\controllers;
+namespace api\modules\v1\controllers;
 
 use frontend\models\AddressBalanceHolder;
 use yii\rest\ActiveController;
@@ -11,7 +11,7 @@ use yii\rest\ActiveController;
  */
 class AddressesController extends ActiveController
 {
-    public $modelClass = 'frontend\modules\api\v1\models\Addresses';
+    public $modelClass = 'api\modules\v1\models\Addresses';
 
     /**
      * Behaviors
