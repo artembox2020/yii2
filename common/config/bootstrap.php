@@ -10,6 +10,7 @@ Yii::setAlias('backend', realpath(__DIR__ . '/../../backend'));
 Yii::setAlias('console', realpath(__DIR__ . '/../../console'));
 Yii::setAlias('storage', realpath(__DIR__ . '/../../storage'));
 Yii::setAlias('api', realpath(__DIR__ . '/../../api'));
+Yii::setAlias('.well-known', realpath(__DIR__ . '/../../.well-known'));
 
 /**
  * Setting url aliases

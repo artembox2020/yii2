@@ -2,6 +2,7 @@
 
 namespace api\modules\v1\UseCase\Terminal;
 
+use DateTime;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\BalanceHolder;
 use frontend\models\Imei;
@@ -83,6 +84,7 @@ class Terminal
 
         if ($this->getRelevanceStatusCB($res['created_at'])) {
             $status_central_board = $this->getRelevanceStatusCB($res['created_at']);
+            $cb_code = array_search('ErrTerminalNotInTouch', $imeiData->status_central_board);
         }
 
         $this->result['param'] = [
@@ -90,20 +92,24 @@ class Terminal
             'address' => $address->address,
             'floor' => $address->floor,
             'central_board_status' => Yii::t('imeiData', $status_central_board),
-            'CB code' => $status_central_board,
+            'CB code' => $cb_code,
             'bill_acceptor_status' => Yii::t('imeiData', $imeiData->status_bill_acceptor[$res['evt_bill_validator']]),
-            'BA code' => $imeiData->status_bill_acceptor[$res['evt_bill_validator']]
+            'BA code' => (int)$res['evt_bill_validator']
         ];
 
         foreach ($wm_machine as $key => $value) {
+            $d = new DateTime(date(self::DATE_FORMAT, $value->ping));
             $this->array[$value->number_device] = [
                 'device_number' => $value->number_device,
                 'display' => $value->display,
-                'date' => date(self::DATE_FORMAT, $value->ping),
+//                'date' => date(self::DATE_FORMAT, $value->ping),
+                'date' => $d->format('Y-m-d\TH:i:s.u+03:00'),
                 'status' => Yii::t('frontend', $value->current_state[$value->current_status]),
                 'status code' => $value->current_status
             ];
         }
+//        $d = new DateTime(date(self::DATE_FORMAT, $value->ping));
+//        Debugger::dd($d->format('Y-m-d\TH:i:s.u+03:00'));  // 2011-01-01T15:03:01.012345
 
         $this->result['wash_machine'] = $this->array;
 
