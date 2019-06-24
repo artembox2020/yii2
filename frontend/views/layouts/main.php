@@ -33,7 +33,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     $brand = Yii::$app->name;
-    $brand_url = Yii::$app->homeUrl;
+    $brand_url = '/';
     $entity = new Entity();
 //    if (Yii::$app->user->can('administrator')) {
 //    } else {

@@ -23,7 +23,8 @@ class ForwardController extends Controller
 
     /**
      * @param string $address_name
-     * @return string
+     * @return \yii\web\Response
+     * @throws \yii\db\Exception
      */
     public function actionIndex(string $address_name)
     {
