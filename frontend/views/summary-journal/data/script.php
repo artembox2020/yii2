@@ -25,7 +25,7 @@
 <?php
 
     // check privilleges for summary journal
-    $hasUserIncomesPermission = Yii::$app->user->can('viewTechData');
+    $hasUserIncomesPermission = Yii::$app->user->can('viewFinData');
     $hasUserIdlesPermission = Yii::$app->user->can('viewTechData');
 
     if ($hasUserIncomesPermission && $hasUserIdlesPermission) {

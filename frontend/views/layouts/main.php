@@ -108,6 +108,16 @@ AppAsset::register($this);
             $userRole = $role_description;
         }
 
+        if ( yii::$app->user->can('viewTechData') ) {
+            $monitoring_url = '/monitoring/technical';
+        }
+        if ( yii::$app->user->can('viewFinData') ) {
+            $monitoring_url = '/monitoring/financial';
+        }
+         if ( yii::$app->user->can('viewTechData') && yii::$app->user->can('viewFinData') ) {
+             $monitoring_url = '/monitoring';
+         }
+
         $menuItems = [
 //        [
 //            'label' => Yii::t('frontend', 'Users'),
@@ -116,8 +126,8 @@ AppAsset::register($this);
 //        ],
             [
                 'label' => Yii::t('frontend', 'Monitoring'),
-                'url' => ['/monitoring'],
-                'items' => [
+                'url' => [$monitoring_url],
+/*                'items' => [
                     [
                         'label' => Yii::t('frontend', 'Тechnical Data'),
                         'url' => ['/monitoring/technical'],
@@ -134,6 +144,7 @@ AppAsset::register($this);
                         'visible' => Yii::$app->user->can('viewFinData'),
                     ],
                 ]
+*/
 //            'visible' => Yii::$app->user->can('mntr'),
             ],
 //            [
