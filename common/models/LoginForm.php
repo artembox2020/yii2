@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use frontend\modules\account\models\SignupForm;
 
 /**
  * Login form.
@@ -86,5 +87,87 @@ class LoginForm extends Model
         }
 
         return $this->user;
+    }
+
+    /**
+     * Loads user identity from google account
+     * 
+     * @param frontend\modules\account\models\dto\GoogleOAuthDto $userData
+     * 
+     * @return bool
+     */
+    public function loadFromGoogleOAuth($userData)
+    {
+        if (empty($userData) || empty($userData->verified_email)) {
+
+            return false;
+        }
+
+        $this->identity = $userData->email;
+
+        return true;
+    }
+
+    /**
+     * Loads user identity from facebook account
+     * 
+     * @param frontend\modules\account\models\dto\FbOAuthDto $userData
+     * 
+     * @return bool
+     */
+    public function loadFromFbOAuth($userData)
+    {
+        if (empty($userData) || empty($userData->email)) {
+
+            return false;
+        }
+
+        $this->identity = $userData->email;
+
+        return true;
+    }
+
+    /**
+     * Log in user identity from google account
+     * 
+     * @param frontend\modules\account\models\dto\GoogleOAuthDto $userData
+     * 
+     * @return bool
+     */
+    public function loginViaGoogle($userData)
+    {
+        if (!$this->loadFromGoogleOAuth($userData)) {
+
+            return false;
+        }
+
+        if (empty($user=$this->getUser())) {
+            $signup = new SignupForm();
+            $user = $signup->signupFromGoogle($userData);
+        }
+
+        return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
+    }
+
+    /**
+     * Log in user identity from facebook account
+     * 
+     * @param frontend\modules\account\models\dto\FbOAuthDto $userData
+     * 
+     * @return bool
+     */
+    public function loginViaFb($userData)
+    {
+        if (!$this->loadFromFbOAuth($userData)) {
+
+            return false;
+        }
+
+        if (empty($user=$this->getUser())) {
+            $signup = new SignupForm();
+            $user = $signup->signupFromFb($userData);
+        }
+
+        return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
     }
 }

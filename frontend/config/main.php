@@ -64,6 +64,12 @@ $config = [
         'dbCommandHelperOptimizer' => [
             'class' => 'frontend\components\db\DbCommandHelperOptimizer'
         ],
+        'googleOAuth' => [
+            'class' => 'frontend\components\google\oauth\GoogleOAuth'
+        ],
+        'fbOAuth' => [
+            'class' => 'frontend\components\fb\oauth\FbOAuth'
+        ],
         'cookieLanguageSelector' => [
             'class' => 'gugglegum\Yii2\Extension\CookieLanguageSelector\Component',
             'defaultLanguage' => 'uk-UA',

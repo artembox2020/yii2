@@ -10,6 +10,9 @@ use yii\widgets\ActiveForm;
 $this->title = Yii::t('frontend', 'Login');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<?= $this->render('flash-messages') ?>
+
 <div class="account-sign-in-login">
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -35,3 +38,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php ActiveForm::end() ?>
 </div>
+<div class = "form-group form-inline">
+    <div class="google-login">
+        <?php echo \Yii::$app->googleOAuth->makeOauthLink(Yii::t('common', 'Login via Google')); ?>
+    </div>
+    <div class="fb-login">
+        <?php echo \Yii::$app->fbOAuth->makeOauthLink(Yii::t('common','Login via Fb')); ?>
+    </div>
+</div>
+
+<?= $this->render('script/login') ?>

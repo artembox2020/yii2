@@ -29,16 +29,16 @@ class SignInController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'signup', 'confirm-email', 'request-password-reset', 'reset-password'],
+                        'actions' => ['login', 'signup', 'sign-in-via-google', 'sign-in-via-fb', 'confirm-email', 'request-password-reset', 'reset-password', 'is-user-active'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['login', 'signup', 'confirm-email', 'request-password-reset', 'reset-password'],
+                        'actions' => ['login', 'signup', 'sign-in-via-google', 'sign-in-via-fb', 'confirm-email', 'request-password-reset', 'reset-password'],
                         'allow' => false,
                         'roles' => ['@'],
                         'denyCallback' => function () {
-                            return Yii::$app->controller->redirect(['default/view', 'id' => Yii::$app->user->id]);
+                            return Yii::$app->controller->redirect(['customer/index', 'id' => Yii::$app->user->id]);
                         },
                     ],
                     [
@@ -64,6 +64,7 @@ class SignInController extends Controller
     public function actionLogin()
     {
         $model = new LoginForm();
+
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             $model = Yii::$app->user->identity;
             $model->ip = Yii::$app->request->userIP;
@@ -121,6 +122,8 @@ class SignInController extends Controller
             return $this->render('signup', ['model' => $model]);
         } else {
             Yii::$app->session->setFlash('info', Yii::t('frontend', 'Registration is disabled.'));
+
+            return $this->goHome();
         }
     }
 
@@ -157,12 +160,12 @@ class SignInController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', Yii::t('frontend', 'Check your email for further instructions.'));
+                Yii::$app->session->setFlash('password-reset-success', Yii::t('frontend', 'Check your email for further instructions.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('frontend', 'Sorry, we are unable to reset password for the provided email address.'));
+                Yii::$app->session->setFlash('password-reset-error', Yii::t('frontend', 'Sorry, we are unable to reset password for the provided email address.'));
             }
 
-            return $this->refresh();
+            return $this->goHome();
         }
 
         return $this->render('requestPasswordResetToken', ['model' => $model]);
@@ -190,5 +193,64 @@ class SignInController extends Controller
         }
 
         return $this->render('resetPassword', ['model' => $model]);
+    }
+
+    /**
+     * Signs In/Up via google
+     *
+     * @return string
+     */
+    public function actionSignInViaGoogle()
+    {
+        $userData = Yii::$app->googleOAuth->findUserData();
+        $model = new LoginForm();
+
+        if ($model->loginViaGoogle($userData)) {
+            $model = Yii::$app->user->identity;
+            $model->ip = Yii::$app->request->userIP;
+            $model->save();
+
+            return "<script>self.close();</script>";
+        } else {
+            $model->password = '';
+
+            return $this->render('login', ['model' => $model]);
+        }
+    }
+
+    /**
+     * Signs In/Up via facebook
+     *
+     * @return string
+     */
+    public function actionSignInViaFb()
+    {
+        $userData = Yii::$app->fbOAuth->findUserData();
+
+        $model = new LoginForm();
+
+        if ($model->loginViaFb($userData)) {
+            $model = Yii::$app->user->identity;
+            $model->ip = Yii::$app->request->userIP;
+            $model->save();
+
+            return "<script>self.close();</script>";
+        } else {
+            $model->password = '';
+
+            return $this->render('login', ['model' => $model]);
+        }
+    }
+
+    /**
+     * Check whether user is logged in
+     *
+     * @return string
+     */
+    public function actionIsUserLogged()
+    {
+        $result = empty(Yii::$app->user->id) ? 0 : 1;
+
+        return json_encode(['result' => $result]);
     }
 }

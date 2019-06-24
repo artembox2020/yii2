@@ -5,6 +5,7 @@ namespace frontend\modules\account\models;
 use Yii;
 use yii\base\Model;
 use common\models\User;
+use yii\helpers\Html;
 
 /**
  * Password reset request form.
@@ -64,10 +65,15 @@ class PasswordResetRequestForm extends Model
             return false;
         }
 
+        $link = \yii\helpers\Url::to('/account/sign-in/reset-password', true);
+        $link .= "?token=".$user->access_token;
+        $link = Yii::t('frontend', 'Password reset link').': '.Html::a($link, $link, ['target' => '_blank']);
+
         return Yii::$app->mailer->compose('passwordReset', ['user' => $user])
             ->setFrom([Yii::$app->params['robotEmail'] => Yii::$app->name . ' robot'])
             ->setTo($this->email)
             ->setSubject(Yii::t('frontend', 'Password reset for {name}', ['name' => Yii::$app->name]))
+            ->setHtmlBody($link)
             ->send();
     }
 }
