@@ -82,7 +82,7 @@ class Terminal
         $status_central_board = $imeiData->status_central_board[$res['packet']];
         $status_central_board = Yii::t('imeiData', $status_central_board);
 
-        $cb_code = $res['packet'];
+        $cb_code = (int)$res['packet'];
 
         if ($this->getRelevanceStatusCB($res['created_at'])) {
             $status_central_board = $this->getRelevanceStatusCB($res['created_at']);
