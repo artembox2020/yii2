@@ -47,7 +47,8 @@ class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
     const STATUS_DELETED = 3;
 
     public $roles;
-   
+
+    const ROLE_CUSTOMER = 'customer';
     const ROLE_USER = 'user';
     const ROLE_FINANCIER = 'financier';
     const ROLE_TECHNICIAN = 'technician';
@@ -285,7 +286,8 @@ class User extends ActiveRecord implements IdentityInterface, UserRbacInterface
 
         // Default role
         $auth = Yii::$app->authManager;
-        $auth->assign($auth->getRole(self::ROLE_USER), $this->getId());
+        //$auth->assign($auth->getRole(self::ROLE_USER), $this->getId());
+        $auth->assign($auth->getRole(self::ROLE_CUSTOMER), $this->getId());
     }
 
     /**

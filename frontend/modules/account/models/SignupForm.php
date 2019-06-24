@@ -5,6 +5,7 @@ namespace frontend\modules\account\models;
 use Yii;
 use yii\base\Model;
 use common\models\User;
+use common\models\UserProfile;
 
 /**
  * Signup form.
@@ -75,6 +76,7 @@ class SignupForm extends Model
             $user->status = Yii::$app->keyStorage->get('frontend.email-confirm') ? User::STATUS_INACTIVE : User::STATUS_ACTIVE;
             $user->setPassword($this->password);
             $user->generateAuthKey();
+            $user->is_deleted = false;
             $user->save();
             $user->afterSignup();
 
@@ -82,6 +84,62 @@ class SignupForm extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Signs user up via Google account.
+     *
+     * @param frontend\modules\account\models\dto\GoogleOAuthDto $userData
+     * 
+     * @return \common\models\User|null the saved model or null if saving fails
+     */
+    public function signupFromGoogle($userData)
+    {
+        $user = new User();
+        $user->username = explode("@", $userData->email)[0];
+        $user->username = $this->makeValidUsername($user->username);
+        $user->email = $userData->email;
+        $user->status = User::STATUS_ACTIVE;
+        $user->setPassword(Yii::$app->security->generateRandomString());
+        $user->generateAuthKey();
+        $user->is_deleted = false;
+        $user->save();
+        $user->afterSignup();
+
+        $userProfile = UserProfile::findOne($user->id);
+        $userProfile->firstname = $userData->given_name;
+        $userProfile->lastname = $userData->family_name;
+        $userProfile->update();
+
+        return $user;
+    }
+
+    /**
+     * Signs user up via Facebook account.
+     * 
+     * @param frontend\modules\account\models\dto\FbOAuthDto $userData
+     *
+     * @return \common\models\User|null the saved model or null if saving fails
+     */
+    public function signupFromFb($userData)
+    {
+        $user = new User();
+        $user->username = explode("@", $userData->email)[0];
+        $user->username = $this->makeValidUsername($user->username);
+        $user->email = $userData->email;
+        $user->status = User::STATUS_ACTIVE;
+        $user->setPassword(Yii::$app->security->generateRandomString());
+        $user->generateAuthKey();
+        $user->is_deleted = false;
+        $user->save();
+        $user->afterSignup();
+
+        $userProfile = UserProfile::findOne($user->id);
+        $userProfile->firstname = $userData->first_name;
+        $userProfile->lastname = $userData->last_name;
+        $userProfile->update();
+
+        return $user;
     }
 
     /**
@@ -110,5 +168,21 @@ class SignupForm extends Model
             ->setTo($this->email)
             ->setSubject(Yii::t('frontend', 'Activation for {name}', ['name' => Yii::$app->name]))
             ->send();
+    }
+
+    /**
+     * Makes username to be unique
+     * 
+     * @param string $username
+     * 
+     * @return string
+     */
+    public function makeValidUsername($username)
+    {
+        while (User::find()->where(['username' => $username])->count() > 0) {
+            $username .= rand(1,9);
+        }
+
+        return $username;
     }
 }

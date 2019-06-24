@@ -43,6 +43,8 @@ return [
     'July' => 'Липень',
     'June' => 'Червень',
     'Lastname' => 'Прізвище',
+    'Login via Fb' => 'Вхід/Реєстрація через Facebook',
+    'Login via Google' => 'Вхід/Реєстрація через Google',
     'Logo' => 'Логотип',
     'March' => 'Березень',
     'May' => 'Травень',

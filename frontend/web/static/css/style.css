@@ -858,3 +858,13 @@ div.required label:after {
 .jlog-index .jlog-item {
     min-height: 10px;
 }
+.google-login, .fb-login {
+    display: inline-block;
+}
+.google-login a, .fb-login a {
+    text-decoration: none;
+}
+.google-login img, .fb-login img {
+    width: 18px;
+    height: 18px;
+}

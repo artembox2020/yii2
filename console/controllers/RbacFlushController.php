@@ -55,6 +55,10 @@ class RbacFlushController extends Controller
 
 
         //Create roles
+        $user = $auth->createRole(USER::ROLE_CUSTOMER);
+        $user->description = 'Customer';
+        $auth->add($user);
+
         $user = $auth->createRole(USER::ROLE_USER);
         $user->description = 'User';
         $auth->add($user);
