@@ -18,7 +18,7 @@
     <a href="/net-manager/addresses">[<?= Yii::t('frontend', 'Addresses') ?>]</a>
 <?php } ?>
 
-<?php if ( yii::$app->user->can('viewFinData') ) { ?>
+<?php if ( yii::$app->user->can('viewFinData') || yii::$app->user->can('viewTechData') ) { ?>
     <a href="/net-manager/washpay">[WashPay]</a>
 <?php } ?>
 
