@@ -268,7 +268,7 @@ class DefaultController extends Controller
 
                 $user->save(false);
 
-//                $this->service->createLog($user, 'Create');
+                $this->service->createLog($user, 'Create');
                 
                 $profile = UserProfile::findOne($user->id);
                 if ($profile->load(Yii::$app->request->post())) {
@@ -344,7 +344,7 @@ class DefaultController extends Controller
     {
         $model = User::findOne(Yii::$app->user->id);
 
-        if ($model->email == 'webmaster@example.com') {
+        if (Yii::$app->user->can('loginToBackend')) {
             if ($model->load(Yii::$app->request->post())) {
                 $request = Yii::$app->request;
                 $get = $request->post('User');
