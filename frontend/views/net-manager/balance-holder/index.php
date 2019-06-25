@@ -23,10 +23,11 @@ $menu = [];
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+    <?php if( yii::$app->user->can('editCompanyData') ) { ?>
     <p>
         <?= Html::a(Yii::t('frontend', 'Create Balance Holder'), ['/balance-holder/create'], ['class' => 'btn btn-success']) ?>
     </p>
+    <?php } ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

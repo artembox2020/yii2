@@ -22,7 +22,7 @@ use frontend\models\Imei;
         'menu' => $menu,
     ]) ?>
 </b><br><br>
-<b><?php if ( yii::$app->user->can('editFinData') ) echo Html::a(Yii::t('frontend', 'Add Washpay'), ['net-manager/washpay-create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
+<b><?php if ( yii::$app->user->can('editTechData') ) echo Html::a(Yii::t('frontend', 'Add Washpay'), ['net-manager/washpay-create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
 <br/>
 <?= yii\grid\GridView::widget([
         'dataProvider' => $dataProvider,
