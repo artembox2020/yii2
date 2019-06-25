@@ -73,11 +73,11 @@ class DefaultController extends Controller
      */
     public function actionSettings()
     {
-        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
+/*        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
-
+*/
         $model = Yii::$app->user->identity->userProfile;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
