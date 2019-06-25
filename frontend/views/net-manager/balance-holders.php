@@ -31,8 +31,9 @@ use frontend\services\custom\Debugger;
         <?php endforeach; ?>
     <?php endforeach; ?>
 <?php endforeach;?>
-
+<?php if( yii::$app->user->can('editFinData') ) { ?>
 <p><b><a href="/balance-holder/create">Додати балансотримача</a></b></p>
+<?php } ?>
 
 <p><u><b>Зведені технічні данні</b></u><p/>
 <div>Кількість адрес: <b><?= $address = isset($address) ? count($address) : '0'; ?></b></div>

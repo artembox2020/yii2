@@ -21,7 +21,9 @@ use common\models\User;
 </b>
 <br/><br/>
 <div>
+    <?php if( yii::$app->user->can('editCompanyData') ) { ?>
     <?= Html::a("[".Yii::t('frontend', 'Create user')."]", ['account/default/create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?>
+    <?php } ?>
 </div>
 <div class="account-default-users">
     <h1><?= Html::encode($this->title) ?></h1>
@@ -60,7 +62,11 @@ use common\models\User;
             [
                 'label' => Yii::t('common', 'Server Rights'),
                 'value' => function($data) {
-                    return  $data->getUserRoleName($data->id);
+                    $role = $data->getUserRoleName($data->id);
+                    if ($role == 'Super Administrator') {
+                        $role = 'Administrator';
+                    }
+                    return $role;
                 },
             ],
  
