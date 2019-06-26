@@ -123,6 +123,8 @@ class DefaultController extends Controller
             }
 
             $transaction->operation = $transaction::OPERATION_INCOME;
+            $transaction->card_no = $card_no;
+            $transaction->amount = $amount;
             $transaction->raw_data = $data;
             $transaction->save();
         } else {
