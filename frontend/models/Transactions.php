@@ -16,7 +16,7 @@ use yii\db\ActiveRecord;
  * @property string $amount
  * @property string $comment
  * @property string raw_data
- * @property int $operation_time
+ * @property string $operation_time
  * @property int $created_at
  */
 class Transactions extends \yii\db\ActiveRecord
