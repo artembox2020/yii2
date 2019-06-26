@@ -2,9 +2,9 @@
 
 namespace app\modules\payment\controllers;
 
-use app\models\CustomerCards;
+use frontend\models\CustomerCards;
 use app\models\Orders;
-use app\models\Transactions;
+use frontend\models\Transactions;
 use Ramsey\Uuid\Uuid;
 use yii\web\Controller;
 use yii\base\DynamicModel;
@@ -110,6 +110,8 @@ class DefaultController extends Controller
                         $balance = $balance + $amount;
                         $card->balance = $balance;
                         $card->save();
+                        $transaction->card_no = $card_no;
+                        $transaction->amount = $amount;
                     } else {
                         $order->status = Orders::STATUS_NO_CARD;
                     }
@@ -123,8 +125,6 @@ class DefaultController extends Controller
             }
 
             $transaction->operation = $transaction::OPERATION_INCOME;
-            $transaction->card_no = $card_no;
-            $transaction->amount = $amount;
             $transaction->raw_data = $data;
             $transaction->save();
         } else {
