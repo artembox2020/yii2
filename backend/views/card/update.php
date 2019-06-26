@@ -28,8 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'attribute' => 'amount'
         ],
         [
-            'label' => yii::t('payment', 'operation time'),
-            'attribute' => 'operation_time',
-        ],
+            'label' => Yii::t('payment', 'operation time'),
+            'attribute' => 'created_at',
+            'format' => ['date', 'php:d-m-Y H:m:s'],
+        ]
     ],
 ]) ?>
