@@ -41,6 +41,7 @@
     "yii2tech/ar-softdelete": "*",
     "kartik-v/yii2-widget-datepicker": "@dev",
     "nepster-web/yii2-basis-components": "*",
+    "metalguardian/yii2-fotorama-widget": "*",
     "mpdf/mpdf":"*",
     "phpdocumentor/phpdocumentor": "2.*",
     "ext-pdo": "*",

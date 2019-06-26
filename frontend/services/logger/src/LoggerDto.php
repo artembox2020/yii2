@@ -40,6 +40,9 @@ class LoggerDto implements LoggerDtoInterface
             case $this->getClassName($data) == 'BalanceHolder':
                 return $this->getBalanceHolderDto($data, $event);
                 break;
+            case $this->getClassName($data) == 'WmMashine':
+                return null;
+                break;
             default:
                 echo "Not list";
         }

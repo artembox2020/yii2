@@ -34,6 +34,11 @@ use frontend\models\Imei;
                 'value' => $model->id,
             ],
             [
+                'label' => Yii::t('frontend', 'Device photo gallery'),
+                'format' => 'raw',
+                'value' => $model->makePhotoGallery(),
+            ],
+            [
                 'label' => Yii::t('frontend', 'Device number'),
                 'value' => $model->number_device,
             ],
