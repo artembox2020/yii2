@@ -95,6 +95,7 @@ class DefaultController extends Controller
                 $transaction->comment = self::SUCCESS;
 
                 $order_id = $data_array['order_id'];
+                $create_date = $data_array['create_date'];
                 $amount = (float)$data_array['amount'];
                 //Get order
                 $order = Orders::findOne(['order_uuid' => $order_id]);
@@ -112,6 +113,7 @@ class DefaultController extends Controller
                         $card->save();
                         $transaction->card_no = $card_no;
                         $transaction->amount = $amount;
+                        $transaction->operation_time = $create_date;
                     } else {
                         $order->status = Orders::STATUS_NO_CARD;
                     }
