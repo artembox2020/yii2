@@ -44,6 +44,12 @@ use backend\widgets\Menu;
                     'visible' => Yii::$app->user->can('super_administrator'),
                 ],
                 [
+                    'label' => Yii::t('backend', 'Cards'),
+                    'url' => ['/card/index'],
+                    'icon' => '<i class="fa fa-credit-card"></i>',
+                    'visible' => Yii::$app->user->can('super_administrator'),
+                ],
+                [
                     'label' => Yii::t('backend', 'Companies'),
                     'url' => ['/company/index'],
                     'icon' => '<i class="fa fa-copyright"></i>',

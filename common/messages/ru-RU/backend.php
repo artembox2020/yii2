@@ -122,4 +122,9 @@ return [
     'administrator' => 'Администратор',
     'financier' => 'Финансы',
     'technician' => 'Техник',
+    'Cards' => 'Карты',
+    'Card no' => 'Номер карты',
+    'Balance' => 'Баланс',
+    'Discount' => 'Скидка',
+    'Status' => 'Статус',
 ];

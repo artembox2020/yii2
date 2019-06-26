@@ -64,5 +64,7 @@ return [
     'Type imei' => 'введіть імей',
     'Worker Card' => 'Картка співробітника',
     'Undefined' => 'Не визначений',
-    'Unknown' => 'Невідомо'
+    'Unknown' => 'Невідомо',
+    'Card inactive' => 'Картка неактивна',
+    'Card active' => 'Картка активна',
 ];
