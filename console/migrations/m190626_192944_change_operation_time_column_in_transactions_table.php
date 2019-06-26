@@ -10,7 +10,7 @@ class m190626_192944_change_operation_time_column_in_transactions_table extends 
     /**
      * {@inheritdoc}
      */
-    public function safeUp()
+    public function up()
     {
         $this->alterColumn('transactions', 'operation_time', 'text');
     }
