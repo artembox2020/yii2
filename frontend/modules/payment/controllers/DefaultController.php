@@ -113,7 +113,7 @@ class DefaultController extends Controller
                         $card->save();
                         $transaction->card_no = $card_no;
                         $transaction->amount = $amount;
-                        $transaction->operation_time = $create_date;
+                        $transaction->operation_time = (int)$create_date;
                     } else {
                         $order->status = Orders::STATUS_NO_CARD;
                     }

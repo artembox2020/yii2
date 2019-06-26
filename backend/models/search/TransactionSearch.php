@@ -17,8 +17,8 @@ class TransactionSearch extends Transactions
     public function rules()
     {
         return [
-            [['imei', 'operation_time'], 'string'],
-            [['operation', 'created_at'], 'integer'],
+            [['imei'], 'string'],
+            [['operation', 'created_at', 'operation_time'], 'integer'],
             [['amount'], 'number'],
 
         ];
