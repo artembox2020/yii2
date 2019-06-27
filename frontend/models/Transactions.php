@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace frontend\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -74,5 +74,20 @@ class Transactions extends \yii\db\ActiveRecord
             'operation_time' => 'Operation Time',
             'created_at' => 'Created At',
         ];
+    }
+
+    public static function statuses($status = null)
+    {
+        $statuses = [
+            self::OPERATION_PAYMENT => Yii::t('payment', 'Operation payment'),
+            self::OPERATION_INCOME => Yii::t('payment', 'Operation income'),
+            self::OPERATION_FAIL => Yii::t('payment', 'Operation fail')
+        ];
+
+        if ($status === null) {
+            return $statuses;
+        }
+
+        return $statuses[$status];
     }
 }

@@ -90,4 +90,6 @@ return [
     'Value' => 'Значение',
     'Website' => 'Веб-сайт',
     'Worker Card' => 'Картка сотрудника',
+    'Card inactive' => 'Карта неактивна',
+    'Card active' => 'Карта активна',
 ];

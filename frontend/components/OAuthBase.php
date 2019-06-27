@@ -11,6 +11,7 @@ use yii\helpers\Html;
  * @package frontend\components
  */
 abstract class OAuthBase extends Component implements OAuthInterface {
+
     protected $clientId;
     protected $clientSecret;
     public $redirectUri;
