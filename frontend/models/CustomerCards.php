@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace frontend\models;
 
 use Yii;
 
@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property int $card_no
- * @property string $balance
+ * @property float $balance
  * @property int $discount
  * @property int $status
  * @property int $created_at
@@ -18,6 +18,9 @@ use Yii;
  */
 class CustomerCards extends \yii\db\ActiveRecord
 {
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+
     /**
      * {@inheritdoc}
      */
@@ -52,5 +55,25 @@ class CustomerCards extends \yii\db\ActiveRecord
             'deleted_at' => 'Deleted At',
             'is_deleted' => 'Is Deleted',
         ];
+    }
+
+    /**
+     * Get card statuses
+     *
+     * @param null $status
+     * @return array|mixed
+     */
+    public static function statuses($status = null)
+    {
+        $statuses = [
+            self::STATUS_INACTIVE => Yii::t('common', 'Card inactive'),
+            self::STATUS_ACTIVE => Yii::t('common', 'Card active'),
+        ];
+
+        if ($status === null) {
+            return $statuses;
+        }
+
+        return $statuses[$status];
     }
 }

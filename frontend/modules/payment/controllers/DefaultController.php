@@ -2,9 +2,9 @@
 
 namespace app\modules\payment\controllers;
 
-use app\models\CustomerCards;
+use frontend\models\CustomerCards;
 use app\models\Orders;
-use app\models\Transactions;
+use frontend\models\Transactions;
 use Ramsey\Uuid\Uuid;
 use yii\web\Controller;
 use yii\base\DynamicModel;
@@ -96,6 +96,7 @@ class DefaultController extends Controller
                 $transaction->comment = self::SUCCESS;
 
                 $order_id = $data_array['order_id'];
+                $create_date = $data_array['create_date'];
                 $amount = (float)$data_array['amount'];
                 //Get order
                 $order = Orders::findOne(['order_uuid' => $order_id]);
@@ -111,6 +112,9 @@ class DefaultController extends Controller
                         $balance = $balance + $amount;
                         $card->balance = $balance;
                         $card->save();
+                        $transaction->card_no = $card_no;
+                        $transaction->amount = $amount;
+                        $transaction->operation_time = $create_date;
                     } else {
                         $order->status = Orders::STATUS_NO_CARD;
                     }
