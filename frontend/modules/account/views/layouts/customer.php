@@ -62,17 +62,30 @@ AppAsset::register($this);
     if (empty($role_name)) {
         $role_name = Yii::t('frontend', 'role not defined');
     }
-
-    $menuItems[] = [
-        'label' => $role_name . ' (' . $userRole .')',
-        'url' => '#',
-        'items' => [
-            [
-                'label' => Yii::t('frontend', 'Logout'),
-                'url' => ['/account/sign-in/logout'],
-                'linkOptions' => ['data-method' => 'post'],
-            ],
+    $menuItems = [
+        [
+            'label' => Yii::t('payment', 'Top Up Card'),
+            'url' => ['/payment/default/index']
         ],
+        [
+            'label' => Yii::t('payment', 'History'),
+            'url' => ['/payment/default/history']
+        ],
+        [
+            'label' => $role_name . ' (' . $userRole .')',
+            'url' => '#',
+            'items' => [
+                [
+                    'label' => Yii::t('customer', 'User Profile'),
+                    'url' => ['/account/customer/user-profile']
+                ],
+                [
+                    'label' => Yii::t('frontend', 'Logout'),
+                    'url' => ['/account/sign-in/logout'],
+                    'linkOptions' => ['data-method' => 'post'],
+                ],
+            ],
+        ]
     ];
 
     echo Nav::widget([

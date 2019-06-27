@@ -1,7 +1,7 @@
 <?php
     use \yii\widgets\ActiveForm;
     use yii\helpers\Html;
-    ?>
+?>
 
 <div class="payment-default-index">
     <h1><?= Yii::t('payment', 'Payment') ?></h1>
@@ -18,5 +18,6 @@
         </div>
 
         <?php ActiveForm::end(); ?>
+    </div>    
 
 </div>
