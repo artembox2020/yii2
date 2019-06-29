@@ -10,6 +10,7 @@ $config = [
     'homeUrl' => Yii::getAlias('@frontendUrl'),
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'frontend\controllers',
+    'layout' => env('LAYOUT'),
     'modules' => [
         'account' => [
             'class' => 'frontend\modules\account\Module',
@@ -69,6 +70,9 @@ $config = [
         ],
         'fbOAuth' => [
             'class' => 'frontend\components\fb\oauth\FbOAuth'
+        ],
+        'headerBuilder' => [
+            'class' => 'frontend\components\HeaderBuilder'
         ],
         'cookieLanguageSelector' => [
             'class' => 'gugglegum\Yii2\Extension\CookieLanguageSelector\Component',
