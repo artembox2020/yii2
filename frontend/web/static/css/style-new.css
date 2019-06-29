@@ -1,0 +1,22 @@
+.header-container-mn {
+    position: fixed;
+    width: 100%;
+    z-index: 2000;
+    margin-bottom: 60px;
+}
+.header-container-mn .top-menu.container-fluid {
+    margin-bottom: 0;
+}
+.header-container-mn .img-wrapper {
+    float: left;
+}
+.header-container-mn .label-wrapper {
+    display: inline-block;
+    margin:-6px 0 0 24px;
+}
+.header-container-mn .burger-menu i.fa-2x {
+    visibility: hidden;
+}
+.wrap .container > div:nth-child(1) {
+    margin-top: 60px;
+}
