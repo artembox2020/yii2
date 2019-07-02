@@ -111,8 +111,8 @@ $config = [
             'useFileTransport' => true,
         ],
         'cache' => [
-            //'class' => YII_ENV_DEV ? 'yii\caching\DummyCache' : 'yii\caching\FileCache',
-            'class' => 'yii\caching\DummyCache',
+            'class' => YII_ENV_DEV ? 'yii\caching\DummyCache' : 'yii\caching\FileCache',
+//            'class' => 'yii\caching\DummyCache',
         ],
     ],
 ];

@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use frontend\models\WmMashine;
 use bs\Flatpickr\FlatpickrWidget;
+use vova07\fileapi\Widget as FileApi;
 
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
@@ -17,6 +18,36 @@ use bs\Flatpickr\FlatpickrWidget;
     <h3><u><?= Yii::t('frontend', 'Create Wash Machine') ?></u></h3>
 
     <?php $form = ActiveForm::begin(); ?>
+
+    <?= $form->field($model, 'img1')->widget(
+            FileApi::className(),
+            [
+                'settings' => [
+                    'url' => ['/wm-mashine/fileapi-upload'],
+                ],
+                'crop' => false,
+            ])
+    ?>
+
+    <?= $form->field($model, 'img2')->widget(
+            FileApi::className(),
+            [
+                'settings' => [
+                    'url' => ['/wm-mashine/fileapi-upload'],
+                ],
+                'crop' => false,
+            ])
+    ?>
+
+    <?= $form->field($model, 'img3')->widget(
+            FileApi::className(),
+            [
+                'settings' => [
+                    'url' => ['/wm-mashine/fileapi-upload'],
+                ],
+                'crop' => false,
+            ])
+    ?>
 
     <?= $form->field($model, 'number_device')->textInput(['maxlength' => true]) ?>
 

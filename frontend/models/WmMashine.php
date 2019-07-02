@@ -12,6 +12,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\web\view;
+use \metalguardian\fotorama\Fotorama;
 
 /**
  * This is the model class for table "wm_mashine".
@@ -69,6 +70,8 @@ class WmMashine extends \yii\db\ActiveRecord
     const TYPE_IDLES_OK = 0;
     const TYPE_CP_ERROR = 1;
     const MASHINE_ERROR = 2;
+
+    const DASH = '---';
 
     private $wm;
 
@@ -188,6 +191,26 @@ class WmMashine extends \yii\db\ActiveRecord
                     'deleted_at' => time() + Jlog::TYPE_TIME_OFFSET
                 ],
             ],
+            'uploadBehavior' => [
+                'class' => \frontend\services\balanceHolder\UploadBehavior::className(),
+                'attributes' => [
+                    'img1' => [
+                        'path' => '@storage/logos',
+                        'tempPath' => '@storage/tmp',
+                        'url' => Yii::getAlias('@storageUrl/logos'),
+                    ],
+                    'img2' => [
+                        'path' => '@storage/logos',
+                        'tempPath' => '@storage/tmp',
+                        'url' => Yii::getAlias('@storageUrl/logos'),
+                    ],
+                    'img3' => [
+                        'path' => '@storage/logos',
+                        'tempPath' => '@storage/tmp',
+                        'url' => Yii::getAlias('@storageUrl/logos'),
+                    ],
+                ],
+            ],
             [
                 'class' => TimestampBehavior::className(),
                 'value' => time() + Jlog::TYPE_TIME_OFFSET
@@ -268,6 +291,9 @@ class WmMashine extends \yii\db\ActiveRecord
             'display' => Yii::t('frontend' ,'Display'),
             'ping' => Yii::t('frontend', 'Ping'),
             'inventory_number' => Yii::t('frontend', 'Inventory number'),
+            'img1' => Yii::t('frontend', 'Image 1'),
+            'img2' => Yii::t('frontend', 'Image 2'),
+            'img3' => Yii::t('frontend', 'Image 3'),
         ];
     }
 
@@ -1181,5 +1207,65 @@ class WmMashine extends \yii\db\ActiveRecord
         $idlesData['allHours'] = $allHours;
 
         return $idlesData;
+    }
+
+    /**
+     * Finds gallery image items for the current mashine
+     * 
+     * @return array
+     */
+    public function findPhotoGalleryItems()
+    {
+        $items = [];
+        $baseUrl = Yii::getAlias('@storageUrl/logos');
+
+        if (!empty($this->img1)) {
+            $url = $baseUrl.'/'.$this->img1;
+            $items[] = ['img' => $url];
+        }
+
+        if (!empty($this->img2)) {
+            $url = $baseUrl.'/'.$this->img2;
+            $items[] = ['img' => $url];
+        }
+
+        if (!empty($this->img3)) {
+            $url = $baseUrl.'/'.$this->img3;
+            $items[] = ['img' => $url];
+        }
+
+        return $items;
+    }
+
+    /**
+     * Makes photo gallery images for the current mashine
+     * 
+     * @return string
+     */
+    public function makePhotoGallery()
+    {
+        $items = $this->findPhotoGalleryItems();
+        if (empty($items)) {
+
+            return self::DASH;
+        }
+
+        ob_start();
+        Fotorama::$useCDN = true;
+
+        echo Fotorama::widget([
+            'items' => $items,
+            'options' => [
+                'nav' => 'thumbs',
+                'loop' => true,
+                'allowfullscreen' => 'native',
+                'fit' => 'cover',
+                'width'=> 300,
+                'maxwidth'=> '100%',
+                 'ratio' => 16/9,
+            ]
+        ]);
+
+        return ob_get_clean();
     }
 }

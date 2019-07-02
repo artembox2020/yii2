@@ -9,6 +9,7 @@ use frontend\models\WmMashineSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use vova07\fileapi\actions\UploadAction as FileAPIUpload;
 
 /**
  * WmMashineController implements the CRUD actions for WmMashine model.
@@ -36,6 +37,19 @@ class WmMashineController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function actions()
+    {
+        return [
+            'fileapi-upload' => [
+                'class' => FileAPIUpload::className(),
+                'path' => '@storage/tmp',
+            ]
         ];
     }
 

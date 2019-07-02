@@ -133,4 +133,15 @@ class CustomerController extends Controller
             throw new NotFoundHttpException(Yii::t('frontend', 'Page not found.'));
         }
     }
+
+    /**
+     * User Profile page
+     * 
+     * @return string
+     */
+    public function actionUserProfile()
+    {
+
+        return $this->render('user-profile');
+    }
 }
