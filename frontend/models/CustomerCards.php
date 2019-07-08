@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use common\models\User;
 use Yii;
 
 /**
@@ -12,6 +13,8 @@ use Yii;
  * @property float $balance
  * @property int $discount
  * @property int $status
+ * @property int user_id
+ * @property int company_id
  * @property int $created_at
  * @property int $deleted_at
  * @property int $is_deleted
@@ -75,5 +78,15 @@ class CustomerCards extends \yii\db\ActiveRecord
         }
 
         return $statuses[$status];
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    public function getCompany()
+    {
+        return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 }
