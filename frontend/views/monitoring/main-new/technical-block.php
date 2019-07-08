@@ -8,27 +8,27 @@ use frontend\services\globals\EntityHelper;
 <td style="width: 15px;" class="font12 pt-3">
     <?= $item['software']['firmware_version_cpu'] ?>
 </td>
-<td style="width: 15px;">
+<td style="width: 15px;" class="width-restrict">
     <span class="<?= $item['terminal']['last_ping_class'] ?> font12">
         <?= $item['terminal']['last_ping_value'] ?>
     </span>
 </td>
 <td class="font12 <?= $item['terminal']['last_ping_class'].' '.$item['terminal']['error']  ?>" style="width: 15px;">
-    <i class="fas fa-circle color-green"></i> ЦП
+    <i class="fas fa-circle color-green"></i> <?= Yii::t('frontend', 'Software Versions') ?>
 </td>
 <?php foreach ($item['devices'] as $mashine): ?>
-    <td rowspan="<?= $rowspan ?>" class="bg-pm1grey" style = "max-width: 92px;">
+    <td rowspan="<?= $rowspan ?>" class="bg-pm1grey bold-border" style = "max-width: 92px;">
         <input type="hidden" class="device-id" value="<?= $mashine['id'] ?>">
         <a class = "wm-mashine-link" target= "_blank" href= "/net-manager/wm-machine-view?id=<?= $mashine['id'] ?>">
             <span class="font12" style="white-space: nowrap;">
-                <?= $mashine['type'].$mashine['number_device'] ?>
+                <?= Yii::t('frontend', $mashine['type']).$mashine['number_device'] ?>
                 <span class="<?= $mashine['indicator'] ?>-indicator d-inline-block font12" >
                     <?= $mashine['display'] ?>
                 </span>
             </span>
-            <span class="font10"><?= $mashine['current_status'] ?></span><br>
+            <span class="font10 height40"><?= $mashine['current_status'] ?></span><br>
         </a>
-        <span class="font12"><?= $mashine['last_ping'] ?></span><br>
+        <span class="font12 inline-adjustment <?= $mashine['indicator'] ?>-indicator"><?= $mashine['last_ping'] ?></span><br>
         <span class="font12">
             <span>
                 <img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/Fill_1.png" class="pr-2" alt="гривня"><?= $mashine['bill_cash'] ?>
@@ -57,19 +57,32 @@ use frontend\services\globals\EntityHelper;
     <td class="table-active font12">
         <?= $item['software']['firmware_6lowpan']. ' '.$item['software']['number_channel'].'Ch' ?>
     </td>
-    <td class="table-active font12"><img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/signal.png" class="pr-2" alt="signal">
-        <?= $item['terminal']['level_signal'] ?>
-        &nbsp;
-        <?= $item['terminal']['money_in_banknotes'] ?>
-        <img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/Fill_1.png" alt="гривня">
-        <?= 
+    <td class="table-active font12 width-restrict">
+        <div style="float: left;">
+            <img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/signal.png" class="pr-2" alt="signal">
+            <?= $item['terminal']['level_signal'] ?>
+            <?= 
             EntityHelper::makePopupWindow(
                 [],
-                $model->attributeLabels()['money_in_banknotes'],
-                'top: -5px; display: block',
+                $model->attributeLabels()['level_signal'],
+                'top: -5px',
                 'height: 5px'
             )
-        ?>
+            ?>
+        </div>
+
+        <div style="float: right;">
+            <?= $item['terminal']['money_in_banknotes'] ?>
+            <img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/Fill_1.png" alt="гривня">
+            <?= 
+                EntityHelper::makePopupWindow(
+                    [],
+                    $model->attributeLabels()['on_modem_account'],
+                    'top: -5px; display: block',
+                    'height: 5px'
+                )
+            ?>
+        </div>
     </td>
     <td class="table-active font12">
         <div style = "white-space: nowrap; max-width:60px;">
@@ -93,7 +106,7 @@ use frontend\services\globals\EntityHelper;
     <td class="font12">
         <?= $item['software']['firmware_version'] ?>
     </td>
-    <td class="font12">
+    <td class="font12 width-restrict">
         <img
             src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/phone.svg"
             class="pr-2" alt="phone"
@@ -114,11 +127,11 @@ use frontend\services\globals\EntityHelper;
     </td>
 </tr>
 <tr>
-    <td class="table-active">&nbsp;</td>
-    <td class="table-active font12">
+    <td class="table-active bold-border">&nbsp;</td>
+    <td class="table-active font12 bold-border width-restrict">
         <?= $item['terminal']['imei'] ?>
     </td>
-    <td class="table-active font12">
+    <td class="table-active font12 bold-border">
         <?= explode(" ", $item['terminal']['last_ping_value'])[0] ?>
     </td>
 </tr>

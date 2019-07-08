@@ -20,6 +20,7 @@ class MonitoringBuilder extends Component {
     public $layout;
     
     public const RED_FILLNESS_INDICATOR = 60;
+    public const CONNECTION_IDLES_TIME = 1800;
     public const DATE_TIME_FORMAT = 'd.m.y H:i:s';
 
     /**
@@ -232,9 +233,9 @@ class MonitoringBuilder extends Component {
             $connectionIdleStates = [0, 16];
             $errorStates = [9, 10, 11, 12, 13, 14, 21, 25];
 
-            if (in_array($model->current_state, $connectionIdleStates)) {
+            if (in_array($model->current_status, $connectionIdleStates) || (time() - $model->ping > self::CONNECTION_IDLES_TIME)) {
                 $indicator = 'darkgrey';
-            } elseif (in_array($model->current_state, $errorStates)) {
+            } elseif (in_array($model->current_status, $errorStates)) {
                 $indicator = 'red';
             }
 

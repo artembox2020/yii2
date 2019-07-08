@@ -88,6 +88,21 @@
     text-decoration: none;
     color: inherit;
 }
+.monitoring-new .bold-border {
+    border-bottom: 3px solid grey;
+}
+.monitoring-new .width-restrict {
+    max-width: 150px!important;
+    padding-right: 2px!important;
+    padding-left: 2px!important;
+}
+.monitoring-new .height40 {
+    height: 40px;
+}
+.monitoring-new .inline-adjustment {
+    display: inline-block;
+    margin-left: -7px;
+}
 
 @media all and (max-width: 767px) {
     .header-container-mn .user-actions {

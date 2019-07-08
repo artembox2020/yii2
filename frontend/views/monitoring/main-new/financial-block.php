@@ -7,7 +7,7 @@ use frontend\services\globals\EntityHelper;
 /* @var $item array */
 
 ?>
-<td class="font12 counter" rowspan ="<?= $rowspan ?>">
+<td class="font12 counter bold-border" rowspan ="<?= $rowspan ?>">
     <?= $item['financial']['fireproof_residue'] ?>
     <?= EntityHelper::makePopupWindow(
             [],
@@ -17,7 +17,7 @@ use frontend\services\globals\EntityHelper;
         );
     ?>                    
 </td>
-<td style="width: 20px;" class="font12 counter" rowspan ="<?= $rowspan ?>">
+<td style="width: 20px;" class="font12 counter bold-border" rowspan ="<?= $rowspan ?>">
     <?= $item['financial']['money_in_banknotes'] ?>
     <?= EntityHelper::makePopupWindow(
             [],
@@ -27,7 +27,7 @@ use frontend\services\globals\EntityHelper;
         );
     ?>
 </td>
-<td valign="center" class="bg-lightgrey" rowspan ="<?= $rowspan ?>">
+<td valign="center" class="bg-lightgrey bold-border" rowspan ="<?= $rowspan ?>">
     <span class="font12 last">
         <?= $item['financial']['last_encashment'] ?>
     </span>
@@ -39,7 +39,7 @@ use frontend\services\globals\EntityHelper;
         );
     ?>
 </td>
-<td rowspan ="<?= $rowspan ?>">
+<td rowspan ="<?= $rowspan ?>" class ="bold-border">
     <span class="font12 last"><?= $item['financial']['pre_last_encashment'] ?></span>
     <?= EntityHelper::makePopupWindow(
             [],
@@ -49,7 +49,7 @@ use frontend\services\globals\EntityHelper;
         );
     ?>
 </td>
-<td class="bg-lightgrey font12 counter" rowspan ="<?= $rowspan ?>">
+<td class="bg-lightgrey font12 counter bold-border" rowspan ="<?= $rowspan ?>">
     <?= $item['financial']['in_banknotes'] ?>
     <?= EntityHelper::makePopupWindow(
             [],
