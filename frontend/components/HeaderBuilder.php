@@ -15,7 +15,7 @@ use yii\helpers\ArrayHelper;
 class HeaderBuilder extends Component {
 
     /**
-     * Builds head depending on layout
+     * Builds header depending on layout
      * 
      * @param string $layout
      * 
@@ -26,7 +26,7 @@ class HeaderBuilder extends Component {
         $brand = Yii::$app->name;
         $brand_url = '/';
         $entity = new Entity();
-        $userMenuItem = ['url' => null, 'label' => null];
+        $userMenuItems = [];
 
         if (!empty($user = $entity->getUser())) {
             if (!empty($user->company)) {
@@ -95,9 +95,21 @@ class HeaderBuilder extends Component {
                 ],
             ];
 
-            $userMenuItem =  [
-                'label' => $role_name . '<br> (' . $userRole .')',
-                'url' => '/account/sign-in/logout',
+            $userMenuItems =  [
+                [
+                    'label' => Yii::t('frontend', 'Users'),
+                    'url' => ['/net-manager/employees'],
+                    'visible' => Yii::$app->user->can('manager'),
+                ],
+                [
+                    'label' => Yii::t('frontend', 'Company'),
+                    'url' => ['/account/default/tt'],
+                    'visible' => Yii::$app->user->can('administrator'),
+                ],
+                [
+                    'label' => Yii::t('frontend', 'Logout'),
+                    'url' => ['/account/sign-in/logout'],
+                ]
             ];
         }
 
@@ -105,7 +117,7 @@ class HeaderBuilder extends Component {
             "@frontend".'/views/layouts/'.$layout.'/header',
             [
                 'menuItems' => $menuItems,
-                'userMenuItem' => $userMenuItem
+                'userMenuItems' => $userMenuItems
             ]
         );
     }

@@ -20,3 +20,83 @@
 .wrap .container > div:nth-child(1) {
     margin-top: 60px;
 }
+.monitoring-new .popup-block,
+.summary-journal .popup-block {
+    position:  relative;
+    cursor: pointer;
+}
+.monitoring-new .popup-block img,
+.summary-journal .popup-block img {
+    height: 28px;
+    width: 36px;
+    margin-top: -5px;
+    margin-bottom: -5px;
+}
+.monitoring-new .popup-block > .label,
+.summary-journal .popup-block > .label,
+.jlog-index .jlog-item .label {
+    position: absolute;
+    background: #fff;
+    color: black;
+    left: 0;
+    padding: 4px;
+    border: 1px solid black;
+    z-index: 1000;
+    visibility: hidden;
+}
+.monitoring-new .popup-block:hover > .label,
+.summary-journal .timestamp.white-color:not([class*=not-set-income]):hover .label,
+.summary-journal .timestamp.address-green-color:hover .label,
+.summary-journal .timestamp.address-red-color:hover .label,
+.summary-journal .timestamp.light-grey:hover .label,
+.summary-journal .timestamp.middle-grey:hover .label,
+.summary-journal .timestamp.heavy-grey:hover .label,
+.summary-journal .timestamp.dark-grey:hover .label,
+.summary-journal .timestamp.cancelled:hover .label,
+.jlog-index .jlog-item:hover .label {
+    visibility: visible;
+    cursor: pointer;
+}
+
+.header-container-mn .search input, .monitoring-new .search input,
+.header-container-mn .search input, .monitoring-new .search select {
+    margin-left: 0;
+    min-width: 270px;
+}
+.monitoring-new .monitoring-filter-form .tab-navs,
+.monitoring-new .monitoring-filter-form .search {
+    display: none;
+}
+.fa, .far, .fas {
+    font-family: "Font Awesome 5 Free";
+}
+
+.monitoring-new .font12.ping-not-actual i.fa-circle.color-green {
+    color: #a9a9a9;
+}
+.monitoring-new .font12.error i.fa-circle {
+    color: red!important;
+}
+.monitoring-new span.font12 span.ping-actual,
+.monitoring-new span.font12 span.ping-not-actual {
+    white-space: nowrap;
+}
+.monitoring-new .font12 {
+    line-height: 1.0;
+}
+.monitoring-new .wm-mashine-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+@media all and (max-width: 767px) {
+    .header-container-mn .user-actions {
+        right: 16%;
+    }
+}
+
+@media all and (min-width: 768px) {
+    .header-container-mn .user-actions {
+        right: 10%;
+    }
+}

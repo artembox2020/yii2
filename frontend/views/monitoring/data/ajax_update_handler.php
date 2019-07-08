@@ -10,7 +10,9 @@ Comet.init = function ()
     var deviceIds = monitoring.querySelectorAll('.device-id');
     var deviceIdsString = '';
     for (var i = 0; i < deviceIds.length; ++i) {
-        deviceIdsString += deviceIds[i].value + ',';
+        if (!deviceIdsString.includes(deviceIds[i].value + ',')) {
+            deviceIdsString += deviceIds[i].value + ',';
+        }
     }
 
     if (deviceIdsString != '') {

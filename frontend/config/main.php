@@ -74,6 +74,9 @@ $config = [
         'headerBuilder' => [
             'class' => 'frontend\components\HeaderBuilder'
         ],
+        'monitoringBuilder' => [
+            'class' => 'frontend\components\MonitoringBuilder'
+        ],
         'cookieLanguageSelector' => [
             'class' => 'gugglegum\Yii2\Extension\CookieLanguageSelector\Component',
             'defaultLanguage' => 'uk-UA',
