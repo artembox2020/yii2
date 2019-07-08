@@ -1,7 +1,7 @@
 <?php
 
 /* @var $menuItems array */
-/* @var $userMenuItem array */
+/* @var $userMenuItems array */
 
 ?>
 <header class="top-menu container-fluid">
@@ -16,16 +16,17 @@
                 <?= $item['label'] ?>
             </a>
         <?php endforeach; ?>
-
-        <a href="<?= $userMenuItem['url'] ?>" data-method="post" tabindex="-1" style="  white-space:nowrap;">
-            <div class="img-wrapper">
-                <img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/user.svg" alt="user">
-            </div>
-            <div class="label-wrapper">
-                <?= $userMenuItem['label'] ?? null ?>
-            </div>
-        </a>
+        <button class="btn-user"><img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/user.svg" alt="user"></button>
     </div>
+
+    <?php if (!empty($userMenuItems)): ?>
+        <div class="user-actions">
+            <?php foreach ($userMenuItems as $item): ?>
+                <a href = "<?= $item['url'][0] ?>" data-method = "post"><?= $item['label'] ?></a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
     <div class="burger-menu">
         <svg 
             class="svg-inline--fa fa-bars fa-w-14 fa-2x white"
@@ -48,13 +49,9 @@
     </div>
     <div class="mobile-menu">
         <?php foreach ($menuItems as $item): ?>
-            <a href ="<?= $item['url'][0] ?>" ><?= $item['label'] ?></a>
+            <a href ="<?= $item['url'][0] ?>"><?= $item['label'] ?></a>
         <?php endforeach; ?>
-        <a href="<?= $userMenuItem['url'] ?>" data-method="post">
-            <img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/user.svg" alt="user">
-            <div style="margin:-4px 0 0 24px;">
-                <?= $userMenuItem['label'] ?? null ?>
-            </div>
-        </a>
     </div>
 </header>
+
+<?= Yii::$app->view->render("@frontend/views/layouts/main-new/header-script") ?>

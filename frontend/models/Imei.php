@@ -582,6 +582,31 @@ class Imei extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets last ping class string representation
+     * 
+     * @return string
+     */
+    public function getLastPingClass()
+    {
+        if ($this->status != self::STATUS_ACTIVE) {
+
+            return "ping-not-actual'>";
+        }
+
+        $actualityClass = 'ping-not-actual';
+        $getInitResult = $this->getInit();
+        if ($getInitResult == 'Ok') {
+            $halfHourBeforeTimestamp = strtotime("-30 minutes") + Jlog::TYPE_TIME_OFFSET;
+            if ($this->ping >= $halfHourBeforeTimestamp) {
+
+                return 'ping-actual';
+            }
+        }
+
+        return $actualityClass;
+    }
+
+    /**
      * Gets last ping value
      * 
      * @return int|null

@@ -12,8 +12,9 @@ use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
+use frontend\components\MonitoringBuilder;
 
-class MonitoringController extends \yii\web\Controller
+class MonitoringController extends \frontend\controllers\Controller
 {
     const SMALL_DEVICE_WIDTH = 512;
     const SORT_BY_ADDRESS = 0;
@@ -61,12 +62,14 @@ class MonitoringController extends \yii\web\Controller
             'terminal' => Yii::t('frontend', 'Terminal'),
             'all' => Yii::t('frontend', 'All')
         ];
+
         $sortOrders = [
             self::SORT_BY_ADDRESS => Yii::t('frontend', 'Sort By Address'),
             self::SORT_BY_SERIAL => Yii::t('frontend', 'Sort BY Serial Number')
         ];
-        $script = Yii::$app->view->render(
-            "/monitoring/data/script",
+
+        $script = $this->renderPartial(
+            $this->getPath("/monitoring/data/script"),
             [
                 'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
                 'numberRedundantHeaders' => 5,
@@ -75,9 +78,10 @@ class MonitoringController extends \yii\web\Controller
             ]
         );
 
-        return $this->render('index', [
+        return $this->render($this->getPath('index'), [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'monitoringBuilder' => new MonitoringBuilder($this),
             'monitoringController' => $this,
             'monitoringShapters' => $monitoringShapters,
             'script' => $script,
@@ -136,7 +140,7 @@ class MonitoringController extends \yii\web\Controller
         global $dProvider;
         $this->setGlobals($imeiId, $searchModel);
 
-        return $this->renderPartial('/monitoring/data/terminal', [
+        return Yii::$app->view->render('/monitoring/data/terminal', [
             'searchModel' => $searchModel,
             'dataProvider' => $dProvider,
             'monitoringController' => $this
@@ -229,8 +233,8 @@ class MonitoringController extends \yii\web\Controller
             self::SORT_BY_ADDRESS => Yii::t('frontend', 'Sort By Address'),
             self::SORT_BY_SERIAL => Yii::t('frontend', 'Sort BY Serial Number')
         ];
-        $script = Yii::$app->view->render(
-            "/monitoring/data/script",
+        $script = $this->renderPartial(
+            $this->getPath("/monitoring/data/script"),
             [
                 'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
                 'numberRedundantHeaders' => 3,
@@ -239,10 +243,11 @@ class MonitoringController extends \yii\web\Controller
             ]
         );
 
-        return $this->render('financial', [
+        return $this->render($this->getPath('financial'), [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'monitoringController' => $this,
+            'monitoringBuilder' => new MonitoringBuilder($this),
             'monitoringShapters' => $monitoringShapters,
             'script' => $script,
             'addresses' => $addresses,
@@ -284,8 +289,8 @@ class MonitoringController extends \yii\web\Controller
             self::SORT_BY_ADDRESS => Yii::t('frontend', 'Sort By Address'),
             self::SORT_BY_SERIAL => Yii::t('frontend', 'Sort BY Serial Number')
         ];
-        $script = Yii::$app->view->render(
-            "/monitoring/data/script",
+        $script = $this->renderPartial(
+            $this->getPath("/monitoring/data/script"),
             [
                 'smallDeviceWidth' => self::SMALL_DEVICE_WIDTH,
                 'numberRedundantHeaders' => 4,
@@ -294,10 +299,11 @@ class MonitoringController extends \yii\web\Controller
             ]
         );
 
-        return $this->render('technical', [
+        return $this->render($this->getPath('technical'), [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'monitoringController' => $this,
+            'monitoringBuilder' => new MonitoringBuilder($this),
             'monitoringShapters' => $monitoringShapters,
             'script' => $script,
             'addresses' => $addresses,
@@ -367,7 +373,7 @@ class MonitoringController extends \yii\web\Controller
     {
         $terminalDataView = $this->renderTerminalDataByImeiId($imeiId, $searchModel);
 
-        return $this->renderPartial('/monitoring/data/terminal_action', [
+        return Yii::$app->view->render('/monitoring/data/terminal_action', [
             'terminalDataView' => $terminalDataView,
             'script' => $this->renderScriptTerminal()
         ]);
