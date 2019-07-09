@@ -10,6 +10,7 @@ use yii\helpers\ArrayHelper;
 use frontend\models\ImeiDataSearch;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
+use frontend\controllers\MonitoringController;
 
 /**
  * Class MonitoringBuilder
@@ -37,14 +38,18 @@ class MonitoringBuilder extends Component {
      * 
      * @param yii\data\ActiveDataProvider $dataProvider
      * @param frontend\models\ImeiDataSearch $searchModel
+     * @param array $postParams
      * 
      * @return string
      */
-    public function renderCommon($dataProvider, $searchModel)
+    public function renderCommon($dataProvider, $searchModel, $postParams)
     {
         $data = $this->getData($dataProvider, $searchModel);
 
-        return Yii::$app->view->render("@frontend/views/monitoring/".$this->layout."/common", ['data' => $data]);
+        return Yii::$app->view->render(
+            "@frontend/views/monitoring/".$this->layout."/common",
+            ['data' => $data, 'postParams' => $postParams]
+        );
     }
 
     /**
@@ -52,14 +57,18 @@ class MonitoringBuilder extends Component {
      * 
      * @param yii\data\ActiveDataProvider $dataProvider
      * @param frontend\models\ImeiDataSearch $searchModel
+     * @param array $postParams
      * 
      * @return string
      */
-    public function renderTechnical($dataProvider, $searchModel)
+    public function renderTechnical($dataProvider, $searchModel, $postParams)
     {
         $data = $this->getData($dataProvider, $searchModel);
 
-        return Yii::$app->view->render("@frontend/views/monitoring/".$this->layout."/technical", ['data' => $data]);
+        return Yii::$app->view->render(
+            "@frontend/views/monitoring/".$this->layout."/technical",
+            ['data' => $data, 'postParams' => $postParams]
+        );
     }
 
     /**
@@ -67,14 +76,18 @@ class MonitoringBuilder extends Component {
      * 
      * @param yii\data\ActiveDataProvider $dataProvider
      * @param frontend\models\ImeiDataSearch $searchModel
+     * @param array $postParams
      * 
      * @return string
      */
-    public function renderFinancial($dataProvider, $searchModel)
+    public function renderFinancial($dataProvider, $searchModel, $postParams)
     {
         $data = $this->getData($dataProvider, $searchModel);
 
-        return Yii::$app->view->render("@frontend/views/monitoring/".$this->layout."/financial", ['data' => $data]);
+        return Yii::$app->view->render(
+            "@frontend/views/monitoring/".$this->layout."/financial",
+            ['data' => $data, 'postParams' => $postParams]
+        );
     }
 
     /**
@@ -265,5 +278,33 @@ class MonitoringBuilder extends Component {
         $technical = ['software' => $software, 'terminal' => $terminal, 'devices' => $devices];
 
         return $technical;
+    }
+
+    /**
+     * Sets header class depending on post data
+     * 
+     * @param array $postParams
+     * @param string $name
+     * 
+     * @return string
+     */
+    public static function setHeaderClass($postParams, $name)
+    {
+        $isEmpty = empty($postParams) || empty($postParams['sortOrder']);
+        switch ($name) {
+            case 'number':
+
+                return $isEmpty ? 'dropup' : 
+                       ($postParams['sortOrder'] != MonitoringController::SORT_BY_SERIAL ? 'dropdown' : 'dropup');
+            case 'bhname':
+
+                return $isEmpty ? 'dropup' : 
+                       ($postParams['sortOrder'] != MonitoringController::SORT_BY_BALANCEHOLDER ? 'dropdown' : 'dropup');
+            
+            case 'address':
+
+                return $isEmpty ? 'dropup' : 
+                       ($postParams['sortOrder'] != MonitoringController::SORT_BY_ADDRESS ? 'dropdown' : 'dropup');
+        }
     }
 }

@@ -12,6 +12,7 @@ use frontend\components\MonitoringBuilder;
 /* @var $monitoringController frontend\controllers\MonitoringController */
 /* @var $monitoringBuilder frontend\components\MonitoringBuilder */
 /* @var $addresses array */
+/* @var $postParams array */
 
 ?>
 <div class="monitoring-new">
@@ -28,7 +29,7 @@ use frontend\components\MonitoringBuilder;
     ?>
 
     <div class="table-responsives monitoring-grid-view">
-        <?= $monitoringBuilder->renderFinancial($dataProvider, $searchModel) ?>
+        <?= $monitoringBuilder->renderFinancial($dataProvider, $searchModel, $postParams) ?>
 
         <?= Yii::$app->view->render('data/pjax_form', ['params' => $params]); ?>
     </div>

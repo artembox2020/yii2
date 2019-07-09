@@ -33,7 +33,7 @@
                 $params['sortOrder'],
                 $sortOrders,
                 [
-                    'class' => 'form-control',
+                    'class' => 'form-control hidden',
                     'width' => '40'
                 ]
             );

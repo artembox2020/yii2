@@ -103,6 +103,15 @@
     display: inline-block;
     margin-left: -7px;
 }
+.monitoring-new .header-block .dropup,
+.monitoring-new .header-block .dropdown {
+    cursor: pointer;
+}
+.monitoring-new .header-block .dropup.active,
+.monitoring-new .header-block .dropdown.active {
+    cursor: pointer;
+    font-weight: bold;
+}
 
 @media all and (max-width: 767px) {
     .header-container-mn .user-actions {

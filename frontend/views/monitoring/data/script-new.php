@@ -1,3 +1,8 @@
+<?php
+
+use frontend\controllers\MonitoringController;
+
+?>
 <script>
     (function() 
     {
@@ -6,7 +11,16 @@
         var monitoringFormAddress = monitoringForm.querySelector('input[name=address]');
         var monitoringFormSortOrder = monitoringForm.querySelector('select[name=sortOrder]');
         var monitoringSerialNumbers = monitoring.querySelectorAll('input.address-serial-number');
-        
+        var monitoringSerialSorts = monitoring.querySelectorAll(
+            '.header-block .dropup.number, .header-block .dropdown.number'
+        );
+        var monitoringBalanceHolderSorts = monitoring.querySelectorAll(
+            '.header-block .dropup.bhname, .header-block .dropdown.bhname'
+        );
+        var monitoringAddressSorts = monitoring.querySelectorAll(
+            '.header-block .dropup.address, .header-block .dropdown.address'
+        );
+
         /*function getActiveTab()
         {
             var genTab = monitoring.querySelector('#tab-gen');
@@ -86,7 +100,6 @@
         monitoringFormAddress.onkeypress = function(e)
         {
             if (e.keyCode == 13 ) {
-                console.log('enter press');
                 e.preventDefault();
                 this.onchange();
 
@@ -173,6 +186,62 @@
                 }
             }
         })();
+
+        // on sort arrow click function
+        function sortClick(elem, sortValue, sortDescValue)
+        {
+            var form = monitoring.querySelector('.monitoring-pjax-form');
+            var sortOrderField = form.querySelector('input[name=sortOrder]');
+
+            if (elem.classList.contains('dropup')) {
+                var sortOrder = sortDescValue;
+            } else {
+                var sortOrder = sortValue;
+            }
+
+            sortOrderField.value = sortOrder;
+            elem.classList.add('active');
+            form.querySelector('button[type=submit]').click();
+        }
+
+        // serial columns sort
+        for (var i = 0; i < monitoringSerialSorts.length; ++i) {
+            monitoringSerialSort = monitoringSerialSorts[i];
+            monitoringSerialSort.onclick = function() {
+                e.preventDefault();
+                sortClick(
+                    this,
+                    <?= MonitoringController::SORT_BY_SERIAL ?>,
+                    <?= MonitoringController::SORT_BY_SERIAL_DESC ?>
+                );
+            }
+        }
+
+        // balance holders sort
+        for (var i = 0; i < monitoringBalanceHolderSorts.length; ++i) {
+            monitoringBalanceHolderSort = monitoringBalanceHolderSorts[i];
+            monitoringBalanceHolderSort.onclick = function(e) {
+                e.preventDefault();
+                sortClick(
+                    this,
+                    <?= MonitoringController::SORT_BY_BALANCEHOLDER ?>,
+                    <?= MonitoringController::SORT_BY_BALANCEHOLDER_DESC ?>
+                );
+            }
+        }
+
+        // addresses sort
+        for (var i = 0; i < monitoringAddressSorts.length; ++i) {
+            monitoringAddressSort =  monitoringAddressSorts[i];
+            monitoringAddressSort.onclick = function(e) {
+                e.preventDefault();
+                sortClick(
+                    this,
+                    <?= MonitoringController::SORT_BY_ADDRESS ?>,
+                    <?= MonitoringController::SORT_BY_ADDRESS_DESC ?>
+                );
+            }
+        }
 
         // update page script
         <?= Yii::$app->view->render('/monitoring/data/ajax_update_handler', ['timestamp' => $timestamp, 'timeOut' => $timeOut]) ?>
