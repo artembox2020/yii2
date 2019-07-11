@@ -27,8 +27,13 @@ use frontend\services\globals\EntityHelper;
     >
         <?= $item['common']['bhName'].($item['common']['is_deleted'] ? "[".Yii::t('frontend', 'Deleted')."]" : "") ?>
     </a>
+    <input
+        type = "hidden" 
+        class = "search-bh-value"
+        value = "<?= $item['common']['bhName'] ?>"
+    />
 </td>
-<td rowspan="<?= $rowspan ?>" class="font12 last bold-border">
+<td rowspan="<?= $rowspan ?>" class="font12 last bold-border" style="min-width: 140px;">
     <a
         target = "_blank"
         href = "/address-balance-holder/view?id=<?= $item['common']['id'] ?>"

@@ -22,13 +22,16 @@ use frontend\services\globals\EntityHelper;
         <a class = "wm-mashine-link" target= "_blank" href= "/net-manager/wm-machine-view?id=<?= $mashine['id'] ?>">
             <span class="font12" style="white-space: nowrap;">
                 <?= Yii::t('frontend', $mashine['type']).$mashine['number_device'] ?>
-                <span class="<?= $mashine['indicator'] ?>-indicator d-inline-block font12" >
-                    <?= $mashine['display'] ?>
+                <span class="<?= $mashine['indicator'] ?> label d-inline-block font12" >
+                    <?= !empty(trim($mashine['display'])) ? '&nbsp;'.$mashine['display'].'&nbsp;' :  '' ?>
                 </span>
             </span>
             <span class="font10 height40"><?= $mashine['current_status'] ?></span><br>
         </a>
-        <span class="font12 inline-adjustment <?= $mashine['indicator'] ?>-indicator"><?= $mashine['last_ping'] ?></span><br>
+        <span class="font12 inline-adjustment <?= $mashine['indicator'] ?>">
+            <?= $mashine['last_ping'] ?>
+        </span>
+        <br>
         <span class="font12">
             <span>
                 <img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/Fill_1.png" class="pr-2" alt="гривня"><?= $mashine['bill_cash'] ?>
@@ -84,7 +87,7 @@ use frontend\services\globals\EntityHelper;
             ?>
         </div>
     </td>
-    <td class="table-active font12">
+    <td class="table-active font12 <?= $item['terminal']['last_ping_class'] ?>">
         <div style = "white-space: nowrap; max-width:60px;">
         <img 
             src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/<?=$item['terminal']['fullnessIndicator'] ?>-icon.svg"

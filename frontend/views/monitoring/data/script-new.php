@@ -20,6 +20,8 @@ use frontend\controllers\MonitoringController;
         var monitoringAddressSorts = monitoring.querySelectorAll(
             '.header-block .dropup.address, .header-block .dropdown.address'
         );
+        var MIN_VALUE = -999999999;
+        var MAX_VALUE = 999999999;
 
         /*function getActiveTab()
         {
@@ -148,6 +150,31 @@ use frontend\controllers\MonitoringController;
             }
         }
 
+        // puts item after node
+        function putItemAfter(tr, afterNode)
+        {
+            var oldNode = afterNode;
+            afterNode = afterNode.nextSibling;
+            while  (typeof afterNode != 'undefined' && afterNode != null 
+                && (!afterNode.classList || !afterNode.classList.contains('upper-row'))
+            ) {
+                oldNode = afterNode;
+                afterNode = afterNode.nextSibling;
+            }
+            var nextSibling = tr.nextSibling;
+            oldNode.after(tr);
+
+            while (
+                typeof nextSibling != 'undefined' && nextSibling != null 
+                && (!nextSibling.classList || !nextSibling.classList.contains('upper-row'))
+            ) {
+                newNextSibling  = nextSibling.nextSibling;
+                tr.after(nextSibling);
+                tr = tr.nextSibling;
+                nextSibling = newNextSibling;
+            }
+        }
+
         // initialize script
         (function init() {
             var genTab = monitoring.querySelector("#tab-gen");
@@ -203,16 +230,112 @@ use frontend\controllers\MonitoringController;
             elem.classList.add('active');
             form.querySelector('button[type=submit]').click();
         }
+        
+        // on sort arrow click process function
+        function sortClickProc(elem, selector, sortAsc, sortDesc, type)
+        {
+            var length = monitoring.querySelectorAll(selector).length;
+
+            if (elem.classList.contains('dropup')) {
+                var sortOrder = sortDesc;
+                elem.classList.remove('dropup');
+                elem.classList.add('dropdown');
+            } else {
+                var sortOrder = sortAsc;
+                elem.classList.remove('dropdown');
+                elem.classList.add('dropup');
+            }
+
+            var arrayAsc = [
+                <?= MonitoringController::SORT_BY_ADDRESS ?>,
+                <?= MonitoringController::SORT_BY_BALANCEHOLDER ?>,
+                <?= MonitoringController::SORT_BY_SERIAL ?>
+            ];
+
+            var arrayDesc = [
+                <?= MonitoringController::SORT_BY_ADDRESS_DESC ?>,
+                <?= MonitoringController::SORT_BY_BALANCEHOLDER_DESC ?>,
+                <?= MonitoringController::SORT_BY_SERIAL_DESC ?>
+            ];
+
+            for (var j = length - 1; j > 0; --j) {
+                var lines = monitoring.querySelectorAll(selector);
+                var currentElem = lines[0];
+                var lastElem = lines[j];
+                for (var i = 1; i <= j; ++i) {
+                    var item = lines[i];
+                    var itemValue = item.value;
+                    var currValue = currentElem.value;
+
+                    if (type == 'int') {
+                        if (parseInt(itemValue)) {
+                            itemValue = parseInt(itemValue);
+                        } else {
+                            if (arrayAsc.includes(sortOrder)) {
+                                itemValue = MAX_VALUE;
+                            } else {
+                                itemValue = MIN_VALUE;
+                            }
+                        }
+
+                        if (parseInt(currValue)) {
+                            currValue = parseInt(currValue);
+                        } else {
+                            if (arrayAsc.includes(sortOrder)) {
+                                currValue = MAX_VALUE;
+                            } else {
+                                currValue = MIN_VALUE;
+                            }
+                        }
+                    }
+
+                    if (arrayAsc.includes(sortOrder)) {
+                        var condition = itemValue > currValue;
+                    } else {
+                        var condition = itemValue < currValue;
+                    }
+
+                    if (condition) {
+                        currentElem = item;
+                    }
+                }
+                putItemAfter(currentElem.closest('tr.upper-row'), lastElem.closest('tr.upper-row'));
+            }
+        }
+
+        //sort click aggregated function 
+        function sortClickFunc(elemSelector, selector, sortAsc, sortDesc, type)
+        {
+            var selectors = [];
+
+            if (monitoring.querySelector("#tab-gen")) {
+                selectors.push("#tab-gen " + selector);
+            }
+
+            if (monitoring.querySelector("#tab-tech")) {
+                selectors.push("#tab-tech " + selector);
+            }
+
+            if (monitoring.querySelector("#tab-fin")) {
+                selectors.push("#tab-fin " + selector);
+            }
+
+            for (var i = 0; i < selectors.length; ++i) {
+                var elem = monitoring.querySelector(selectors[i].split(" ")[0] + ' ' + elemSelector);
+                sortClickProc(elem, selectors[i], sortAsc, sortDesc, type);
+            }
+        }
 
         // serial columns sort
         for (var i = 0; i < monitoringSerialSorts.length; ++i) {
             monitoringSerialSort = monitoringSerialSorts[i];
             monitoringSerialSort.onclick = function() {
-                e.preventDefault();
-                sortClick(
-                    this,
+                sortClickFunc(
+                    ".header-block .number",
+                    ".address-serial-number",
                     <?= MonitoringController::SORT_BY_SERIAL ?>,
-                    <?= MonitoringController::SORT_BY_SERIAL_DESC ?>
+                    <?= MonitoringController::SORT_BY_SERIAL_DESC ?>,
+                    "int"
                 );
             }
         }
@@ -220,12 +343,13 @@ use frontend\controllers\MonitoringController;
         // balance holders sort
         for (var i = 0; i < monitoringBalanceHolderSorts.length; ++i) {
             monitoringBalanceHolderSort = monitoringBalanceHolderSorts[i];
-            monitoringBalanceHolderSort.onclick = function(e) {
-                e.preventDefault();
-                sortClick(
-                    this,
+            monitoringBalanceHolderSort.onclick = function() {
+                sortClickFunc(
+                    ".header-block .bhname",
+                    ".search-bh-value",
                     <?= MonitoringController::SORT_BY_BALANCEHOLDER ?>,
-                    <?= MonitoringController::SORT_BY_BALANCEHOLDER_DESC ?>
+                    <?= MonitoringController::SORT_BY_BALANCEHOLDER_DESC ?>,
+                    "string"
                 );
             }
         }
@@ -233,12 +357,13 @@ use frontend\controllers\MonitoringController;
         // addresses sort
         for (var i = 0; i < monitoringAddressSorts.length; ++i) {
             monitoringAddressSort =  monitoringAddressSorts[i];
-            monitoringAddressSort.onclick = function(e) {
-                e.preventDefault();
-                sortClick(
-                    this,
+            monitoringAddressSort.onclick = function() {
+                sortClickFunc(
+                    ".header-block .address",
+                    ".search-address-value",
                     <?= MonitoringController::SORT_BY_ADDRESS ?>,
-                    <?= MonitoringController::SORT_BY_ADDRESS_DESC ?>
+                    <?= MonitoringController::SORT_BY_ADDRESS_DESC ?>,
+                    "string"
                 );
             }
         }

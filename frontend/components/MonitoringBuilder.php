@@ -19,8 +19,7 @@ use frontend\controllers\MonitoringController;
 class MonitoringBuilder extends Component {
     private $monitoringController;
     public $layout;
-    
-    public const RED_FILLNESS_INDICATOR = 60;
+
     public const CONNECTION_IDLES_TIME = 1800;
     public const DATE_TIME_FORMAT = 'd.m.y H:i:s';
 
@@ -209,16 +208,16 @@ class MonitoringBuilder extends Component {
         }
         $fullnessIndicator = 'green';
 
-        if ($fullness >= self::RED_FILLNESS_INDICATOR) {
-            $fullnessIndicator = 'red-tab';
-        }
-
         $cpErrors = [1, 2,3, 4, 5, 6];
         $evtBillErrors = [1, 2, 3, 4, 4, 5, 6];
         $errorLabel = '';
 
-        if (in_array($imeiData->packet, $cpErrors) || in_array($imeiData->evt_bill_validator, $evtBillErrors)) {
+        if (in_array($imeiData->packet, $cpErrors)) {
             $errorLabel = 'error';
+        }
+
+        if (in_array($imeiData->evt_bill_validator, $evtBillErrors)) {
+            $fullnessIndicator = 'red-tab';
         }
 
         $terminal = [
@@ -242,14 +241,14 @@ class MonitoringBuilder extends Component {
         $mashines = $dataProviderWmMashine->query->all();
 
         foreach ($mashines as $model) {
-            $indicator = 'green';
+            $indicator = 'ping-actual';
             $connectionIdleStates = [0, 16];
             $errorStates = [9, 10, 11, 12, 13, 14, 21, 25];
 
             if (in_array($model->current_status, $connectionIdleStates) || (time() - $model->ping > self::CONNECTION_IDLES_TIME)) {
-                $indicator = 'darkgrey';
+                $indicator = 'ping-not-actual';
             } elseif (in_array($model->current_status, $errorStates)) {
-                $indicator = 'red';
+                $indicator = 'color-red';
             }
 
             $lastPing = Yii::$app->formatter->asDate($model->ping, WmMashine::PHP_DATE_TIME_FORMAT);
