@@ -90,8 +90,8 @@ use frontend\services\globals\EntityHelper;
     <td class="table-active font12 <?= $item['terminal']['last_ping_class'] ?>">
         <div style = "white-space: nowrap; max-width:60px;">
         <img 
-            src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/<?=$item['terminal']['fullnessIndicator'] ?>-icon.svg"
-            class="x2" alt="red icon"
+            src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/<?=$item['terminal']['fullnessIndicator'] ?>"
+            class="x2 fullness-icon" alt="red icon"
         >
         <?= $item['terminal']['fullness'] ?>%
         <?= 

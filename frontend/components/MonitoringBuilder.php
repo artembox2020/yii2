@@ -206,7 +206,7 @@ class MonitoringBuilder extends Component {
         } else {
             $fullness = 0;
         }
-        $fullnessIndicator = 'green';
+        $fullnessIndicator = 'green-icon.svg';
 
         $cpErrors = [1, 2,3, 4, 5, 6];
         $evtBillErrors = [1, 2, 3, 4, 4, 5, 6];
@@ -216,13 +216,17 @@ class MonitoringBuilder extends Component {
             $errorLabel = 'error';
         }
 
-        if (in_array($imeiData->evt_bill_validator, $evtBillErrors)) {
-            $fullnessIndicator = 'red-tab';
+        $lastPingClass = $imei->getLastPingClass();
+
+        if ($lastPingClass == 'ping-not-actual') {
+            $fullnessIndicator = 'grey-icon.png';
+        } elseif (in_array($imeiData->evt_bill_validator, $evtBillErrors)) {
+            $fullnessIndicator = 'red-tab-icon.svg';
         }
 
         $terminal = [
             'last_ping' => $imei->getLastPing(),
-            'last_ping_class' => $imei->getLastPingClass(),
+            'last_ping_class' => $lastPingClass,
             'error' => $errorLabel,
             'last_ping_value' => date(self::DATE_TIME_FORMAT, $imei->getLastPingValue()),
             'level_signal' => $imeiData->getLevelSignal(),

@@ -139,6 +139,11 @@
     font-weight: normal;
     padding: 0;
 }
+.monitoring-new img.fullness-icon {
+    width: 18px;
+    height: 18px;
+    margin-left: -3px;
+}
 
 @media all and (max-width: 767px) {
     .header-container-mn .user-actions {
