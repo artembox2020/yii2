@@ -75,6 +75,7 @@ class CController extends Controller
                 $imei->time_out = $initDto->time_out;
                 $imei->on_modem_account = $initDto->on_modem_account;
                 $imei->level_signal = $initDto->level_signal;
+                $imei->traffic = $initDto->traffic;
                 $imei->ping = time() + Jlog::TYPE_TIME_OFFSET;
                 $imei->update();
 

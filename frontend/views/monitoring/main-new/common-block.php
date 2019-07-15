@@ -6,7 +6,7 @@ use frontend\services\globals\EntityHelper;
 /* @var $rowspan int */
 
 ?>
-<td style="width: 40px;" rowspan="<?= $rowspan ?>"  class="font12 last">
+<td style="width: 40px;" rowspan="<?= $rowspan ?>"  class="font12 last bold-border">
     <input class="address-id" type="hidden" value="<?= $item['common']['id'] ?>" />
     <input class="address-serial-number" size="1" value="<?= $item['common']['serialNumber'] ?>" />
     <?=
@@ -18,7 +18,7 @@ use frontend\services\globals\EntityHelper;
         )
     ?>
 </td>
-<td rowspan="<?= $rowspan ?>" class="bg-lightgrey font12 last" >
+<td rowspan="<?= $rowspan ?>" class="bg-lightgrey font12 last bold-border" >
     <a
         target = "_blank"
     <?php if (!$item['common']['is_deleted']): ?>
@@ -27,8 +27,13 @@ use frontend\services\globals\EntityHelper;
     >
         <?= $item['common']['bhName'].($item['common']['is_deleted'] ? "[".Yii::t('frontend', 'Deleted')."]" : "") ?>
     </a>
+    <input
+        type = "hidden" 
+        class = "search-bh-value"
+        value = "<?= $item['common']['bhName'] ?>"
+    />
 </td>
-<td rowspan="<?= $rowspan ?>" class="font12 last">
+<td rowspan="<?= $rowspan ?>" class="font12 last bold-border" style="min-width: 140px;">
     <a
         target = "_blank"
         href = "/address-balance-holder/view?id=<?= $item['common']['id'] ?>"

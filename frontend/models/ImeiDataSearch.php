@@ -69,11 +69,7 @@ class ImeiDataSearch extends ImeiData
                        ]))
                        ->andWhere(['address_balance_holder.is_deleted' => false]);
 
-        if (isset($postParams['sortOrder']) && $postParams['sortOrder'] == MonitoringController::SORT_BY_SERIAL) {
-            $query = $query->orderBy(['address_balance_holder.serial_column' => SORT_ASC]);
-        } else {
-            $query = $query->orderBy(['address_balance_holder.address' => SORT_ASC]);
-        }
+        $query = $this->makeOrder($query, $postParams);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -81,6 +77,53 @@ class ImeiDataSearch extends ImeiData
         ]);
 
         return $dataProvider;
+    }
+
+    /**
+     * Adds order condition to query
+     * 
+     * @params \yii\db\Query $query
+     * @params array $postParams
+     * 
+     * @return \yii\db\Query
+     */
+    public function makeOrder($query, $postParams)
+    {
+        if (empty($postParams['sortOrder'])) {
+            $query = $query->orderBy(['address_balance_holder.address' => SORT_ASC]);
+
+            return $query;
+        }
+
+        switch ($postParams['sortOrder']) {
+            case MonitoringController::SORT_BY_ADDRESS:
+                $query = $query->orderBy(['address_balance_holder.address' => SORT_ASC]);
+                break;
+            case MonitoringController::SORT_BY_SERIAL:
+                $query = $query->orderBy(['address_balance_holder.serial_column' => SORT_ASC]);
+                break;
+            case MonitoringController::SORT_BY_BALANCEHOLDER:
+                $query = $query->innerJoin('balance_holder', 'address_balance_holder.balance_holder_id = balance_holder.id')
+                               ->andWhere(['balance_holder.is_deleted' => false])
+                               ->orderBy(['balance_holder.name' => SORT_ASC]);
+                break;
+            case MonitoringController::SORT_BY_ADDRESS_DESC:
+                $query = $query->orderBy(['address_balance_holder.address' => SORT_DESC]);
+                break;
+            case MonitoringController::SORT_BY_SERIAL_DESC:
+                $query = $query->orderBy(['address_balance_holder.serial_column' => SORT_DESC]);
+                break;
+            case MonitoringController::SORT_BY_BALANCEHOLDER_DESC:
+                $query = $query->innerJoin('balance_holder', 'address_balance_holder.balance_holder_id = balance_holder.id')
+                               ->andWhere(['balance_holder.is_deleted' => false])
+                               ->orderBy(['balance_holder.name' => SORT_DESC]);
+                break;    
+            default:
+                $query = $query->orderBy(['address_balance_holder.address' => SORT_ASC]);
+                break;
+        }
+
+        return $query;
     }
 
     /**

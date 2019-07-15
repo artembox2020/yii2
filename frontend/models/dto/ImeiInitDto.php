@@ -22,6 +22,7 @@ class ImeiInitDto
     public $number_channel;
     public $pcb_version;
     public $on_modem_account;
+    public $traffic;
 
     /**
      * map string to ImeiInitDto
@@ -88,6 +89,10 @@ class ImeiInitDto
 
         if (array_key_exists('on_modem_account', $data)) {
             $this->on_modem_account = (float)$data['on_modem_account'];
+        }
+
+        if (array_key_exists('traffic', $data)) {
+            $this->traffic = (float)$data['traffic'];
         }
     }
 }

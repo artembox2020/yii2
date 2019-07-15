@@ -10,7 +10,11 @@ use frontend\models\ImeiDataSearch;
 <div class="container-fluid mt-5" id="tab-tech">
     <table class="table table-bordered table-sm table-responsive-lg margtop mx-auto">
         <?= Yii::$app->view->render("/monitoring/main-new/shapter-block") ?>
-        <?= Yii::$app->view->render("/monitoring/main-new/header-block", ['searchModel' => new ImeiDataSearch()]) ?>
+        <?= Yii::$app->view->render(
+                "/monitoring/main-new/header-block", 
+                ['searchModel' => new ImeiDataSearch(), 'postParams' => $postParams]
+            ) 
+        ?>
         <tbody>
         <?php foreach ($data as $item): ?>
             <tr class="upper-row">

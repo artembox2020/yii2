@@ -1,18 +1,28 @@
 <?php
 
 use frontend\services\globals\EntityHelper;
+use frontend\components\MonitoringBuilder;
 
 ?>
 <thead>
-    <tr>
+    <tr class="header-block">
         <th style="width: 40px;">
-            <?= Yii::t('frontend', 'Number') ?>
+            <div class="<?= MonitoringBuilder::setHeaderClass($postParams, 'number') ?> number">
+                <?= Yii::t('frontend', 'Number') ?>
+                <span class="dropdown-toggle"> </span>
+            </div>
         </th>
         <th class="bg-lightgrey">
-            <?= Yii::t('frontend', 'Balance Holder Name') ?>
+            <div class="<?= MonitoringBuilder::setHeaderClass($postParams, 'bhname') ?> bhname">
+                <?= Yii::t('frontend', 'Balance Holder Name') ?>
+                <span class="dropdown-toggle"> </span>
+            </div>
         </th>
         <th>
-            <?= Yii::t('frontend', 'Address') ?>
+            <div class="<?= MonitoringBuilder::setHeaderClass($postParams, 'address') ?> address">
+                <?= Yii::t('frontend', 'Address') ?>
+                <span class="dropdown-toggle"> </span>
+            </div>
         </th>
         <th class="fin">
             <img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/Group_2.png" alt="roll">
