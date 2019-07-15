@@ -19,6 +19,10 @@ class MonitoringController extends \frontend\controllers\Controller
     const SMALL_DEVICE_WIDTH = 512;
     const SORT_BY_ADDRESS = 0;
     const SORT_BY_SERIAL = 1;
+    const SORT_BY_BALANCEHOLDER = 2;
+    const SORT_BY_ADDRESS_DESC = 3;
+    const SORT_BY_SERIAL_DESC = 4;
+    const SORT_BY_BALANCEHOLDER_DESC = 5;
     const TYPE_TIMEOUT = 300;
 
     public function behaviors()
@@ -88,6 +92,7 @@ class MonitoringController extends \frontend\controllers\Controller
             'addresses' => $addresses,
             'imeis' => $imeis,
             'params' => $params,
+            'postParams' => Yii::$app->request->post(),
             'sortOrders' => $sortOrders,
         ]);
     }
@@ -253,6 +258,7 @@ class MonitoringController extends \frontend\controllers\Controller
             'addresses' => $addresses,
             'imeis' => $imeis,
             'params' => $params,
+            'postParams' => Yii::$app->request->post(),
             'sortOrders' => $sortOrders,
         ]);
     }
@@ -309,6 +315,7 @@ class MonitoringController extends \frontend\controllers\Controller
             'addresses' => $addresses,
             'imeis' => $imeis,
             'params' => $params,
+            'postParams' => Yii::$app->request->post(),
             'sortOrders' => $sortOrders,
         ]);
     }

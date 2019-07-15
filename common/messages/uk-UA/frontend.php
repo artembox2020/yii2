@@ -439,7 +439,7 @@ return [
     'Verification code' => 'Код перевірки',
     'View' => 'Огляд',
     'Website' => 'Веб-сайт',
-    'WM' => 'СМ',
+    'WM' => 'ПМ',
     'Wm Mashines' => 'Пральні машини',
     'Wrong password reset token.' => 'Невірний маркер скидання пароля.',
     'washing' => 'Прання',

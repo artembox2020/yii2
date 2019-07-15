@@ -17,6 +17,11 @@
 .header-container-mn .burger-menu i.fa-2x {
     visibility: hidden;
 }
+.wrap .container {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+}
 .wrap .container > div:nth-child(1) {
     margin-top: 60px;
 }
@@ -87,6 +92,57 @@
 .monitoring-new .wm-mashine-link {
     text-decoration: none;
     color: inherit;
+}
+.monitoring-new .bold-border {
+    border-bottom: 2px solid grey;
+}
+.monitoring-new .width-restrict {
+    max-width: 150px!important;
+    padding-right: 2px!important;
+    padding-left: 2px!important;
+}
+.monitoring-new .height40 {
+    height: 40px;
+}
+.monitoring-new .inline-adjustment {
+    display: inline-block;
+    margin-left: -7px;
+}
+.monitoring-new .header-block .dropup,
+.monitoring-new .header-block .dropdown {
+    cursor: pointer;
+}
+.monitoring-new .header-block .dropup.active,
+.monitoring-new .header-block .dropdown.active {
+    cursor: pointer;
+    font-weight: bold;
+}
+.monitoring-new .ping-actual {
+    font-weight: normal;
+}
+
+.monitoring-new .ping-actual.label {
+    background-color: #228B22;
+    color: white;
+    font-weight: normal;
+    padding: 0;
+}
+.monitoring-new .ping-not-actual.label {
+    background-color: #a9a9a9;
+    color: white;
+    font-weight: normal;
+    padding: 0;
+}
+.monitoring-new .color-red.label {
+    background-color: red;
+    color: white;
+    font-weight: normal;
+    padding: 0;
+}
+.monitoring-new img.fullness-icon {
+    width: 18px;
+    height: 18px;
+    margin-left: -3px;
 }
 
 @media all and (max-width: 767px) {

@@ -1,3 +1,8 @@
+<?php
+
+use frontend\controllers\MonitoringController;
+
+?>
 <script>
     (function() 
     {
@@ -6,7 +11,18 @@
         var monitoringFormAddress = monitoringForm.querySelector('input[name=address]');
         var monitoringFormSortOrder = monitoringForm.querySelector('select[name=sortOrder]');
         var monitoringSerialNumbers = monitoring.querySelectorAll('input.address-serial-number');
-        
+        var monitoringSerialSorts = monitoring.querySelectorAll(
+            '.header-block .dropup.number, .header-block .dropdown.number'
+        );
+        var monitoringBalanceHolderSorts = monitoring.querySelectorAll(
+            '.header-block .dropup.bhname, .header-block .dropdown.bhname'
+        );
+        var monitoringAddressSorts = monitoring.querySelectorAll(
+            '.header-block .dropup.address, .header-block .dropdown.address'
+        );
+        var MIN_VALUE = -999999999;
+        var MAX_VALUE = 999999999;
+
         /*function getActiveTab()
         {
             var genTab = monitoring.querySelector('#tab-gen');
@@ -86,7 +102,6 @@
         monitoringFormAddress.onkeypress = function(e)
         {
             if (e.keyCode == 13 ) {
-                console.log('enter press');
                 e.preventDefault();
                 this.onchange();
 
@@ -135,6 +150,31 @@
             }
         }
 
+        // puts item after node
+        function putItemAfter(tr, afterNode)
+        {
+            var oldNode = afterNode;
+            afterNode = afterNode.nextSibling;
+            while  (typeof afterNode != 'undefined' && afterNode != null 
+                && (!afterNode.classList || !afterNode.classList.contains('upper-row'))
+            ) {
+                oldNode = afterNode;
+                afterNode = afterNode.nextSibling;
+            }
+            var nextSibling = tr.nextSibling;
+            oldNode.after(tr);
+
+            while (
+                typeof nextSibling != 'undefined' && nextSibling != null 
+                && (!nextSibling.classList || !nextSibling.classList.contains('upper-row'))
+            ) {
+                newNextSibling  = nextSibling.nextSibling;
+                tr.after(nextSibling);
+                tr = tr.nextSibling;
+                nextSibling = newNextSibling;
+            }
+        }
+
         // initialize script
         (function init() {
             var genTab = monitoring.querySelector("#tab-gen");
@@ -173,6 +213,160 @@
                 }
             }
         })();
+
+        // on sort arrow click function
+        function sortClick(elem, sortValue, sortDescValue)
+        {
+            var form = monitoring.querySelector('.monitoring-pjax-form');
+            var sortOrderField = form.querySelector('input[name=sortOrder]');
+
+            if (elem.classList.contains('dropup')) {
+                var sortOrder = sortDescValue;
+            } else {
+                var sortOrder = sortValue;
+            }
+
+            sortOrderField.value = sortOrder;
+            elem.classList.add('active');
+            form.querySelector('button[type=submit]').click();
+        }
+        
+        // on sort arrow click process function
+        function sortClickProc(elem, selector, sortAsc, sortDesc, type)
+        {
+            var length = monitoring.querySelectorAll(selector).length;
+
+            if (elem.classList.contains('dropup')) {
+                var sortOrder = sortDesc;
+                elem.classList.remove('dropup');
+                elem.classList.add('dropdown');
+            } else {
+                var sortOrder = sortAsc;
+                elem.classList.remove('dropdown');
+                elem.classList.add('dropup');
+            }
+
+            var arrayAsc = [
+                <?= MonitoringController::SORT_BY_ADDRESS ?>,
+                <?= MonitoringController::SORT_BY_BALANCEHOLDER ?>,
+                <?= MonitoringController::SORT_BY_SERIAL ?>
+            ];
+
+            var arrayDesc = [
+                <?= MonitoringController::SORT_BY_ADDRESS_DESC ?>,
+                <?= MonitoringController::SORT_BY_BALANCEHOLDER_DESC ?>,
+                <?= MonitoringController::SORT_BY_SERIAL_DESC ?>
+            ];
+
+            for (var j = length - 1; j > 0; --j) {
+                var lines = monitoring.querySelectorAll(selector);
+                var currentElem = lines[0];
+                var lastElem = lines[j];
+                for (var i = 1; i <= j; ++i) {
+                    var item = lines[i];
+                    var itemValue = item.value;
+                    var currValue = currentElem.value;
+
+                    if (type == 'int') {
+                        if (parseInt(itemValue)) {
+                            itemValue = parseInt(itemValue);
+                        } else {
+                            if (arrayAsc.includes(sortOrder)) {
+                                itemValue = MAX_VALUE;
+                            } else {
+                                itemValue = MIN_VALUE;
+                            }
+                        }
+
+                        if (parseInt(currValue)) {
+                            currValue = parseInt(currValue);
+                        } else {
+                            if (arrayAsc.includes(sortOrder)) {
+                                currValue = MAX_VALUE;
+                            } else {
+                                currValue = MIN_VALUE;
+                            }
+                        }
+                    }
+
+                    if (arrayAsc.includes(sortOrder)) {
+                        var condition = itemValue > currValue;
+                    } else {
+                        var condition = itemValue < currValue;
+                    }
+
+                    if (condition) {
+                        currentElem = item;
+                    }
+                }
+                putItemAfter(currentElem.closest('tr.upper-row'), lastElem.closest('tr.upper-row'));
+            }
+        }
+
+        //sort click aggregated function 
+        function sortClickFunc(elemSelector, selector, sortAsc, sortDesc, type)
+        {
+            var selectors = [];
+
+            if (monitoring.querySelector("#tab-gen")) {
+                selectors.push("#tab-gen " + selector);
+            }
+
+            if (monitoring.querySelector("#tab-tech")) {
+                selectors.push("#tab-tech " + selector);
+            }
+
+            if (monitoring.querySelector("#tab-fin")) {
+                selectors.push("#tab-fin " + selector);
+            }
+
+            for (var i = 0; i < selectors.length; ++i) {
+                var elem = monitoring.querySelector(selectors[i].split(" ")[0] + ' ' + elemSelector);
+                sortClickProc(elem, selectors[i], sortAsc, sortDesc, type);
+            }
+        }
+
+        // serial columns sort
+        for (var i = 0; i < monitoringSerialSorts.length; ++i) {
+            monitoringSerialSort = monitoringSerialSorts[i];
+            monitoringSerialSort.onclick = function() {
+                sortClickFunc(
+                    ".header-block .number",
+                    ".address-serial-number",
+                    <?= MonitoringController::SORT_BY_SERIAL ?>,
+                    <?= MonitoringController::SORT_BY_SERIAL_DESC ?>,
+                    "int"
+                );
+            }
+        }
+
+        // balance holders sort
+        for (var i = 0; i < monitoringBalanceHolderSorts.length; ++i) {
+            monitoringBalanceHolderSort = monitoringBalanceHolderSorts[i];
+            monitoringBalanceHolderSort.onclick = function() {
+                sortClickFunc(
+                    ".header-block .bhname",
+                    ".search-bh-value",
+                    <?= MonitoringController::SORT_BY_BALANCEHOLDER ?>,
+                    <?= MonitoringController::SORT_BY_BALANCEHOLDER_DESC ?>,
+                    "string"
+                );
+            }
+        }
+
+        // addresses sort
+        for (var i = 0; i < monitoringAddressSorts.length; ++i) {
+            monitoringAddressSort =  monitoringAddressSorts[i];
+            monitoringAddressSort.onclick = function() {
+                sortClickFunc(
+                    ".header-block .address",
+                    ".search-address-value",
+                    <?= MonitoringController::SORT_BY_ADDRESS ?>,
+                    <?= MonitoringController::SORT_BY_ADDRESS_DESC ?>,
+                    "string"
+                );
+            }
+        }
 
         // update page script
         <?= Yii::$app->view->render('/monitoring/data/ajax_update_handler', ['timestamp' => $timestamp, 'timeOut' => $timeOut]) ?>

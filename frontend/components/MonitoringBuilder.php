@@ -10,6 +10,7 @@ use yii\helpers\ArrayHelper;
 use frontend\models\ImeiDataSearch;
 use frontend\models\Imei;
 use frontend\models\WmMashine;
+use frontend\controllers\MonitoringController;
 
 /**
  * Class MonitoringBuilder
@@ -18,8 +19,8 @@ use frontend\models\WmMashine;
 class MonitoringBuilder extends Component {
     private $monitoringController;
     public $layout;
-    
-    public const RED_FILLNESS_INDICATOR = 60;
+
+    public const CONNECTION_IDLES_TIME = 1800;
     public const DATE_TIME_FORMAT = 'd.m.y H:i:s';
 
     /**
@@ -36,14 +37,18 @@ class MonitoringBuilder extends Component {
      * 
      * @param yii\data\ActiveDataProvider $dataProvider
      * @param frontend\models\ImeiDataSearch $searchModel
+     * @param array $postParams
      * 
      * @return string
      */
-    public function renderCommon($dataProvider, $searchModel)
+    public function renderCommon($dataProvider, $searchModel, $postParams)
     {
         $data = $this->getData($dataProvider, $searchModel);
 
-        return Yii::$app->view->render("@frontend/views/monitoring/".$this->layout."/common", ['data' => $data]);
+        return Yii::$app->view->render(
+            "@frontend/views/monitoring/".$this->layout."/common",
+            ['data' => $data, 'postParams' => $postParams]
+        );
     }
 
     /**
@@ -51,14 +56,18 @@ class MonitoringBuilder extends Component {
      * 
      * @param yii\data\ActiveDataProvider $dataProvider
      * @param frontend\models\ImeiDataSearch $searchModel
+     * @param array $postParams
      * 
      * @return string
      */
-    public function renderTechnical($dataProvider, $searchModel)
+    public function renderTechnical($dataProvider, $searchModel, $postParams)
     {
         $data = $this->getData($dataProvider, $searchModel);
 
-        return Yii::$app->view->render("@frontend/views/monitoring/".$this->layout."/technical", ['data' => $data]);
+        return Yii::$app->view->render(
+            "@frontend/views/monitoring/".$this->layout."/technical",
+            ['data' => $data, 'postParams' => $postParams]
+        );
     }
 
     /**
@@ -66,14 +75,18 @@ class MonitoringBuilder extends Component {
      * 
      * @param yii\data\ActiveDataProvider $dataProvider
      * @param frontend\models\ImeiDataSearch $searchModel
+     * @param array $postParams
      * 
      * @return string
      */
-    public function renderFinancial($dataProvider, $searchModel)
+    public function renderFinancial($dataProvider, $searchModel, $postParams)
     {
         $data = $this->getData($dataProvider, $searchModel);
 
-        return Yii::$app->view->render("@frontend/views/monitoring/".$this->layout."/financial", ['data' => $data]);
+        return Yii::$app->view->render(
+            "@frontend/views/monitoring/".$this->layout."/financial",
+            ['data' => $data, 'postParams' => $postParams]
+        );
     }
 
     /**
@@ -193,23 +206,27 @@ class MonitoringBuilder extends Component {
         } else {
             $fullness = 0;
         }
-        $fullnessIndicator = 'green';
-
-        if ($fullness >= self::RED_FILLNESS_INDICATOR) {
-            $fullnessIndicator = 'red-tab';
-        }
+        $fullnessIndicator = 'green-icon.svg';
 
         $cpErrors = [1, 2,3, 4, 5, 6];
         $evtBillErrors = [1, 2, 3, 4, 4, 5, 6];
         $errorLabel = '';
 
-        if (in_array($imeiData->packet, $cpErrors) || in_array($imeiData->evt_bill_validator, $evtBillErrors)) {
+        if (in_array($imeiData->packet, $cpErrors)) {
             $errorLabel = 'error';
+        }
+
+        $lastPingClass = $imei->getLastPingClass();
+
+        if ($lastPingClass == 'ping-not-actual') {
+            $fullnessIndicator = 'grey-icon.png';
+        } elseif (in_array($imeiData->evt_bill_validator, $evtBillErrors)) {
+            $fullnessIndicator = 'red-tab-icon.svg';
         }
 
         $terminal = [
             'last_ping' => $imei->getLastPing(),
-            'last_ping_class' => $imei->getLastPingClass(),
+            'last_ping_class' => $lastPingClass,
             'error' => $errorLabel,
             'last_ping_value' => date(self::DATE_TIME_FORMAT, $imei->getLastPingValue()),
             'level_signal' => $imeiData->getLevelSignal(),
@@ -218,7 +235,8 @@ class MonitoringBuilder extends Component {
             'fullness' => $fullness,
             'fullnessIndicator' => $fullnessIndicator,
             'in_banknotes' => $imeiData->in_banknotes,
-            'imei' => $imei->imei
+            'imei' => $imei->imei,
+            'traffic' => $imei->traffic
         ];
 
         $devices = [];
@@ -228,14 +246,14 @@ class MonitoringBuilder extends Component {
         $mashines = $dataProviderWmMashine->query->all();
 
         foreach ($mashines as $model) {
-            $indicator = 'green';
+            $indicator = 'ping-actual';
             $connectionIdleStates = [0, 16];
             $errorStates = [9, 10, 11, 12, 13, 14, 21, 25];
 
-            if (in_array($model->current_state, $connectionIdleStates)) {
-                $indicator = 'darkgrey';
-            } elseif (in_array($model->current_state, $errorStates)) {
-                $indicator = 'red';
+            if (in_array($model->current_status, $connectionIdleStates) || (time() - $model->ping > self::CONNECTION_IDLES_TIME)) {
+                $indicator = 'ping-not-actual';
+            } elseif (in_array($model->current_status, $errorStates)) {
+                $indicator = 'color-red';
             }
 
             $lastPing = Yii::$app->formatter->asDate($model->ping, WmMashine::PHP_DATE_TIME_FORMAT);
@@ -264,5 +282,33 @@ class MonitoringBuilder extends Component {
         $technical = ['software' => $software, 'terminal' => $terminal, 'devices' => $devices];
 
         return $technical;
+    }
+
+    /**
+     * Sets header class depending on post data
+     * 
+     * @param array $postParams
+     * @param string $name
+     * 
+     * @return string
+     */
+    public static function setHeaderClass($postParams, $name)
+    {
+        $isEmpty = empty($postParams) || empty($postParams['sortOrder']);
+        switch ($name) {
+            case 'number':
+
+                return $isEmpty ? 'dropup' : 
+                       ($postParams['sortOrder'] != MonitoringController::SORT_BY_SERIAL ? 'dropdown' : 'dropup');
+            case 'bhname':
+
+                return $isEmpty ? 'dropup' : 
+                       ($postParams['sortOrder'] != MonitoringController::SORT_BY_BALANCEHOLDER ? 'dropdown' : 'dropup');
+            
+            case 'address':
+
+                return $isEmpty ? 'dropup' : 
+                       ($postParams['sortOrder'] != MonitoringController::SORT_BY_ADDRESS ? 'dropdown' : 'dropup');
+        }
     }
 }
