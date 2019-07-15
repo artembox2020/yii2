@@ -235,7 +235,8 @@ class MonitoringBuilder extends Component {
             'fullness' => $fullness,
             'fullnessIndicator' => $fullnessIndicator,
             'in_banknotes' => $imeiData->in_banknotes,
-            'imei' => $imei->imei
+            'imei' => $imei->imei,
+            'traffic' => $imei->traffic
         ];
 
         $devices = [];

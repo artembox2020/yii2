@@ -85,6 +85,7 @@ use frontend\services\globals\EntityHelper;
                     'height: 5px'
                 )
             ?>
+            <?= !empty($item['terminal']['traffic']) ? $item['terminal']['traffic'].' Mb' : '' ?>
         </div>
     </td>
     <td class="table-active font12 <?= $item['terminal']['last_ping_class'] ?>">
