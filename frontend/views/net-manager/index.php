@@ -21,7 +21,7 @@ $gd_machine = array();
 ?>
 <?php $menu = []; ?>
 <b>
-<?= $this->render('_sub_menu', [
+<?= $this->render($controller->getPath('_sub_menu'), [
         'menu' => $menu,
     ]) ?>
 </b>

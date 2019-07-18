@@ -19,15 +19,16 @@ class Controller extends \yii\web\Controller
      * Gets path depending on layout
      * 
      * @param string $view
+     * @param bool $ignoreLayout
      * 
      * @return string
      */
-    public function getPath($view)
+    public function getPath($view, $ignoreLayout = false)
     {
         $layout = Yii::$app->layout;
         $layoutParts = explode("-", $layout);
 
-        if (count($layoutParts) < 2) {
+        if ($ignoreLayout || count($layoutParts) < 2) {
 
             return $view;
         }
