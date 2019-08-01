@@ -38,7 +38,7 @@ use yii\web\NotFoundHttpException;
  * Class NetManagerController
  * @package frontend\controllers
  */
-class NetManagerController extends \yii\web\Controller
+class NetManagerController extends \frontend\controllers\Controller
 {
     /** @var int ONE */
     const ONE = 1;
@@ -87,9 +87,10 @@ class NetManagerController extends \yii\web\Controller
     }
 
     /**
+     * @param bool|null $ignoreLayout
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($ignoreLayout = null)
     {
 
 //        if (!\Yii::$app->user->can('viewTechData', ['class'=>static::class])) {
@@ -105,11 +106,25 @@ class NetManagerController extends \yii\web\Controller
             $balanceHolders = $model->balanceHolders;
         }
 
-        return $this->render('index', [
+        $render = Yii::$app->layout == 'main-new' ?  ($ignoreLayout ? 'render' : 'renderPartial') : 'render';
+
+        return $this->$render($this->getPath('index', $ignoreLayout), [
             'model' => $model,
             'users' => $users,
             'balanceHolders' => $balanceHolders,
+            'controller' => $this
         ]);
+    }
+
+    /**
+     * Redirection to index action
+     * 
+     * @return string 
+     */
+    public function actionCompany()
+    {
+
+        return $this->actionIndex(true);
     }
 
     /**
@@ -961,8 +976,9 @@ class NetManagerController extends \yii\web\Controller
             'allModels' => $this->service->getItems(),
         ]);
 
-        return $this->render('logger/index', [
+        return $this->render($this->getPath('logger/index'), [
             'dataProvider' => $dataProvider,
+            'pageSize' => self::PAGE_SIZE
         ]);
     }
 }

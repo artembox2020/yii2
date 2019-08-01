@@ -115,6 +115,7 @@ class JournalController extends Controller
 
         $params = $searchModel->setParams($searchModel, $params, $params);
         $params = $searchModel->setMashineNumber($searchModel, $params);
+
         $searchModel->inputValue['date'] = $params['inputValue']['date'];
         $searchModel->val2['date'] = $params['val2']['date'];
         $typePackets = Jlog::getTypePackets();
@@ -129,7 +130,7 @@ class JournalController extends Controller
         $removeRedundantGrids = $entityHelper->removeRedundantGrids('.journal-grid-view');
         $columnFilterScript = $this->getColumnFilterScript($params);
 
-        $dataProvider = $this->getDataProvider($searchModel, $params);
+        $dataProvider = $searchModel->searchByMashine($params, $id);
 
         return $this->renderPartial('index-by-mashine', [
             'searchModel' => $searchModel,
@@ -230,6 +231,7 @@ class JournalController extends Controller
         $searchModel = new JLogDataSearch();
         $searchFilter = new CbLogSearchFilter();
         $dataProvider->query->andWhere(['type_packet' => Jlog::TYPE_PACKET_DATA]);
+        $searchModel->setMashineNumber($searchModel, $prms);
         $arrayProvider = $searchModel->searchData($prms, $dataProvider->query);
 
         $searchModel->inputValue['date'] = $prms['inputValue']['date'];

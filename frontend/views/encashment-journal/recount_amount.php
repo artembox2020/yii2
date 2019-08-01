@@ -7,7 +7,7 @@
         var difference = currentRa.closest('tr').querySelector('td.cell-difference span');
         var hidden = document.createElement('input');
         hidden.type = 'hidden';
-        hidden.value = parseFloat(difference.innerHTML) + parseInt(currentRa.value);
+        hidden.value = parseFloat(difference.innerHTML) - parseInt(currentRa.value);
         difference.parentNode.insertBefore(hidden, difference);
         currentRa.onchange = function() { updateRecountAmount(this);}
     }
@@ -32,7 +32,7 @@
 
                         var hidden = currentRa.closest('tr').querySelector('td.cell-difference input[type=hidden]');
                         var difference = currentRa.closest('tr').querySelector('td.cell-difference span');
-                        var diff = parseFloat(hidden.value) - parseInt(currentRa.value);
+                        var diff = parseFloat(hidden.value) + parseInt(currentRa.value);
                         difference.innerHTML = diff;
 
                         if (diff > 0) {

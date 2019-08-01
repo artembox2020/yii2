@@ -144,6 +144,12 @@
     height: 18px;
     margin-left: -3px;
 }
+b .net-manager-new.sub-menu {
+    font-weight: normal;
+}
+.net-manager .width80 {
+    min-width: 80px;
+}
 
 @media all and (max-width: 767px) {
     .header-container-mn .user-actions {
