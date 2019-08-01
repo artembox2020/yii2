@@ -204,7 +204,8 @@ class EncashmentJournalController extends Controller
     {
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'orientation' => 'P'
+            'orientation' => 'P',
+            'tempDir' => Yii::getAlias("@frontend")."/../storage/temp"
         ]);
 
         $mpdf->setTitle($title);
