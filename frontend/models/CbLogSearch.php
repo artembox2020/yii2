@@ -822,8 +822,8 @@ class CbLogSearch extends CbLog
     public function getDifference($model)
     {
 
-        $diff = ($model['wash_temperature'] - $this->getLastFireproofCounterHrn($model) - $this->getCollectionCounter($model));
-        $diff -= (int)$model['recount_amount'];
+        $diff = ($model['wash_temperature'] - $this->getLastFireproofCounterHrn($model) - 2*$this->getCollectionCounter($model));
+        $diff += (int)$model['recount_amount'];
 
         return $diff;
     }
