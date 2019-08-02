@@ -834,8 +834,7 @@ class JlogSearch extends Jlog
     {
         $mashineId = Yii::$app->request->get()['id'] ?? self::ZERO;
 
-        if (!empty($mashineId)) {
-            $mashine = WmMashine::findOne($mashineId);
+        if (!empty($mashineId) && !empty($mashine = WmMashine::findOne($mashineId))) {
             $searchModel->mashineNumber = '_'.$mashine->type_mashine.'*'.$mashine->number_device;
             $params['wm_mashine_number'] = $mashine->number_device;
         }
