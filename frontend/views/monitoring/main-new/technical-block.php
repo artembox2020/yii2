@@ -26,7 +26,7 @@ use frontend\services\globals\EntityHelper;
                     <?= !empty(trim($mashine['display'])) ? '&nbsp;'.$mashine['display'].'&nbsp;' :  '' ?>
                 </span>
             </span>
-            <span class="font10 height40"><?= $mashine['current_status'] ?></span><br>
+            <span class="font10 height40 <?= $mashine['no_connection'] ?>"><?= $mashine['current_status'] ?></span><br>
         </a>
         <span class="font12 inline-adjustment <?= $mashine['indicator'] ?>">
             <?= $mashine['last_ping'] ?>
