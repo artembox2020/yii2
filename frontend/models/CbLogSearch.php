@@ -746,7 +746,7 @@ class CbLogSearch extends CbLog
         $dataProvider = new ActiveDataProvider([
             'query' => $cbLogQuery,
             'pagination' => [
-                'pageSize' => self::PAGE_SIZE
+                'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
             ],
             'sort' => [
                 'defaultOrder' => ['unix_time_offset' => SORT_DESC],

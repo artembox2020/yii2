@@ -144,6 +144,13 @@
     height: 18px;
     margin-left: -3px;
 }
+.monitoring-new .no-connection {
+    color: white;
+    border-bottom-left-radius: 4.56px;
+    border-bottom-right-radius: 4.56px;
+    background-color: rgb(169, 169, 169);
+    height: 100%;
+}
 b .net-manager-new.sub-menu {
     font-weight: normal;
 }
