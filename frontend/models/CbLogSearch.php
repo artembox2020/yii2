@@ -746,7 +746,7 @@ class CbLogSearch extends CbLog
         $dataProvider = new ActiveDataProvider([
             'query' => $cbLogQuery,
             'pagination' => [
-                'pageSize' => self::PAGE_SIZE
+                'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
             ],
             'sort' => [
                 'defaultOrder' => ['unix_time_offset' => SORT_DESC],
@@ -822,8 +822,8 @@ class CbLogSearch extends CbLog
     public function getDifference($model)
     {
 
-        $diff = ($model['wash_temperature'] - $this->getLastFireproofCounterHrn($model) - $this->getCollectionCounter($model));
-        $diff -= (int)$model['recount_amount'];
+        $diff = ($model['wash_temperature'] - $this->getLastFireproofCounterHrn($model) - 2*$this->getCollectionCounter($model));
+        $diff += (int)$model['recount_amount'];
 
         return $diff;
     }

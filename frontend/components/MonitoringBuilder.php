@@ -270,6 +270,7 @@ class MonitoringBuilder extends Component {
                 'id' => $model->id,
                 'bill_cash' => $model->bill_cash,
                 'current_status' => Yii::t('frontend', $model->getState()),
+                'no_connection' => $indicator == 'ping-not-actual' ? 'no-connection' : '',
                 'indicator' => $indicator,
                 'display' => $model->display,
                 'last_ping' => $lastPing,

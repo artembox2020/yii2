@@ -95,7 +95,7 @@ class EncashmentJournalController extends Controller
                     'date', 'type_packet', 'address', 'imei', 'id',
                     'number', 'unix_time_offset'
                 ],
-                'sort',
+                'sort', 'page_size',
                 'CbLogSearch' => [
                     'from_date', 'to_date',
                     'inputValue' => ['date', 'unix_time_offset'],
@@ -204,7 +204,8 @@ class EncashmentJournalController extends Controller
     {
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'orientation' => 'P'
+            'orientation' => 'P',
+            'tempDir' => Yii::getAlias("@frontend")."/../storage/temp"
         ]);
 
         $mpdf->setTitle($title);
