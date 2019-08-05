@@ -23,6 +23,8 @@ class UserProfile extends ActiveRecord
     const GENDER_MALE = 1;
     const GENDER_FEMALE = 2;
 
+    const NO_PHOTO_AVATAR_PATH = 'no-photo.png';
+
     /**
      * @inheritdoc
      */
@@ -83,5 +85,16 @@ class UserProfile extends ActiveRecord
             'other' => Yii::t('common', 'Other'),
             'position' => Yii::t('common', 'Position'),
         ];
+    }
+
+    /**
+     * Gets path to avatar
+     *
+     * @return string
+     */
+    public function getAvatarPath()
+    {
+
+        return !empty($this->avatar_path) ? $this->avatar_path : self::NO_PHOTO_AVATAR_PATH;
     }
 }

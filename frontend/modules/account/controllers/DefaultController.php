@@ -250,12 +250,12 @@ class DefaultController extends Controller
         if (!Yii::$app->user->isGuest) {
             $model = new UserForm();
             $model->setScenario('create');
-            
+
             if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
                 Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
                 return \yii\widgets\ActiveForm::validate($model);
             }
-            
+
             if ($model->load(Yii::$app->request->post())) {
                 $model->other = $model->password;
 
@@ -272,6 +272,7 @@ class DefaultController extends Controller
                 
                 $profile = UserProfile::findOne($user->id);
                 if ($profile->load(Yii::$app->request->post())) {
+                    $profile->birthday = strtotime(Yii::$app->request->post()['UserProfile']['birthday']);
                     $profile->save(false);
                 }
 

@@ -147,10 +147,53 @@
 b .net-manager-new.sub-menu {
     font-weight: normal;
 }
-.net-manager .width80 {
+.net-manager-new .width80 {
     min-width: 80px;
 }
-
+.net-manager-new .hidden-row {
+    display: none;
+}
+.net-manager-new #createuser,
+.net-manager-new #editcoworker,
+.net-manager-new #del-coworker {
+    z-index: 2000;
+}
+.net-manager-new .coworker-card .media img {
+    max-width: 100px;
+    max-height: 100px;
+}
+.net-manager-new .change-avatar-block label,
+.net-manager-new .glyphicon {
+    display: none;
+}
+.net-manager-new #editcoworker .avatar-img {
+    max-width: 40px;
+    max-height: 40px;
+    overflow: hidden;
+}
+.net-manager-new #editcoworker .avatar-img img {
+    max-height: 100%;
+    max-width: 100%;
+}
+.net-manager-new #modal-crop {
+    opacity: 1;
+}
+body {
+    padding-right: 0!important;
+}
+body.modal-open {
+    overflow: visible!important;
+}
+@media all and (max-width: 468px) {
+    .net-manager-new .coworkers__create-user {
+        overflow: hidden;
+    }
+    .net-manager-new .coworkers__create-user input {
+        max-width: 305px!important;
+        padding-left: 30px!important;
+        padding-right: 5px;
+    }
+}
 @media all and (max-width: 767px) {
     .header-container-mn .user-actions {
         right: 16%;

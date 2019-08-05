@@ -6,17 +6,20 @@
     var numberSort = netManager.querySelector('.dropdown.number, .dropup.number');
     var min = -999999999999;
     var max= 999999999999;
+    var direction = 'up';
+
+    <?=Yii::$app->view->render('/net-manager/main-new/baseScript') ?>
 
     // show more button click
     buttonMore.onclick = function()
     {
-        showmoreClickProcess(this);
+        showmoreClickProcess(this, 'table tbody tr');
     }
 
     // show less button click
     buttonLess.onclick = function()
     {
-        showlessClickProcess(this);
+        showlessClickProcess(this, 'table tbody tr');
     }
 
     // date sort process click
@@ -31,61 +34,7 @@
         sortFunc(this, ".hidden.number");
     }
 
-    // show more button click
-    function showmoreClickProcess(button)
-    {
-        var trs = netManager.querySelectorAll('table tbody tr');
-        var showNumber = netManager.querySelector('.page-size-initial').value;
-        var pageInitSize = parseInt(showNumber);
-        var i = 0;
-
-        for (; i < trs.length; ++i) {
-            if (trs[i].classList && trs[i].classList.contains('hidden')) {
-                trs[i].classList.remove('hidden');
-                --showNumber;
-            }
-
-            if (showNumber <= 0) {
-                break;
-            }
-        }
-        
-        if (i == trs.length) {
-            button.classList.add('hidden');
-            buttonLess.classList.remove('hidden');
-        }
-        
-        var pageSize = netManager.querySelector('.page-size');
-        pageSize.value = parseInt(pageSize.value) + pageInitSize;
-    }
-
-    // show less button click
-    function showlessClickProcess(button)
-    {
-        var trs = netManager.querySelectorAll('table tbody tr');
-        var showNumber = netManager.querySelector('.page-size-initial').value;
-        var pageInitSize = parseInt(showNumber);
-        var i = trs.length-1;
-
-        for (; i >= pageInitSize; --i) {
-            if (!trs[i].classList || !trs[i].classList.contains('hidden')) {
-                trs[i].classList.add('hidden');
-                --showNumber;
-            }
-
-            if (showNumber <= 0) {
-                break;
-            }
-        }
-
-        if (i <= pageInitSize) {
-            button.classList.add('hidden');
-            buttonMore.classList.remove('hidden');
-        }
-
-        var pageSize = netManager.querySelector('.page-size');
-        pageSize.value = parseInt(pageSize.value) - pageInitSize;
-    }
+    
 
     // sort function
     function sortFunc(sortElem, selector)
@@ -149,5 +98,9 @@
                 trs[i].classList.add('hidden');
             }
         }
+    }
+    
+    function updateStatusString() {
+        
     }
 </script>

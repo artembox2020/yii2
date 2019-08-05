@@ -33,6 +33,7 @@ use yii\filters\AccessControl;
 use backend\services\mail\MailSender;
 use frontend\services\custom\Debugger;
 use yii\web\NotFoundHttpException;
+use yii\bootstrap\ActiveForm;
 
 /**
  * Class NetManagerController
@@ -138,15 +139,16 @@ class NetManagerController extends \frontend\controllers\Controller
         }
 
         $searchModel = new UserSearch();
-        
+
         $model = new User();
-        
+
         $dataProvider = $searchModel->searchEmployees(Yii::$app->request->queryParams);
-        
-        return $this->render('employees', [
+
+        return $this->render($this->getPath('employees'), [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
-            'model' => $model
+            'model' => $model,
+            'pageSize' => self::PAGE_SIZE
         ]);
     }
 
@@ -208,6 +210,54 @@ class NetManagerController extends \frontend\controllers\Controller
 //    }
 
     /**
+     * Renders user creation
+     * 
+     * @return string
+     */
+    public function actionCreateEmployee()
+    {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
+        $model = new UserForm();
+        $model->setScenario('create');
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            return \yii\widgets\ActiveForm::validate($model);
+        }
+
+        $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
+
+        $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+
+        if (!array_key_exists('super_administrator', $now)) {
+            unset($roles[array_search('administrator', $roles)]);
+        }
+
+        unset($roles[array_search('super_administrator', $roles)]);
+        unset($roles[array_search('user', $roles)]);
+
+        foreach ($roles as $key => $role) {
+            $roles[$key] = Yii::t('backend', $role);
+        }
+
+        $model->status = 1;
+
+        return $this->renderPartial(
+            'employees-new/create-user',
+            [
+                'model' => $model,
+                'roles' => $roles,
+                'profile' => new UserProfile()
+            ]
+        );
+    }
+
+    /**
      * @param null $id
      * @return string
      * @throws NotFoundHttpException
@@ -215,9 +265,15 @@ class NetManagerController extends \frontend\controllers\Controller
     public function actionViewEmployee($id)
     {
         $model = $this->findModel($id, new User());
-        
-        return $this->render('view-employee', [
-            'model' => $model
+        $userForm = new UserForm();
+        $userForm->setModel($this->findModel($id, new User()));
+        $profile = UserProfile::findOne($id);
+
+        return $this->render($this->getPath('view-employee'), [
+            'model' => $model,
+            'roles' => $this->getRoles(),
+            'userForm' => $userForm,
+            'profile' => $profile
         ]);
     }
 
@@ -246,9 +302,7 @@ class NetManagerController extends \frontend\controllers\Controller
             if ($isValid) {
                 $user->save();
                 $profile->save(false);
-//                $this->service->createLog($user, 'Update');
-//                $this->service->createLog($profile, 'Update');
-                //        $this->service->createLog($profile);
+
                 return $this->redirect(['/net-manager/employees']);
             }
         }
@@ -270,8 +324,8 @@ class NetManagerController extends \frontend\controllers\Controller
         foreach ($roles as $key => $role) {
             $roles[$key] = Yii::t('backend', $role);
         }
-        
-        return $this->render('create', [
+
+        return $this->render($this->getPath('create'), [
             'user' => $user,
             'profile' => $profile,
             'roles' => $roles,
@@ -980,5 +1034,94 @@ class NetManagerController extends \frontend\controllers\Controller
             'dataProvider' => $dataProvider,
             'pageSize' => self::PAGE_SIZE
         ]);
+    }
+
+    /**
+     * Gets user roles available
+     * 
+     * @return array
+     */
+    public function getRoles()
+    {
+        $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
+
+        $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+
+        unset($roles[array_search('super_administrator', $roles)]);
+        unset($roles[array_search('user', $roles)]);
+
+        foreach ($roles as $key => $role) {
+            $roles[$key] = Yii::t('backend', $role);
+        }
+
+        return $roles;
+    }
+
+    /**
+     * Gets employee info by id
+     * 
+     * @param integer $id
+     * 
+     * @return array
+     */
+    public function actionEditEmployeeData($id)
+    {
+        $model = $this->findModel($id, new User());
+        $userForm = new UserForm();
+        $userForm->setModel($this->findModel($id, new User()));
+        $profile = UserProfile::findOne($id);
+        $form = ActiveForm::begin([
+            'id' => 'user-edit-form',
+            'action' => '/net-manager/edit-employee?id='.$id,
+            'method' => 'post'
+        ]);
+
+        $data = [
+            'username' => $model->username,
+            'position' => $profile->position,
+            'birthday' => $profile->birthday ? date('Y-m-d', $profile->birthday) : null,
+            'email' => $model->email,
+            'avatar_path' => $profile->getAvatarPath(),
+            'firstname' => $profile->firstname,
+            'gender' => $profile->gender,
+            'lastname' => $profile->lastname,
+            'other' => $profile->other,
+            'status' => $model->status,
+            'roles' => $userForm->roles,
+            'storageUrl' => Yii::getAlias("@storageUrl"),
+            'redrawModalSelector' => "*[data-id='$id']",
+            'deleteModalSelector' => "*[data-delete-id='$id']"
+        ];
+
+        return json_encode($data);
+    }
+
+    /**
+     * Renders employee edition form by data provider
+     * 
+     * @param yii\data\ActiveDataProvider $dataProvider
+     * 
+     * @return string
+     */
+    public function actionEditEmployeeNew($dataProvider)
+    {
+        $item = $dataProvider->query->one();
+        $id = $item->id;
+        $model = $this->findModel($id, new User());
+        $userForm = new UserForm();
+        $userForm->setModel($this->findModel($id, new User()));
+        $profile = UserProfile::findOne($id);
+
+        return $this->renderPartial(
+            'employees-new/edit-employee',
+            [
+                'model' => $userForm,
+                'profile' => $profile,
+                'roles' => $this->getRoles(),
+                'id' => $id,
+                'redrawModalSelector' => "*[data-id='{$id}']",
+                'deleteModalSelector' => "*[data-target='#del-coworker']"
+            ]
+        );
     }
 }

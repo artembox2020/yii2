@@ -43,6 +43,9 @@ class LoggerDto implements LoggerDtoInterface
             case $this->getClassName($data) == 'WmMashine':
                 return null;
                 break;
+            case $this->getClassName($data) == 'User':
+                return null;
+                break;     
             default:
                 echo "Not list";
         }
