@@ -12,7 +12,7 @@ use frontend\services\parser\CParser;
 /* @var $params array */
 ?>
 
-<div class="table-responsives">
+<div class="table-responsives <?= Yii::$app->headerBuilder->getJournalResponsiveClass() ?>">
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

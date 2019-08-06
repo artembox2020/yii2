@@ -28,7 +28,7 @@ use yii\filters\AccessControl;
 /**
  * JournalController implements the CRUD actions for journal logs
  */
-class JournalController extends Controller
+class JournalController extends \frontend\controllers\Controller
 {
     public function behaviors()
     {
@@ -164,13 +164,15 @@ class JournalController extends Controller
         $searchModel->inputValue[$dateFieldName] = $params['inputValue'][$dateFieldName];
         $searchModel->val2[$dateFieldName] = $params['val2'][$dateFieldName];
         $itemsCount = $searchModel->getLogTotalCount($entity, $searchFilter, $params);
+        $columnFilterScript = $this->getColumnFilterScript($params);
 
         return $this->renderPartial('logs/index', [
             'searchModel' => $searchModel,
             'searchFilter' => $searchFilter,
             'dataProvider' => $dataProvider,
             'params' => $params,
-            'itemsCount' => $itemsCount
+            'itemsCount' => $itemsCount,
+            'columnFilterScript' => $columnFilterScript
         ]);
     }
 

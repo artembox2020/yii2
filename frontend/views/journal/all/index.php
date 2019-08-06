@@ -8,9 +8,11 @@ use \frontend\models\Jlog;
 /* @var $searchModel frontend\models\JlogSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $params array */
+
+echo 'l='.Yii::$app->layout;
 ?>
 
-<div class="table-responsives">
+<div class="table-responsives <?= Yii::$app->layout == 'main-new' ? 'table-responsive' : '' ?>">
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
