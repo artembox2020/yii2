@@ -22,7 +22,7 @@ class AppAssetNew extends AssetBundle
     ];
 
     public $js = [
-        'static/js/journal-filters/main.js',
+        'static/js/journal-filters/main.js'
     ];
 
     public $jsOptions = [

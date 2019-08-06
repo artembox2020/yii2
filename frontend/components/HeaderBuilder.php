@@ -121,4 +121,17 @@ class HeaderBuilder extends Component {
             ]
         );
     }
+
+    /**
+     * Gets table responsive class for journal events
+     * 
+     * @return string
+     */
+    public function getJournalResponsiveClass()
+    {
+
+        return Yii::$app->layout == 'main-new' ? 'table-responsive' : '';
+    }
+    
+    
 }

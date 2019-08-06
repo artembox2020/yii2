@@ -10,11 +10,11 @@ use \frontend\models\AddressBalanceHolder;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 ?>
-<div class="address-balance-holder-index logs-index">
+<div class="address-balance-holder-index logs-index <?= Yii::$app->headerBuilder->getJournalResponsiveClass() ?>">
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-    'summary' => "<b>".Yii::t('frontend', 'Shown')."</b> {begin} - {end} ".Yii::t('frontend', 'From')." {$itemsCount}",
+    'summary' => "<div class='summary'><b>".Yii::t('frontend', 'Shown')."</b> {begin} - {end} ".Yii::t('frontend', 'From')." {$itemsCount}</div>",
     'columns' => [
         [
             'attribute' => $searchFilter->getDateFieldNameByParams($params),
@@ -138,3 +138,4 @@ use \frontend\models\AddressBalanceHolder;
     ],
 ]); ?>
 </div>
+<?= $columnFilterScript ?>

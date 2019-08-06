@@ -7,10 +7,10 @@ use yii\helpers\Html;
 ?>
 <div class="grid-view-filter grid-view-filter-setting">
     <div class="filter-prompt">
-        <?= Yii::t('logs', 'Log settings') ?>  <span class="glyphicon glyphicon-plus"></span>
+        <label class="log-setting"><?= Yii::t('logs', 'Log settings') ?></label> <span class="glyphicon glyphicon-plus"></span>
     </div>
     <div class="filter-menu hidden">
-        <span style="white-space: nowrap;"><?= Yii::t('logs', 'Date and time setting') ?></span>
+        <label style="white-space: nowrap;"><?= Yii::t('logs', 'Date and time setting') ?></label>
         <div class="filter-container">
 
             <?= \yii\helpers\Html::radioList(
