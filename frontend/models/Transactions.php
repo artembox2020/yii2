@@ -90,4 +90,11 @@ class Transactions extends \yii\db\ActiveRecord
 
         return $statuses[$status];
     }
+    
+    public static function findLastTransactionByCardNo($cardNo, $select = "*")
+    {
+
+        return self::find()->select($select)->andWhere(['card_no' => $cardNo])
+                           ->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
+    }
 }

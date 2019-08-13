@@ -498,14 +498,25 @@ class AddressImeiData extends ActiveRecord
     public function getAddressHistoryByImei($imei)
     {
         if (empty($imei)) {
-            
+
             return [];
+        }
+
+        global $globalAddressHistoryByImei;
+
+        if (empty($globalAddressHistoryByImei)) {
+            $globalAddressHistoryByImei = [];
+        }
+
+        if (array_key_exists($imei->id, $globalAddressHistoryByImei)) {
+
+            return $globalAddressHistoryByImei[$imei->id];
         }
 
         $timestamp = 0;
         $historyInfo = [];
         $addressInfo = $this->getNextAddressIdByImeiAndTimestamp($imei->id, $timestamp);
-        
+
         while (!empty($addressInfo)) {
             $address = AddressBalanceHolder::find()->where(['id' => $addressInfo['address_id']])->one();
             $historyInfo[] = [
@@ -519,6 +530,8 @@ class AddressImeiData extends ActiveRecord
         }
 
         ArrayHelper::multisort($historyInfo, ['created_at'], [SORT_DESC]);
+
+        $globalAddressHistoryByImei[$imei->id] = $historyInfo;
 
         return $historyInfo;
     }
@@ -721,5 +734,29 @@ class AddressImeiData extends ActiveRecord
         }
 
         return $imeiId;
+    }
+    
+    public function findAddressIdByImeiAndTimestamp($imei, $timestamp)
+    {
+        $history = $this->getAddressHistoryByImei($imei);
+
+        if (empty($history)) {
+
+            return !empty($imei->address) ? $imei->address->id : null;
+        }
+
+        $record = null;
+
+        foreach ($history as $item) {
+            if ((empty($record) || $record['created_at'] > $timestamp) && !empty($item['address_id'])) {
+                $record = $item;
+            }
+
+            if ($record['created_at'] <= $timestamp) {
+                break;
+            }
+        }
+
+        return !empty($record) ? $record['address_id'] : null;
     }
 }

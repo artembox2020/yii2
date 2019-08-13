@@ -286,7 +286,25 @@ body.modal-open {
     max-width: 450px;
     font-family: 'PT Sans', sans-serif;
     font-weight: 400;
-} 
+}
+.map-shapter .tab-navs {
+    border-bottom-width: 0!important;
+}
+.map-shapter .tab-navs a {
+    padding-bottom: 4px!important;
+    border-bottom-width: 0!important;
+    text-decoration: none!important;
+}
+.map-shapter .tab-navs a.active {
+    border-bottom-width: 2px!important;
+}
+.map-user .table-responsive tr.filters,
+.map-index .table-responsive tr.filters {
+    display: none;
+}
+.container.timestamp-interval-block {
+    width: 100%;
+}
 @media all and (max-width: 468px) {
     .net-manager-new .coworkers__create-user {
         overflow: hidden;

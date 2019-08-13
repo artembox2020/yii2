@@ -76,6 +76,10 @@ class HeaderBuilder extends Component {
                     'url' => [$monitoring_url],
                 ],
                 [
+                    'label' => Yii::t('map', 'CARDS'),
+                    'url' => ['/map'],
+                ],
+                [
                     'label' => Yii::t('nav-items', 'Net'),
                     'url' => ['/net-manager'],
                 ],
@@ -133,5 +137,10 @@ class HeaderBuilder extends Component {
         return Yii::$app->layout == 'main-new' ? 'table-responsive' : '';
     }
     
-    
+    public function getMapShapterTabActivity($action, $tabId)
+    {
+
+        return $action == $tabId ? 'active' : '';
+    }
+
 }
