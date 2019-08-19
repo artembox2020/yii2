@@ -29,7 +29,7 @@ class MapController extends Controller
     public function actionGenerateTestData($limit)
     {
         $availableUserIds = ArrayHelper::getColumn(
-            User::find()->select(['id'])->andWhere(['company_id' => null])->all(),
+            User::find()->select(['id'])->all(),
             'id'
         );
 
@@ -63,7 +63,13 @@ class MapController extends Controller
                 $transaction->operation = array_rand(
                     [Transactions::OPERATION_PAYMENT, Transactions::OPERATION_INCOME, Transactions::OPERATION_FAIL]
                 );
-                $transaction->amount = rand(self::MIN_TRANSACTION_AMOUNT, self::MAX_TRANSACTION_AMOUNT);
+
+                if ($transaction->operation != Transactions::OPERATION_FAIL) {
+                    $transaction->amount = rand(self::MIN_TRANSACTION_AMOUNT, self::MAX_TRANSACTION_AMOUNT);
+                } else {
+                    $transaction->amount = null;
+                }
+
                 $transaction->isNewRecord = true;
                 $transaction->save();
 

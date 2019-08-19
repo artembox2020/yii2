@@ -140,7 +140,7 @@ class HeaderBuilder extends Component {
     public function getMapShapterTabActivity($action, $tabId)
     {
 
-        return $action == $tabId ? 'active' : '';
+        return in_array($action, $tabId) ? 'active' : '';
     }
 
 }

@@ -47,9 +47,15 @@ class CardSearch extends CustomerCards
             'pagination' => [
                 'pageSize' => self::RECORDS_PER_PAGE
             ],
+            'sort' => [
+                'defaultOrder' => ['status' => SORT_DESC]
+            ]
         ]);
 
+       
+
         if ( !($this->load($params) && $this->validate()) ) {
+
             return $dataProvider;
         }
 
@@ -77,7 +83,7 @@ class CardSearch extends CustomerCards
             'query' => $query,
             'pagination' => [
                 'pageSize' => self::RECORDS_PER_PAGE
-            ],
+            ]
         ]);
 
         if ( !($this->load($params) && $this->validate()) ) {
@@ -92,19 +98,67 @@ class CardSearch extends CustomerCards
     }
 
     /**
+     * Main search pertain company method
+     * 
+     * @param int $companyId
+     * @param array $params
+     * 
+     * @return yii\data\ActiveDataProvider
+     */
+    public function searchPertainCompany($companyId, $params)
+    {
+        $dataProvider = $this->search($params);
+        $dataProvider->query->andWhere(['company_id' => $companyId]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * Search user  pertain company method
+     * 
+     * @param int $companyId
+     * @param array $params
+     * 
+     * @return yii\data\ActiveDataProvider
+     */
+    public function searchByUserId($userId, $params)
+    {
+        $cardNos = $this->findCardsByUserId($userId);
+        $dataProvider = $this->search($params);
+        $dataProvider->query->andWhere(['card_no' => $cardNos]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * Search user pertain company method
+     * 
+     * @param int $companyId
+     * @param array $params
+     *
+     * @return yii\data\ActiveDataProvider
+     */
+    public function searchUserPertainCompany($companyId, $params)
+    {
+        $dataProvider = $this->searchUser($params);
+        $dataProvider->query->andWhere(['company_id' => $companyId]);
+
+        return $dataProvider;
+    }
+
+    /**
      * Finds address by card number
      * 
      * @param int $cardNo
+     * @param frontend\models\Transactions $transaction
      * 
      * @return string|null
      */
-    public function findAddressByCardNo($cardNo)
+    public function findAddressByCardNo($cardNo, $transaction = null)
     {
-        $transaction = Transactions::findLastTransactionByCardNo($cardNo, 'imei');
-
         if (empty($transaction)) {
 
-            return null;
+            $transaction = Transactions::findLastTransactionByCardNo($cardNo, 'imei');
         }
 
         $imei = Imei::find()->andWhere(['imei' => $transaction->imei])->limit(1)->one();
@@ -121,9 +175,9 @@ class CardSearch extends CustomerCards
 
             return null;
         }
-        
+
         $address = AddressBalanceHolder::find()->where(['id' => $address_id])->limit(1)->one();
-        
+
         if (empty($address)) {
 
             return null;
@@ -164,25 +218,5 @@ class CardSearch extends CustomerCards
         $items = $query->all();
 
         return array_unique(ArrayHelper::getColumn($items, 'card_no'));
-    }
-
-    /**
-     * Finds last circulation value by user id
-     * 
-     * @param int $userId
-     * 
-     * @return double|null
-     */
-    public function findLastCirculationByUserId($userId)
-    {
-        $cardsNo = $this->findCardsByUserId($userId);
-        $transaction = Transactions::findLastTransactionByCardNo($cardsNo, 'amount');
-
-        if (empty($transaction)) {
-
-            return null;
-        }
-
-        return $transaction->amount;
     }
 }
