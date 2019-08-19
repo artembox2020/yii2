@@ -97,4 +97,22 @@ class UserProfile extends ActiveRecord
 
         return !empty($this->avatar_path) ? $this->avatar_path : self::NO_PHOTO_AVATAR_PATH;
     }
+    
+    public function findFlnameByUserId($id)
+    {
+        $item = UserProfile::find()->andwhere(['user_id' => $id])->limit(1)->one();
+        $flname = '';
+
+        if (!empty($item)) {
+
+            $flname = $item->firstname.' '.$item->lastname;
+        }
+
+        if (empty(trim($flname))) {
+            $user = User::find()->where(['id' => $id])->one();
+            $flname = !empty($user) ? $user->username : null;
+        }
+
+        return $flname;
+    }
 }

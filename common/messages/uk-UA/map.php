@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'About myself' => 'Про себе',
+    'Additional Info' => 'Додаткове інфо',
+    'Address' => 'Пункт',
+    'Amount' => 'Сума',
+    'Avatar' => 'Аватар',
+    'Balance' => 'Баланс',
+    'Birthday' => 'Дата народження',
+    'CARDS' => 'КAРТИ',
+    'Card' => 'Карта',
+    'Card Card' => 'Картка картки',
+    'Cards' => 'Карти',
+    'Circulation' => 'Оборот',
+    'Date' => 'Дата',
+    'Discount' => 'Знижка, %',
+    'Faculty' => 'Факультет',
+    'Group' => 'Група',
+    'Hostel' => 'Гуртожиток',
+    'Last action' => 'Остання дія',
+    'LFP' => 'ФІО',
+    'Login' => 'Логін',
+    'Status' => 'Статус',
+    'Time' => 'Час',
+    'Total Circulation' => 'Всього оборот, грн',
+    'University' => 'Університет',
+    'Use History' => 'Історія використання',
+    'User' => 'Користувач',
+    'User Card' => 'Карта користувача',
+    'User Cards' => 'Карти користувача',
+    'Users' => 'Користувачі'
+];

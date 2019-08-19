@@ -5,6 +5,7 @@ namespace frontend\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use backend\models\search\CardSearch;
 
 /**
  * This is the model class for table "transactions".
@@ -89,5 +90,54 @@ class Transactions extends \yii\db\ActiveRecord
         }
 
         return $statuses[$status];
+    }
+
+    /**
+     * Finds last transaction by card number
+     * 
+     * @param int $cardNo
+     * @param string $select
+     * 
+     * @return frontend\models\Transactions|null
+     */
+    public static function findLastTransactionByCardNo($cardNo, $select = "*")
+    {
+
+        return self::find()->select($select)->andWhere(['card_no' => $cardNo])
+                           ->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
+    }
+
+    /**
+     * Finds circulation by card number and initial timestamp
+     * 
+     * @param int $cardNo
+     * @param int $timestampSince
+     * 
+     * @return int|null
+     */
+    public function findCirculationByCardNo($cardNo, $timestampSince = 0)
+    {
+
+        return self::find()->andWhere(['operation' => self::OPERATION_PAYMENT, 'card_no' => $cardNo])
+                           ->andWhere(['>=', 'created_at', $timestampSince])
+                           ->sum('amount');
+    }
+
+    /**
+     * Finds circulation by user id and initial timestamp
+     * 
+     * @param int $userId
+     * @param int $timestampSince
+     * 
+     * @return int|null
+     */
+    public function findCirculationByUserId($userId, $timestampSince = 0)
+    {
+        $cardSearch = new CardSearch();
+        $cardNos = $cardSearch->findCardsByUserId($userId);
+
+        return self::find()->andWhere(['operation' => self::OPERATION_PAYMENT, 'card_no' => $cardNos])
+                           ->andWhere(['>=', 'created_at', $timestampSince])
+                           ->sum('amount');
     }
 }
