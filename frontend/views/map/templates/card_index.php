@@ -1,0 +1,75 @@
+<?php
+
+use yii\grid\GridView;
+use \common\models\UserProfile;
+use frontend\models\CustomerCards;
+
+/* @var $cards backend\models\search\CardSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+?>
+<div class="table-responsive">
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $cards,
+        'columns' => [
+            [
+                'label' => yii::t('backend', 'Card no'),
+                'attribute' => 'card_no',
+                'filter' => false,
+                'format' => 'raw',
+                'value' => function($model) {
+
+                    return \yii\helpers\Html::a($model->card_no, '/map/cardofcard?cardNo='.$model->card_no);
+                }
+            ],
+            [
+                'label' => yii::t('backend', 'Balance'),
+                'attribute' => 'balance',
+                'filter' => false,
+            ],
+            [
+                'label' => yii::t('backend', 'Discount'),
+                'attribute' => 'discount',
+                'filter' => false,
+            ],
+            [
+                'label' => yii::t('map', 'User'),
+                'contentOptions' => ['class' => 'user'],
+                'headerOptions' => ['class' => 'user'],
+                'value' => function($model) {
+                    $userProfile = new UserProfile();
+
+                    return $userProfile->findFlnameByUserId($model->user_id);
+                },
+                'filter' => false
+            ],
+            [
+                'label' => yii::t('map', 'Address'),
+                'value' => function($model) use ($cards) {
+
+                    return $cards->findAddressByCardNo($model->card_no);
+                },
+                'filter' => false,
+            ],
+            [
+                'label' => yii::t('map', 'Last action'),
+                'value' => function($model) use ($cards) {
+
+                    return $cards->findLastActivityByCardNo($model->card_no);
+                },
+                'filter' => false,
+            ],
+            [
+                'label' => yii::t('backend', 'Status'),
+                'attribute' => 'status',
+                'value' => function($cards) {
+
+                    return CustomerCards::statuses($cards->status);
+                },
+                'filter' => false
+            ]
+        ],
+    ])
+    ?>
+</div>
