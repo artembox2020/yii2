@@ -266,6 +266,11 @@ body.modal-open {
     position: absolute;
     padding-top: 20px;
     margin-top: 0;
+    max-width: 100%;
+}
+.jlog-index.map-index .pagination,
+.jlog-index.map-user .pagination {
+    width: 90%;
 }
 .jlog-index .pagination > li > a {
     color: rgb(0, 0, 0);
@@ -274,6 +279,14 @@ body.modal-open {
     min-height: 450px;
     overflow-y: visible!important;
     border-width: 0;
+}
+.jlog-index.map-index .table-responsive,
+.jlog-index.map-user .table-responsive {
+    min-height: auto;
+}
+.jlog-index.map-index,
+.jlog-index.map-user {
+    margin-left: 0;
 }
 .wrap .container {
     max-width: 100%;
@@ -286,7 +299,35 @@ body.modal-open {
     max-width: 450px;
     font-family: 'PT Sans', sans-serif;
     font-weight: 400;
-} 
+}
+.map-shapter .container-fluid {
+    padding: 0;
+}
+.map-shapter .tab-navs {
+    border-bottom-width: 0!important;
+}
+.map-shapter .tab-navs a {
+    padding-bottom: 4px!important;
+    border-bottom-width: 0!important;
+    text-decoration: none!important;
+}
+.map-shapter .tab-navs a.active {
+    border-bottom-width: 2px!important;
+}
+.map-user .table-responsive tr.filters,
+.map-index .table-responsive tr.filters,
+.map-cardofcard .table-responsive tr.filters {
+    display: none;
+}
+.container.timestamp-interval-block {
+    width: 100%;
+}
+.jlog-index.map-index .map-cardofcard table th.card,
+.jlog-index.map-index .map-cardofcard table td.card,
+.jlog-index.map-user table th.user,
+.jlog-index.map-user table td.user {
+    display: none;
+}
 @media all and (max-width: 468px) {
     .net-manager-new .coworkers__create-user {
         overflow: hidden;

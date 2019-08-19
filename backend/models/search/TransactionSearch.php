@@ -19,8 +19,7 @@ class TransactionSearch extends Transactions
         return [
             [['imei', 'operation_time'], 'string'],
             [['operation', 'created_at'], 'integer'],
-            [['amount'], 'number'],
-
+            [['amount'], 'number']
         ];
     }
 
@@ -38,9 +37,17 @@ class TransactionSearch extends Transactions
             'pagination' => [
                 'pageSize' => self::RECORDS_PER_PAGE
             ],
+            'sort' => [
+                'defaultOrder' => ['created_at' => SORT_DESC]
+            ]
+            
         ]);
 
-        if ( !($this->load($params) && $this->validate()) ) {
+        $removeKeys = ['cardNo', 'userId', 'page', 'per-page', 'sort'];
+        $params = array_diff_key($params, array_flip($removeKeys));
+
+        if (!empty($params) && !($this->load($params) && $this->validate())) {
+
             return $dataProvider;
         }
 
