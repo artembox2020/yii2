@@ -2,6 +2,7 @@
 
 namespace api\modules\v2d00\UseCase\Log;
 
+use frontend\services\custom\Debugger;
 use Yii;
 
 class Log
@@ -23,7 +24,9 @@ class Log
         }
 
         if ($items->pac->devType == self::WASH_MACHINE) {
-            $create = new WasheMachineLog($items);
+//            Debugger::dd($items);
+            $create = new WashMachineLog();
+            $create->add($items);
             Yii::$app->response->statusCode = 201;
             return 'WM';
         }

@@ -17,16 +17,12 @@ class CentralBoardLog
     public function add($items)
     {
         if (Imei::findOne(['imei' => $items->imei])) {
-
             $imei = $this->getImei($items->imei);
-
             if (Imei::getStatus($imei) == self::ONE_CONST) {
-
                 $cbl = new CbLog();
 
                 $dateTimeHelper = new DateTimeHelper();
                 $cbLogSearch = new CbLogSearch();
-
                 $cbl->company_id = $imei->company_id;
                 $cbl->address_id = $imei->address_id;
                 $cbl->imei_id = $imei->id;
@@ -34,22 +30,15 @@ class CentralBoardLog
                 $cbl->imei = $items->imei;
                 $cbl->device = $items->type;
                 $cbl->signal = $items->pac->rssi;
-
                 $cbl->unix_time_offset = $dateTimeHelper->getRealUnixTimeOffset($items->pac->utc);
-
                 $cbl->status = $items->pac->event->cenBoard;
-
                 $cbl->fireproof_counter_hrn = $items->pac->money->total;
-
                 $cbl->fireproof_counter_card = $items->pac->money->totalCards;
                 $cbl->collection_counter = $items->pac->money->collection;
                 $cbl->notes_billiards_pcs = $items->pac->money->numberNotes;
                 $cbl->rate = $items->pac->tariff;
-
                 $cbl->refill_amount = $items->pac->devCash;
-
                 $cbl->last_collection_counter = $items->pac->money->collection;
-
 //                $cbl->banknote_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($items->numberNotes);
                 $cbl->is_deleted = false;
 
