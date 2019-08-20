@@ -1,19 +1,20 @@
 <?php
 
-namespace api\modules\v1\controllers;
+namespace api\modules\v2d00\controllers;
 
+use api\modules\v2d00\UseCase\Log\Log;
 use frontend\controllers\Controller;
 use frontend\services\custom\Debugger;
 use Yii;
+use yii\web\Response;
 
 /**
- * Class LbwController
- * @package api\modules\v1\controllers
+ * Class JsonController
+ * @package api\modules\v2d00\controllers
  */
-class LbwController extends Controller
+class JsonController extends Controller
 {
-    const CENTRAL_BOARD = '-1';
-    const WASH_MACHINE = '0';
+    const LOG = '2.00 L';
 
     public function behaviors()
     {
@@ -50,20 +51,12 @@ class LbwController extends Controller
 
     public function actionIndex()
     {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $items = json_decode(file_get_contents("php://input"));
 
-        if ($items->devType == self::CENTRAL_BOARD) {
-            Yii::$app->response->statusCode = 201;
-
-            Debugger::dd($items);
-
-            return 'CB';
-        }
-
-        if ($items->devType == self::WASH_MACHINE) {
-            Yii::$app->response->statusCode = 201;
-            return 'WM';
+        if ($items->type == self::LOG) {
+            $log = new Log();
+            return $log->create($items);
         }
 
         return Yii::$app->response->statusCode = 400;

@@ -26,6 +26,12 @@ $config = [
         'v1' => [
             'class' => 'api\modules\v1\Module',
         ],
+        'v1d98' => [
+            'class' => 'api\modules\v1d98\Module',
+        ],
+        'v2d00' => [
+            'class' => 'api\modules\v2d00\Module',
+        ],
     ],
     'components' => [
         'db' => [
