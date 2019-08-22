@@ -27,6 +27,9 @@ $config = [
         'payment' => [
             'class' => 'app\modules\payment\Payment',
         ],
+        'v2d00' => [
+            'class' => 'api\modules\v2d00\Module',
+        ],
     ],
     'components' => [
         'formatter' => [
