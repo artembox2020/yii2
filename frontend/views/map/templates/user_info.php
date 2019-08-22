@@ -1,5 +1,7 @@
 <?php
 
+use yii\helpers\Html;
+
 /* @var $cards backend\models\search\CardSearch */
 /* @var $user common\models\User */
 
@@ -61,7 +63,7 @@
     <ul class="cards-list d-flex flex-column">
         <li class="fw600"><?= Yii::t('map', 'Cards') ?></li>
         <?php foreach ($cards->findCardsByUserId($user->id) as $cardNo): ?>
-            <li><?= $cardNo ?></li>
+            <li><?= Html::a($cardNo, '/map/cardofcard?cardNo='.$cardNo) ?></li>
         <?php endforeach; ?>
     </ul>
 </section>

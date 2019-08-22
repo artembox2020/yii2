@@ -156,9 +156,9 @@ class CardSearch extends CustomerCards
      */
     public function findAddressByCardNo($cardNo, $transaction = null)
     {
-        if (empty($transaction)) {
+        if (empty($transaction) && empty($transaction = Transactions::findLastTransactionByCardNo($cardNo, 'imei'))) {
 
-            $transaction = Transactions::findLastTransactionByCardNo($cardNo, 'imei');
+            return null;
         }
 
         $imei = Imei::find()->andWhere(['imei' => $transaction->imei])->limit(1)->one();

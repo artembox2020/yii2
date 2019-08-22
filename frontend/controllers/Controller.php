@@ -8,6 +8,7 @@ use frontend\models\ImeiAction;
 use frontend\models\WmMashineDataSearch;
 use frontend\models\WmMashine;
 use frontend\models\Jlog;
+use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\filters\AccessControl;
@@ -35,7 +36,29 @@ class Controller extends \yii\web\Controller
 
         return $view.'-'.$layoutParts[1];
     }
-    
+
+    /**
+     * Gets model instance according to filter data
+     * 
+     * @param array $data
+     * @param instance $instance
+     * 
+     * @return instance
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function getModel($data, $instance)
+    {
+        $entity = new Entity();
+        $data['company_id'] = $entity->getCompanyId();
+        $model = $instance::find()->andWhere($data)->limit(1)->one();
+
+        if (!$model) {
+            throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
+        }
+
+        return $model;
+    }
+
     /*public function render($view, $params = [])
     {
         $view = $this->getPath($view);

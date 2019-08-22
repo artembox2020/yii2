@@ -25,6 +25,13 @@ class Transactions extends \yii\db\ActiveRecord
     const OPERATION_PAYMENT = 0;
     const OPERATION_INCOME = 1;
     const OPERATION_FAIL = 2;
+    
+    const MIN_REFILL_AMOUNT = 10;
+    const MAX_REFILL_AMOUNT = 200;
+
+    const STATUS_SUCCESS = 1;
+    const STATUS_ERROR = 2;
+
     /**
      * {@inheritdoc}
      */
@@ -139,5 +146,39 @@ class Transactions extends \yii\db\ActiveRecord
         return self::find()->andWhere(['operation' => self::OPERATION_PAYMENT, 'card_no' => $cardNos])
                            ->andWhere(['>=', 'created_at', $timestampSince])
                            ->sum('amount');
+    }
+
+    /**
+     * Refills card and returns operation status info as array
+     * 
+     * @param \frontend\models\CustomerCards $card
+     * @param int $amount
+     * 
+     * @return array
+     */
+    public function refillCard($card, $amount)
+    {
+        if ($amount <= self::MAX_REFILL_AMOUNT && $amount >= self::MIN_REFILL_AMOUNT) {
+            unset($this->id);
+            $this->card_no = $card->card_no;
+            $this->operation = self::OPERATION_INCOME;
+            $this->amount = $amount;
+
+            if ($lastTransaction = $this->findLastTransactionByCardNo($card->card_no, "imei")) {
+                $this->imei = $lastTransaction->imei;
+            }
+
+            $this->isNewRecord = true;
+            $this->save();
+
+            $card->balance += $amount;
+            $card->update();
+
+            return ['status' => self::STATUS_SUCCESS];
+        } else {
+            $errorDescription = "Amount boundaries exceeding";
+
+            return ['status' => self::STATUS_ERROR, 'description' => $errorDescription];
+        }
     }
 }

@@ -38,6 +38,9 @@ $config = [
         ],
     ],
     'components' => [
+        'mapBuilder' => [
+            'class' => 'frontend\components\MapBuilder'
+        ],
         'request' => [
             'cookieValidationKey' => env('BACKEND_COOKIE_VALIDATION_KEY'),
             'csrfParam' => '_csrf-backend',

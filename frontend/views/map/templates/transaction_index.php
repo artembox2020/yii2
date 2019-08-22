@@ -33,6 +33,11 @@ use backend\models\search\CardSearch;
                     'headerOptions' => ['class' => 'card'],
                     'contentOptions' => ['class' => 'card'],
                     'attribute' => 'card_no',
+                    'format' => 'raw',
+                    'value' => function($model) {
+
+                        return \yii\helpers\Html::a($model->card_no, '/map/cardofcard?cardNo='.$model->card_no);
+                    }
                 ],
                 [
                     'label' => yii::t('payment', 'Operation'),

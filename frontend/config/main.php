@@ -77,6 +77,9 @@ $config = [
         'monitoringBuilder' => [
             'class' => 'frontend\components\MonitoringBuilder'
         ],
+        'mapBuilder' => [
+            'class' => 'frontend\components\MapBuilder'
+        ],
         'cookieLanguageSelector' => [
             'class' => 'gugglegum\Yii2\Extension\CookieLanguageSelector\Component',
             'defaultLanguage' => 'uk-UA',

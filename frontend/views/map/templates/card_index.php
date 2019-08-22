@@ -37,10 +37,14 @@ use frontend\models\CustomerCards;
                 'label' => yii::t('map', 'User'),
                 'contentOptions' => ['class' => 'user'],
                 'headerOptions' => ['class' => 'user'],
+                'format' => 'raw',
                 'value' => function($model) {
                     $userProfile = new UserProfile();
 
-                    return $userProfile->findFlnameByUserId($model->user_id);
+                    return \yii\helpers\Html::a(
+                        $userProfile->findFlnameByUserId($model->user_id),
+                        '/map/userscard?userId='.$model->user_id
+                    );
                 },
                 'filter' => false
             ],
@@ -68,8 +72,24 @@ use frontend\models\CustomerCards;
                     return CustomerCards::statuses($cards->status);
                 },
                 'filter' => false
+            ],
+            [
+                'label' => Yii::t('frontend', 'Actions'),
+                'format' => 'raw',
+                'headerOptions' => ['class' => 'actions'],
+                'contentOptions' => ['class' => 'actions'],
+                'value' => function($model) {
+
+                    return
+                        '<div class="cardinfo cardinfo-index">'.
+                            Yii::$app->view->render('/map/templates/card_actions', ['card' => $model]).
+                        '</div>';
+                }
             ]
         ],
     ])
     ?>
 </div>
+
+<?= Yii::$app->view->render('/map/js/main') ?>
+<?= Yii::$app->view->render('/map/css/card_actions') ?>
