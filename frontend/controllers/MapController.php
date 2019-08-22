@@ -20,14 +20,14 @@ use frontend\models\Transactions;
 use frontend\services\globals\Entity;
 
 /**
- * customer cards processing
+ * Cards management: cards and card users info + card operations (block/unblock, refill)
  * Class MapController
  * @package frontend\controllers
  */
 class MapController extends \frontend\controllers\Controller
 {
     /**
-     * Gets cards and users list
+     * Cards index list
      * 
      * @return string
      */
@@ -49,7 +49,7 @@ class MapController extends \frontend\controllers\Controller
     }
 
     /**
-     * Gets cards and users list
+     * Users index list 
      * 
      * @return string
      */
@@ -71,7 +71,7 @@ class MapController extends \frontend\controllers\Controller
     }
 
     /**
-     * Card of card action
+     * Card info by card no + card operations (block/unblock, refill)
      * 
      * @param int $cardNo
      * 
@@ -79,24 +79,32 @@ class MapController extends \frontend\controllers\Controller
      */
     public function actionCardofcard($cardNo)
     {
+        $card = $this->getModel(['card_no' => $cardNo], new CustomerCards());
         $transactionSearch = new TransactionSearch();
-        $dataProvider = $transactionSearch-> search($cardNo, Yii::$app->request->queryParams);
+        $dataProvider = $transactionSearch->search($cardNo, Yii::$app->request->queryParams);
+
+        // card operations
+        if ($post = Yii::$app->request->post()) {
+            Yii::$app->getSession()->setFlash(
+                'updateMapData', Yii::$app->mapBuilder->updateMapDataFromPost($post, $card)
+            );
+        }
 
         return $this->render(
             'cardofcard',
             [
                 'transactionSearch' => $transactionSearch,
                 'dataProvider' => $dataProvider,
-                'card' => CustomerCards::find()->andWhere(['card_no' => $cardNo])->limit(1)->one(),
+                'card' => $card,
                 'userProfile' => new UserProfile(),
                 'transaction' => new Transactions(),
-                'action' => $this->action->id
+                'action' => $this->action->id,
             ]
         );
     }
 
     /**
-     * Gets card of the user action
+     * User cards info by user id + card operations (block/unblock, refill)
      * 
      * @param int $userId
      * 
@@ -110,6 +118,14 @@ class MapController extends \frontend\controllers\Controller
         $transactionDataProvider = $transactionSearch->search(
             $cards->findCardsByUserId($userId), Yii::$app->request->queryParams
         );
+
+        // card operations
+        if ($post = Yii::$app->request->post()) {
+            $card = $this->getModel(['card_no' => $post['card_no']], new CustomerCards());
+            Yii::$app->getSession()->setFlash(
+                'updateMapData', Yii::$app->mapBuilder->updateMapDataFromPost($post, $card)
+            );
+        }
 
         return $this->render(
             'userscard',

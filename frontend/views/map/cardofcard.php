@@ -13,11 +13,15 @@ use backend\models\search\CardSearch;
 /* @var $userProfile common\models\UserProfile */
 
 ?>
+
+<?= Yii::$app->view->render('/map/templates/update-map-alert') ?>
+
 <div class="monitoring-new">
     <div class="jlog-index map-index">
         <?=
             Yii::$app->view->render('/map/templates/shapter', ['action' => $action]);
         ?>
+        
         <?=
             Yii::$app->view->render(
                 '/map/templates/card_info',

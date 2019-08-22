@@ -1,6 +1,8 @@
 <?php
 
 use frontend\models\CustomerCards;
+use frontend\models\Transactions;
+use yii\helpers\Html;
 
 ?>
 <section class="cardinfo pl-4 pb-4 d-flex flex-column">
@@ -13,8 +15,11 @@ use frontend\models\CustomerCards;
                 <th><?= Yii::t('map', 'Card') ?></th>
                 <td><?= $card->card_no ?></td>
                 <td></td>
-                <th>&nbsp;<?= Yii::t('map', 'Status') ?>&nbsp;</th>
-                <td><?= CustomerCards::statuses($card->status) ?></td>
+                <th>
+                    &nbsp;<?= Yii::t('map', 'Status') ?>&nbsp;
+                    <span class="light"><?= CustomerCards::statuses($card->status) ?></span>
+                    <?= Yii::$app->view->render('card_actions', ['card' => $card]) ?>
+                </th>
             </tr>
             <tr>
                 <th><?= Yii::t('map', 'Balance') ?></th>
@@ -32,7 +37,13 @@ use frontend\models\CustomerCards;
             </tr>
             <tr>
                 <th><?= Yii::t('map', 'User') ?></th>
-                <td><?= $userProfile->findFlnameByUserId($card->user_id); ?></td>
+                <td>
+                    <?= Html::a(
+                        $userProfile->findFlnameByUserId($card->user_id),
+                        '/map/userscard?userId='.$card->user_id
+                    );
+                    ?>
+                </td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -47,3 +58,6 @@ use frontend\models\CustomerCards;
         </tbody>
     </table>
 </section>
+
+<?= Yii::$app->view->render('/map/js/main') ?>
+<?= Yii::$app->view->render('/map/css/card_actions') ?>

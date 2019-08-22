@@ -8,6 +8,9 @@
 /* @var $transactionDataProvider yii\data\ActiveDataProvider */
 
 ?>
+
+<?= Yii::$app->view->render('/map/templates/update-map-alert') ?>
+
 <div class="net-manager-new">
     <div class="jlog-index map-user">
         <?=

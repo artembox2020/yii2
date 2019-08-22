@@ -325,7 +325,9 @@ body.modal-open {
 .jlog-index.map-index .map-cardofcard table th.card,
 .jlog-index.map-index .map-cardofcard table td.card,
 .jlog-index.map-user table th.user,
-.jlog-index.map-user table td.user {
+.jlog-index.map-user table td.user,
+.jlog-index.map-index table th.actions,
+.jlog-index.map-index table td.actions {
     display: none;
 }
 @media all and (max-width: 468px) {

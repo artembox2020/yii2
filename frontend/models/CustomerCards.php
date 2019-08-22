@@ -89,4 +89,14 @@ class CustomerCards extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
+
+    /**
+     * Reverses card status
+     * 
+     */
+    public function updateStatus()
+    {
+        $this->status = ($this->status == self::STATUS_INACTIVE) ? self::STATUS_ACTIVE : self::STATUS_INACTIVE;
+        $this->update();
+    }
 }
