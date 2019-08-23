@@ -52,4 +52,17 @@
 .jlog-index.map-user .cardinfo.cardinfo-index .grid-view-filter .filter-menu {
     margin-right: 5.5%;
 }
+.actions-block .form-data-block .to_block {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border-radius: 16px;
+    cursor: pointer;
+}
+.actions-block .form-data-block {
+    vertical-align: sub;
+    display: inline-block;
+}
 </style>

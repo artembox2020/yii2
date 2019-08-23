@@ -46,7 +46,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     return
                         '<div class="cardinfo cardinfo-index">'.
-                            Yii::$app->view->render('@frontend/views/map/templates/card_actions', ['card' => $model]).
+                            Yii::$app->view->render(
+                                '@frontend/views/map/templates/card_actions',
+                                [
+                                    'card' => $model,
+                                ]
+                            ).
                         '</div>';
                 }
             ],
@@ -59,5 +64,10 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 </div>
 
-<?= Yii::$app->view->render('@frontend/views/map/js/main') ?>
+<?= Yii::$app->view->render(
+        '@frontend/views/map/js/main',
+        ['design' => Yii::$app->mapBuilder::CARD_ACTIONS_EXTENDED_DESIGN]
+    )
+?>
+
 <?= Yii::$app->view->render('@frontend/views/map/css/card_actions') ?>

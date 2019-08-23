@@ -91,5 +91,10 @@ use frontend\models\CustomerCards;
     ?>
 </div>
 
-<?= Yii::$app->view->render('/map/js/main') ?>
+<?= Yii::$app->view->render(
+        '@frontend/views/map/js/main',
+        ['design' => Yii::$app->mapBuilder::CARD_ACTIONS_SIMPLE_DESIGN]
+    )
+?>
+
 <?= Yii::$app->view->render('/map/css/card_actions') ?>
