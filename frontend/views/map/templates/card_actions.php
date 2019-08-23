@@ -3,12 +3,40 @@
 use frontend\models\CustomerCards;
 use frontend\models\Transactions;
 use yii\helpers\Html;
+use frontend\services\globals\EntityHelper;
 
 /* @var $card \frontend\models\CustomerCards */
 
 ?>
 <div class="grid-view-filter grid-view-filter-setting actions-block">
-    <div class="filter-prompt">
+    <div class="form-data-block form-check form-check-inline hidden">
+        <div
+            class="to_block"
+            style="background-image:
+                    url('<?=
+                            Yii::$app->homeUrl.'/static/img/'.
+                            ($action=$card->status == CustomerCards::STATUS_INACTIVE ? 'Unblock' : 'Block').
+                            '.png'
+                        ?>')"
+        >
+        <?= EntityHelper::makePopupWindow(
+                [],
+                Yii::t('map', $action),
+                'top: 20px',
+                'height: 10px'
+            )
+        ?>
+        </div>
+        <input
+            placeholder="<?= Yii::t('map', 'Amount') ?>"
+            type="number"
+            name="refill_amount"
+            min="<?= Transactions::MIN_REFILL_AMOUNT ?>"
+            max="<?= Transactions::MAX_REFILL_AMOUNT ?>"
+        />
+        <?php echo Html::submitButton(Yii::t('frontend', 'Submit'), ['class' => 'btn btn-primary']); ?>
+    </div>
+    <div class="filter-prompt hidden">
         <label class="log-setting">
             <?= Yii::t('frontend', 'Actions') ?>
         </label> 
