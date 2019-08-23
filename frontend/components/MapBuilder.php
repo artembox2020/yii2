@@ -12,6 +12,9 @@ use frontend\models\Transactions;
  */
 class MapBuilder extends Component {
 
+    const CARD_ACTIONS_EXTENDED_DESIGN = 1;
+    const CARD_ACTIONS_SIMPLE_DESIGN = 2;
+
     /**
      * Updates card data: status and balance from post array
      * and returns flash message about operation status

@@ -347,7 +347,7 @@ class EntityHelper implements EntityHelperInterface
     {
 
         return Yii::$app->view->render(
-            '/monitoring/data/popupWindow.php',
+            '@frontend/views/monitoring/data/popupWindow.php',
             ['imgSrcs' => $imgSrcs, 'text' => $text, 'labelStyle' => $labelStyle, 'blockStyle' => $blockStyle]
         );
     }

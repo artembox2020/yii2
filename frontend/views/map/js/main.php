@@ -9,6 +9,42 @@
         var refill = dataBlock.querySelector('input[name=to_refill]');
         var reset = dataBlock.querySelector('button[type=reset]');
 
+        var formData = actionsBlock.querySelector('.form-data-block');
+        var toBlock = formData.querySelector('.to_block');
+        var submitBtn = formData.querySelector('button[type=submit]');
+
+        <?php if ($design == Yii::$app->mapBuilder::CARD_ACTIONS_EXTENDED_DESIGN): ?>
+            actionsBlock.querySelector('.filter-prompt').classList.remove('hidden');
+        <?php else: ?>
+            formData.classList.remove('hidden');
+        <?php endif; ?>
+
+        // form data submit button event handler
+        submitBtn.onclick = function() {
+            var actionsBlock = this.closest('.actions-block');
+            var formData = actionsBlock.querySelector('.form-data-block');
+            var dataBlock = this.closest('.actions-block').querySelector('.filter-menu');
+            var block = dataBlock.querySelector('input[name=to_block]');
+            var refill = dataBlock.querySelector('input[name=to_refill]');
+            var refillAmount = dataBlock.querySelector('input[name=refill_amount]');
+            var submit = dataBlock.querySelector('button[type=submit]');
+            refillAmount.value = formData.querySelector('input[name=refill_amount]').value;
+            block.removeAttribute('checked');
+            refill.setAttribute('checked', 'checked');
+            submit.click();
+        }
+
+        // block button click event handler
+        toBlock.onclick = function() {
+            var dataBlock = this.closest('.actions-block').querySelector('.filter-menu');
+            var block = dataBlock.querySelector('input[name=to_block]');
+            var refill = dataBlock.querySelector('input[name=to_refill]');
+            var submit = dataBlock.querySelector('button[type=submit]');
+            block.setAttribute('checked', 'checked');
+            refill.removeAttribute('checked');
+            submit.click();
+        }
+
         // glyphicon (+-) click event handler
         glyphicon.onclick = function() {
             var dataBlock = this.closest('.actions-block').querySelector('.filter-menu');

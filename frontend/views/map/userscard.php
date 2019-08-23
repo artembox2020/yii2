@@ -11,7 +11,7 @@
 
 <?= Yii::$app->view->render('/map/templates/update-map-alert') ?>
 
-<div class="net-manager-new">
+<div class="net-manager-new monitoring-new">
     <div class="jlog-index map-user">
         <?=
             Yii::$app->view->render('/map/templates/shapter', ['action' => $action]);
