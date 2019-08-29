@@ -64,7 +64,7 @@ use backend\models\search\CardSearch;
                     'label' => yii::t('map', 'Additional Info'),
                     'value' => function($transaction) {
 
-                        return $transaction->raw_data;
+                        return $transaction->comment;
                     }
                 ],
             ],
