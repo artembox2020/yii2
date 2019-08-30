@@ -28,11 +28,13 @@ return [
     'Status' => 'Статус',
     'Time' => 'Час',
     'Total Circulation' => 'Всього оборот, грн',
+    'Unable to update card data' => 'Не вдалося поновити дані карти',
     'Unblock' => 'Розблокувати',
     'University' => 'Університет',
     'Use History' => 'Історія використання',
     'User' => 'Користувач',
     'User Card' => 'Карта користувача',
     'User Cards' => 'Карти користувача',
-    'Users' => 'Користувачі'
+    'Users' => 'Користувачі',
+    'Your request has been processed' => 'Запит оброблено'
 ];
