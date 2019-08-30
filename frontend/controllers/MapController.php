@@ -84,10 +84,9 @@ class MapController extends \frontend\controllers\Controller
         $dataProvider = $transactionSearch->search($cardNo, Yii::$app->request->queryParams);
 
         // card operations
-        if ($post = Yii::$app->request->post()) {
-            Yii::$app->getSession()->setFlash(
-                'updateMapData', Yii::$app->mapBuilder->updateMapDataFromPost($post, $card)
-            );
+        if (($post = Yii::$app->request->post()) && ($result = $this->updateMapData($post, $card))) {
+
+            return $result;
         }
 
         return $this->render(
@@ -122,9 +121,11 @@ class MapController extends \frontend\controllers\Controller
         // card operations
         if ($post = Yii::$app->request->post()) {
             $card = $this->getModel(['card_no' => $post['card_no']], new CustomerCards());
-            Yii::$app->getSession()->setFlash(
-                'updateMapData', Yii::$app->mapBuilder->updateMapDataFromPost($post, $card)
-            );
+
+            if ($result = $this->updateMapData($post, $card)) {
+
+                return $result;
+            }
         }
 
         return $this->render(
@@ -140,5 +141,40 @@ class MapController extends \frontend\controllers\Controller
                 'cards' => new CardSearch()
             ]
         );
+    }
+
+    /**
+     * Performs card operations by card post data (block/unblock + refill)
+     
+     * @param array $post
+     * @param \frontend\models\CustomerCards $card
+     * 
+     * @return string|bool
+     */
+    public function updateMapData($post, $card)
+    {
+        $model = Yii::$app->mapBuilder->getUpdateMapDataModelFromPost($post, $card);
+
+        Yii::$app->session->set(
+            'update-map-data-status',
+            Yii::$app->mapBuilder->getFlashMessageByStatus(
+                $model ? $model->status : Yii::$app->mapBuilder::STATUS_ERROR
+            )
+        );
+
+        // in case of need payment confirmation redirect to liqpay payment page
+        if ($model->status == Yii::$app->mapBuilder::STATUS_PENDING_CONFIRMATION) {
+
+            return $this->render(
+                'confirm_payment',
+                [
+                    'payment_button' => Yii::$app->mapBuilder->createOrderAndPaymentButton(
+                        $model, env('SERVER_URL'), Yii::$app->homeUrl.Yii::$app->request->url
+                    )
+                ]
+            );
+        }
+
+        return false;
     }
 }
