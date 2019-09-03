@@ -13,6 +13,7 @@ use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
+use yii\helpers\ArrayHelper;
 
 class Controller extends \yii\web\Controller
 {
@@ -57,6 +58,27 @@ class Controller extends \yii\web\Controller
         }
 
         return $model;
+    }
+
+    /**
+     * Gets user roles available
+     * 
+     * @return array
+     */
+    public function getRoles()
+    {
+        $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
+
+        $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+
+        unset($roles[array_search('super_administrator', $roles)]);
+        unset($roles[array_search('user', $roles)]);
+
+        foreach ($roles as $key => $role) {
+            $roles[$key] = Yii::t('backend', $role);
+        }
+
+        return $roles;
     }
 
     /*public function render($view, $params = [])

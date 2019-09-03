@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use frontend\models\UserBlacklist;
 
 /* @var $cards backend\models\search\CardSearch */
 /* @var $user common\models\User */
@@ -66,4 +67,43 @@ use yii\helpers\Html;
             <li><?= Html::a($cardNo, '/map/cardofcard?cardNo='.$cardNo) ?></li>
         <?php endforeach; ?>
     </ul>
+</section>
+
+<!-- user management section -->
+ <section class="coworker-card container-fluid px-5 py-4">
+        <div class="media">
+            <div class="media-body">
+                 <div class="d-block edits">
+                    <button class="btn-transparent" data-toggle="modal" data-target="#editcoworker">
+                        <img src="<?= Yii::getAlias("@storageUrl/main-new") ?>/img/edit-pen.svg" alt="<?= Yii::t('frontend', 'Edit') ?>">
+                        <span class="color-edit fz12 pl-2"><?= Yii::t('frontend', 'Edit') ?></span>
+                    </button>
+                    <?= Yii::$app->mapBuilder->getBlockButtonByUser($user->id, $companyId) ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="user-edit-employee">
+            <?= Yii::$app->view->render(
+                '/net-manager/employees-new/edit-employee',
+                [
+                    'model' => $userForm,
+                    'profile' => $profile,
+                    'roles' => $roles,
+                    'index' => '',
+                    'id' => $user->id,
+                    'redrawModalSelector' => "*[data-target='#editcoworker']",
+                    'deleteModalSelector' => ".edits button[data-target='#del-coworker']"
+                ]
+            )
+            ?>
+        </div>
+
+        <?= Yii::$app->view->render(
+            '/map/templates/block-employee',
+            [
+                'user' => $user,
+                'action' => Yii::$app->mapBuilder->getActionBlockByUser($user->id, $companyId),
+            ]
+        ) ?>
 </section>

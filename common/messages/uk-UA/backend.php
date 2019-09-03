@@ -35,7 +35,7 @@ return [
     'Static pages' => 'Статичні сторінки',
     'System' => 'Система',
     'Update' => 'Редагувати',
-    'Update user' => 'Редагувати співробітника',
+    'Update user' => 'Редагувати користувача',
     'Update user: {username}' => 'Редагувати користувача: {username}',
     'Username' => 'Ім\'я користувача',
     'Users' => 'Користувачі',

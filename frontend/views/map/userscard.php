@@ -21,7 +21,11 @@
                 '/map/templates/user_info',
                 [
                     'cards' => $cards,
-                    'user' => $user
+                    'user' => $user,
+                    'userForm' => $userForm,
+                    'profile' => $profile,
+                    'roles' => $roles,
+                    'companyId' => $companyId
                 ]
             );
         ?>

@@ -10,6 +10,7 @@ use frontend\models\WmMashineDataSearch;
 use frontend\models\WmMashine;
 use frontend\models\Jlog;
 use frontend\models\CustomerCards;
+use frontend\models\UserBlacklist;
 use backend\models\search\TransactionSearch;
 use frontend\services\globals\EntityHelper;
 use Yii;
@@ -17,6 +18,7 @@ use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
 use backend\models\search\CardSearch;
 use frontend\models\Transactions;
+use backend\models\UserForm;
 use frontend\services\globals\Entity;
 
 /**
@@ -35,7 +37,7 @@ class MapController extends \frontend\controllers\Controller
     {
         $cards = new CardSearch();
         $entity = new Entity();
-        
+
         $dataProvider = $cards->searchPertainCompany($entity->getCompanyId(), Yii::$app->request->queryParams);
 
         return $this->render(
@@ -113,6 +115,8 @@ class MapController extends \frontend\controllers\Controller
     {
         $cards = new CardSearch();
         $transactionSearch = new TransactionSearch();
+        $entity = new Entity();
+        $companyId = $entity->getCompanyId();
         $dataProvider = $cards->searchByUserId($userId, Yii::$app->request->queryParams);
         $transactionDataProvider = $transactionSearch->search(
             $cards->findCardsByUserId($userId), Yii::$app->request->queryParams
@@ -128,6 +132,10 @@ class MapController extends \frontend\controllers\Controller
             }
         }
 
+        $userForm = new UserForm();
+        $userForm->setModel(User::findOne($userId));
+        $profile = UserProfile::findOne($userId);
+
         return $this->render(
             'userscard',
             [
@@ -138,7 +146,12 @@ class MapController extends \frontend\controllers\Controller
                 'transactionSearch' => $transactionSearch,
                 'action' => $this->action->id,
                 'user' => User::findOne($userId),
-                'cards' => new CardSearch()
+                'cards' => new CardSearch(),
+                'userForm' => $userForm,
+                'profile' => $profile,
+                'roles' => $this->getRoles(),
+                'companyId' => $companyId,
+                'authorId' => Yii::$app->user->id
             ]
         );
     }
@@ -176,5 +189,25 @@ class MapController extends \frontend\controllers\Controller
         }
 
         return false;
+    }
+
+    /**
+     * Blocks/unblocks user depending on it's status by id
+     * 
+     * @param int $userId
+     * @param string $comment
+     */
+    public function actionBlockUnblockUser($userId, $comment)
+    {
+        $userBlacklist = new UserBlacklist();
+        $entity = new Entity();
+        $companyId = $entity->getCompanyId();
+        $authorId = Yii::$app->user->id;
+        $userBlacklist->reverseUser($userId, $authorId, $companyId, $comment);
+
+        Yii::$app->session->set(
+            'update-map-data-status',
+            Yii::$app->mapBuilder->getFlashMessageByStatus(Yii::$app->mapBuilder::STATUS_SUCCESS)
+        );
     }
 }

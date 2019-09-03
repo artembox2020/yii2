@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Component;
 use frontend\models\CustomerCards;
 use frontend\models\Transactions;
+use frontend\models\UserBlacklist;
 use yii\base\DynamicModel;
 use Ramsey\Uuid\Uuid;
 use app\models\Orders;
@@ -42,13 +43,13 @@ class MapBuilder extends Component {
      */
     public function getUpdateMapDataModelFromPost($post, $card)
     {
-        // update card status (block, unblock)
-        if (!empty($post['to_block'])) {
-            $card->updateStatus();
-        }
-
         $model = $this->getModel($post);
         $model->status = self::STATUS_SUCCESS;
+
+        // update card status (block, unblock)
+        if (!empty($post['to_block']) && !$card->updateStatus()) {
+            $model->status = self::STATUS_ERROR;
+        }
 
         // refill card
         if (!empty($post['to_refill']) && !empty($post['refill_amount'])) {
@@ -94,7 +95,12 @@ class MapBuilder extends Component {
     public function getModel($post)
     {
         $model = new DynamicModel(['card_no','amount', 'status']);
-        $cards = CustomerCards::find(['is_deleted' => self::ZERO])->select('card_no')->asArray()->column();
+        $cards = CustomerCards::find()
+            ->andWhere(['status' => CustomerCards::STATUS_ACTIVE])
+            ->andWhere(['IS', 'is_deleted', [null, self::ZERO]])
+            ->select('card_no')
+            ->asArray()
+            ->column();
         $model
             ->addRule(['card_no', 'amount'],  'required')
             ->addRule(['card_no'], 'in', ['range' => $cards])
@@ -272,5 +278,50 @@ class MapBuilder extends Component {
         $json = base64_decode($data);
 
         return json_decode($json, true);
+    }
+
+    /**
+     * Generates block/unblock button by user id and company id
+     * 
+     * @param int $userId
+     * @param int $companyId
+     * 
+     * @return string
+     */
+    public function getBlockButtonByUser($userId, $companyId)
+    {
+        $action =  $this->getActionBlockByUser($userId, $companyId);
+
+        $imgUrl = Yii::$app->homeUrl.'/static/img/'.$action.'.png';
+
+        return Yii::$app->view->render(
+            '/map/templates/block_button',
+            [
+                'action' => $action,
+                'imgUrl' => $imgUrl,
+                'userId' => $userId
+            ]
+        );
+    }
+
+    /**
+     * Gets block action by user id and company id
+     *
+     * @param int $userId
+     * @param int $companyId
+     *
+     * @return string
+     */
+    public function getActionBlockByUser($userId, $companyId)
+    {
+        $userBlacklist = new UserBlacklist();
+
+        if ($userBlacklist->getUserItem($userId, $companyId)) {
+            $action = 'Unblock';
+        } else {
+            $action = 'Block';
+        }
+
+        return $action;
     }
 }
