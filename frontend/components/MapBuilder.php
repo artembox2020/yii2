@@ -9,7 +9,7 @@ use frontend\models\Transactions;
 use frontend\models\UserBlacklist;
 use yii\base\DynamicModel;
 use Ramsey\Uuid\Uuid;
-use app\models\Orders;
+use frontend\models\Orders;
 use LiqPay;
 
 /**
@@ -45,6 +45,12 @@ class MapBuilder extends Component {
     {
         $model = $this->getModel($post);
         $model->status = self::STATUS_SUCCESS;
+
+        if (!\Yii::$app->user->can('editCustomer', ['class'=>static::class])) {
+            $model->status = self::STATUS_ERROR;
+
+            return $model;
+        }
 
         // update card status (block, unblock)
         if (!empty($post['to_block']) && !$card->updateStatus()) {
@@ -97,7 +103,7 @@ class MapBuilder extends Component {
         $model = new DynamicModel(['card_no','amount', 'status']);
         $cards = CustomerCards::find()
             ->andWhere(['status' => CustomerCards::STATUS_ACTIVE])
-            ->andWhere(['IS', 'is_deleted', [null, self::ZERO]])
+            ->andWhere(['or', ['is_deleted' => self::ZERO], ['is', 'is_deleted', null]])
             ->select('card_no')
             ->asArray()
             ->column();

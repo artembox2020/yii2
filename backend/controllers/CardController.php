@@ -18,9 +18,11 @@ class CardController extends \frontend\controllers\Controller
 
         if ($post = Yii::$app->request->post()) {
             $card = $this->getModel(['card_no' => $post['card_no']], new CustomerCards());
-            Yii::$app->getSession()->setFlash(
-                'updateMapData', Yii::$app->mapBuilder->updateMapDataFromPost($post, $card)
-            );
+
+            if ($result = $this->updateMapData($post, $card)) {
+
+                return $result;
+            }
         }
 
         return $this->render('index', ['cards' => $cards, 'dataProvider' => $dataProvider]);

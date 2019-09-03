@@ -157,41 +157,6 @@ class MapController extends \frontend\controllers\Controller
     }
 
     /**
-     * Performs card operations by card post data (block/unblock + refill)
-     
-     * @param array $post
-     * @param \frontend\models\CustomerCards $card
-     * 
-     * @return string|bool
-     */
-    public function updateMapData($post, $card)
-    {
-        $model = Yii::$app->mapBuilder->getUpdateMapDataModelFromPost($post, $card);
-
-        Yii::$app->session->set(
-            'update-map-data-status',
-            Yii::$app->mapBuilder->getFlashMessageByStatus(
-                $model ? $model->status : Yii::$app->mapBuilder::STATUS_ERROR
-            )
-        );
-
-        // in case of need payment confirmation redirect to liqpay payment page
-        if ($model->status == Yii::$app->mapBuilder::STATUS_PENDING_CONFIRMATION) {
-
-            return $this->render(
-                'confirm_payment',
-                [
-                    'payment_button' => Yii::$app->mapBuilder->createOrderAndPaymentButton(
-                        $model, env('SERVER_URL'), Yii::$app->homeUrl.Yii::$app->request->url
-                    )
-                ]
-            );
-        }
-
-        return false;
-    }
-
-    /**
      * Blocks/unblocks user depending on it's status by id
      * 
      * @param int $userId
@@ -199,6 +164,12 @@ class MapController extends \frontend\controllers\Controller
      */
     public function actionBlockUnblockUser($userId, $comment)
     {
+        if ( !\Yii::$app->user->can('editCustomer', ['class'=>static::class])) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $userBlacklist = new UserBlacklist();
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
