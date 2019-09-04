@@ -47,7 +47,8 @@ class LoggerDto implements LoggerDtoInterface
                 return null;
                 break;     
             default:
-                echo "Not list";
+
+                return null;
         }
     }
 

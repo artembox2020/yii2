@@ -292,7 +292,7 @@ class NetManagerController extends \frontend\controllers\Controller
         }
 
         $user = new UserForm();
-        $user->setModel($this->findModel($id, new User()));
+        $user->setModel($this->findAnyModel($id, new User()));
         $profile = UserProfile::findOne($id);
 
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
@@ -303,7 +303,7 @@ class NetManagerController extends \frontend\controllers\Controller
                 $user->save();
                 $profile->save(false);
 
-                return $this->redirect(['/net-manager/employees']);
+                return $this->goBack(Yii::$app->request->referrer);
             }
         }
 
@@ -317,7 +317,7 @@ class NetManagerController extends \frontend\controllers\Controller
         $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
 
         $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-        
+
         unset($roles[array_search('super_administrator', $roles)]);
         unset($roles[array_search('user', $roles)]);
 
@@ -375,6 +375,22 @@ class NetManagerController extends \frontend\controllers\Controller
         $entity = new Entity();
         
         return $entity->getUnitPertainCompany($id, $instance);
+    }
+
+    /**
+     * Finds the instance of any model based on its primary key value.
+     *
+     * @param integer $id
+     * @return instance of the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findAnyModel($id, $instance)
+    {
+        if (!$unit = $instance::findOne($id)) {
+            throw new \yii\web\NotFoundHttpException(Yii::t('common','Entity not found'));
+        }
+
+        return $unit;
     }
 
     /**
@@ -1034,27 +1050,6 @@ class NetManagerController extends \frontend\controllers\Controller
             'dataProvider' => $dataProvider,
             'pageSize' => self::PAGE_SIZE
         ]);
-    }
-
-    /**
-     * Gets user roles available
-     * 
-     * @return array
-     */
-    public function getRoles()
-    {
-        $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
-
-        $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-
-        unset($roles[array_search('super_administrator', $roles)]);
-        unset($roles[array_search('user', $roles)]);
-
-        foreach ($roles as $key => $role) {
-            $roles[$key] = Yii::t('backend', $role);
-        }
-
-        return $roles;
     }
 
     /**

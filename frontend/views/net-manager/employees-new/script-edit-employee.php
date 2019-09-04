@@ -76,8 +76,10 @@
         }
 
         var eraseBtn = document.querySelector("#del-coworker .erase-btn");
-        eraseBtn.onclick = function() {
-            location.href = "/net-manager/delete-employee?id="+delBtn.dataset.deleteId;
+        if (eraseBtn) {
+            eraseBtn.onclick = function() {
+                location.href = "/net-manager/delete-employee?id="+delBtn.dataset.deleteId;
+            }
         }
     }
 

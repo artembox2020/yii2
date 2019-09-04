@@ -87,16 +87,28 @@ class CustomerCards extends \yii\db\ActiveRecord
 
     public function getCompany()
     {
+
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 
     /**
      * Reverses card status
      * 
+     * @return bool
      */
     public function updateStatus()
     {
+        $userBlacklist = new UserBlacklist();
+
+        // if card user in blacklist then do nothing
+        if ($userBlacklist->getUserItem($this->user->id, $this->company->id)) {
+
+            return false;
+        }
+
         $this->status = ($this->status == self::STATUS_INACTIVE) ? self::STATUS_ACTIVE : self::STATUS_INACTIVE;
         $this->update();
+
+        return true;
     }
 }

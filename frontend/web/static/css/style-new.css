@@ -139,7 +139,8 @@
     font-weight: normal;
     padding: 0;
 }
-.monitoring-new img.fullness-icon {
+.monitoring-new img.fullness-icon,
+button.actions-btn img {
     width: 18px;
     height: 18px;
     margin-left: -3px;
@@ -184,6 +185,18 @@ b .net-manager-new.sub-menu {
 .net-manager-new #editcoworker .avatar-img img {
     max-height: 100%;
     max-width: 100%;
+}
+.net-manager-new .user-edit-employee #editcoworker .change-btn {
+    width: 100%;
+    text-align: center;
+}
+.net-manager-new .user-edit-employee #editcoworker .change-btn button {
+    max-width: 50%;
+    margin: auto;
+}
+.net-manager-new .user-edit-employee #editcoworker .field-userform-roles,
+.net-manager-new .user-edit-employee #editcoworker .input-group-btn {
+    display: none;
 }
 .net-manager-new #modal-crop {
     opacity: 1;
@@ -330,6 +343,15 @@ body.modal-open {
 .jlog-index.map-index table td.actions {
     display: none;
 }
+.block-user-dv .modal-content {
+    padding: 15px;
+}
+.user-edit-employee .modal-footer button {
+    display: inline;
+    width: 49%;
+    margin-top: 0;
+}
+
 @media all and (max-width: 468px) {
     .net-manager-new .coworkers__create-user {
         overflow: hidden;
