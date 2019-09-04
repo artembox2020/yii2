@@ -13,6 +13,7 @@ use frontend\services\globals\EntityHelper;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
+use yii\helpers\ArrayHelper;
 
 class Controller extends \yii\web\Controller
 {
@@ -57,6 +58,62 @@ class Controller extends \yii\web\Controller
         }
 
         return $model;
+    }
+
+    /**
+     * Gets user roles available
+     * 
+     * @return array
+     */
+    public function getRoles()
+    {
+        $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
+
+        $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+
+        unset($roles[array_search('super_administrator', $roles)]);
+        unset($roles[array_search('user', $roles)]);
+
+        foreach ($roles as $key => $role) {
+            $roles[$key] = Yii::t('backend', $role);
+        }
+
+        return $roles;
+    }
+    
+     /**
+     * Performs card operations by card post data (block/unblock + refill)
+     
+     * @param array $post
+     * @param \frontend\models\CustomerCards $card
+     * 
+     * @return string|bool
+     */
+    public function updateMapData($post, $card)
+    {
+        $model = Yii::$app->mapBuilder->getUpdateMapDataModelFromPost($post, $card);
+
+        Yii::$app->session->set(
+            'update-map-data-status',
+            Yii::$app->mapBuilder->getFlashMessageByStatus(
+                $model ? $model->status : Yii::$app->mapBuilder::STATUS_ERROR
+            )
+        );
+
+        // in case of need payment confirmation redirect to liqpay payment page
+        if ($model->status == Yii::$app->mapBuilder::STATUS_PENDING_CONFIRMATION) {
+
+            return $this->render(
+                '@frontend/views/map/confirm_payment',
+                [
+                    'payment_button' => Yii::$app->mapBuilder->createOrderAndPaymentButton(
+                        $model, env('SERVER_URL'), env('FRONTEND_URL').Yii::$app->request->url
+                    )
+                ]
+            );
+        }
+
+        return false;
     }
 
     /*public function render($view, $params = [])

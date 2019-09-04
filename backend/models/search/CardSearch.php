@@ -11,6 +11,7 @@ use frontend\models\AddressImeiData;
 use frontend\models\AddressBalanceHolder;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
+use frontend\services\globals\Entity;
 
 /**
  * This is the model class for Cards search.
@@ -214,7 +215,11 @@ class CardSearch extends CustomerCards
      */
     public function findCardsByUserId($userId)
     {
-        $query = CustomerCards::find()->select(['card_no'])->andWhere(['user_id' => $userId]);
+        $entity = new Entity();
+        $companyId = $entity->getCompanyId();
+        $query = CustomerCards::find()->select(['card_no'])->andWhere(
+            ['user_id' => $userId, 'company_id' => $companyId]
+        );
         $items = $query->all();
 
         return array_unique(ArrayHelper::getColumn($items, 'card_no'));

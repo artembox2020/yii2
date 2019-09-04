@@ -53,6 +53,9 @@ class RbacFlushController extends Controller
         $editFinData->description = 'Can edit fin data';
         $auth->add($editFinData);
 
+        $editCustomer = $auth->createPermission('editCustomer');
+        $editCustomer->description = 'Can edit customer';
+        $auth->add($editCustomer);
 
         //Create roles
         $user = $auth->createRole(USER::ROLE_CUSTOMER);
@@ -80,6 +83,7 @@ class RbacFlushController extends Controller
         $auth->add($admin);
         $auth->addChild($admin, $viewCompanyData);
         $auth->addChild($admin, $editCompanyData);
+        $auth->addChild($admin, $editCustomer);
         $auth->addChild($admin, $manager);
         $auth->addChild($admin, $tech);
 

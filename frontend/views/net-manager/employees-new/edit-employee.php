@@ -18,7 +18,7 @@ use vova07\fileapi\Widget as FileApi;
 <?php
     $form = ActiveForm::begin([
         'id' => 'user-edit-form',
-        'action' => '/net-manager/edit-employee?id='.(!empty($_GET['id']) ? $_GET['id'] : ''),
+        'action' => '/net-manager/edit-employee?id='.(!empty($_GET['id']) ? $_GET['id'] : ($_GET['userId'] ?? '')),
         'method' => 'post'
     ])
 ?>
@@ -143,6 +143,7 @@ use vova07\fileapi\Widget as FileApi;
     ActiveForm::end()
 ?>
 
+<!-- script edit employee -->
 <?= Yii::$app->view->render(
         '/net-manager/employees-new/script-edit-employee',
         [

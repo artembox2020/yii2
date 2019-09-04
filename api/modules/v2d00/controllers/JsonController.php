@@ -14,7 +14,8 @@ use yii\web\Response;
  */
 class JsonController extends Controller
 {
-    const LOG = '2.00 L';
+    const LOG_2_00 = '2.00 L';
+    const INI_2_00 = '2.00 I';
 
     public function behaviors()
     {
@@ -54,9 +55,17 @@ class JsonController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         $items = json_decode(file_get_contents("php://input"));
 
-        if ($items->type == self::LOG) {
+        if ($items->type == self::LOG_2_00) {
             $log = new Log();
+
             return $log->create($items);
+        }
+
+        if ($items->type == self::INI_2_00) {
+            Debugger::dd($items);
+            $ini = new Initialization();
+
+            return $ini->create($items);
         }
 
         return Yii::$app->response->statusCode = 400;
