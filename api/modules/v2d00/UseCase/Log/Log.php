@@ -24,7 +24,6 @@ class Log
         }
 
         if ($items->pac->devType == self::WASH_MACHINE) {
-//            Debugger::dd($items);
             $create = new WashMachineLog();
             $create->add($items);
             Yii::$app->response->statusCode = 201;

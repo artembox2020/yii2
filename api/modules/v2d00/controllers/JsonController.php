@@ -2,7 +2,9 @@
 
 namespace api\modules\v2d00\controllers;
 
+use api\modules\v2d00\UseCase\ImeiInit\ImeiInit;
 use api\modules\v2d00\UseCase\Log\Log;
+use api\modules\v2d00\UseCase\StatePackage\StatePackage;
 use frontend\controllers\Controller;
 use frontend\services\custom\Debugger;
 use Yii;
@@ -16,6 +18,8 @@ class JsonController extends Controller
 {
     const LOG_2_00 = '2.00 L';
     const INI_2_00 = '2.00 I';
+    const STATUS_2_00 = '2.00 S';
+    const ENCASHMENT_2_00 = '2.00 C';
 
     public function behaviors()
     {
@@ -26,7 +30,7 @@ class JsonController extends Controller
                 'actions' => [
                     'incoming' => [
                         'Origin' => ['*'],
-                        'Access-Control-Request-Method' => ['GET', 'POST', 'HEAD', 'OPTIONS'],
+                        'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'HEAD', 'OPTIONS'],
                         'Access-Control-Request-Headers' => ['*'],
                         'Access-Control-Allow-Credentials' => null,
                         'Access-Control-Max-Age' => 86400,
@@ -62,12 +66,21 @@ class JsonController extends Controller
         }
 
         if ($items->type == self::INI_2_00) {
-            Debugger::dd($items);
-            $ini = new Initialization();
-
-            return $ini->create($items);
+            $init = new ImeiInit();
+//            $initLog = new InitLog();
+//            $initLog->create($items);
+            return $init->add($items);
         }
 
+        if ($items->type == self::STATUS_2_00) {
+            $status = new StatePackage();
+            return $status->create($items);
+        }
+
+        if ($items->type == self::ENCASHMENT_2_00) {
+            $encashment = new Encashment();
+            $encashment->add($items);
+        }
         return Yii::$app->response->statusCode = 400;
     }
 }

@@ -42,10 +42,6 @@ class CentralBoardLog
 //                $cbl->banknote_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($items->numberNotes);
                 $cbl->is_deleted = false;
 
-//                Yii::$app->response->statusCode = 201;
-//                return 'CB';
-//                Debugger::dd($cbl);
-
                 $cbl->save();
                 $imei->ping = time();
                 $imei->save();
