@@ -2,6 +2,7 @@
 
 namespace api\modules\v2d00\controllers;
 
+use api\modules\v2d00\UseCase\Encashment\Encashment;
 use api\modules\v2d00\UseCase\ImeiInit\ImeiInit;
 use api\modules\v2d00\UseCase\Log\Log;
 use api\modules\v2d00\UseCase\StatePackage\StatePackage;
@@ -79,7 +80,7 @@ class JsonController extends Controller
 
         if ($items->type == self::ENCASHMENT_2_00) {
             $encashment = new Encashment();
-            $encashment->add($items);
+            return $encashment->add($items);
         }
         return Yii::$app->response->statusCode = 400;
     }
