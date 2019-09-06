@@ -143,4 +143,72 @@ class HeaderBuilder extends Component {
         return in_array($action, $tabId) ? 'active' : '';
     }
 
+    /**
+     * Builds customer header depending on layout
+     * 
+     * @param string $layout
+     * 
+     * @return string
+     */
+    public function makeCustomerHeader($layout)
+    {
+        $brand = Yii::$app->name;
+        $brand_url = env('FRONTEND_URL').'/account/customer/index?id='.Yii::$app->user->id;
+        $entity = new Entity();
+
+        $role = ArrayHelper::map(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'description', 'description');
+        foreach ($role as $key => $val) {
+            $role_description = $key;
+        }
+        $role_name = Yii::$app->user->identity->username;
+        $userRole = \Yii::$app->authManager->getRolesByUser(Yii::$app->user->id);
+
+        if (empty($role_description)) {
+            $userRole = '';
+        } else {
+            $userRole = $role_description;
+        }
+
+        $menuItems = [];
+
+        if (empty($role_name)) {
+            $role_name = Yii::t('frontend', 'role not defined');
+        }
+        $menuItems = [
+            [
+                'label' => Yii::t('payment', 'Top Up Card'),
+                'url' => ['/payment/default/index']
+            ],
+            [
+                'label' => Yii::t('payment', 'History'),
+                'url' => ['/payment/default/history']
+            ],
+            [
+                'label' => $role_name . ' (' . $userRole .')',
+                'url' => '#',
+                'items' => [
+                    [
+                        'label' => Yii::t('customer', 'User Profile'),
+                        'url' => ['/account/customer/user-profile']
+                    ],
+                    [
+                        'label' => Yii::t('frontend', 'Logout'),
+                        'url' => ['/account/sign-in/logout'],
+                        'linkOptions' => ['data-method' => 'post'],
+                    ],
+                ],
+            ]
+        ];
+
+        return  Yii::$app->view->render(
+            "@frontend".'/modules/account/views/layouts/'.$layout.'/header',
+            [
+                'brand' => $brand,
+                'brand_url' => $brand_url,
+                'menuItems' => $menuItems
+            ]
+        );
+    }
+    
+
 }

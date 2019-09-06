@@ -7,7 +7,7 @@ use yii\bootstrap\NavBar;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
-use frontend\assets\AppAsset;
+use frontend\assets\AppAssetNew;
 use frontend\models\NavItem;
 use frontend\services\globals\Entity;
 use lo\modules\noty\Wrapper;
@@ -15,7 +15,7 @@ use lo\modules\noty\Wrapper;
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-AppAsset::register($this);
+AppAssetNew::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -32,67 +32,8 @@ AppAsset::register($this);
 
 <div class="wrap">
     <?php
-    $brand = Yii::$app->name;
-    $brand_url = Yii::$app->homeUrl;
-    $entity = new Entity();
-
-    NavBar::begin([
-        'brandLabel' => $brand,
-        'brandUrl' => $brand_url,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-
-    $role = ArrayHelper::map(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'description', 'description');
-    foreach ($role as $key => $val) {
-        $role_description = $key;
-    }
-    $role_name = Yii::$app->user->identity->username;
-    $userRole = \Yii::$app->authManager->getRolesByUser(Yii::$app->user->id);
-
-    if (empty($role_description)) {
-        $userRole = '';
-    } else {
-        $userRole = $role_description;
-    }
-
-    $menuItems = [];
-
-    if (empty($role_name)) {
-        $role_name = Yii::t('frontend', 'role not defined');
-    }
-    $menuItems = [
-        [
-            'label' => Yii::t('payment', 'Top Up Card'),
-            'url' => ['/payment/default/index']
-        ],
-        [
-            'label' => Yii::t('payment', 'History'),
-            'url' => ['/payment/default/history']
-        ],
-        [
-            'label' => $role_name . ' (' . $userRole .')',
-            'url' => '#',
-            'items' => [
-                [
-                    'label' => Yii::t('customer', 'User Profile'),
-                    'url' => ['/account/customer/user-profile']
-                ],
-                [
-                    'label' => Yii::t('frontend', 'Logout'),
-                    'url' => ['/account/sign-in/logout'],
-                    'linkOptions' => ['data-method' => 'post'],
-                ],
-            ],
-        ]
-    ];
-
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
-    NavBar::end() ?>
+       echo Yii::$app->headerBuilder->makeCustomerHeader('main-new')
+    ?>
 
     <div class="container">
         <?= Breadcrumbs::widget([
