@@ -50,7 +50,11 @@ class Controller extends \yii\web\Controller
     public function getModel($data, $instance)
     {
         $entity = new Entity();
-        $data['company_id'] = $entity->getCompanyId();
+
+        if (!Yii::$app->user->can('super_administrator')) {
+            $data['company_id'] = $entity->getCompanyId();
+        }
+
         $model = $instance::find()->andWhere($data)->limit(1)->one();
 
         if (!$model) {
