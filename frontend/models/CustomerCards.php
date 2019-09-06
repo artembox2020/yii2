@@ -115,14 +115,14 @@ class CustomerCards extends \yii\db\ActiveRecord
     /**
      * Checks card is available to be assigned to a user
      * 
+     * @param int $userId
      * @param int $cardNo
      * 
-     * @return int
+     * @return bool
      */
-    public function checkCardAvailable($cardNo)
+    public function checkCardAvailable($userId, $cardNo)
     {
-
-        return self::find()->andWhere(['status' => self::STATUS_ACTIVE])
+        $card = self::find()->andWhere(['status' => self::STATUS_ACTIVE])
                             ->andWhere(['or', 
                                 ['user_id' => 0], ['is', 'user_id', null]
                             ])
@@ -130,7 +130,17 @@ class CustomerCards extends \yii\db\ActiveRecord
                                 ['is_deleted' => 0], ['is', 'is_deleted', null]
                             ])
                             ->andWhere(['card_no' => $cardNo])
-                            ->count();
+                            ->limit(1)
+                            ->one();
+
+        $userBlacklist = new UserBlacklist();
+
+        if (!$card || (!empty($card->company_id) && $userBlacklist->getUserItem($userId, $card->company_id))) {
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
