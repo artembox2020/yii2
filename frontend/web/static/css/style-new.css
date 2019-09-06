@@ -25,6 +25,9 @@
 .wrap .container > div:nth-child(1) {
     margin-top: 60px;
 }
+.wrap .container > div.navbar-header {
+    margin-top: 0;
+}
 .monitoring-new .popup-block,
 .summary-journal .popup-block {
     position:  relative;
@@ -346,12 +349,44 @@ body.modal-open {
 .block-user-dv .modal-content {
     padding: 15px;
 }
+.nav a.add-card,
+.nav a.add-card:focus,
+.nav a.add-card:visited,
+.nav a.add-card:active {
+    outline: 0;
+    border: none;
+    cursor: pointer;
+    -moz-outline-style: none;
+}
+.nav .add-card .add-card-label {
+    position: relative;
+    z-index: 4000;
+}
+.nav .add-card .block {
+    text-align: center;
+    margin: 12px 4px;
+    padding: 4px;
+}
+.nav .add-card .block-info {
+    background-color: rgb(217, 237, 247);
+    color: rgb(49, 112, 143);
+}
+.nav .add-card .block-error {
+    background-color: rgb(242, 222, 222);
+    color: rgb(169, 68, 66);
+}
+.nav .block-user-dv {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 3000;
+    color: rgb(0, 0, 0);
+}
 .user-edit-employee .modal-footer button {
     display: inline;
     width: 49%;
     margin-top: 0;
 }
-
 @media all and (max-width: 468px) {
     .net-manager-new .coworkers__create-user {
         overflow: hidden;
@@ -378,8 +413,15 @@ body.modal-open {
         padding-left: 15px;
         padding-right: 15px;
     }
+    .nav .block-user-dv {
+        position: absolute;
+        left: 0;
+        top: 22px;
+        z-index: 3000;
+        color: rgb(0, 0, 0);
+        width: 55%;
+    }
 }
-
 @media all and (min-width: 768px) {
     .header-container-mn .user-actions {
         right: 10%;

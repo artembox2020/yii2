@@ -330,4 +330,22 @@ class MapBuilder extends Component {
 
         return $action;
     }
+
+    /**
+     * Gets card cofirmation view by user id
+     * 
+     * @param int $userId
+     * 
+     * @return string
+     */
+    public function getCardConfirmationByUser($userId)
+    {
+
+        return Yii::$app->view->render(
+            '@frontend/views/map/templates/card_confirmation',
+            [
+                'userId' => $userId,
+            ]
+        );
+    }
 }

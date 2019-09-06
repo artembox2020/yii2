@@ -181,4 +181,25 @@ class MapController extends \frontend\controllers\Controller
             Yii::$app->mapBuilder->getFlashMessageByStatus(Yii::$app->mapBuilder::STATUS_SUCCESS)
         );
     }
+
+    /**
+     * Assigns card to a user 
+     * 
+     * @param int $userId
+     * @param int $cardNo
+     * 
+     * @return string
+     */
+    public function actionCardConfirm($userId, $cardNo)
+    {
+        $card = new CustomerCards();
+
+        if ($card->checkCardAvailable($userId, $cardNo)) {
+            $card->assignCard($userId, $cardNo);
+
+            return json_encode(['status' => Yii::$app->mapBuilder::STATUS_SUCCESS]);
+        }
+
+        return json_encode(['status' => Yii::$app->mapBuilder::STATUS_ERROR]);
+    }
 }

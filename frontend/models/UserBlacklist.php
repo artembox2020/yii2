@@ -119,7 +119,7 @@ class UserBlacklist extends \yii\db\ActiveRecord
 
         if ($item) {
 
-            return $item;;
+            return $item;
         }
 
         return false;

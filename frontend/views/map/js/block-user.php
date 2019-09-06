@@ -16,6 +16,9 @@
         var ajaxActions = new XMLHttpRequest();
         ajaxActions.open("GET", "/map/block-unblock-user?" + queryString, true);
         ajaxActions.send();
-        location.reload();
+
+        ajaxActions.addEventListener("load", function() {
+            location.reload();
+        });
     }
 </script>

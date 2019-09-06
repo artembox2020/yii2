@@ -303,7 +303,7 @@ class NetManagerController extends \frontend\controllers\Controller
                 $user->save();
                 $profile->save(false);
 
-                return $this->goBack(Yii::$app->request->referrer);
+                return $this->redirect(Yii::$app->request->referrer);
             }
         }
 
