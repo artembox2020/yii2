@@ -100,8 +100,8 @@ class CustomerCards extends \yii\db\ActiveRecord
     {
         $userBlacklist = new UserBlacklist();
 
-        // if card user in blacklist then do nothing
-        if ($userBlacklist->getUserItem($this->user->id, $this->company->id)) {
+        // if no user and  card user in blacklist then do nothing
+        if (!empty($this->user) && $userBlacklist->getUserItem($this->user->id, $this->company->id)) {
 
             return false;
         }
@@ -110,5 +110,49 @@ class CustomerCards extends \yii\db\ActiveRecord
         $this->update();
 
         return true;
+    }
+
+    /**
+     * Checks card is available to be assigned to a user
+     * 
+     * @param int $userId
+     * @param int $cardNo
+     * 
+     * @return bool
+     */
+    public function checkCardAvailable($userId, $cardNo)
+    {
+        $card = self::find()->andWhere(['status' => self::STATUS_ACTIVE])
+                            ->andWhere(['or', 
+                                ['user_id' => 0], ['is', 'user_id', null]
+                            ])
+                            ->andWhere(['or', 
+                                ['is_deleted' => 0], ['is', 'is_deleted', null]
+                            ])
+                            ->andWhere(['card_no' => $cardNo])
+                            ->limit(1)
+                            ->one();
+
+        $userBlacklist = new UserBlacklist();
+
+        if (!$card || (!empty($card->company_id) && $userBlacklist->getUserItem($userId, $card->company_id))) {
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Assigns card to a user
+     * 
+     * @param int $userId
+     * @param int $cardNo
+     */
+    public function assignCard($userId, $cardNo)
+    {
+        $card = self::find()->andWhere(['card_no' => $cardNo])->one();
+        $card->user_id = $userId;
+        $card->save();
     }
 }

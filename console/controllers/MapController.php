@@ -71,9 +71,10 @@ class MapController extends Controller
                 $card->balance = rand(0, self::MAX_BALANCE);
                 $card->discount = rand(0, self::MAX_DISCOUNT);
                 $card->status = array_rand([CustomerCards::STATUS_INACTIVE, CustomerCards::STATUS_ACTIVE]);
-                $card->user_id = $availableUserIds[rand(0, count($availableUserIds)-1)];
+                $card->user_id = rand(0, 2) == 1 ? $availableUserIds[rand(0, count($availableUserIds)-1)] : null;
                 $card->company_id = $testCompanyId;
                 $card->created_at = ($randCreated = rand(strtotime("-1 months"), time() - 3600*24));
+                $card->is_deleted = 0;
                 $card->isNewRecord = true;
                 $card->save();
 

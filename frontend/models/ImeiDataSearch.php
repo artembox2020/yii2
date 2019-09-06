@@ -90,7 +90,7 @@ class ImeiDataSearch extends ImeiData
     public function makeOrder($query, $postParams)
     {
         if (empty($postParams['sortOrder'])) {
-            $query = $query->orderBy(['address_balance_holder.address' => SORT_ASC]);
+            $query = $query->orderBy(['address_balance_holder.serial_column' => SORT_ASC]);
 
             return $query;
         }
