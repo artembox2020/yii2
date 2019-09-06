@@ -42,8 +42,10 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property float $firmware_6lowpan
  * @property int $capacity_bill_acceptance
  * @property float $number_channel
- * @property  float $pcb_version
+ * @property float $pcb_version
  * @property integer $level_signal
+ * @property float $on_modem_account
+ * @property int $traffic
  *
  * @property AddressBalanceHolder $address
  * @property Machine[] $machines
@@ -110,7 +112,7 @@ class Imei extends \yii\db\ActiveRecord
         return [
 
             [['imei', 'address_id', 'imei_central_board', 'critical_amount', 'time_out', 'created_at', 'updated_at', 'deleted_at', 'capacity_bill_acceptance', 'level_signal'], 'integer'],
-            [['on_modem_account'], 'double'],
+            [['on_modem_account', 'pcb_version'], 'double'],
             [['imei', 'address_id', 'company_id', 'balance_holder_id', 'status'], 'required'],
             [['type_packet', 'firmware_version', 'type_bill_acceptance', 'serial_number_kp', 'phone_module_number', 'crash_event_sms', 'communication_program_version'], 'string', 'max' => 255],
             [['capacity_bill_acceptance'], 'integer', 'min' => 1],
@@ -351,6 +353,7 @@ class Imei extends \yii\db\ActiveRecord
     {
         return $imei->status;
     }
+
 
     /**
      * @param $int
