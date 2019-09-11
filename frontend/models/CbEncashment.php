@@ -27,6 +27,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property string $coin_face_values
  * @property double $amount_of_coins
  * @property boolean $is_deleted
+ * @property integer $last_collection_counter
  */
 class CbEncashment extends \yii\db\ActiveRecord
 {
