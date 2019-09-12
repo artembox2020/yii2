@@ -8,7 +8,7 @@ use frontend\models\UserBlacklist;
 ?>
 
 <div class="net-manager-new">
-    <div class="block-user-dv hidden" id="card-confirm">
+    <div class="block-user-dv hidden card-confirm">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <button type="button" class="close text-right pr-4 pt-4">
@@ -33,7 +33,7 @@ use frontend\models\UserBlacklist;
                 </div>
                 <br>
                 <div class="btn-wrap m-3">
-                    <button type="button" class="btn btn-success btn-block confirm-btn">
+                    <button type="button" class="btn btn-success btn-block confirmation-btn">
                         <?= Yii::t('map', 'Confirm') ?>
                     </button>
                     <button type="button" class="btn btn-outline-info btn-block confirm-cancel-btn">

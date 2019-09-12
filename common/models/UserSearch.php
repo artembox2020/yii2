@@ -5,6 +5,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\conditions\OrCondition;
+use yii\helpers\ArrayHelper;
 use common\models\User;
 
 /**
@@ -137,7 +138,12 @@ class UserSearch extends User
                 );
             }
         }]);
-        
+
+        $queryString = "SELECT user_id FROM auth_assignment WHERE item_name = 'super_administrator'";
+        $superAdminIds = ArrayHelper::getColumn(Yii::$app->db->createCommand($queryString)->queryAll(), 'user_id');
+
+        $query->andWhere(['not in', 'id', $superAdminIds]);
+
         return $dataProvider;
     }
 }

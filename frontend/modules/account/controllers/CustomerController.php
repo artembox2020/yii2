@@ -110,10 +110,11 @@ class CustomerController extends Controller
             return $this->renderAccessDenied();
         }
 
-        return $this->render('index', [
-            'model' => $this->findModel($id),
-            'profile' => UserProfile::findOne($id),
-        ]);
+        $profile = UserProfile::findOne($id);
+
+        Yii::$app->controllerNamespace = 'frontend\controllers';
+
+        return $this->redirect(['/map/userscard', 'userId' => $profile->user_id]);
     }
 
     /**

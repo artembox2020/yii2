@@ -101,7 +101,7 @@ class CustomerCards extends \yii\db\ActiveRecord
         $userBlacklist = new UserBlacklist();
 
         // if no user and  card user in blacklist then do nothing
-        if (!empty($this->user) && $userBlacklist->getUserItem($this->user->id, $this->company->id)) {
+        if (!empty(\Yii::$app->user) && $userBlacklist->getUserItem(\Yii::$app->user->id, $this->company->id)) {
 
             return false;
         }
@@ -153,6 +153,7 @@ class CustomerCards extends \yii\db\ActiveRecord
     {
         $card = self::find()->andWhere(['card_no' => $cardNo])->one();
         $card->user_id = $userId;
+        $card->created_at = time();
         $card->save();
     }
 }

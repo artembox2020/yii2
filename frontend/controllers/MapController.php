@@ -29,6 +29,18 @@ use frontend\services\globals\Entity;
 class MapController extends \frontend\controllers\Controller
 {
     /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if (Yii::$app->user->can('customer')) {
+            $this->layout = '@frontend/modules/account/views/layouts/customer';
+        }
+
+        return parent::beforeAction($action);
+    }
+
+    /**
      * Cards index list
      * 
      * @return string
@@ -113,17 +125,24 @@ class MapController extends \frontend\controllers\Controller
      */
     public function actionUserscard($userId)
     {
+        if ( !\Yii::$app->user->can('editCustomer', ['class'=>static::class]) && Yii::$app->user->id != $userId) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $cards = new CardSearch();
         $transactionSearch = new TransactionSearch();
         $entity = new Entity();
         $companyId = $entity->getCompanyId();
-        $dataProvider = $cards->searchByUserId($userId, Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $cards->searchByUserId($userId, $params);
         $transactionDataProvider = $transactionSearch->search(
-            $cards->findCardsByUserId($userId), Yii::$app->request->queryParams
+            $cards->findCardsByUserId($userId), $params, true
         );
 
         // card operations
-        if ($post = Yii::$app->request->post()) {
+        if (!empty($post) || ($post = Yii::$app->request->post())) {
             $card = $this->getModel(['card_no' => $post['card_no']], new CustomerCards());
 
             if ($result = $this->updateMapData($post, $card)) {
@@ -135,6 +154,8 @@ class MapController extends \frontend\controllers\Controller
         $userForm = new UserForm();
         $userForm->setModel(User::findOne($userId));
         $profile = UserProfile::findOne($userId);
+
+        //$render = $renderPartial ? 'renderPartial' : 'render';
 
         return $this->render(
             'userscard',
@@ -192,6 +213,12 @@ class MapController extends \frontend\controllers\Controller
      */
     public function actionCardConfirm($userId, $cardNo)
     {
+        if ( !\Yii::$app->user->can('editCustomer', ['class'=>static::class]) && Yii::$app->user->id != $userId) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         $card = new CustomerCards();
 
         if ($card->checkCardAvailable($userId, $cardNo)) {

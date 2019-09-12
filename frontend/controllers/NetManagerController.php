@@ -71,7 +71,19 @@ class NetManagerController extends \frontend\controllers\Controller
         $this->service = $service;
         parent::__construct($id, $module, $config);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if (Yii::$app->user->can('customer')) {
+            $this->layout = '@frontend/modules/account/views/layouts/customer';
+        }
+
+        return parent::beforeAction($action);
+    }
+
     public function behaviors()
     {
         return [
@@ -286,7 +298,7 @@ class NetManagerController extends \frontend\controllers\Controller
     {
         $array = array();
 
-        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCompanyData', ['class'=>static::class]) && $id != Yii::$app->user->id) {
             \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
             return $this->render('@app/modules/account/views/denied/access-denied');
         }
@@ -307,23 +319,7 @@ class NetManagerController extends \frontend\controllers\Controller
             }
         }
 
-        if (!array_key_exists(self::ADMINISTRATOR, Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId()))) {
-            $array = Yii::$app->authManager->getRoles();
-            unset($array[self::ADMINISTRATOR]);
-        } else {
-            $array = Yii::$app->authManager->getRoles();
-        }
-
-        $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
-
-        $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-
-        unset($roles[array_search('super_administrator', $roles)]);
-        unset($roles[array_search('user', $roles)]);
-
-        foreach ($roles as $key => $role) {
-            $roles[$key] = Yii::t('backend', $role);
-        }
+        $roles = $this->setRoles();
 
         return $this->render($this->getPath('create'), [
             'user' => $user,
@@ -347,7 +343,6 @@ class NetManagerController extends \frontend\controllers\Controller
         $model = $this->findModel($id, new User());
 //        $this->service->createLog($model, 'Delete');
         $model->softDelete();
-
 
         return $this->redirect("/net-manager/employees");
     }

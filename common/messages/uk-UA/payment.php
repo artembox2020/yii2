@@ -24,7 +24,7 @@ return [
     'operation time' => 'Время операции',
     'description' => 'Привіт! Ти переказуєшь гроші на свою розрахункову картку Мережі пралень "Постірай-Ка!". Чистота - це те що треба!',
     'History' => 'Історія',
-    'Operation' => 'Операция',
+    'Operation' => 'Дія',
     'Operation payment' => 'Оплата',
     'Operation income' => 'Пополнение',
     'Operation fail' => 'Помилка',

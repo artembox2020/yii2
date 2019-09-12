@@ -68,6 +68,18 @@ class SiteController extends Controller
             ],
         ];
     }
+    
+     /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if (Yii::$app->user->can('customer')) {
+            $this->layout = '@frontend/modules/account/views/layouts/customer';
+        }
+
+        return parent::beforeAction($action);
+    }
 
     /**
      * Displays homepage.
@@ -91,6 +103,11 @@ class SiteController extends Controller
         } else {
 
             return $this->redirect('account/sign-in/login');
+        }
+        
+        if (Yii::$app->user->can('customer')) {
+
+            return $this->redirect(['account/customer/index', 'id' => Yii::$app->user->id]);
         }
 
         return $this->render('index', [

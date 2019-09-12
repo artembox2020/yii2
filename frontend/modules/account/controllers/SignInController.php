@@ -38,7 +38,14 @@ class SignInController extends Controller
                         'allow' => false,
                         'roles' => ['@'],
                         'denyCallback' => function () {
-                            return Yii::$app->controller->redirect(['customer/index', 'id' => Yii::$app->user->id]);
+
+                            if (Yii::$app->user->can('customer')) {
+
+                                return Yii::$app->controller->redirect(['customer/index', 'id' => Yii::$app->user->id]);
+                            } else {
+
+                                return Yii::$app->controller->redirect(['/site/index']);
+                            }
                         },
                     ],
                     [

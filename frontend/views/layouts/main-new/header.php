@@ -1,20 +1,24 @@
 <?php
 
 /* @var $menuItems array */
+/* @var $brand_url string */
 /* @var $userMenuItems array */
 
 ?>
+
 <header class="top-menu container-fluid">
     <div class="logo ml-1 ml-md-5">
-        <a href="<?= Yii::$app->homeUrl ?>">
+        <a href="<?= $brand_url ?>">
             <img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/logo.png" alt="Постирайка">
         </a>
     </div>
-    <div class="menu-items mr-5">
+    <div class="menu-items mr-5 nav">
         <?php foreach ($menuItems as $item): ?>
-            <a href ="<?= $item['url'][0] ?>" >
-                <?= $item['label'] ?>
-            </a>
+            <?php if ($item['label'] == 'add-card'): ?>
+                <?= Yii::$app->view->render('@frontend/views/layouts/main-new/add-card') ?>
+            <?php else: ?>
+                <a href ="<?= $item['url'][0] ?>"><?= $item['label'] ?></a>
+            <?php endif; ?>
         <?php endforeach; ?>
         <button class="btn-user"><img src="<?= Yii::getAlias('@storageUrl/main-new') ?>/img/user.svg" alt="user"></button>
     </div>
@@ -47,9 +51,13 @@
         </svg>
         <i class="fas fa-bars fa-2x white"></i>
     </div>
-    <div class="mobile-menu">
+    <div class="mobile-menu nav">
         <?php foreach ($menuItems as $item): ?>
-            <a href ="<?= $item['url'][0] ?>"><?= $item['label'] ?></a>
+            <?php if ($item['label'] == 'add-card'): ?>
+                <?= Yii::$app->view->render('@frontend/views/layouts/main-new/add-card') ?>
+            <?php else: ?>
+                <a href ="<?= $item['url'][0] ?>"><?= $item['label'] ?></a>
+            <?php endif; ?>
         <?php endforeach; ?>
     </div>
 </header>

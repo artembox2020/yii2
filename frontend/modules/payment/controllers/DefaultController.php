@@ -3,7 +3,7 @@
 namespace app\modules\payment\controllers;
 
 use frontend\models\CustomerCards;
-use app\models\Orders;
+use frontend\models\Orders;
 use frontend\models\Transactions;
 use Ramsey\Uuid\Uuid;
 use yii\web\Controller;
@@ -44,7 +44,12 @@ class DefaultController extends Controller
     {
         $model = new DynamicModel(['card_no','amount']);
 
-        $cards = CustomerCards::find(['is_deleted' => self::FALSE])->select('card_no')->asArray()->column();
+        $cards = CustomerCards::find()
+        ->andWhere([
+            'is_deleted' => self::FALSE,
+            'status' => CustomerCards::STATUS_ACTIVE
+        ])
+        ->select('card_no')->asArray()->column();
 
         $model
             ->addRule(['card_no', 'amount'],  'required')

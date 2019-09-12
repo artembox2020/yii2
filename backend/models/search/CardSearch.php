@@ -215,11 +215,10 @@ class CardSearch extends CustomerCards
      */
     public function findCardsByUserId($userId)
     {
-        $entity = new Entity();
-        $companyId = $entity->getCompanyId();
         $query = CustomerCards::find()->select(['card_no'])->andWhere(
-            ['user_id' => $userId, 'company_id' => $companyId]
+            ['user_id' => $userId]
         );
+
         $items = $query->all();
 
         return array_unique(ArrayHelper::getColumn($items, 'card_no'));
