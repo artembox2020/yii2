@@ -8,7 +8,7 @@ use frontend\models\CustomerCards;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 ?>
-<div class="table-responsive">
+<div class="table-responsive card-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $cards,

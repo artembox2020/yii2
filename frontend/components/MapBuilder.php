@@ -46,7 +46,7 @@ class MapBuilder extends Component {
         $model = $this->getModel($post);
         $model->status = self::STATUS_SUCCESS;
 
-        if (!\Yii::$app->user->can('editCustomer', ['class'=>static::class])) {
+        if (!\Yii::$app->user->can('editCustomer', ['class'=>static::class]) && Yii::$app->user->id != $card->user_id) {
             $model->status = self::STATUS_ERROR;
 
             return $model;

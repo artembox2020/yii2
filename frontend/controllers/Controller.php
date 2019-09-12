@@ -51,7 +51,9 @@ class Controller extends \yii\web\Controller
     {
         $entity = new Entity();
 
-        if (!Yii::$app->user->can('super_administrator')) {
+        if (Yii::$app->user->can(User::ROLE_CUSTOMER)) {
+            $data['user_id'] = Yii::$app->user->id;
+        } else if (!Yii::$app->user->can('super_administrator')) {
             $data['company_id'] = $entity->getCompanyId();
         }
 
@@ -84,8 +86,41 @@ class Controller extends \yii\web\Controller
 
         return $roles;
     }
-    
-     /**
+
+    /**
+     * Sets user roles possible
+     * 
+     * @return array
+     */
+    public function setRoles()
+    {
+        if (!array_key_exists(User::ROLE_ADMINISTRATOR, Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId()))) {
+            $array = Yii::$app->authManager->getRoles();
+            unset($array[self::ADMINISTRATOR]);
+        } else {
+            $array = Yii::$app->authManager->getRoles();
+        }
+
+        $roles = ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name');
+
+        $now = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+
+        //unset($roles[array_search('super_administrator', $roles)]);
+        unset($roles[array_search('user', $roles)]);
+
+        foreach ($roles as $key => $role) {
+            $roles[$key] = Yii::t('backend', $role);
+        }
+
+        if (array_key_exists(User::ROLE_CUSTOMER, Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId()))) {
+            $key = array_search(User::ROLE_CUSTOMER, $roles);
+            $roles = array_intersect_key($roles, [$key => $roles[$key]]);
+        }
+
+        return $roles;
+    }
+
+    /**
      * Performs card operations by card post data (block/unblock + refill)
      
      * @param array $post

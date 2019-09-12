@@ -9,7 +9,7 @@ use backend\models\search\CardSearch;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 ?>
-<div class="map-cardofcard">
+<div class="map-cardofcard transaction-index">
     <div class="table-responsive">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,

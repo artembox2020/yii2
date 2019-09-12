@@ -358,7 +358,7 @@ body.modal-open {
     cursor: pointer;
     -moz-outline-style: none;
 }
-.nav .add-card .add-card-label {
+.nav .add-card, .nav .add-card .add-card-label {
     position: relative;
     z-index: 4000;
 }
@@ -377,8 +377,8 @@ body.modal-open {
 }
 .nav .block-user-dv {
     position: absolute;
-    left: 10px;
-    top: 10px;
+    left: 20px;
+    top: 25px;
     z-index: 3000;
     color: rgb(0, 0, 0);
 }
@@ -386,6 +386,28 @@ body.modal-open {
     display: inline;
     width: 49%;
     margin-top: 0;
+}
+.card-index table thead tr {
+    background-color: #6591f7!important;
+}
+.card-index table thead tr a,
+.transaction-index table thead tr a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+}
+.card-index table tbody tr:nth-child(2n) {
+    background-color: #e8effe;
+}
+.transaction-index table thead tr {
+    background-color: #3da698!important;
+}
+.transaction-index table tbody tr:nth-child(2n) {
+    background-color: #def2ef;
+}
+.card-index table tbody tr:nth-child(2n+1),
+.transaction-index table tbody tr:nth-child(2n+1) {
+    background-color: white!important;
 }
 @media all and (max-width: 468px) {
     .net-manager-new .coworkers__create-user {

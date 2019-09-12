@@ -120,6 +120,7 @@ class HeaderBuilder extends Component {
         return Yii::$app->view->render(
             "@frontend".'/views/layouts/'.$layout.'/header',
             [
+                'brand_url' => env('FRONTEND_URL'),
                 'menuItems' => $menuItems,
                 'userMenuItems' => $userMenuItems
             ]
@@ -160,6 +161,7 @@ class HeaderBuilder extends Component {
         foreach ($role as $key => $val) {
             $role_description = $key;
         }
+
         $role_name = Yii::$app->user->identity->username;
         $userRole = \Yii::$app->authManager->getRolesByUser(Yii::$app->user->id);
 
@@ -174,41 +176,32 @@ class HeaderBuilder extends Component {
         if (empty($role_name)) {
             $role_name = Yii::t('frontend', 'role not defined');
         }
+
         $menuItems = [
+            [
+                'label' => 'add-card'
+            ],
             [
                 'label' => Yii::t('payment', 'Top Up Card'),
                 'url' => ['/payment/default/index']
-            ],
-            [
-                'label' => Yii::t('payment', 'History'),
-                'url' => ['/payment/default/history']
-            ],
-            [
-                'label' => $role_name . ' (' . $userRole .')',
-                'url' => '#',
-                'items' => [
-                    [
-                        'label' => Yii::t('customer', 'User Profile'),
-                        'url' => ['/account/customer/user-profile']
-                    ],
+            ]
+        ];
+
+        $userMenuItems = [
                     [
                         'label' => Yii::t('frontend', 'Logout'),
                         'url' => ['/account/sign-in/logout'],
                         'linkOptions' => ['data-method' => 'post'],
                     ],
-                ],
-            ]
         ];
 
-        return  Yii::$app->view->render(
-            "@frontend".'/modules/account/views/layouts/'.$layout.'/header',
+        return Yii::$app->view->render(
+            "@frontend".'/views/layouts/'.$layout.'/header',
             [
-                'brand' => $brand,
                 'brand_url' => $brand_url,
-                'menuItems' => $menuItems
+                'menuItems' => $menuItems,
+                'userMenuItems' => $userMenuItems
             ]
         );
     }
-    
-
 }

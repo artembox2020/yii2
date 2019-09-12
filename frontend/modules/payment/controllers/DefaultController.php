@@ -3,7 +3,7 @@
 namespace app\modules\payment\controllers;
 
 use frontend\models\CustomerCards;
-use app\models\Orders;
+use frontend\models\Orders;
 use frontend\models\Transactions;
 use Ramsey\Uuid\Uuid;
 use yii\web\Controller;
