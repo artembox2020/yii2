@@ -409,6 +409,19 @@ body.modal-open {
 .transaction-index table tbody tr:nth-child(2n+1) {
     background-color: white!important;
 }
+.wm-mashines-block table {
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 12px;
+    border: 0;
+}
+.wm-mashines-block table .label {
+    display: inline-block;
+}
+.wm-mashines-block table .connect-status {
+    margin-top: 4px;
+}
+
 @media all and (max-width: 468px) {
     .net-manager-new .coworkers__create-user {
         overflow: hidden;

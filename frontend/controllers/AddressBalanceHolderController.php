@@ -8,6 +8,7 @@ use frontend\services\globals\Entity;
 use frontend\services\logger\src\service\LoggerService;
 use Yii;
 use frontend\models\BalanceHolder;
+use frontend\models\ImeiDataSearch;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\AddressImeiData;
 use frontend\models\AddressBalanceHolderSearch;
@@ -162,6 +163,31 @@ class AddressBalanceHolderController extends Controller
 
             return $this->redirect(['/net-manager/addresses']);
         }
+    }
+
+    /**
+     * Represents wm mashines by address
+     * 
+     * @param \frontend\models\AddressBalanceHolder $address
+     * 
+     * @return string
+     */
+    public function actionWmMashines($address)
+    {
+        $addressImeiData = new AddressImeiData();
+        $imei = $addressImeiData->getCurrentImeiIdByAddress($address->id, $address->status);
+        $searchModel = new ImeiDataSearch();
+        $item = ['devices' => Yii::$app->monitoringBuilder::getDevicesData($searchModel, $imei)];
+
+        return Yii::$app->view->render(
+            '@frontend/views/address-balance-holder/main-new/wm-mashines',
+            [
+                'item' => $item,
+                'model' => $searchModel,
+                'rowspan' => 4
+                
+            ]
+        );
     }
 
     /**

@@ -100,7 +100,6 @@ $dateFormat = "d.m.Y";
                 'label' => Yii::t('frontend','Money Amount'),
                 'value' =>  8000000000
             ],
-            
             [
                 'label' => Yii::t('frontend','Last errors'),
                 'value' => Yii::t('frontend','Last errors'),
@@ -116,6 +115,16 @@ $dateFormat = "d.m.Y";
     <h3 align="center"><?= Yii::t('frontend', 'Terminal Features') ?></h3>
     <?= $model->getTerminalInfoView() ?>
 <?php endif; ?>
+
+<div><b><u><?= Yii::t('frontend', 'Wm Mashines') ?></u></b></div>
+<br/>
+
+<?php
+    echo Yii::$app->runAction(
+        '/address-balance-holder/wm-mashines',
+        ['address' => $model]
+    );
+?>
 
 <?php
     echo Yii::$app->runAction(
