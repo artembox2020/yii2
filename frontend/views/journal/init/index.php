@@ -50,6 +50,7 @@ use frontend\services\parser\CParser;
                         'sortType' => $searchFilter->getSortType($params, 'address')
                     ]
                 ),
+                'format' => 'raw',
                 'value' => function($model) use ($searchModel)
                 {
                     

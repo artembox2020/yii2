@@ -55,6 +55,7 @@ use \frontend\models\AddressBalanceHolder;
         [
             'attribute' => 'address',
             'label' => Yii::t('frontend', 'Address'),
+            'format' => 'raw',
             'value'=> function ($model) use($searchModel) {
 
                 return $searchModel->getAddressView($model);

@@ -50,12 +50,23 @@ $machine_menu = [];
 //            'label' => Yii::t('frontend', 'Date Install'),
 //            'format' => ['date', 'php:d/m/Y']
 //        ],
-        ['attribute' => 'address.address',
+        [
+            'attribute' => 'address.address',
             'label' => Yii::t('frontend', 'Address Install'),
+            'format' => 'raw',
+            'value' => function($dataProvider) {
+
+                return Yii::$app->commonHelper->link($dataProvider->address);
+            }
         ],
         [
             'attribute' => 'balanceHolder.name',
             'label' => Yii::t('frontend', 'Balance Holder'),
+            'format' => 'raw',
+            'value' => function($dataProvider) {
+
+                return Yii::$app->commonHelper->link($dataProvider->balanceHolder);
+            }
         ],
         ['attribute' => 'updated_at',
             'label' => Yii::t('frontend', 'Last ping'),

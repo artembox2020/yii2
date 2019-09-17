@@ -18,6 +18,18 @@ use yii\helpers\ArrayHelper;
 class Controller extends \yii\web\Controller
 {
     /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if (Yii::$app->user->can('customer')) {
+            $this->layout = '@frontend/modules/account/views/layouts/customer';
+        }
+
+        return parent::beforeAction($action);
+    }
+
+    /**
      * Gets path depending on layout
      * 
      * @param string $view
@@ -43,16 +55,21 @@ class Controller extends \yii\web\Controller
      * 
      * @param array $data
      * @param instance $instance
+     * @param bool $hasUserId
      * 
      * @return instance
      * @throws \yii\web\NotFoundHttpException
      */
-    public function getModel($data, $instance)
+    public function getModel($data, $instance, $hasUserId = true)
     {
         $entity = new Entity();
 
         if (Yii::$app->user->can(User::ROLE_CUSTOMER)) {
-            $data['user_id'] = Yii::$app->user->id;
+
+            if ($hasUserId) {
+                $data['user_id'] = Yii::$app->user->id;
+            }
+
         } else if (!Yii::$app->user->can('super_administrator')) {
             $data['company_id'] = $entity->getCompanyId();
         }

@@ -42,6 +42,7 @@ use \common\models\UserProfile;
                     ],
                     [
                         'label' => yii::t('map', 'Address'),
+                        'format' => 'raw',
                         'value' => function($model) use ($cards) {
 
                             return $cards->findAddressByCardNo($cards->findCardsByUserId($model->user_id));

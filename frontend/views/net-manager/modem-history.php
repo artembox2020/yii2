@@ -43,7 +43,16 @@ use frontend\models\ImeiDataSearch;
         'columns' => [
             [
                 'attribute' => 'address_name',
-                'label' => Yii::t('frontend', 'Address')
+                'label' => Yii::t('frontend', 'Address'),
+                'format' => 'raw',
+                'value' => function($model) {
+
+                    return Html::a(
+                        $model['address_name'],
+                        ['/address-balance-holder/view', 'id' => $model['address_id']],
+                        ['target' => '_blank']
+                    );
+                }
             ],
             [
                 'attribute' => 'created_at',
@@ -57,10 +66,17 @@ use frontend\models\ImeiDataSearch;
             [
                 'attribute' => 'imei',
                 'label' => Yii::t('frontend', 'Imei'),
+                'format' => 'raw',
                 'value' => function($model)
                 {
+                    if (empty($model['imei'])) {
 
-                    return !empty($model['imei']) ? $model['imei'] : '---';
+                        return '---';
+                    }
+
+                    return Yii::$app->commonHelper->linkByType(
+                        Yii::$app->commonHelper::OBJECT_TYPE_IMEI, $model['imei']
+                    );
                 }
             ]
         ]

@@ -106,7 +106,7 @@ use frontend\services\globals\EntityHelper;
 <tr>
     <td class="table-active bold-border">&nbsp;</td>
     <td class="table-active font12 bold-border width-restrict">
-        <?= $item['terminal']['imei'] ?>
+        <?= Yii::$app->commonHelper->linkByType(Yii::$app->commonHelper::OBJECT_TYPE_IMEI, $item['terminal']['imei']) ?>
     </td>
     <td class="table-active font12 bold-border">
         <?= explode(" ", $item['terminal']['last_ping_value'])[0] ?>

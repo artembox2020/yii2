@@ -54,6 +54,7 @@ use backend\models\search\CardSearch;
                 ],
                 [
                     'label' => yii::t('map', 'Address'),
+                    'format' => 'raw',
                     'value' => function($transaction) {
                         $cardSearch = new CardSearch();
 

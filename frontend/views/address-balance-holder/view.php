@@ -48,13 +48,15 @@ $dateFormat = "d.m.Y";
                 'value' => function($model)
                 {
 
-                    return (
+                    $title = (
                         ($balanceHolder = $model->balanceHolder) ? $balanceHolder->name :
                         (
                             (($fakeBalanceHolder = $model->getFakeBalanceHolder()) ? $fakeBalanceHolder->name : '').
                             '<br>['.Yii::t('frontend', 'Deleted').']'
                         )
-                    );    
+                    );
+
+                    return $balanceHolder ? Yii::$app->commonHelper->link($balanceHolder) : $title;
                 }
             ],
 

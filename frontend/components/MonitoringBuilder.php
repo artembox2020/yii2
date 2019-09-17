@@ -258,6 +258,11 @@ class MonitoringBuilder extends Component {
     {
         $devices = [];
 
+        if (empty($imei)) {
+
+            return $devices;
+        }
+
         $dataProviderWmMashine = $searchModel->searchWmMashinesByImeiId($imei->id);
 
         $mashines = $dataProviderWmMashine->query->all();

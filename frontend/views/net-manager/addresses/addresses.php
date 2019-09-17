@@ -29,10 +29,14 @@ use frontend\services\globals\EntityHelper;
         'filterModel' => $searchModel,
         'columns' => [
            'id',
-           
             [
                'attribute' => 'balanceHolder.name',
-               'label' => Yii::t('frontend','Balance Holder')
+               'label' => Yii::t('frontend','Balance Holder'),
+               'format' => 'raw',
+               'value' => function($model) {
+
+                    return Yii::$app->commonHelper->link($model->balanceHolder);
+                }
             ],
             [
                 'attribute' => 'name',
@@ -43,10 +47,8 @@ use frontend\services\globals\EntityHelper;
                 'attribute' => 'address',
                 'format' => 'raw',
                 'value' => function($model) {
-                    return Html::a(
-                        $model->address,
-                        ['/address-balance-holder/view', 'id' => $model->id]
-                    );
+
+                    return Yii::$app->commonHelper->link($model);
                 }
             ],
             
@@ -69,12 +71,13 @@ use frontend\services\globals\EntityHelper;
                             'placeholder' => Yii::t('common', 'Type imei')
                         ]
                     ]);
+
                     $relationData = $entityHelper->tryUnitRelationData(
                         $model,
                         ['imei' => 'imei']
                     );
-                    
-                    return $relationData ? $relationData : $addWashpay;
+
+                    return $relationData ? Yii::$app->commonHelper->link($model->imei, [], $relationData) : $addWashpay;
                 }
             ],
     

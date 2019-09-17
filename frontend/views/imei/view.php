@@ -42,11 +42,14 @@ $this->title = $model->imei;
             
             [
                 'attribute' => 'balanceHolder',
+                'format' => 'raw',
                 'value' => function($model) {
                     
                     if (!empty($model->balanceHolder)) {
-                        return $model->balanceHolder->name;
+
+                        return Yii::$app->commonHelper->link($model->balanceHolder);
                     } else {
+
                         return Yii::t('common', 'Not Set');
                     }
                 }
@@ -54,12 +57,18 @@ $this->title = $model->imei;
             
             [
                 'attribute' => 'address',
+                'format' => 'raw',
                 'value' => function($model) {
                     $relationData = $model->tryRelationData(
                         ['address' => 'address']
                     );
-                    
-                    return $relationData ? $relationData : Yii::t('common', 'Not Set');
+
+                    if ($relationData) {
+
+                        return Yii::$app->commonHelper->link($model->address, [], $relationData);
+                    }
+
+                    return Yii::t('common', 'Not Set');
                 }
             ],
 

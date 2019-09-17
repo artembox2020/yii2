@@ -12,7 +12,7 @@ use frontend\models\ImeiDataSearch;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\AddressImeiData;
 use frontend\models\AddressBalanceHolderSearch;
-use yii\web\Controller;
+use frontend\controllers\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -200,7 +200,7 @@ class AddressBalanceHolderController extends Controller
      */
     protected function findModel($id)
     {
-       $entity = new Entity();
-       return $entity->getUnitPertainCompany($id, new AddressBalanceHolder());
+
+        return $this->getModel(['id' => $id], new AddressBalanceHolder(), false);
     }
 }

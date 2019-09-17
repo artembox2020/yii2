@@ -24,8 +24,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            [
+                'attribute' => 'id',
+                'format' => 'raw',
+                'value' => function($model) {
 
-            'id',
+                    return Yii::$app->commonHelper->link($model, [], $model->id);
+                }
+            ],
             'imei_id',
             'type_mashine',
             'number_device',

@@ -24,9 +24,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'id',
-            'name',
+            [
+                'attribute' => 'name',
+                'format' => 'raw',
+                'value' => function($model) {
+
+                    return Yii::$app->commonHelper->link($model);
+                }
+            ],
             'city',
             'address',
 //            'contact_person',

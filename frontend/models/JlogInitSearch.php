@@ -11,6 +11,7 @@ use frontend\models\Imei;
 use frontend\services\globals\Entity;
 use frontend\services\globals\EntityHelper;
 use frontend\services\parser\CParser;
+use yii\helpers\Html;
 
 /**
  * JlogInitSearch represents the model behind the search form of `frontend\models\JlogSearch`.
@@ -38,12 +39,24 @@ class JlogInitSearch extends JlogSearch
         $countParts = count($addressParts);
 
         if ($countParts >= 2) {
-            $partOne = $addressParts[0];
+            $partOne = trim($addressParts[0]);
+            $partTwo = trim(mb_substr($model->address, mb_strlen($partOne) + 1));
+            $address = AddressBalanceHolder::find()
+                            ->andFilterWhere(['like', 'address', $partOne])
+                            ->andWhere(['or', ['like', 'floor', $partTwo], ['floor' => null], ['floor' => '']])
+                            ->limit(1)
+                            ->one();
 
-            return $partOne." (".mb_substr($model->address, mb_strlen($partOne) + 1).")";
+            $addressString = $partOne." (".$partTwo.")";
+        } else {
+            $addressString = $model->address;
+            $address = AddressBalanceHolder::find()
+                            ->andWhere(['like', 'address', $model->address])
+                            ->limit(1)
+                            ->one();
         }
 
-        return $model->address;
+        return Yii::$app->commonHelper->link($address, [], $addressString);
     }
 
     /**

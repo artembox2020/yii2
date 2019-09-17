@@ -2,7 +2,7 @@
             <?= $model->attributeLabels()['imei'] ?>
         </b>
         <br>
-        <?= $model->imeiRelation->imei ?>
+        <?= Yii::$app->commonHelper->link($model->imeiRelation) ?>
         <input
             type="hidden" 
             class="search-imei-value" 

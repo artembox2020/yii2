@@ -34,14 +34,10 @@ use frontend\models\Imei;
                 'attribute' => 'imei',
                 'format' => 'raw',
                 'value' => function($model) {
-                    
-                    return Html::a(
-                        $model->imei,
-                        ['/imei/view', 'id' => $model->id]
-                    );
+
+                    return Yii::$app->commonHelper->link($model);
                 }
             ],
-           
             [
                'attribute' => 'address',
                'format' => 'raw',
@@ -60,14 +56,24 @@ use frontend\models\Imei;
                     $relationData = $model->tryRelationData(
                         ['address' => ['address', 'floor'], ', ']
                     );
-                    
-                    return $relationData ? $relationData : $addAddress;
-               },
+
+                    if ($relationData) {
+
+                        return Yii::$app->commonHelper->link($model->address, [], $relationData);
+                    }
+
+                    return $addAddress;
+                },
             ],
            
             [
                'attribute' => 'balanceHolder.name',
                'label' => Yii::t('frontend', 'Balance Holder'),
+               'format' => 'raw',
+               'value' => function ($model) {
+
+                    return Yii::$app->commonHelper->link($model->balanceHolder);
+               }
             ],
            
             [

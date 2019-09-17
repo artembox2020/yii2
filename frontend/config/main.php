@@ -83,6 +83,9 @@ $config = [
         'mapBuilder' => [
             'class' => 'frontend\components\MapBuilder'
         ],
+        'commonHelper' => [
+            'class' => 'frontend\components\CommonHelper'
+        ],
         'cookieLanguageSelector' => [
             'class' => 'gugglegum\Yii2\Extension\CookieLanguageSelector\Component',
             'defaultLanguage' => 'uk-UA',

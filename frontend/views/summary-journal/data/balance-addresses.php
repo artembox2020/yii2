@@ -21,7 +21,9 @@ use frontend\services\globals\QueryOptimizer;
             ?>
             <tr data-key="<?= $balanceHolder->id ?>">
                 <td class="mashine-number-device cell-device">
-                    <?= $balanceHolder->name ?>
+                    <?=
+                        Yii::$app->commonHelper->link($balanceHolder)
+                    ?>
                 </td>
                 <td class="is_deleted hidden">
                     <?= $balanceHolder->is_deleted ?>
@@ -44,8 +46,9 @@ use frontend\services\globals\QueryOptimizer;
                         ?>
                             <tr>
                                 <td class="mashine-number-device address">
-                                    <?= $address->address ?>,
-                                    <?= $address->floor ? $address->floor : ' &nbsp;' ?>
+                                    <?=
+                                        Yii::$app->commonHelper->link($address, [], $address->address.($address->floor ? $address->floor : ' &nbsp;'))
+                                    ?>
                                 </td>
                                 <td class="mashine-count address-id-<?= $address->id ?>">
                                     <?= $addressImeiData->getWmMashinesCountByYearMonth($year, $month, $address) ?>
