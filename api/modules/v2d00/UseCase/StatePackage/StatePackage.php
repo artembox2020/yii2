@@ -55,7 +55,7 @@ class StatePackage
         $imeiData->imei_id = $imei->id;
         $imeiData->created_at = time() + Jlog::TYPE_TIME_OFFSET;
         $imeiData->imei = $items->imei;
-        $imeiData->fireproof_residue = $items->pac->totalСash;
+        $imeiData->fireproof_residue = $items->pac->totalCash;
         $imeiData->in_banknotes = $items->pac->numberNotes;
         $imeiData->on_modem_account = $items->pac->collection;
         $imeiData->cb_version = $imei->firmware_version;
@@ -63,6 +63,10 @@ class StatePackage
         $imeiData->packet = $items->pac->workStatus->CenBoard;
         $imeiData->is_deleted = false;
         $imeiData->insert();
+
+        $imei->on_modem_account = $items->pac->collection;
+        $imei->ping = time() + Jlog::TYPE_TIME_OFFSET;
+        $imei->save();
 
         return 'Ok';
     }
@@ -81,7 +85,6 @@ class StatePackage
         $imei = ImeiInit::getImei($items->imei);
         $wm_machine_array = $this->createArrayWm($items->pac->device);
         $this->ifNeedAutoCreateWm($wm_machine_array, $imei);
-        $this->updateWm($wm_machine_array, $imei);
         $this->insertWmData($wm_machine_array, $imei);
 
         return 'Ok';
@@ -126,36 +129,25 @@ class StatePackage
         $wm_mashine_data->status = WmMashine::STATUS_ACTIVE;
         $wm_mashine_data->ping = $imei->ping;
         $wm_mashine_data->insert(false);
-    }
 
-    /**
-     * Проход по массиву объектов машинок и вызов
-     * метода обновления машинок в т. wm_machine
-     * @param array $wm_machine_array
-     * @param Imei $imei
-     * @throws Throwable
-     * @throws \yii\db\StaleObjectException
-     */
-    public function updateWm(array $wm_machine_array, Imei $imei): void
-    {
-        foreach ($wm_machine_array as $value) {
-            $this->updateWashMachine($value, $imei);
-        }
+        $this->updateWashMachine($washMachine, $imei, $wm_mashine_data);
     }
 
     /**
      * Обновление состояния машинки в т. wm_machine
      * @param $washMachine
      * @param Imei $imei
+     * @param WmMashineData $wm_mashine_data
      * @throws Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function updateWashMachine($washMachine, Imei $imei)
+    public function updateWashMachine($washMachine, Imei $imei, $wm_mashine_data)
     {
         $wash_machine = WmMashine::find()
             ->where(['number_device' => $washMachine->number])
             ->andWhere(['imei_id' => $imei->id])->one();
 
+        $wash_machine->setLastPing($wm_mashine_data);
         $wash_machine->level_signal = $washMachine->rssi;
         $wash_machine->bill_cash = $washMachine->money;
         $wash_machine->door_position = $washMachine->door;

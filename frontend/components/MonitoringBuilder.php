@@ -281,10 +281,6 @@ class MonitoringBuilder extends Component {
             $lastPing = Yii::$app->formatter->asDate($model->ping, WmMashine::PHP_DATE_TIME_FORMAT);
             $timeParts = explode(" ", $lastPing);
 
-            if (count($timeParts) >  1) {
-                $lastPing = $timeParts[0]."<br>".$timeParts[1];
-            }
-
             $deviceItem = [
                 'type' => $model->type_mashine,
                 'number_device' => $model->number_device,
