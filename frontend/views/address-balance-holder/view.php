@@ -128,6 +128,26 @@ $dateFormat = "d.m.Y";
     );
 ?>
 
+<b><?= Yii::t('graph', 'Level Signal'); ?></b>
+<br>
+
+<div class="chart-container-mls graph-block">
+    <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+</div>
+
+<?php
+    echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container-mls',
+            'action' => '/dashboard/modem-level-signal',
+            'active' => 'current ten',
+            'actionBuilder' => 'builds/action-mls-builder',
+            'other' => $model->id
+        ]
+    );
+?>
+
 <?php
     echo Yii::$app->runAction(
         '/journal/index-by-address',
@@ -135,3 +155,4 @@ $dateFormat = "d.m.Y";
     );
 ?>
 </div>
+<div class="margin-bottom-274"></div>

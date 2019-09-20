@@ -764,7 +764,7 @@ div.required label:after {
     position: relative;
     top: -274px;
     margin-bottom: -274px;
-    min-height: 280px;
+    min-height: 320px;
     z-index: 1;
 }
 .graph-container.active {
@@ -780,7 +780,7 @@ div.required label:after {
 .graph-container .timestamp-interval-block {
     display: none;
     background: white;
-    position: absolute!important;
+    position: relative!important;
     z-index: 2000;
     border: 1px solid #666;
     padding: 12px;
