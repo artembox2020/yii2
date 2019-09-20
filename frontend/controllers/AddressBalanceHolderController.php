@@ -69,6 +69,11 @@ class AddressBalanceHolderController extends Controller
      */
     public function actionView($id)
     {
+        if ( !\Yii::$app->user->can('viewTechData', ['class'=>static::class]) && !\Yii::$app->user->can('viewFinData', ['class'=>static::class]) ) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
