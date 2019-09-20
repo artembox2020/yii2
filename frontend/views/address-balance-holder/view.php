@@ -80,39 +80,6 @@ $dateFormat = "d.m.Y";
     ])
 ?>
 
-<h3 align="center"><?= Yii::t('frontend', 'Address Card') ?></h3>
-
-<div><b><u><?= Yii::t('frontend','Summary Technical Data') ?></u></b></div>
-<br/>
-
-<?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            [
-                'label' => Yii::t('frontend','Number Washine Cycles'),
-                'value' => 400000000000
-            ],
-            
-            [
-                'label' => Yii::t('frontend','Average Currency Amount'),
-                'value' => 350
-            ],
-            
-            [    
-                'label' => Yii::t('frontend','Money Amount'),
-                'value' =>  8000000000
-            ],
-            [
-                'label' => Yii::t('frontend','Last errors'),
-                'value' => Yii::t('frontend','Last errors'),
-            ],
-        ],
-    ])
-?>
-
-<div><b><u><?= Yii::t('frontend','Consolidated Financial Data') ?></u></b></div>
-<br/>
-
 <?php if (!empty($model->getTerminalInfoView())): ?>
     <h3 align="center"><?= Yii::t('frontend', 'Terminal Features') ?></h3>
     <?= $model->getTerminalInfoView() ?>
