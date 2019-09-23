@@ -120,6 +120,7 @@ class BalanceHolder extends \yii\db\ActiveRecord
      */
     public function getAddressBalanceHolders()
     {
+
         return $this->hasMany(AddressBalanceHolder::className(), ['balance_holder_id' => 'id']);
     }
 

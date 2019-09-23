@@ -15,6 +15,7 @@ return [
     'Date' => 'Дата',
     'Filter By Address' => 'Фільтр за адресою',
     'Filter By Date' => 'Фільтр по даті',
+    'Level Signal' => 'Рівень сигналу',
     'Modem Level Signal' => 'Рівень сигналу по пунктам',
     'Show by the certain period' => 'Показувати за конкретний період',
     'Show by the last days' => 'Показувати за останні дні',

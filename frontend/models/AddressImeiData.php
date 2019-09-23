@@ -601,7 +601,8 @@ class AddressImeiData extends ActiveRecord
                 'imei_id' => $item['imei_id'],
                 'created_at' => $item['created_at'],
                 'imei' => !empty($imei) ? $imei->imei : false,
-                'address_name' => !empty($address) ? $address->address : false
+                'address_name' => !empty($address) ? $address->address : false,
+                'address_id' => !empty($address) ? $address->id : false
             ];
 
             $imeiIds[] = $item->imei_id;

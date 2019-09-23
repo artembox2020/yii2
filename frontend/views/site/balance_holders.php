@@ -15,7 +15,7 @@
                     <table>
                         <tr>
                             <td>
-                                <?=  $balanceHolder->name ?>
+                                <?= Yii::$app->commonHelper->link($balanceHolder) ?>
                             </td>
                         </tr>
                         <tr>
@@ -39,7 +39,7 @@
                     ?>
                     <tr style="height: <?= $balanceHolderData['height'] ?>">
                         <td class="cell-device">
-                            <?= $balanceHolderData['address']->address ?>, 
+                            <?= Yii::$app->commonHelper->link($balanceHolderData['address']) ?>, 
                             <?= $balanceHolderData['address']->floor ?>
                         </td>
                     </tr>
@@ -55,7 +55,7 @@
                             <td class="cell-device">
                             <?php if ($balanceHolderData['address']->imei): ?>
                                 IMEI:
-                                <?= $balanceHolderData['address']->imei->imei ?>
+                                <?= Yii::$app->commonHelper->link($balanceHolderData['address']->imei) ?>
                                 Init: 
                                 <?= $balanceHolderData['address']->imei->getInit() ?>
                                 <?= \Yii::$app->formatter->asDate($balanceHolderData['address']->imei->updated_at, 'short') ?>
@@ -73,8 +73,14 @@
                     ?>
                         <tr class="device-status-row">
                             <td>
-                                <?= Yii::t('frontend', 'WM').' '.$mashine->number_device ?>
-                                <?= '(status:'.Yii::t('frontend', $mashine->getState()).')' ?>
+                                <?=
+                                    Yii::$app->commonHelper->link(
+                                        $mashine,
+                                        [],
+                                        Yii::t('frontend', 'WM').' '.$mashine->number_device.
+                                        '(status:'.Yii::t('frontend', $mashine->getState()).')'
+                                    )
+                                ?>
                             </td>
                         </tr>
                     <?php

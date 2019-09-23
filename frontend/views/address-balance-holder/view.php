@@ -48,13 +48,15 @@ $dateFormat = "d.m.Y";
                 'value' => function($model)
                 {
 
-                    return (
+                    $title = (
                         ($balanceHolder = $model->balanceHolder) ? $balanceHolder->name :
                         (
                             (($fakeBalanceHolder = $model->getFakeBalanceHolder()) ? $fakeBalanceHolder->name : '').
                             '<br>['.Yii::t('frontend', 'Deleted').']'
                         )
-                    );    
+                    );
+
+                    return $balanceHolder ? Yii::$app->commonHelper->link($balanceHolder) : $title;
                 }
             ],
 
@@ -78,44 +80,40 @@ $dateFormat = "d.m.Y";
     ])
 ?>
 
-<h3 align="center"><?= Yii::t('frontend', 'Address Card') ?></h3>
-
-<div><b><u><?= Yii::t('frontend','Summary Technical Data') ?></u></b></div>
-<br/>
-
-<?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            [
-                'label' => Yii::t('frontend','Number Washine Cycles'),
-                'value' => 400000000000
-            ],
-            
-            [
-                'label' => Yii::t('frontend','Average Currency Amount'),
-                'value' => 350
-            ],
-            
-            [    
-                'label' => Yii::t('frontend','Money Amount'),
-                'value' =>  8000000000
-            ],
-            
-            [
-                'label' => Yii::t('frontend','Last errors'),
-                'value' => Yii::t('frontend','Last errors'),
-            ],
-        ],
-    ])
-?>
-
-<div><b><u><?= Yii::t('frontend','Consolidated Financial Data') ?></u></b></div>
-<br/>
-
 <?php if (!empty($model->getTerminalInfoView())): ?>
     <h3 align="center"><?= Yii::t('frontend', 'Terminal Features') ?></h3>
     <?= $model->getTerminalInfoView() ?>
 <?php endif; ?>
+
+<div><b><u><?= Yii::t('frontend', 'Wm Mashines') ?></u></b></div>
+<br/>
+
+<?php
+    echo Yii::$app->runAction(
+        '/address-balance-holder/wm-mashines',
+        ['address' => $model]
+    );
+?>
+
+<b><?= Yii::t('graph', 'Level Signal'); ?></b>
+<br>
+
+<div class="chart-container-mls graph-block">
+    <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+</div>
+
+<?php
+    echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container-mls',
+            'action' => '/dashboard/modem-level-signal',
+            'active' => 'current ten',
+            'actionBuilder' => 'builds/action-mls-builder',
+            'other' => $model->id
+        ]
+    );
+?>
 
 <?php
     echo Yii::$app->runAction(
@@ -124,3 +122,4 @@ $dateFormat = "d.m.Y";
     );
 ?>
 </div>
+<div class="margin-bottom-274"></div>

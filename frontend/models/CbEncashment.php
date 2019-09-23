@@ -102,7 +102,7 @@ class CbEncashment extends \yii\db\ActiveRecord
      */
     public function getAddress($address_id)
     {
-        return AddressBalanceHolder::find(['id' => $address_id])->one();
+        return AddressBalanceHolder::find()->andWhere(['id' => $address_id])->one();
     }
 
     /**

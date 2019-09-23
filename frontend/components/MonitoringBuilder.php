@@ -26,7 +26,7 @@ class MonitoringBuilder extends Component {
     /**
      * @inheritdoc
      */
-    public function __construct($monitoringController)
+    public function __construct($monitoringController = false)
     {
         $this->monitoringController = $monitoringController;
         $this->layout = Yii::$app->layout;
@@ -239,7 +239,29 @@ class MonitoringBuilder extends Component {
             'traffic' => $imei->traffic
         ];
 
+        $devices = $this->getDevicesData($searchModel, $imei);
+
+        $technical = ['software' => $software, 'terminal' => $terminal, 'devices' => $devices];
+
+        return $technical;
+    }
+
+    /** 
+     * Gets Wm mashines data
+     * 
+     * @param \frontend\models\ImeiDataSearch $searchModel
+     * @param \frontend\models\Imei $imei
+     * 
+     * @return array
+     */
+    public static function getDevicesData($searchModel, $imei)
+    {
         $devices = [];
+
+        if (empty($imei)) {
+
+            return $devices;
+        }
 
         $dataProviderWmMashine = $searchModel->searchWmMashinesByImeiId($imei->id);
 
@@ -259,10 +281,6 @@ class MonitoringBuilder extends Component {
             $lastPing = Yii::$app->formatter->asDate($model->ping, WmMashine::PHP_DATE_TIME_FORMAT);
             $timeParts = explode(" ", $lastPing);
 
-            if (count($timeParts) >  1) {
-                $lastPing = $timeParts[0]."<br>".$timeParts[1];
-            }
-
             $deviceItem = [
                 'type' => $model->type_mashine,
                 'number_device' => $model->number_device,
@@ -280,9 +298,7 @@ class MonitoringBuilder extends Component {
             $devices[$model->number_device] = $deviceItem;
         }
 
-        $technical = ['software' => $software, 'terminal' => $terminal, 'devices' => $devices];
-
-        return $technical;
+        return $devices;
     }
 
     /**

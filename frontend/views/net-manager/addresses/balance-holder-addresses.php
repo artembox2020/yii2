@@ -38,7 +38,6 @@ use frontend\services\globals\EntityHelper;
             [
                 'attribute' => 'floor',
             ],
-            
             [
                 'attribute' => 'imei',
                 'label' => Yii::t('frontend', 'Imei'),
@@ -59,8 +58,8 @@ use frontend\services\globals\EntityHelper;
                         $model,
                         ['imei' => 'imei']
                     );
-                    
-                    return $relationData ? $relationData : $addWashpay;
+
+                    return $relationData ? Yii::$app->commonHelper->link($model->imei, [], $relationData) : $addWashpay;
                 }
             ],
     

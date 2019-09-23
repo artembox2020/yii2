@@ -8,10 +8,11 @@ use frontend\services\globals\Entity;
 use frontend\services\logger\src\service\LoggerService;
 use Yii;
 use frontend\models\BalanceHolder;
+use frontend\models\ImeiDataSearch;
 use frontend\models\AddressBalanceHolder;
 use frontend\models\AddressImeiData;
 use frontend\models\AddressBalanceHolderSearch;
-use yii\web\Controller;
+use frontend\controllers\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -68,6 +69,11 @@ class AddressBalanceHolderController extends Controller
      */
     public function actionView($id)
     {
+        if ( !\Yii::$app->user->can('viewTechData', ['class'=>static::class]) && !\Yii::$app->user->can('viewFinData', ['class'=>static::class]) ) {
+            \Yii::$app->getSession()->setFlash('AccessDenied', 'Access denied');
+            return $this->render('@app/modules/account/views/denied/access-denied');
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -165,6 +171,31 @@ class AddressBalanceHolderController extends Controller
     }
 
     /**
+     * Represents wm mashines by address
+     * 
+     * @param \frontend\models\AddressBalanceHolder $address
+     * 
+     * @return string
+     */
+    public function actionWmMashines($address)
+    {
+        $addressImeiData = new AddressImeiData();
+        $imei = $addressImeiData->getCurrentImeiIdByAddress($address->id, $address->status);
+        $searchModel = new ImeiDataSearch();
+        $item = ['devices' => Yii::$app->monitoringBuilder::getDevicesData($searchModel, $imei)];
+
+        return Yii::$app->view->render(
+            '@frontend/views/address-balance-holder/main-new/wm-mashines',
+            [
+                'item' => $item,
+                'model' => $searchModel,
+                'rowspan' => 4
+                
+            ]
+        );
+    }
+
+    /**
      * Finds the AddressBalanceHolder model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * 
@@ -174,7 +205,7 @@ class AddressBalanceHolderController extends Controller
      */
     protected function findModel($id)
     {
-       $entity = new Entity();
-       return $entity->getUnitPertainCompany($id, new AddressBalanceHolder());
+
+        return $this->getModel(['id' => $id], new AddressBalanceHolder(), false);
     }
 }

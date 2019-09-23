@@ -8,7 +8,7 @@ use Yii;
 use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSearch;
 use frontend\services\globals\Entity;
-use yii\web\Controller;
+use frontend\controllers\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
@@ -188,7 +188,7 @@ class BalanceHolderController extends Controller
      */
     protected function findModel($id)
     {
-        $entity = new Entity();
-        return $entity->getUnitPertainCompany($id, new BalanceHolder());
+
+        return $this->getModel(['id' => $id], new BalanceHolder(), false);
     }
 }

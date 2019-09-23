@@ -50,6 +50,7 @@ use frontend\models\CustomerCards;
             ],
             [
                 'label' => yii::t('map', 'Address'),
+                'format' => 'raw',
                 'value' => function($model) use ($cards) {
 
                     return $cards->findAddressByCardNo($model->card_no);

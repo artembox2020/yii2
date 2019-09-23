@@ -57,6 +57,7 @@ use frontend\services\parser\CParser;
             ],
             [
                 'attribute' => 'address',
+                'format' => 'raw',
                 'filter' =>  $this->render(
                     '/journal/filters/main',
                     [

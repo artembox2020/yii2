@@ -184,7 +184,7 @@ class CardSearch extends CustomerCards
             return null;
         }
 
-        return $address->address;
+        return Yii::$app->commonHelper->link($address);
     }
 
     /**

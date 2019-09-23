@@ -58,7 +58,7 @@ class NetManagerController extends \frontend\controllers\Controller
 
     /** @var int for wm status transfer form storage Under repair status */
     const STATUS_UNDER_REPAIR = 2;
-    
+
     const DATA_MODEM_HISTORY_FORMAT = 'H:i:s d.m.y';
 
     const ADMINISTRATOR = 'administrator';
@@ -70,18 +70,6 @@ class NetManagerController extends \frontend\controllers\Controller
     {
         $this->service = $service;
         parent::__construct($id, $module, $config);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function beforeAction($action)
-    {
-        if (Yii::$app->user->can('customer')) {
-            $this->layout = '@frontend/modules/account/views/layouts/customer';
-        }
-
-        return parent::beforeAction($action);
     }
 
     public function behaviors()

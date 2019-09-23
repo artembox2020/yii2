@@ -75,6 +75,7 @@ class JsonController extends Controller
 
         if ($items->type == self::STATUS_2_00) {
             $status = new StatePackage();
+
             return $status->create($items);
         }
 

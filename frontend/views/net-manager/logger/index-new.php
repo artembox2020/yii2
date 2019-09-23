@@ -62,7 +62,7 @@ $menu = [];
                         <?= $model['type'] ?>  
                     </td>
                     <td>
-                        <?= $model['name'] ?>  
+                        <?= Yii::$app->commonHelper->linkByType($model['type'], $model['name']) ?>
                     </td>
                     <td>
                         <?= $model['number'] ?>

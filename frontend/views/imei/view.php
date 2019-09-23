@@ -34,7 +34,7 @@ $this->title = $model->imei;
 
     <?= DetailView::widget([
         'model' => $model,
-        
+
         'attributes' => [
             'imei',
             
@@ -42,11 +42,14 @@ $this->title = $model->imei;
             
             [
                 'attribute' => 'balanceHolder',
+                'format' => 'raw',
                 'value' => function($model) {
                     
                     if (!empty($model->balanceHolder)) {
-                        return $model->balanceHolder->name;
+
+                        return Yii::$app->commonHelper->link($model->balanceHolder);
                     } else {
+
                         return Yii::t('common', 'Not Set');
                     }
                 }
@@ -54,12 +57,18 @@ $this->title = $model->imei;
             
             [
                 'attribute' => 'address',
+                'format' => 'raw',
                 'value' => function($model) {
                     $relationData = $model->tryRelationData(
                         ['address' => 'address']
                     );
-                    
-                    return $relationData ? $relationData : Yii::t('common', 'Not Set');
+
+                    if ($relationData) {
+
+                        return Yii::$app->commonHelper->link($model->address, [], $relationData);
+                    }
+
+                    return Yii::t('common', 'Not Set');
                 }
             ],
 
@@ -80,33 +89,4 @@ $this->title = $model->imei;
             ]
         ],
     ]) ?>
-    
-    <p><u><b><?= Yii::t('frontend','History') ?></b></u><p/>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            [
-                'label' =>  Yii::t('frontend', 'Number Washine Cycles'),
-                'value' => 23454
-            ],
-            
-            [
-                'label' =>  Yii::t('frontend', 'Time Work'),
-                'value' => 346567
-            ],
-            
-            [
-                'label' =>  Yii::t('frontend', 'Money Amount'),
-                'value' => 45665
-            ],
-            
-            [
-                'label' => Yii::t('frontend', 'Last errors'),
-                'value' => Yii::t('frontend', 'Last errors'),
-            ],
-            
-        ]
-    ]); ?>
-
 </div>
