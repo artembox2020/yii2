@@ -4,7 +4,7 @@
 /* @var $dataProvider ArrayDataProvider */
 /* @var $pageSize int */
 
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use yii\helpers\Html;
 use yii\widgets\ListView;
 

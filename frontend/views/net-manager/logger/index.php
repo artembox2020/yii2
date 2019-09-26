@@ -1,7 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use yii\helpers\Html;
 use yii\widgets\ListView;
 

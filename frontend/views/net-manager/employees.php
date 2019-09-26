@@ -9,8 +9,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 use common\models\User;
+use frontend\components\responsive\GridView;
 
 ?>
 <?php $menu = []; ?>
@@ -28,7 +29,7 @@ use common\models\User;
 <div class="account-default-users">
     <h1><?= Html::encode($this->title) ?></h1>
     
-    <?= yii\grid\GridView::widget([
+    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [

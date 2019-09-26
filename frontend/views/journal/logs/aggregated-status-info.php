@@ -1,6 +1,6 @@
 <?php
 
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 
 /* @var $model array */
 /* @var $wmStatus string */

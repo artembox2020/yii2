@@ -3,11 +3,12 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 use \yii\jui\AutoComplete;
 use yii\web\JsExpression;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\EntityHelper;
+use frontend\components\responsive\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
@@ -24,11 +25,20 @@ use frontend\services\globals\EntityHelper;
 <b><?php if ( yii::$app->user->can('editTechData') ) echo Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder/create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
 <br/>
 <?php \yii\widgets\Pjax::begin(['id' => 'address-pjax-container']); ?>
-<?= yii\grid\GridView::widget([
+<?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-           'id',
+            [
+               'attribute' => 'id',
+               'headerOptions' => [
+                    'class' => 'narrow'
+                ],
+                'contentOptions' =>function () {
+
+                    return ['class' => 'narrow'];
+                },
+            ],
             [
                'attribute' => 'balanceHolder.name',
                'label' => Yii::t('frontend','Balance Holder'),
@@ -36,7 +46,7 @@ use frontend\services\globals\EntityHelper;
                'value' => function($model) {
 
                     return Yii::$app->commonHelper->link($model->balanceHolder);
-                }
+                },
             ],
             [
                 'attribute' => 'name',
@@ -84,7 +94,8 @@ use frontend\services\globals\EntityHelper;
             'countWashMachine',
             
             'countGelDispenser',
-        ]
+        ],
+        'gridClass' => GridView::OPTIONS_DEFAULT_GRID_CLASS.' grid-addresses'
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
 <p><u><b><?= Yii::t('frontend','General Info') ?></b></u><p/>

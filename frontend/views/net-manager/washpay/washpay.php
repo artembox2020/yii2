@@ -2,7 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
+use frontend\components\responsive\GridView;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\EntityHelper;
 use frontend\models\Imei;
@@ -24,12 +25,20 @@ use frontend\models\Imei;
 </b><br><br>
 <b><?php if ( yii::$app->user->can('editTechData') ) echo Html::a(Yii::t('frontend', 'Add Washpay'), ['net-manager/washpay-create'], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
 <br/>
-<?= yii\grid\GridView::widget([
+<?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-           'id',
-           
+            [
+               'attribute' => 'id',
+               'headerOptions' => [
+                    'class' => 'narrow'
+                ],
+                'contentOptions' => function () {
+
+                    return ['class' => 'narrow'];
+                },
+            ],
             [
                 'attribute' => 'imei',
                 'format' => 'raw',

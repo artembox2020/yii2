@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use frontend\models\ImeiDataSearch;
+use frontend\components\responsive\GridView;
 
 /* @var $this yii\web\View */
 /* @var $imeis array */
@@ -38,8 +39,9 @@ use frontend\models\ImeiDataSearch;
 
     <br>
 
-    <?= yii\grid\GridView::widget([
+    <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'gridClass' => GridView::OPTIONS_DEFAULT_GRID_CLASS.' grid-filter-hide',
         'columns' => [
             [
                 'attribute' => 'address_name',

@@ -2,8 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
-use yii\grid\GridView;
+use frontend\components\responsive\DetailView;
+use frontend\components\responsive\GridView;
 use frontend\services\custom\Debugger;
 use frontend\controllers\OtherContactPersonController;
 /* @var $this yii\web\View */
@@ -133,7 +133,7 @@ use frontend\controllers\OtherContactPersonController;
 
 <?= DetailView::widget([
         'model' => $model,
-        'attributes' => $widgetAttributes
+        'attributes' => $widgetAttributes,
     ]);
 ?>
 
@@ -162,7 +162,7 @@ use frontend\controllers\OtherContactPersonController;
                 'label' =>  Yii::t('frontend', 'Count Gd Machine'),
                 'value' => $model->countGdMachine
             ],
-        ]
+        ],
     ]);
 ?>
 
@@ -173,6 +173,7 @@ use frontend\controllers\OtherContactPersonController;
 </p>
 <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'gridClass' => GridView::OPTIONS_DEFAULT_GRID_CLASS.' grid-filter-hide',
         'columns' => [
             'name',
             'position',

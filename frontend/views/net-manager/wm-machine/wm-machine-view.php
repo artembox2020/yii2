@@ -1,11 +1,12 @@
 <?php
 
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 use frontend\services\custom\Debugger;
 use frontend\models\Imei;
+
 /* @var $this yii\web\View */
 /* @var $model frontend\models\WmMashine */
 /* @var $users common\models\User */
@@ -96,6 +97,7 @@ use frontend\models\Imei;
     <b><u>Технічні дані</u></b><br>
     <?= GridView::widget([
     'dataProvider'=> $provider,
+    'gridClass' => GridView::OPTIONS_DEFAULT_GRID_CLASS.' grid-filter-hide',
         'columns' => [
             ['attribute' => 'inventory_number',
                 'label' => Yii::t('frontend', 'Inventory number'),

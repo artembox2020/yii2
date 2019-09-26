@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 use frontend\models\Org;
 
 $this->title = $model->name_org;

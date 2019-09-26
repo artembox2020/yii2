@@ -2,8 +2,8 @@
 
 use frontend\models\BalanceHolder;
 use yii\helpers\Html;
-use yii\grid\GridView;
-use yii\widgets\DetailView;
+use frontend\components\responsive\GridView;
+use frontend\components\responsive\DetailView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -31,6 +31,7 @@ $menu = [];
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'gridClass' => GridView::OPTIONS_DEFAULT_GRID_CLASS.' grid-filter-hide',
         'columns' => [
             'id',
             ['attribute' => 'name',

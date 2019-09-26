@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use yii\widgets\Pjax;
 use frontend\models\BalanceHolder;
 use frontend\models\BalanceHolderSummarySearch;

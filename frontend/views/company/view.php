@@ -1,7 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
+
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
 

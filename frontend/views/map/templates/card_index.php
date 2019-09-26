@@ -1,6 +1,6 @@
 <?php
 
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use \common\models\UserProfile;
 use frontend\models\CustomerCards;
 
