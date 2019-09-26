@@ -1,4 +1,5 @@
 <?php
+
 error_reporting( E_ERROR );
 
 use yii\jui\DatePicker;
@@ -17,6 +18,7 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $searchModel  frontend\models\BalanceHolderSummarySearch*/
 /* @var $summaryJournalController frontend\controllers\SummaryJournalController */
+
 ?>
 <h1><?= Yii::t('frontend', 'Summary Journal(General)') ?></h1>
 <?php
@@ -37,7 +39,7 @@ use yii\widgets\Pjax;
         'filterModel' => false,
         'summary' => '',
         'tableOptions' => [
-            'class' => 'table table-bordered main-table'
+            'class' => 'table table-bordered main-table grid-summary'
         ],
         'rowOptions' => [
             'class' => 'main-table-row'
@@ -58,6 +60,7 @@ use yii\widgets\Pjax;
                 'format' => 'raw',
                 'value' => function($model, $key, $index) use ($summaryJournalController, $searchModel, $dataProvider, $params)
                 {
+
                     return $summaryJournalController->renderBalanceAddresses($searchModel, $dataProvider, $params);
                 },
                 'contentOptions' => ['class' => 'common all'],

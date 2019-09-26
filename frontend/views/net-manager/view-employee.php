@@ -2,7 +2,8 @@
 /* @var $this yii\web\View */
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
+
 ?>
 <?php $menu = []; ?>
 <b>

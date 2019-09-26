@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 use common\models\UserProfile;
 
 /* @var $this yii\web\View */

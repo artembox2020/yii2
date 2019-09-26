@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\GdMashineDataSearch */

@@ -1,10 +1,13 @@
 <?php
 
+use yii\grid\GridView;
+
 /* @var $dataProvider yii\data\ArrayDataProvider */
+
 ?>
 
 <?=
-    \yii\grid\GridView::widget([
+    GridView::widget([
         'dataProvider' => $dataProvider,
         'options' => [
             'class' => 'nominals-grid nominals-banknote-grid'

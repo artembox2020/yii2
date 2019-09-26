@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use \frontend\models\Jlog;
 
 /* @var $this yii\web\View */

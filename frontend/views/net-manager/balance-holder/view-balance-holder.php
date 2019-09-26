@@ -2,8 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
-use yii\grid\GridView;
+use frontend\components\responsive\DetailView;
+use frontend\components\responsive\GridView;
 use frontend\services\custom\Debugger;
 use frontend\controllers\OtherContactPersonController;
 /* @var $this yii\web\View */
@@ -133,7 +133,7 @@ use frontend\controllers\OtherContactPersonController;
 
 <?= DetailView::widget([
         'model' => $model,
-        'attributes' => $widgetAttributes
+        'attributes' => $widgetAttributes,
     ]);
 ?>
 
@@ -162,43 +162,9 @@ use frontend\controllers\OtherContactPersonController;
                 'label' =>  Yii::t('frontend', 'Count Gd Machine'),
                 'value' => $model->countGdMachine
             ],
-            [
-                'label' => Yii::t('frontend', 'Last errors'),
-                'value' => Yii::t('frontend', 'Last errors'),
-            ],
-            [
-                'label' => Yii::t('frontend', 'Last repairs'),
-                'value' => Yii::t('frontend', 'Last repairs'),
-            ]
-        ]
+        ],
     ]);
 ?>
-
-<div><b><u><?= Yii::t('frontend','Consolidated Financial Data') ?></u></b></div>
-
-<?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            [
-                'label' =>  Yii::t('frontend', 'Money Amount'),
-                'value' => 1000
-            ],
-            [
-                'label' =>  Yii::t('frontend', 'Average Day Income'),
-                'value' => 200
-            ],
-            [
-                'label' =>  Yii::t('frontend', 'Average Income For 1WM'),
-                'value' => 400
-            ],
-            [
-                'label' =>  Yii::t('frontend', 'Average Income for 1 Point WM'),
-                'value' => 480
-            ],
-        ]
-    ]);
-?>
-
 
 <div><b><u><?= Yii::t('frontend','Other Contact People') ?></u></b></div>
 <br>
@@ -207,6 +173,7 @@ use frontend\controllers\OtherContactPersonController;
 </p>
 <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'gridClass' => GridView::OPTIONS_DEFAULT_GRID_CLASS.' grid-filter-hide',
         'columns' => [
             'name',
             'position',

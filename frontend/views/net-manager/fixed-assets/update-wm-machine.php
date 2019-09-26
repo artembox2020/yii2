@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 use frontend\services\custom\Debugger;
 /* @var $this yii\web\View */
 /* @var $imei frontend\models\Imei */

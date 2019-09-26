@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use \frontend\models\AddressBalanceHolder;
 
 /* @var $this yii\web\View */
@@ -134,6 +134,7 @@ use \frontend\models\AddressBalanceHolder;
             'contentOptions' => ['class' => 'cell-difference']
         ]
     ],
+    'gridClass' => GridView::OPTIONS_DEFAULT_GRID_CLASS.' grid-encashment'
 ]); ?>
 </div>
 

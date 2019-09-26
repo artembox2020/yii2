@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use common\models\User;
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */

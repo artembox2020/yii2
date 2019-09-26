@@ -1,11 +1,14 @@
 <?php
 
+use yii\grid\GridView;
+
 /* @var $searchModel frontend\models\CbLogSearch */
 /* @var $dataProvider yii\data\ArrayDataProvider */
+
 ?>
 
 <?=
-    \yii\grid\GridView::widget([
+    GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'options' => [

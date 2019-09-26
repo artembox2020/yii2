@@ -527,7 +527,7 @@ class NetManagerController extends \frontend\controllers\Controller
             'addresses' => $addresses
         ]);
     }
-    
+
     /**
      * Binds address to imei and redirects to actionWashpay
      * 

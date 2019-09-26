@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use \frontend\models\Jlog;
 use frontend\models\JlogDataCpSearch;
 use frontend\models\Imei;

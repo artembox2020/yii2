@@ -2,21 +2,22 @@
 
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $searchModel frontend\models\ImeiData */
+
 ?>
-<div>
+<div class="jlog-index">
     <?php Pjax::begin(); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'summary' => '',
         'tableOptions' => [
-            'class' => 'table table-striped table-bordered table-terminal'
+            'class' => 'table table-striped table-bordered table-terminal grid-terminal'
         ],
         'columns' => [
             [
@@ -54,7 +55,7 @@ use yii\widgets\Pjax;
                 {
                     return $monitoringController->renderImeiCard($model->imeiRelation->id, $searchModel);
                 },
-                'contentOptions' => ['class' => 'terminal all'],
+                'contentOptions' => ['class' => 'terminal imei-card all'],
                 'headerOptions' => ['class' => 'terminal all']
             ],
             [

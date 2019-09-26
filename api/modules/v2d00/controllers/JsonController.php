@@ -17,10 +17,10 @@ use yii\web\Response;
  */
 class JsonController extends Controller
 {
-    const LOG_2_00 = '2.00 L';
-    const INI_2_00 = '2.00 I';
-    const STATUS_2_00 = '2.00 S';
-    const ENCASHMENT_2_00 = '2.00 C';
+    const LOG = 'L';
+    const INI = 'I';
+    const STATUS = 'S';
+    const ENCASHMENT = 'C';
 
     public function behaviors()
     {
@@ -60,26 +60,29 @@ class JsonController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         $items = json_decode(file_get_contents("php://input"));
 
-        if ($items->type == self::LOG_2_00) {
+        // сотояние
+        if ($items->type == self::LOG) {
             $log = new Log();
 
             return $log->create($items);
         }
 
-        if ($items->type == self::INI_2_00) {
+        // инициализация
+        if ($items->type == self::INI) {
             $init = new ImeiInit();
 //            $initLog = new InitLog();
 //            $initLog->create($items);
             return $init->add($items);
         }
 
-        if ($items->type == self::STATUS_2_00) {
+        if ($items->type == self::STATUS) {
             $status = new StatePackage();
 
             return $status->create($items);
         }
 
-        if ($items->type == self::ENCASHMENT_2_00) {
+        // инкассация
+        if ($items->type == self::ENCASHMENT) {
             $encashment = new Encashment();
             return $encashment->add($items);
         }

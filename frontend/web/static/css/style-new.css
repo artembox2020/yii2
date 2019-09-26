@@ -214,6 +214,124 @@ body.modal-open {
     margin: 0 15px;
     padding-left: 20px;
 }
+.grid-view-main-view {
+    margin: 15px 0;
+    padding-left: 0;
+}
+.grid-view-main-view table {
+    width: auto;
+}
+.jlog-index.grid-view-main-view table thead tr td {
+    text-align: -webkit-center;
+    width: 0;
+}
+.jlog-index.grid-view-main-view table thead th,
+.jlog-index.grid-view-main-view table thead tr.filters td,
+.jlog-index.grid-view-main-view table tbody tr td {
+    max-width: 150px;
+    min-width: 50px;
+    width: auto;
+    padding: 4px 6px;
+    white-space: normal;
+}
+.jlog-index.grid-view-main-view table td input {
+  max-width: 100%;
+  width: auto;
+  display: inline-block;
+}
+.grid-view-main-view .pagination {
+    display: block;
+    clear: both;
+}
+.grid-view-main-view .grid-encashment .summary {
+    display: none!important;
+}
+.grid-view-main-view .grid-filter-hide .filters {
+    display: none;
+}
+.jlog-index.grid-view-main-view .grid-encashment thead th,
+.jlog-index.grid-view-main-view .grid-encashment tbody tr td {
+    max-width: 200px;
+}
+.jlog-index.grid-view-main-view table.table-responsive thead th.narrow,
+.jlog-index.grid-view-main-view table.table-responsive thead tr.filters td,
+.jlog-index.grid-view-main-view table.table-responsive tbody tr td.narrow {
+    max-width: 60px;
+}
+.jlog-index.grid-view-main-view .grid-bh .filters {
+    display: none;
+}
+.jlog-index.grid-view-main-view .grid-bh .grid-view {
+    position: relative;
+    top: -28px;
+    left: -4px;
+    margin-bottom: -42px;
+}
+.jlog-index.grid-view-main-view .grid-bh .grid-view > table {
+    min-height: 100px;
+}
+.jlog-index.grid-view-main-view .grid-bh tr:nth-child(n+2) td.address .grid-view {
+    top: -4px;
+    left: -3px;
+    margin-bottom: -18px;
+}
+.jlog-index.grid-view-main-view table.grid-bh thead th,
+.jlog-index.grid-view-main-view table.grid-bh thead tr.filters td,
+.jlog-index.grid-view-main-view table.grid-bh tbody tr td {
+    padding: 3px;
+}
+.jlog-index.grid-view-main-view .grid-bh .grid-view tr td:nth-child(1),
+.jlog-index.grid-view-main-view .grid-bh .grid-view tr th:nth-child(1) {
+    width: 94px!important;
+    min-width: 94px!important;
+    max-width: 94px!important;
+}
+.jlog-index.grid-view-main-view .grid-bh .grid-view tr td:nth-child(2),
+.jlog-index.grid-view-main-view .grid-bh .grid-view tr th:nth-child(2) {
+    width: 138px!important;
+    min-width: 138px!important;
+    max-width: 138px!important;
+}
+.jlog-index.grid-view-main-view .grid-bh .grid-view tr td:nth-child(3),
+.jlog-index.grid-view-main-view .grid-bh .grid-view tr th:nth-child(3) {
+    width: 240px!important;
+    min-width: 240px!important;
+    max-width: 240px!important;
+}
+.jlog-index.grid-view-main-view .grid-bh tr td.address .grid-view thead {
+    display: none;
+}
+.jlog-index.grid-view-main-view .grid-bh tr:nth-child(1) td.address .grid-view thead {
+    display: table-header-group;
+}
+.jlog-index.grid-view-main-view .grid-bh th.address {
+    visibility: hidden;
+}
+.jlog-index.grid-view-main-view .grid-bh tbody tr td:nth-child(1) {
+    vertical-align: top;
+}
+.jlog-index.grid-view-main-view .grid-terminal .imei-card {
+    width: 150px;
+}
+.jlog-index.grid-view-main-view .grid-terminal .imei-card > div {
+    margin: -16px -16px -25px 2px;
+}
+.jlog-index.grid-view-main-view .grid-terminal .cell-software {
+    height: 208px;
+}
+.jlog-index.grid-view-main-view .grid-terminal table {
+    margin-bottom: 0;
+}
+.jlog-index.grid-view-main-view .grid-terminal {
+    overflow: hidden;
+}
+.address-terminal-view {
+    padding: 0;
+    margin-left: -35px;
+}
+.address-terminal-view table {
+    margin-bottom: 0!important;
+}
 .jlog-index .table-responsive table th {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -222,12 +340,11 @@ body.modal-open {
     font-weight: 700;
     line-height: 16px;
     padding: 4.8px;
-    vertical-align: bottom;
+    vertical-align: middle;
     color: rgb(33, 37, 41);
     border-style: solid;
     border-width: 2px;
     border-color: rgb(222, 226, 230);
-    
 }
 .jlog-index .journal-filter-form label,
 .jlog-index .table-responsive .summary-shapter-for-status,
@@ -279,7 +396,7 @@ body.modal-open {
     font-family: 'PT Sans', sans-serif;
     font-size: 16px;
     font-weight: 400;
-    position: absolute;
+    position: static;
     padding-top: 20px;
     margin-top: 0;
     max-width: 100%;
@@ -292,9 +409,10 @@ body.modal-open {
     color: rgb(0, 0, 0);
 }
 .jlog-index .table-responsive {
-    min-height: 450px;
+    min-height: 50px;
+    height: auto;
     overflow-y: visible!important;
-    border-width: 0;
+    background: transparent;
 }
 .jlog-index.map-index .table-responsive,
 .jlog-index.map-user .table-responsive {
@@ -421,7 +539,42 @@ body.modal-open {
 .wm-mashines-block table .connect-status {
     margin-top: 4px;
 }
-
+.detail-view-main-new .address-tab {
+    overflow: visible;
+}
+.detail-view-main-new .address-tab table {
+    width: auto;
+    max-width: 100%;
+}
+form .form-control, form .uploader {
+    max-width: 320px!important;
+    font-family: 'PT Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 4.8px;
+}
+.input-group-btn {
+    display: inline-block;
+}
+.detail-view-main-new table.table-responsive,
+.jlog-index.grid-view-main-view table.table-responsive {
+    max-width: 100%;
+    padding: 0;
+}
+.detail-view-main-new div.table-responsive,
+.jlog-index div.table-responsive {
+    border: 0;
+}
+.net-manager-new.sub-menu a {
+    margin-right: 16px;
+}
+.net-manager-new.sub-menu .inner-nav {
+    margin-left: 48px!important;
+}
+.grid-view-filter .filter-menu {
+    left: 92%;
+    width: 200px;
+}
 @media all and (max-width: 468px) {
     .net-manager-new .coworkers__create-user {
         overflow: hidden;

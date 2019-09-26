@@ -1,8 +1,10 @@
 <?php
+
 use yii\grid\GridView;
 
 /* @var $searchModel frontend\models\CbLogSearch */
 /* @var $dataProvider yii\data\ArrayDataProvider */
+
 ?>
 <span class="glyphicon glyphicon-plus banknote_nominals"></span>
 

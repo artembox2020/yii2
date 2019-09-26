@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use frontend\models\Imei;
 use frontend\models\Jlog;
 use frontend\services\globals\EntityHelper;
