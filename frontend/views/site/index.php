@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 use frontend\services\custom\Debugger;
 use frontend\storages\GoogleGraphStorage;
 use frontend\storages\MashineStatStorage;
@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <b><?= Yii::t('frontend', 'Employees company') ?></b>
 
     <div class="employees-list">
-        <?= yii\grid\GridView::widget([
+        <?= \frontend\components\responsive\GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'columns' => [

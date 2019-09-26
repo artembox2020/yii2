@@ -1161,11 +1161,11 @@ table th,
   margin-left: 25vw;
 }
 
-.header-container-mn .filters , .net-manager-new .filters , .monitoring-new .filters {
+/*.header-container-mn .filters , .net-manager-new .filters , .monitoring-new .filters {
   display: flex;
   margin-top: 40px;
   padding: 0;
-}
+}*/
 label,
 .header-container-mn .month , .net-manager-new .month , .monitoring-new .month {
   font-size: 16px;

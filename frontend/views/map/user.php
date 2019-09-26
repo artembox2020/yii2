@@ -1,7 +1,7 @@
 <?php
 
 use yii\bootstrap\Html;
-use yii\grid\GridView;
+use frontend\components\responsive\GridView;
 use \frontend\models\CustomerCards;
 use \frontend\models\AddressImeiData;
 use \common\models\UserProfile;

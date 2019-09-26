@@ -381,4 +381,48 @@ class AddressBalanceHolder extends \yii\db\ActiveRecord
 
         return ArrayHelper::getColumn($items, 'id');
     }
+
+    /**
+     * Gets imei data by current address
+     *
+     * @return string
+     */
+    public function getImeiData()
+    {
+        ob_start();
+        if ($this->imei): ?>
+            IMEI:
+            <?= Yii::$app->commonHelper->link($this->imei) ?>
+            Init: 
+            <?= $this->imei->getInit() ?>
+            <?= \Yii::$app->formatter->asDate($this->imei->updated_at, 'short') ?>
+        <?php
+        endif;
+
+        return ob_get_clean();
+    }
+
+    /**
+     * Gets mashines data by current address
+     *
+     * @param array $mashines
+     * 
+     * @return string
+     */
+    public function getMashinesData($mashines)
+    {
+        ob_start();
+
+        foreach ($mashines as $mashine) {
+
+            echo Yii::$app->commonHelper->link(
+                $mashine,
+                [],
+                Yii::t('frontend', 'WM').' '.$mashine->number_device.
+                '(status:'.Yii::t('frontend', $mashine->getState()).')'
+            ).'<br>';
+        }
+
+        return ob_get_clean();
+    }
 }

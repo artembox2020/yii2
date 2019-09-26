@@ -1,9 +1,11 @@
 <?php
-use yii\grid\GridView;
+
+use frontend\components\responsive\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 use frontend\services\custom\Debugger;
+
 /* @var $this yii\web\View */
 $menu = [];
 $machine_menu = [];
@@ -27,7 +29,7 @@ $machine_menu = [];
 </p>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
-//    'filterModel' => $searchModel,
+    'gridClass' => GridView::OPTIONS_DEFAULT_GRID_CLASS.' grid-filter-hide',
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
         ['attribute' => 'serial_number',
@@ -92,6 +94,7 @@ $machine_menu = [];
 <?php ob_start(); ?>
 <?= GridView::widget([
     'dataProvider' => $provider,
+    'summary' => '',
     'columns' => [
         ['attribute' => 'model',
             'label' => Yii::t('frontend', 'By Models'),

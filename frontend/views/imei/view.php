@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use \frontend\models\Imei;
 use frontend\services\globals\Entity;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Imei */

@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AddressBalanceHolder */
@@ -32,22 +32,19 @@ $dateFormat = "d.m.Y";
         ]) ?>
     </p>
 
-<?= DetailView::widget([
+<?=
+    DetailView::widget([
         'model' => $model,
         'attributes' => [
             [
                 'label' => Yii::t('frontend','Address'),
                 'value' => $model->address
             ],
-            
             'number_of_citizens',
-
             [
                 'label' => Yii::t('frontend','Balance Holder'),
                 'format' => 'raw',
-                'value' => function($model)
-                {
-
+                'value' => function($model) {
                     $title = (
                         ($balanceHolder = $model->balanceHolder) ? $balanceHolder->name :
                         (
@@ -59,30 +56,24 @@ $dateFormat = "d.m.Y";
                     return $balanceHolder ? Yii::$app->commonHelper->link($balanceHolder) : $title;
                 }
             ],
-
             [    
                 'label' => Yii::t('frontend','Date Inserted'),
                 'value' => date($dateFormat, $model->date_inserted)
             ],
-
             [
                 'label' => Yii::t('frontend','Date Monitoring'),
                 'value' => date($dateFormat, $model->date_connection_monitoring)
             ],
-
             'number_of_floors',
-
             'countWashMachine',
-
             'countGelDispenser',
-
         ],
     ])
 ?>
 
 <?php if (!empty($model->getTerminalInfoView())): ?>
     <h3 align="center"><?= Yii::t('frontend', 'Terminal Features') ?></h3>
-    <?= $model->getTerminalInfoView() ?>
+    <div class="address-terminal-view"><?= $model->getTerminalInfoView() ?></div>
 <?php endif; ?>
 
 <div><b><u><?= Yii::t('frontend', 'Wm Mashines') ?></u></b></div>

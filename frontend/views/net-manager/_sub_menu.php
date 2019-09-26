@@ -1,7 +1,10 @@
 <?php
 
 /* @var $this yii\web\View */
-?>
+
+if (Yii::$app->layout == 'main-new') {
+    echo Yii::$app->view->render('/net-manager/_sub_menu-new-body');
+} else { ?>
     <a href="/net-manager/index">[<?= Yii::t('frontend', 'Company') ?>]</a>
 
     <a href="/net-manager/employees">[<?= Yii::t('frontend', 'Employees') ?>]</a>
@@ -29,3 +32,4 @@ $script = <<< JS
 JS;
 $this->registerJs($script);
 ?>
+<?php } ?>

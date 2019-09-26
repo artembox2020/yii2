@@ -3,11 +3,12 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
+use frontend\components\responsive\DetailView;
 use \yii\jui\AutoComplete;
 use yii\web\JsExpression;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\EntityHelper;
+use frontend\components\responsive\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Company */
@@ -18,7 +19,7 @@ use frontend\services\globals\EntityHelper;
 <b><?= Html::a(Yii::t('frontend', 'Add Address'), ['/address-balance-holder/create', 'balanceHolderId' => $model->id], ['class' => 'btn btn-success', 'style' => 'color: #fff;']) ?></b>
 <br/>
 <?php \yii\widgets\Pjax::begin(['id' => 'address-pjax-container']); ?>
-<?= yii\grid\GridView::widget([
+<?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [

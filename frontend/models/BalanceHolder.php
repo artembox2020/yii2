@@ -11,6 +11,7 @@ use frontend\services\globals\DateTimeHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use stdClass;
 
 /**
  * This is the model class for table "balance_holder".
@@ -243,14 +244,14 @@ class BalanceHolder extends \yii\db\ActiveRecord
     {
         $balanceHoldersData = [];
         foreach ($this->addressBalanceHolders as $address) {
+            $obj = new stdClass();
 
             if (!$address->imei) {
-                $balanceHoldersData[] = [
-                    'address' => $address,
-                    'mashines' => [],
-                    'mashinesCount' => 0,
-                    'height' => $cellHeight.'px'
-                ];
+                $obj->address = $address;
+                $obj->mashines = [];
+                $obj->mashinesCount = 0;
+                $obj->height = $cellHeight.'.px';
+                $balanceHoldersData[] = $obj;
                 continue;
             }
 
@@ -264,12 +265,11 @@ class BalanceHolder extends \yii\db\ActiveRecord
             }
 
             $mashines = $address->imei->getMachineStatus()->orderBy('number_device DESC')->addOrderBy('number_device')->all();
-            $balanceHoldersData[] = [
-                'address' => $address,
-                'mashines' => $mashines,
-                'mashinesCount' => $numberMashines,
-                'height' => $height
-            ];
+            $obj->address = $address;
+            $obj->mashines = $mashines;
+            $obj->mashinesCount = $numberMashines;
+            $obj->height = $height;
+            $balanceHoldersData[] = $obj;
         }
 
         return $balanceHoldersData;

@@ -126,8 +126,8 @@
         var encashmentBlock = td.closest('div.encashment-index').cloneNode(true);
 
         // remove redundant nodes 
-        for (var i = 0; i < encashmentBlock.querySelector('.grid-view').childNodes.length; ++i) {
-            var node = encashmentBlock.querySelector('.grid-view').childNodes[i];
+        for (var i = 0; i < encashmentBlock.querySelector('.grid-view-main-view').childNodes.length; ++i) {
+            var node = encashmentBlock.querySelector('.grid-view-main-view').childNodes[i];
 
             if (typeof node.classList == 'undefined' || !node.classList.contains('table')) {
 

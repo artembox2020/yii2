@@ -1,7 +1,9 @@
 <?php
-use yii\grid\GridView;
+
+use frontend\components\responsive\GridView;
 use yii\helpers\Html; 
 use frontend\models\Devices;
+
 ?>
 
 <div class="panel panel-body">
