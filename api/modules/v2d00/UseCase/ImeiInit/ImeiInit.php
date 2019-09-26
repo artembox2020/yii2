@@ -14,7 +14,9 @@ class ImeiInit
     {
         $imei = ImeiInit::getImei($items->imei);
         $imei->imei_central_board = $items->imei;
+        $imei->type_packet = $items->type;
         $imei->firmware_version = $items->pac->bootloader;
+        $imei->firmware_version_cpu = $items->pac->firmware;
         $imei->firmware_6lowpan = $items->pac->radio;
         $imei->number_channel = $items->pac->channel;
         $imei->pcb_version = (string)$items->pac->PCB;
