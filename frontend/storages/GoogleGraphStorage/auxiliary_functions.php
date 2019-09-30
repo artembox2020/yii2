@@ -157,10 +157,20 @@
         <?php   
                         endforeach;
                         break;
+                    case 'vAxis':
+        ?>
+                        options.vAxis = {
+                            viewWindow: {
+                                min: <?= $data['options']['vAxis']['min'] ?>,
+                                max: <?= $data['options']['vAxis']['max'] ?>
+                            }
+                        };
+        <?php
+                        break;
                 }
             endforeach;
         ?>
-        
+
         if (colors.length > 0) {
             options.colors = colors;
         }

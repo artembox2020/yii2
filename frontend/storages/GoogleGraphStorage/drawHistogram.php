@@ -1,7 +1,7 @@
 <?= Yii::$app->view->render($storage->storagePath.'/auxiliary_functions', ['data' => $data]) ?>
 
 <script>
-    google.charts.load('current', {'packages':['bar']});
+    google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChart);
 
     var dataArray = makeDataForHistogram();
@@ -19,8 +19,9 @@
             formatter.format(data, i);
         }
 
-        var chart = new google.charts.Bar(document.querySelector('<?= $selector ?>'));
-        chart.draw(data, google.charts.Bar.convertOptions(options));
+        var chart = new google.visualization.ColumnChart(document.querySelector('<?= $selector ?>'));
+        options.legend = { position: 'top'};
+        chart.draw(data, options);
         graphBuilder.isGraphBusy = false;
     }
 </script>

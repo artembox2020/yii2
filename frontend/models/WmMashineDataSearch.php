@@ -10,6 +10,7 @@ use frontend\services\globals\QueryOptimizer;
 use yii\helpers\ArrayHelper;
 use frontend\services\globals\DateTimeHelper;
 use frontend\services\globals\Entity;
+use frontend\models\BalanceHolderSummarySearch;
 
 /**
  * WmMashineDataSearch represents the model behind the search form of `frontend\models\WmMashineData`.
@@ -19,6 +20,8 @@ class WmMashineDataSearch extends WmMashineData
     const TYPE_STATUS_DISCONNECTED = 0;
     const TYPE_MAX_STATUS_CODE = 26;
     const TYPE_MIN_STATUS_CODE = -2;
+
+    const TYPE_WORK_INTERVAL_STEP = 300;
 
     /**
      * @inheritdoc
@@ -405,5 +408,113 @@ class WmMashineDataSearch extends WmMashineData
         $timestamp = $item ? $item->created_at : $dateTimeHelper->getRealUnixTimeOffset(0);
 
         return $dateTimeHelper->getDayBeginningTimestamp($timestamp);
+    }
+
+    /**
+     * Gets work percents by wash mashine and timestamps
+     *
+     * @param WmMashine $mashine
+     * @param int $start
+     * @param int $end
+     *
+     * @return int
+     */
+    public function getWorkPercents($mashine, $start, $end)
+    {
+        $statuses = [WmMashine::STATUS_ACTIVE];
+        $allowedStatuses = [2, 3, 4, 5, 6, 7, 8];
+
+        if ($mashine->created_at > $start) {
+            $start = $mashine->created_at;
+        }
+
+        if ($mashine->is_deleted && $mashine->deleted_at < $end) {
+            $end = $mashine->deleted_at;
+        }
+
+        $currStamp = $start;
+        $workSecs = 0;
+
+        $query = $this->getBaseWmMashineDataQueryByTimestamps($start, $end, ['created_at']);
+        $query->andWhere(['mashine_id' => $mashine->id, 'current_status' => $allowedStatuses, 'status' => $statuses]);
+        $query->orderBy(['created_at' => SORT_ASC]);
+        $workSecs = $this->getWorkSecsByPacketTimestamps(
+            $start, $end, ArrayHelper::getColumn(QueryOptimizer::getItemsByQuery($query), 'created_at')
+        );
+
+        $bhSummarySearch = new BalanceHolderSummarySearch();
+
+        return $bhSummarySearch->parseFloat($workSecs/($end-$start)*100, 0);
+    }
+
+    /**
+     * Gets current time work percents by mashine
+     *
+     * @param WmMashine $mashine
+     *
+     * @return int
+     */
+    public function getCurrentWorkPercents($mashine)
+    {
+        $allowedStatuses = [2, 3, 4, 5, 6, 7, 8];
+
+        if (empty($mashine->current_status) || !in_array($mashine->current_status, $allowedStatuses)) {
+
+            return 0;
+        }
+
+        $item = self::find()
+                    ->select(['created_at'])
+                    ->andWhere(['mashine_id' => $mashine->id])
+                    ->limit(1)
+                    ->orderBy(['created_at' => SORT_DESC])
+                    ->one();
+
+        if ((time() - $item->created_at) > self::TYPE_WORK_INTERVAL_STEP) {
+
+            return 0;
+        }
+
+        return 100;
+    }
+
+    /**
+     * Gets working seconds by timestamps and work points
+     *
+     * @param int $start
+     * @param int $end
+     * @param array $timestamps
+     * @param int $workSecs
+     *
+     * @return int
+     */
+    public function getWorkSecsByPacketTimestamps($start, $end, $timestamps, $workSecs = 0)
+    {
+        $currStamp = $start;
+
+        if (empty($timestamps)) {
+
+            return $workSecs;
+        }
+
+        $diff = $timestamps[0] - $currStamp;
+
+        if ($diff <= self::TYPE_WORK_INTERVAL_STEP) {
+            $intervalStep = $end - $currStamp < self::TYPE_WORK_INTERVAL_STEP ? 
+                            ($end - $currStamp) : self::TYPE_WORK_INTERVAL_STEP;
+            $currStamp += $intervalStep;
+        } else {
+            $intervalStep = $end - $timestamps[0] < self::TYPE_WORK_INTERVAL_STEP ?
+                            ($end - $timestamps[0]) : self::TYPE_WORK_INTERVAL_STEP;
+            $currStamp = $timestamps[0] + $intervalStep;
+        }
+
+        $workSecs += $intervalStep;
+
+        while(!empty($timestamps) && $timestamps[0] <= $currStamp) {
+            array_shift($timestamps);
+        }
+
+        return $this->getWorkSecsByPacketTimestamps($currStamp, $end, $timestamps, $workSecs);
     }
 }

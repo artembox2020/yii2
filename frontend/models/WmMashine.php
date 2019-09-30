@@ -865,9 +865,9 @@ class WmMashine extends \yii\db\ActiveRecord
         $dbHelper->addQueryString("ORDER BY created_at ASC LIMIT 1 ");
         $item = $dbHelper->getItem();
         $item = (object)$item;
-        
+
         $stamp = $item->created_at;
-        
+
         if (($stamp - $start)/3600 >= $idleHours) {
 
             return ['error' => self::TYPE_CP_ERROR, 'idlesKey' => 'cbConnectionIdleHours', 'stamp' => $stamp];
@@ -1245,6 +1245,7 @@ class WmMashine extends \yii\db\ActiveRecord
     public function makePhotoGallery()
     {
         $items = $this->findPhotoGalleryItems();
+
         if (empty($items)) {
 
             return self::DASH;
@@ -1267,5 +1268,25 @@ class WmMashine extends \yii\db\ActiveRecord
         ]);
 
         return ob_get_clean();
+    }
+
+    /**
+     * Gets work percents by timestamps
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return int
+     */
+    public function getWorkPercents($start, $end)
+    {
+        $wmMashineDataSearch = new WmMashineDataSearch();
+
+        if ($start == $end) {
+
+            return $wmMashineDataSearch->getCurrentWorkPercents($this);
+        }
+
+        return $wmMashineDataSearch->getWorkPercents($this, $start, $end);
     }
 }

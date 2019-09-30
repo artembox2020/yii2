@@ -86,6 +86,23 @@ $dateFormat = "d.m.Y";
     );
 ?>
 
+<b><?= Yii::t('graph', 'Address Loading'); ?></b>
+
+    <div class="chart-container-al graph-block">
+        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+    </div>
+
+    <?php echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container-al',
+            'action' => '/dashboard/address-loading',
+            'active' => 'current ten',
+            'other' => $model->id,
+            'actionBuilder' => 'builds/action-mls-builder'
+        ]);
+    ?>
+
 <b><?= Yii::t('graph', 'Level Signal'); ?></b>
 <br>
 

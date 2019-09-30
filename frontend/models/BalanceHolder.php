@@ -10,6 +10,7 @@ use frontend\services\globals\QueryOptimizer;
 use frontend\services\globals\DateTimeHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use stdClass;
 
@@ -397,5 +398,62 @@ class BalanceHolder extends \yii\db\ActiveRecord
         }
 
         return $incomes;
+    }
+
+    /**
+     * Gets addresses by timestamps
+     * Maybe put in filters by balanceholders and addresses
+     *
+     * @return int
+     */
+    public function getAddressesByTimestamps($start, $end = false, $balanceHolderId = false, $other = false)
+    {
+        $entityHelper = new EntityHelper();
+        $selectAddress = ['id', 'address', 'created_at', 'is_deleted', 'deleted_at'];
+
+        if (empty($end)) {
+            $end = $start;
+        }
+
+        $compareCondition = false;
+
+        if (!empty($balanceHolderId)) {
+            $compareCondition = ['balance_holder_id' => $balanceHolderId];
+        }
+
+        $addresses = [];
+        $addrQuery = $entityHelper->getUnitQueryByTimestamps(
+            new AddressBalanceHolder(), $start, $end, $selectAddress, $compareCondition
+        );
+
+        $addrItems = QueryOptimizer::getItemsByQuery($addrQuery);
+
+        if (!empty($other)) {
+            $ids = explode(",", $other);
+            $addrIds = ArrayHelper::getColumn($addrItems, 'id');
+            $addrItems = [];
+
+            foreach ($ids as $id) {
+
+                if (in_array($id, $addrIds)) {
+                    $addrItems[] = AddressBalanceHolder::find()->where(['id' => $id])->limit(1)->one();
+                }
+            }
+        }
+
+        foreach ($addrItems as $address) {
+            $addresses[$address->id] = [
+                'id' => $address->id,
+                'address' => $address->address,
+                'name' => $address->name,
+                'created_at' => $address->created_at,
+                'is_deleted' => $address->is_deleted,
+                'deleted_at' => $address->deleted_at
+            ];
+        }
+
+        ArrayHelper::multisort($addresses, ['address'], [SORT_ASC]);
+
+        return $addresses;
     }
 }
