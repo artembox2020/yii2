@@ -3,6 +3,7 @@
 namespace api\modules\v2d00\UseCase\Encashment;
 
 use api\modules\v2d00\UseCase\ImeiInit\ImeiInit;
+use api\modules\v2d00\UseCase\Command\Command;
 use frontend\models\CbEncashment;
 use frontend\models\CbLogSearch;
 use frontend\services\custom\Debugger;
@@ -50,7 +51,7 @@ class Encashment
         }
 
         Yii::$app->response->statusCode = 201;
-        return 'Encashment complete!';
+        return Command::getCommand($imei->imei);
     }
 
     /**
