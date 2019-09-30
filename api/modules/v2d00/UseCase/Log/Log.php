@@ -3,6 +3,7 @@
 namespace api\modules\v2d00\UseCase\Log;
 
 use frontend\services\custom\Debugger;
+use api\modules\v2d00\UseCase\Command\Command;
 use Yii;
 
 class Log
@@ -17,7 +18,7 @@ class Log
                 $create = new CentralBoardLog();
                 $create->add($items);
                 Yii::$app->response->statusCode = 201;
-                return 'CB';
+                return Command::getCommand($items->imei);
             } catch (\Exception $exception) {
                 return $exception;
             }
