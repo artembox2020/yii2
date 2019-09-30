@@ -106,6 +106,11 @@ class HeaderBuilder extends Component {
                     'visible' => Yii::$app->user->can('manager'),
                 ],
                 [
+                    'label' => Yii::t('frontend', 'Settings'),
+                    'url' => ['/account/default/settings'],
+                    'visible' => Yii::$app->user->can('manager'),
+                ],
+                [
                     'label' => Yii::t('frontend', 'Company'),
                     'url' => ['/account/default/tt'],
                     'visible' => Yii::$app->user->can('administrator'),
