@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use frontend\components\responsive\DetailView;
 use frontend\services\custom\Debugger;
 use frontend\storages\GoogleGraphStorage;
+use frontend\storages\AddressStatStorage;
 use frontend\storages\MashineStatStorage;
 use frontend\models\WmMashineDataSearch;
 use frontend\services\globals\DateTimeHelper;
@@ -23,8 +24,8 @@ use yii\widgets\Pjax;
 /* @var $balanceHoldersData  */
 
 $this->title = $model->name;
-//$this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Companies'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="company-view">
 
@@ -81,6 +82,22 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <?php } ?>
+
+    <b><?= Yii::t('graph', 'Address Loading'); ?></b>
+
+    <div class="chart-container-al graph-block">
+        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+    </div>
+
+    <?php echo Yii::$app->runAction(
+        '/dashboard/render-engine',
+        [
+            'selector' => '.chart-container-al',
+            'action' => '/dashboard/address-loading',
+            'active' => 'current day',
+            'actionBuilder' => 'builds/action-mls-builder'
+        ]);
+    ?>
 
     <b><?= Yii::t('graph', 'Modem Level Signal'); ?></b>
     <br>

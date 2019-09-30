@@ -9,6 +9,7 @@ use Yii;
 use yii\web\Controller;
 use frontend\storages\GoogleGraphStorage;
 use frontend\storages\MashineStatStorage;
+use frontend\storages\AddressStatStorage;
 use frontend\storages\ModemStatStorage;
 use frontend\services\globals\DateTimeHelper;
 use frontend\models\Jlog;
@@ -267,6 +268,30 @@ class DashboardController extends Controller
         }
 
         $histogram = $ggs->drawLine($data, $selector, $start, $end);
+        $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active, $other, $actionBuilder);
+
+        return $histogram.$actionBuilder;
+    }
+
+    /**
+     * Renders addresses loading
+     * Accepts data as post params
+     * 
+     * @return string
+     */  
+    public function actionAddressLoading()
+    {
+        $post = Yii::$app->request->post();
+        list($start, $end, $action, $selector, $active, $other, $actionBuilder) = [
+            $post['start'], $post['end'], $post['action'], $post['selector'], $post['active'],
+            $post['other'], $post['actionBuilder']
+        ];
+        $ggs = new GoogleGraphStorage();
+        $ass = new AddressStatStorage();
+        $ass->setStepByTimestamps($start, $end);
+        $options = ['vAxis' => ['min' => 0, 'max' => 100]];
+        $data = $ass->getAddressesLoadingForGoogleGraphByTimestamps($start, $end, $other, $options);
+        $histogram = $ggs->drawHistogram($data, $selector);
         $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active, $other, $actionBuilder);
 
         return $histogram.$actionBuilder;
