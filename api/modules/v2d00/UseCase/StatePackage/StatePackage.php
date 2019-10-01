@@ -3,6 +3,7 @@
 namespace api\modules\v2d00\UseCase\StatePackage;
 
 use api\modules\v2d00\UseCase\ImeiInit\ImeiInit;
+use api\modules\v2d00\UseCase\Command\Command;
 use Exception;
 use frontend\models\Imei;
 use frontend\models\ImeiData;
@@ -39,7 +40,8 @@ class StatePackage
         }
 
         Yii::$app->response->statusCode = 201;
-        return 'SP create!';
+
+        return Command::getCommand($items->imei);
     }
 
     /**
@@ -52,11 +54,13 @@ class StatePackage
     public function addImei($items)
     {
         $imei = ImeiInit::getImei($items->imei);
+
+//        Debugger::dd($items->pac->totalCash);
         $imeiData = new ImeiData();
         $imeiData->imei_id = $imei->id;
         $imeiData->created_at = time() + Jlog::TYPE_TIME_OFFSET;
         $imeiData->imei = $items->imei;
-        $imeiData->fireproof_residue = $items->pac->totalCash;
+        $imeiData->fireproof_residue = $items->pac->totalСash;
         $imeiData->in_banknotes = $items->pac->numberNotes;
         $imeiData->on_modem_account = $items->pac->collection;
         $imeiData->cb_version = $imei->firmware_version;

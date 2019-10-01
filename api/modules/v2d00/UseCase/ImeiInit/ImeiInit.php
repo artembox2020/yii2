@@ -2,6 +2,7 @@
 
 namespace api\modules\v2d00\UseCase\ImeiInit;
 
+use api\modules\v2d00\UseCase\Command\Command;
 use Exception;
 use frontend\models\Imei;
 use frontend\models\Jlog;
@@ -35,7 +36,8 @@ class ImeiInit
         $this->addJlog($imei);
 
         Yii::$app->response->statusCode = 201;
-        return 'Imei update';
+
+        return Command::getCommand($imei->imei);
     }
 
     /**

@@ -61,6 +61,7 @@ class JsonController extends Controller
         $items = json_decode(file_get_contents("php://input"));
 
         // сотояние
+//        Debugger::dd($items->type);
         if ($items->type == self::LOG) {
             $log = new Log();
 
@@ -77,7 +78,6 @@ class JsonController extends Controller
 
         if ($items->type == self::STATUS) {
             $status = new StatePackage();
-
             return $status->create($items);
         }
 
