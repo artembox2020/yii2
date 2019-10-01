@@ -12,6 +12,7 @@ use frontend\models\WmMashineData;
 use frontend\services\custom\Debugger;
 use Throwable;
 use Yii;
+use frontend\services\parser\CParser;
 
 /**
  * Class StatePackage
@@ -67,6 +68,8 @@ class StatePackage
         $imei->on_modem_account = $items->pac->collection;
         $imei->ping = time() + Jlog::TYPE_TIME_OFFSET;
         $imei->save();
+
+        $this->addJlog($imei, $imeiData, $items->pac->device);
 
         return 'Ok';
     }
@@ -252,5 +255,20 @@ class StatePackage
         }
 
         return $wm_machine_array;
+    }
+
+    /**
+     * Adds item to `j_log` table
+     * 
+     * @param Imei $imei
+     * @param ImeiData $imeiData
+     * @param array $devices
+     */
+    public function addJlog($imei, $imeiData, $devices)
+    {
+        $jlog = new Jlog();
+        $parser = new CParser();
+        $p = $parser->getStatePacket($imei, $imeiData, $devices);
+        $jlog->createLogFromImei($imei, $p, Jlog::TYPE_PACKET_DATA);
     }
 }

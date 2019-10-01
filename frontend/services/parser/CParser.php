@@ -376,4 +376,50 @@ class CParser implements CParserInterface
 
         return $packetData['level_signal'];
     }
+
+    /**
+     * Gets init packet string
+     * 
+     * @param Imei $imei
+     * 
+     * @return string
+     */
+    public function getInitPacket($imei)
+    {
+        $traffic = empty($imei->traffic) ? null : $imei->traffic;
+        $firmware_version_cpu = empty($imei->firmware_version_cpu) ? null : $imei->firmware_version_cpu;
+
+        $p =$imei->imei.'*'.$imei->firmware_version.'*'.
+            $firmware_version_cpu.'*'.$imei->firmware_6lowpan.'*'.
+            $imei->number_channel.'*'.$imei->pcb_version.'*'.
+            $imei->phone_module_number.'*'.$imei->on_modem_account.'*'.
+            $imei->level_signal.'*'.$traffic;
+
+        return $p;
+    }
+
+    /**
+     * Gets state packet string by imei data and WMs data
+     * 
+     * @param Imei $imei
+     * @param ImeiData $imeiData
+     * @param array $devices
+     * 
+     * @return string
+     */
+    public function getStatePacket($imei, $imeiData, $devices)
+    {
+        // make CP state string
+        $pCp =  $imei->imei.'*'.$imeiData->in_banknotes.'*'.$imeiData->on_modem_account.'*'.
+                $imeiData->fireproof_residue.'*'.$imeiData->evt_bill_validator.'*'.$imeiData->packet;
+        $pWms = '';
+
+        // make WMs state string
+        foreach ($devices as $device) {
+            $pWms.= "_".$device->type.'*'.$device->number.'*'.$device->rssi.'*'.$device->money.'*'.
+                    $device->door.'*'.$device->checkLEDDoor.'*'.$device->state.'*'.$device->display;
+        }
+
+        return $pCp.$pWms;
+    }
 }
