@@ -532,12 +532,13 @@ class CbLogSearch extends CbLog
      */
     public function getLastCollectionCounter($model)
     {
+
         if (strtoupper($model['device']) == 'WM') {
 
             return $this->getAdditionalWashOptions($model);
         }
 
-        return round($model['prewash'], 1);
+        return !empty($model['prewash']) ? round($model['prewash'], 1) : null;
     }
 
     /**

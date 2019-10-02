@@ -39,7 +39,6 @@ class CentralBoardLog
                 $cbl->notes_billiards_pcs = $items->pac->money->numberNotes;
                 $cbl->rate = $items->pac->tariff;
                 $cbl->refill_amount = $items->pac->devCash;
-                $cbl->last_collection_counter = $items->pac->money->collection;
 //                $cbl->banknote_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($items->numberNotes);
                 $cbl->is_deleted = false;
 
