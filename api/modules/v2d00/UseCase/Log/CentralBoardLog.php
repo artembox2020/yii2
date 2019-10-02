@@ -13,6 +13,7 @@ use Yii;
 class CentralBoardLog
 {
     const ONE_CONST = 1;
+    const CB_CONST = 'cb';
 
     public function add($items)
     {
@@ -28,9 +29,9 @@ class CentralBoardLog
                 $cbl->imei_id = $imei->id;
                 $cbl->date = $items->time;
                 $cbl->imei = $items->imei;
-                $cbl->device = $items->type;
+                $cbl->device = self::CB_CONST;
                 $cbl->signal = $items->pac->rssi;
-                $cbl->unix_time_offset = $dateTimeHelper->getRealUnixTimeOffset($items->pac->utc);
+                $cbl->unix_time_offset = $dateTimeHelper->getRealUnixTimeOffset((int)$items->pac->utc);
                 $cbl->status = $items->pac->event->cenBoard;
                 $cbl->fireproof_counter_hrn = $items->pac->money->total;
                 $cbl->fireproof_counter_card = $items->pac->money->totalCards;

@@ -11,6 +11,7 @@ use yii\helpers\Json;
 class WashMachineLog
 {
     const ONE_CONST = 1;
+    const WM_CONST = 'wm';
 
     public function add($items)
     {
@@ -26,9 +27,9 @@ class WashMachineLog
                 $wml->imei_id = $imei->id;
                 $wml->date = $items->time;
                 $wml->imei = $items->imei;
-                $wml->device = $items->type;
+                $wml->device = self::WM_CONST;
                 $wml->signal = $items->pac->rssi;
-                $wml->unix_time_offset = $dateTimeHelper->getRealUnixTimeOffset($items->pac->utc);
+                $wml->unix_time_offset = $dateTimeHelper->getRealUnixTimeOffset((int)$items->pac->utc);
                 $wml->number = $items->pac->event->num;
                 $wml->status = $items->pac->event->washer;
                 $wml->price = $items->pac->priceMode;
