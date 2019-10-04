@@ -163,7 +163,7 @@ class JournalController extends \frontend\controllers\Controller
 
         $searchModel->inputValue[$dateFieldName] = $params['inputValue'][$dateFieldName];
         $searchModel->val2[$dateFieldName] = $params['val2'][$dateFieldName];
-        $itemsCount = $searchModel->getLogTotalCount($entity, $searchFilter, $params);
+        $itemsCount = 20000; //$searchModel->getLogTotalCount($entity, $searchFilter, $params);
         $columnFilterScript = $this->getColumnFilterScript($params);
 
         return $this->renderPartial('logs/index', [

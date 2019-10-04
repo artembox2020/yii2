@@ -19,7 +19,7 @@ class CbLogSearch extends CbLog
     const PAGE_SIZE = 10;
     const TYPE_ENCASHMENT_STATUS = 8;
     const TYPE_LAST_ENCASHMENT_DATE = '01.01.2019';
-    const TYPE_ITEMS_LIMIT = 200;
+    const TYPE_ITEMS_LIMIT = 20000;
 
     public $address;
 
@@ -198,8 +198,6 @@ class CbLogSearch extends CbLog
         $query = new \yii\db\Query();
         $query->select('*')->from(['u' => $cbLogQuery->union($wmLogQuery, true)]);
         $this->applyOrder($query, $params, $orderFieldName);
-        
-        
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
