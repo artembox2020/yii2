@@ -102,6 +102,8 @@ class AddressBalanceHolderController extends Controller
             $model->status = AddressBalanceHolder::STATUS_FREE;
             $model->is_deleted = false;
             $model->deleted_at = time();
+            $model->static_address = $model->address;
+            $model->static_floor = $model->floor;
             $model->save();
             $this->service->createLog($model, 'Create');
 

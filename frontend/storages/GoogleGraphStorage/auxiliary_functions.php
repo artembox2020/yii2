@@ -38,6 +38,7 @@
         var dataArray = [];
 
         var titles = [];
+        var staticTitles = [];
         var i = 0;
         var styleObj = {'type': 'string', 'role': 'style'};
 
@@ -49,7 +50,17 @@
             ++i;
         <?php endforeach; ?>
 
-        var addressString = titles[index];
+        i = 0;
+
+        <?php foreach ($data['staticTitles'] as $title): ?>
+            staticTitles.push("<?= $title ?>");
+            if (i == index) {
+                staticTitles.push(styleObj);
+            }
+            ++i;
+        <?php endforeach; ?>
+
+        var addressString = staticTitles[index];
         if (!addressString.includes(", ")) {
             addressString += ", ";
         }

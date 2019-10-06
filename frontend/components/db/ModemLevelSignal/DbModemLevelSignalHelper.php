@@ -128,7 +128,7 @@ class DbModemLevelSignalHelper extends DbCommandHelper
      */
     public function getAddressesByTimestampsAndCompanyId($start, $end, $companyId, $addressIds)
     {
-        $select = "id, name, address, floor";
+        $select = "id, name, address, floor, static_address, static_floor";
         $bInst = Company::find()->where(['id' => $companyId])->limit(1)->one();
         $inst = new AddressBalanceHolder();
         $this->getExistingUnitQueryByTimestamps($start, $end, $inst, $bInst, 'company_id', $select);

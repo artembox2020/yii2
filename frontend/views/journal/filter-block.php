@@ -11,6 +11,7 @@ use frontend\models\Jlog;
 /* @var $submitFormOnInputEvents string */
 /* @var $imeis array */
 /* @var $addresses array */
+
 ?>
 
 <h1><?= Html::encode($this->title) ?></h1>
@@ -41,7 +42,7 @@ use frontend\models\Jlog;
             'class' => 'form-control',
             'size' => 20
         ],
-        'value' => $params['address'],
+        'value' => $searchModel->findAddressByStatic($params['address'], $params['type_packet'], false),
         'clientOptions' => [
             'source' => $addresses,
             'autoFill' => false,
@@ -78,7 +79,7 @@ use frontend\models\Jlog;
 
 <div class="form-group">
     <?= Html::hiddenInput('selectionCaretPos', $params['selectionCaretPos']); ?>
-</div> 
+</div>
 
 <div class="form-group hidden">
     <?= Html::submitButton(Yii::t('frontend', 'Submit'), ['class' => 'btn btn-primary', 'id' => 'filter-submit-btn']); ?>
