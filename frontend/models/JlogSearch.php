@@ -820,6 +820,10 @@ class JlogSearch extends Jlog
             $params['type_packet'] = self::TYPE_PACKET_DATA;
         }
 
+        if (!empty($params['address'])) {
+            $params['address'] = $this->findStaticAddress($params['address'], $params['type_packet']);
+        }
+
         return $params;
     }
 
@@ -857,7 +861,7 @@ class JlogSearch extends Jlog
             $entityHelper = new EntityHelper();
             $address = AddressBalanceHolder::findOne($addressId);
             $params['filterCondition']['address'] = self::FILTER_TEXT_EQUAL;
-            $params['val1']['address'] = $entityHelper->tryUnitRelationData($address, ['address' => ['address', 'floor'], ', ']);
+            $params['val1']['address'] = $entityHelper->tryUnitRelationData($address, ['address' => ['static_address', 'static_floor'], ', ']);
         }
 
         return $params;
@@ -911,7 +915,7 @@ class JlogSearch extends Jlog
 
     /**
      * Gets last level signal by address string and initial timestamp
-     * 
+     *
      * @param string $addressString
      * @param int $start
      * 
@@ -986,7 +990,7 @@ class JlogSearch extends Jlog
         $items = [];
 
         foreach ($addressesInfo as $infoItem) {
-            $addressString = $infoItem['address'].', '.$infoItem['floor'];
+            $addressString = $infoItem['static_address'].', '.$infoItem['static_floor'];
             $addressesEndPoints[$addressString] = $this->getFirstLastPacketItemsByAddress($addressString);
 
             if ($addressesEndPoints[$addressString]['first'] > $start + $monitoringStep) {
@@ -1067,5 +1071,65 @@ class JlogSearch extends Jlog
         }
 
         return ['first' => $first, 'last' => $last];
+    }
+
+    /**
+     * Finds static address by address string or returns the same address string
+     *
+     * @param string $addressString
+     * @param int $typePacket
+     *
+     * @return string
+     */
+    public function findStaticAddress($addressString, $typePacket)
+    {
+        if (!in_array($typePacket, [self::TYPE_PACKET_INITIALIZATION, self::TYPE_PACKET_DATA, self::TYPE_PACKET_DATA_CP])
+        ) {
+
+            return $addressString;
+        }
+
+        $item = AddressBalanceHolder::find()->where(['address' => $addressString])->limit(1)->one();
+
+        if (empty($item)) {
+
+            return $addressString;
+        }
+
+        return $item->static_address;
+    }
+
+    /**
+     * Finds address by static address string or returns the same string 
+     *
+     * @param string $addressString
+     * @param int $typePacket
+     * @param bool $cutFromRight
+     *
+     * @return string
+     */
+    public function findAddressByStatic($addressString, $typePacket, $cutFromRight = true)
+    {
+        if (empty($addressString)
+            ||
+            !in_array($typePacket, [self::TYPE_PACKET_INITIALIZATION, self::TYPE_PACKET_DATA, self::TYPE_PACKET_DATA_CP])
+        ) {
+
+            return $addressString;
+        }
+
+        // gets static address string
+        if ($cutFromRight && ($position = strrpos($addressString, ",")) !== false) {
+            $addressString = substr($addressString, 0, $position);
+        }
+
+        $item = AddressBalanceHolder::find()->where(['static_address' => $addressString])->limit(1)->one();
+
+        if (empty($item)) {
+
+            return $addressString;
+        }
+
+        return $item->address;
     }
 }

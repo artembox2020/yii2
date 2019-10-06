@@ -35,6 +35,7 @@ class JlogInitSearch extends JlogSearch
      */
     public function getAddressView($model)
     {
+        $model->address = $this->findAddressByStatic($model->address, self::TYPE_PACKET_INITIALIZATION);
         $addressParts = explode(",", $model->address);
         $countParts = count($addressParts);
 

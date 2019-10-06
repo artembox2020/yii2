@@ -122,6 +122,7 @@ class AddressStatStorage
         $data = $this->getAddressesLoading($start, $end, $other);
         $addresses = $balanceHolder->getAddressesByTimestamps($start, $end, false, $other);
         $titles = [''];
+        $staticTitles = [''];
 
         foreach ($addresses as $address) {
             $titles[] = Yii::t('graph', $address['address'].' '.$address['name']);
@@ -137,6 +138,6 @@ class AddressStatStorage
             $lines[] = $line;
         }
 
-        return ['titles' => $titles, 'lines' => $lines, 'options' => $options];
+        return ['titles' => $titles, 'staticTitles' => $staticTitles, 'lines' => $lines, 'options' => $options];
     }
 }
