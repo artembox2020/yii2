@@ -681,7 +681,7 @@ class CbLogSearch extends CbLog
         $model->address = $address;
         $jlogInitSearch = new JlogInitSearch();
 
-        return  $jlogInitSearch->getAddressView($model);
+        return $jlogInitSearch->getAddressView($model, Jlog::TYPE_PACKET_LOG);
     }
 
     /**
