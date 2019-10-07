@@ -10,11 +10,7 @@ use Yii;
 
 class Monitoring
 {
-    /**
-     * @param string $address_name
-     * @throws \yii\db\Exception
-     */
-    public function getStaff(string $address_name, $wm_num): void
+    public function getStaff(string $address_name, $wm_num)
     {
         $address = AddressBalanceHolder::find()
             ->andWhere(['name' => $address_name])
@@ -37,7 +33,7 @@ class Monitoring
             ->bindValue(':imei_id', $imei->id)
             ->queryOne();
 
-        Debugger::dd($wm_machine->display);
+        return $wm_machine->display;
 
 
     }
