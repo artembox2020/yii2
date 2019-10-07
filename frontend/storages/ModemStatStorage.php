@@ -350,7 +350,7 @@ class ModemStatStorage extends MashineStatStorage
                 ':start' => $start,
                 ':type_packet' => Jlog::TYPE_PACKET_INITIALIZATION,
                 ':addressString' => '%'.$addressString.'%'
-            ];
+            ]; 
 
             $command = Yii::$app->db->createCommand($queryString)->bindValues($bindValues);
             $item = $command->queryOne();
