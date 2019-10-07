@@ -14,8 +14,7 @@ use \frontend\models\AddressBalanceHolder;
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-    //'summary' => '',
-    //'summary' => "<div class='summary'><b>".Yii::t('frontend', 'Shown')."</b> {begin} - {end} ".Yii::t('frontend', 'From')." {$itemsCount}</div>",
+    'summary' => "<div class='summary'><b>".Yii::t('frontend', 'Shown')."</b> {begin} - {end}</div>",
     'columns' => [
         [
             'attribute' => $searchFilter->getDateFieldNameByParams($params),

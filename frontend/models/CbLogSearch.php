@@ -7,7 +7,7 @@ use frontend\services\globals\Entity;
 use frontend\services\globals\QueryOptimizer;
 use Yii;
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
+use \frontend\components\responsive\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 
 /**
@@ -199,7 +199,8 @@ class CbLogSearch extends CbLog
         $query->select('*')->from(['u' => $cbLogQuery->union($wmLogQuery, true)]);
         $this->applyOrder($query, $params, $orderFieldName);
 
-        $dataProvider = new ActiveDataProvider([
+        $dataProvider = new \frontend\components\responsive\data\ActiveDataProvider([
+            'totalCount' => self::TYPE_ITEMS_LIMIT,
             'query' => $query,
             'pagination' => [
                 'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
