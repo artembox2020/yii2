@@ -96,7 +96,7 @@ class Jlog extends ActiveRecord
             'company_id' => $imei->company_id,
             'imei_id' => $imei->id,
             'imei' => $imei->imei,
-            'address' => $imei->tryRelationData(['address' => ['address', 'floor'], ', ']),
+            'address' => $imei->tryRelationData(['address' => ['static_address', 'static_floor'], ', ']),
             'events' => $imei->getLastPing()
         ];
 

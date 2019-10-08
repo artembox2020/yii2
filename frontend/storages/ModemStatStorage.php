@@ -44,6 +44,7 @@ class ModemStatStorage extends MashineStatStorage
 
         $lines = [];
         $titles = [''];
+        $staticTitles = [''];
 
         for ($baseStart = $start; $baseStart <= $end; $baseStart+= self::STEP) {
             $item = [];
@@ -64,7 +65,7 @@ class ModemStatStorage extends MashineStatStorage
         );
 
         foreach ($addressesInfo as $addressInfo) {
-            $addressString = $addressInfo['address'].", ".$addressInfo['floor'];
+            $addressString = $addressInfo['static_address'].", ".$addressInfo['static_floor'];
 
             if (array_key_exists($addressString, $allAddressesNotInTouchItems)) {
                 $notInTouchItems = $allAddressesNotInTouchItems[$addressString];
@@ -95,12 +96,13 @@ class ModemStatStorage extends MashineStatStorage
             }
 
             $titles[] = $addressInfo['address'].(!empty($addressInfo['floor']) ? ", {$addressInfo['floor']}": "");
+            $staticTitles[] = $addressInfo['static_address'].(!empty($addressInfo['static_floor']) ? ", {$addressInfo['static_floor']}": "");
             ++$iterationCounter;
         }
 
         $lines = $this->optimizeLines($lines, $iterationCounter);
 
-        return ['titles' => $titles, 'lines' => $lines, 'options' => $options];
+        return ['titles' => $titles, 'staticTitles' => $staticTitles, 'lines' => $lines, 'options' => $options];
     }
 
     /**
@@ -348,7 +350,7 @@ class ModemStatStorage extends MashineStatStorage
                 ':start' => $start,
                 ':type_packet' => Jlog::TYPE_PACKET_INITIALIZATION,
                 ':addressString' => '%'.$addressString.'%'
-            ];
+            ]; 
 
             $command = Yii::$app->db->createCommand($queryString)->bindValues($bindValues);
             $item = $command->queryOne();

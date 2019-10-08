@@ -30,7 +30,7 @@ class WashMachineLog
                 $wml->device = self::WM_CONST;
                 $wml->signal = $items->pac->rssi;
                 $wml->unix_time_offset = $dateTimeHelper->getRealUnixTimeOffset((int)$items->pac->utc);
-                $wml->number = $items->pac->event->num;
+                $wml->number = $items->pac->numberDev;
                 $wml->status = $items->pac->event->washer;
                 $wml->price = $items->pac->priceMode;
                 $wml->account_money = $items->pac->devCash;

@@ -46,6 +46,7 @@ $this->title = Yii::t('frontend', 'Events Journal');
                     'addresses' => $addresses,
                     'submitFormOnInputEvents' => $submitFormOnInputEvents,
                     'typePackets' => $typePackets,
+                    'searchModel' => $searchModel,
                     'pageSizes' => $pageSizes
                 ]
             );

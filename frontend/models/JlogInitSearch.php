@@ -30,11 +30,13 @@ class JlogInitSearch extends JlogSearch
      * Gets address view representation
      *
      * @param JlogInitSearch $model
+     * @param int $typePacket
      *
      * @return string
      */
-    public function getAddressView($model)
+    public function getAddressView($model, $typePacket = self::TYPE_PACKET_INITIALIZATION)
     {
+        $model->address = $this->findAddressByStatic($model->address, $typePacket);
         $addressParts = explode(",", $model->address);
         $countParts = count($addressParts);
 

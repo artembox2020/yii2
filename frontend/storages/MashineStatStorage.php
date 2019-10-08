@@ -172,7 +172,7 @@ class MashineStatStorage implements MashineStatStorageInterface
         $lines = [0 => array_merge([$key], array_values($data[$key]))];
         $titles = array_merge([''], array_keys($data[$key]));
 
-        return ['titles' => $titles, 'lines' => $lines, 'options' => $options];
+        return ['titles' => $titles, 'staticTitles' => [], 'lines' => $lines, 'options' => $options];
     }
 
     /**
@@ -214,7 +214,7 @@ class MashineStatStorage implements MashineStatStorageInterface
             ];
         }
 
-        return ['titles' => $titles, 'lines' => $lines, 'options' => $options];
+        return ['titles' => $titles, 'staticTitles' => [], 'lines' => $lines, 'options' => $options];
     }
 
     /**

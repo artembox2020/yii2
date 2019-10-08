@@ -7,7 +7,7 @@ use frontend\services\globals\Entity;
 use frontend\services\globals\QueryOptimizer;
 use Yii;
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
+use \frontend\components\responsive\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 
 /**
@@ -19,7 +19,7 @@ class CbLogSearch extends CbLog
     const PAGE_SIZE = 10;
     const TYPE_ENCASHMENT_STATUS = 8;
     const TYPE_LAST_ENCASHMENT_DATE = '01.01.2019';
-    const TYPE_ITEMS_LIMIT = 200;
+    const TYPE_ITEMS_LIMIT = 500;
 
     public $address;
 
@@ -198,10 +198,9 @@ class CbLogSearch extends CbLog
         $query = new \yii\db\Query();
         $query->select('*')->from(['u' => $cbLogQuery->union($wmLogQuery, true)]);
         $this->applyOrder($query, $params, $orderFieldName);
-        
-        
 
-        $dataProvider = new ActiveDataProvider([
+        $dataProvider = new \frontend\components\responsive\data\ActiveDataProvider([
+            'totalCount' => self::TYPE_ITEMS_LIMIT,
             'query' => $query,
             'pagination' => [
                 'pageSize' => $params['page_size'] ? $params['page_size'] : self::PAGE_SIZE
@@ -682,7 +681,7 @@ class CbLogSearch extends CbLog
         $model->address = $address;
         $jlogInitSearch = new JlogInitSearch();
 
-        return  $jlogInitSearch->getAddressView($model);
+        return $jlogInitSearch->getAddressView($model, Jlog::TYPE_PACKET_LOG);
     }
 
     /**

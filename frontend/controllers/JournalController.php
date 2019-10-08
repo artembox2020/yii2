@@ -163,7 +163,7 @@ class JournalController extends \frontend\controllers\Controller
 
         $searchModel->inputValue[$dateFieldName] = $params['inputValue'][$dateFieldName];
         $searchModel->val2[$dateFieldName] = $params['val2'][$dateFieldName];
-        $itemsCount = $searchModel->getLogTotalCount($entity, $searchFilter, $params);
+        $itemsCount = CbLogSearch::TYPE_ITEMS_LIMIT;
         $columnFilterScript = $this->getColumnFilterScript($params);
 
         return $this->renderPartial('logs/index', [
