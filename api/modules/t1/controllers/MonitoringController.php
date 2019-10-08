@@ -63,16 +63,18 @@ class MonitoringController extends Controller
 
 
         $returnData = [
-            'chat_id' => $result['chat_id'],
-            'num_w' => $result['num_w'],
-            'status_w' => $result['status_w'],
-            'time' => $result['time'],
-            'message' => $result['message'],
-            'key' => $result['key']
+            'chat_id' => 'xxx',
+//            'num_w' => $result['num_w'],
+//            'status_w' => $result['status_w'],
+//            'time' => $result['time'],
+//            'message' => $result['message'],
+//            'key' => $result['key']
         ];
         $response = Yii::$app->response;
         $response->format = \yii\web\Response::FORMAT_JSON;
         $response->data = $returnData;
+
+        return $returnData;
 
         // Insert create monitoring
         Debugger::dd($result);
