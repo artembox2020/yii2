@@ -55,28 +55,33 @@ class MonitoringController extends Controller
 
         $service = new Monitoring();
         try {
-            $result = $service->getStaff($items->address, $items->wm);
+            $result = $service->getStaff($items);
         } catch (Exception $e) {
             return $e->getMessage();
         }
 
-
-
-        $returnData = [
-            'chat_id' => 'xxx',
-//            'num_w' => $result['num_w'],
-//            'status_w' => $result['status_w'],
-//            'time' => $result['time'],
-//            'message' => $result['message'],
-//            'key' => $result['key']
-        ];
+//        Debugger::dd($result);
+//
+//        $returnData = [
+//            [
+//                'chat_id' => '111111',
+//                'num_w' => 1,
+//                'status_w' => 2,
+//                'time' => 10,
+//                'key' => 'anfu4h3uh34uf3gf'
+//            ],
+//            [
+//            'chat_id' => '2222222',
+//            'num_w' => 1,
+//            'status_w' => 2,
+//            'time' => 10,
+//            'key' => 'anfu4h3uh34uf3gf'
+//        ]
+//        ];
         $response = Yii::$app->response;
         $response->format = \yii\web\Response::FORMAT_JSON;
-        $response->data = $returnData;
+        $response->data = $result;
 
-        return $returnData;
-
-        // Insert create monitoring
-        Debugger::dd($result);
+        return $this->asJson($result);
     }
 }

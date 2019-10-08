@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use api\modules\t1\UseCase\ResponseMonitoring;
 use frontend\services\imei\ImeiService;
 use frontend\services\parser\CParser;
 use Yii;
@@ -181,6 +182,10 @@ class CController extends Controller
             $jlog->createLogFromImei($imei, $p, Jlog::TYPE_PACKET_DATA);
 
             $this->setTypeMashine($mashineData, $imei);
+
+            // telegram bot begin
+            new ResponseMonitoring($mashineData, $imei);
+            // telegram bot end
 
         } else {
             echo 'Imei not init or not exists'; exit;

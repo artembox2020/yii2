@@ -56,7 +56,8 @@
         "guzzlehttp/guzzle": "^6.3",
         "gugglegum/yii2-cookie-language-selector": "^1.0",
         "liqpay/liqpay": "^1.2",
-    "ext-json": "*"
+    "ext-json": "*",
+    "yiisoft/yii2-httpclient": "~2.0.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
