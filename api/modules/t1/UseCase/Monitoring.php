@@ -33,8 +33,9 @@ class Monitoring
             ->bindValue(':imei_id', $imei->id)
             ->queryOne();
 
-        return $wm_machine->display;
 
+
+        return $wm_machine->display;
 
     }
 }
