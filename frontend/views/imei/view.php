@@ -89,4 +89,30 @@ $this->title = $model->imei;
             ]
         ],
     ]) ?>
+
+    <p><u><b><?= Yii::t('frontend','History') ?></b></u><p/>
+
+    <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                [
+                    'label' =>  Yii::t('frontend', 'Number Washine Cycles'),
+                    'value' => ''
+                ],
+                [
+                    'label' =>  Yii::t('frontend', 'Time Work'),
+                    'value' => ''
+                ],
+                [
+                    'label' =>  Yii::t('frontend', 'Money Amount'),
+                    'value' => ''
+                ],
+                [
+                    'label' => Yii::t('frontend', 'Last errors'),
+                    'value' => '',
+                ],
+            ]
+        ]);
+    ?>
+
 </div>
