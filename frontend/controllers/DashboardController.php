@@ -13,6 +13,7 @@ use frontend\storages\AddressStatStorage;
 use frontend\storages\ModemStatStorage;
 use frontend\services\globals\DateTimeHelper;
 use frontend\models\Jlog;
+use frontend\services\globals\Entity;
 
 /**
  * Class DashboardController
@@ -288,9 +289,11 @@ class DashboardController extends Controller
         ];
         $ggs = new GoogleGraphStorage();
         $ass = new AddressStatStorage();
+        $entity = new Entity();
+        $companyId = $entity->getCompanyId();
         $ass->setStepByTimestamps($start, $end);
         $options = ['vAxis' => ['min' => 0, 'max' => 100]];
-        $data = $ass->getAddressesLoadingForGoogleGraphByTimestamps($start, $end, $other, $options);
+        $data = $ass->getAddressesLoadingForGoogleGraphByTimestamps($start, $end, $other, $options, $companyId);
         $histogram = $ggs->drawHistogram($data, $selector);
         $actionBuilder = $this->actionRenderActionBuilder($start, $end, $action, $selector, $active, $other, $actionBuilder);
 

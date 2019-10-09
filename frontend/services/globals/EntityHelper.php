@@ -651,7 +651,7 @@ class EntityHelper implements EntityHelperInterface
 
         $query = $query->where(['company_id' => $entity->getCompanyId()]);
 
-        if ($compareCondition) {
+        if (!empty($compareCondition)) {
             $query = $query->andWhere($compareCondition);
         }
 

@@ -54,15 +54,16 @@ class AddressStatStorage
      * @param int $start
      * @param int $end
      * @param string $other
+     * @param int|bool $companyId
      *
      * @return array
      */
-    public function getAddressesLoading(int $start, int $end, $other): array
+    public function getAddressesLoading(int $start, int $end, $other, $companyId = false): array
     {
         $balanceHolder = new BalanceHolder();
 
         $data = [];
-        $addresses = $balanceHolder->getAddressesByTimestamps($start, $end, false, $other);
+        $addresses = $balanceHolder->getAddressesByTimestamps($start, $end, false, $other, $companyId);
         $firstIteration = true;
 
         while ($start < $end || $firstIteration) {
@@ -116,11 +117,11 @@ class AddressStatStorage
      *
      * @return array
      */
-    public function getAddressesLoadingForGoogleGraphByTimestamps(int $start, int $end, string $other, array $options): array
+    public function getAddressesLoadingForGoogleGraphByTimestamps(int $start, int $end, string $other, array $options, $companyId = false): array
     {
         $balanceHolder = new BalanceHolder();
         $data = $this->getAddressesLoading($start, $end, $other);
-        $addresses = $balanceHolder->getAddressesByTimestamps($start, $end, false, $other);
+        $addresses = $balanceHolder->getAddressesByTimestamps($start, $end, false, $other, $companyId);
         $titles = [''];
         $staticTitles = [''];
 

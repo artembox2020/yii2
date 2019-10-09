@@ -404,9 +404,15 @@ class BalanceHolder extends \yii\db\ActiveRecord
      * Gets addresses by timestamps
      * Maybe put in filters by balanceholders and addresses
      *
-     * @return int
+     * @param int $start
+     * @param int|bool $end
+     * @param int|bool $balanceHolderId
+     * @param int|bool $other
+     * @param int|bool $companyId
+     * 
+     * @return array
      */
-    public function getAddressesByTimestamps($start, $end = false, $balanceHolderId = false, $other = false)
+    public function getAddressesByTimestamps($start, $end = false, $balanceHolderId = false, $other = false, $companyId = false)
     {
         $entityHelper = new EntityHelper();
         $selectAddress = ['id', 'address', 'created_at', 'is_deleted', 'deleted_at'];
@@ -415,10 +421,16 @@ class BalanceHolder extends \yii\db\ActiveRecord
             $end = $start;
         }
 
-        $compareCondition = false;
+        $compareCondition = [];
 
         if (!empty($balanceHolderId)) {
-            $compareCondition = ['balance_holder_id' => $balanceHolderId];
+            $condition = ['balance_holder_id' => $balanceHolderId];
+            $compareCondition = array_merge($compareCondition, $condition);
+        }
+
+        if (!empty($companyId)) {
+            $condition = ['company_id' => $companyId];
+            $compareCondition = array_merge($compareCondition, $condition);
         }
 
         $addresses = [];
