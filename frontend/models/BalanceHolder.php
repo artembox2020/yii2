@@ -415,7 +415,7 @@ class BalanceHolder extends \yii\db\ActiveRecord
     public function getAddressesByTimestamps($start, $end = false, $balanceHolderId = false, $other = false, $companyId = false)
     {
         $entityHelper = new EntityHelper();
-        $selectAddress = ['id', 'address', 'created_at', 'is_deleted', 'deleted_at'];
+        $selectAddress = ['id', 'address', 'floor', 'created_at', 'is_deleted', 'deleted_at'];
 
         if (empty($end)) {
             $end = $start;
@@ -434,7 +434,7 @@ class BalanceHolder extends \yii\db\ActiveRecord
         }
 
         $addresses = [];
-        $addrQuery = $entityHelper->getUnitQueryByTimestamps(
+        $addrQuery = $entityHelper->getUnitQueryWithoutCompanyByTimestamps(
             new AddressBalanceHolder(), $start, $end, $selectAddress, $compareCondition
         );
 
@@ -457,6 +457,7 @@ class BalanceHolder extends \yii\db\ActiveRecord
             $addresses[$address->id] = [
                 'id' => $address->id,
                 'address' => $address->address,
+                'floor' => $address->floor,
                 'name' => $address->name,
                 'created_at' => $address->created_at,
                 'is_deleted' => $address->is_deleted,

@@ -463,14 +463,14 @@ class WmMashineDataSearch extends WmMashineData
             return 0;
         }
 
-        $item = self::find()
+        $item = WmMashineData::find()
                     ->select(['created_at'])
                     ->andWhere(['mashine_id' => $mashine->id])
                     ->limit(1)
                     ->orderBy(['created_at' => SORT_DESC])
                     ->one();
 
-        if ((time() - $item->created_at) > self::TYPE_WORK_INTERVAL_STEP) {
+        if (empty($item) || (time() - $item->created_at) > self::TYPE_WORK_INTERVAL_STEP) {
 
             return 0;
         }

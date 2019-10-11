@@ -337,9 +337,8 @@ class BalanceHolderSummarySearch extends BalanceHolder
      */ 
     public function getAllMashinesQueryByTimestamps($start, $end, $imeiId)
     {
-        $entity = new Entity();
-        $query = $entity->getUnitsQueryPertainCompany(new WmMashine());
-        $query = $query->where(['imei_id' => $imeiId, 'company_id' => $entity->getCompanyId()]);
+        $query = WmMashine::find();
+        $query = $query->where(['imei_id' => $imeiId]);
         $query = $query->andWhere(['<=', 'created_at', $end]);
         $query = $query->andWhere(['status' => WmMashine::STATUS_ACTIVE]);
         $query = $query->andWhere(new \yii\db\conditions\OrCondition([

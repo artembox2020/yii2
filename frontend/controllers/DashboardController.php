@@ -21,6 +21,9 @@ use frontend\services\globals\Entity;
  */
 class DashboardController extends Controller
 {
+    const LAST_DAYS_DEFAULT = 30;
+    const TOP_RATING_DEFAULT = 10;
+
     /**
      * Renders graph: all, green, grey, work, error WM mashines
      * Accepts data as post params
@@ -314,5 +317,30 @@ class DashboardController extends Controller
         $mss = new ModemStatStorage();
 
         return json_encode($mss->getInitializationData($addressString, $start, $end));
+    }
+
+    /**
+     * Address average loading method by last days
+     *
+     * @param int $lastDays
+     * @param int $toprating
+     *
+     * @return string
+     */
+    public function actionAddressAverageLoading($lastDays = self::LAST_DAYS_DEFAULT, $topRating = self::TOP_RATING_DEFAULT)
+    {
+        $entity = new Entity();
+        $ass = new AddressStatStorage();
+        $companyId = $entity->getCompanyId();
+
+        $dataProvider = $ass->getAverageAddressesLoadingByLastDays($lastDays, $topRating, $companyId);
+
+        return $this->renderPartial(
+            'address-loading-rating',
+            [
+                'dataProvider' => $dataProvider,
+                'ass' => $ass
+            ]
+        );
     }
 }

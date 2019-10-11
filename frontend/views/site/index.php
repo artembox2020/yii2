@@ -47,7 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'website',
         ],
     ]) ?>
-
     <br>
     <b><?= Yii::t('graph', 'WM Mashine Statistics'); ?></b>
 
@@ -82,6 +81,14 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <?php } ?>
+
+    <br>
+    <b><?= Yii::t('graph', 'Address average loading by last 30 days'); ?></b>
+
+    <?= Yii::$app->runAction(
+            '/dashboard/address-average-loading'
+        )
+    ?>
 
     <b><?= Yii::t('graph', 'Address Loading'); ?></b>
 
