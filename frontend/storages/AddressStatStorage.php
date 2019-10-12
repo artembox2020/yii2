@@ -192,7 +192,7 @@ class AddressStatStorage
         $baseValue = 0;
         $baseDays = 0;
 
-        $queryString = "SELECT end, value FROM address_load_data WHERE address_id = :address_id AND ".
+        $queryString = "SELECT start, end, value FROM address_load_data WHERE address_id = :address_id AND ".
                        "start = :start AND end <= :end ORDER BY end DESC LIMIT 1;";
         $bindValues = [':address_id' => $addressId, ':start' => $start, ':end' => $end];
         $command = Yii::$app->db->createCommand($queryString)->bindValues($bindValues);
