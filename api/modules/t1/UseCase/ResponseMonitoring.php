@@ -52,7 +52,7 @@ class ResponseMonitoring
                 ->bindValue(':address', $address->name)
                 ->execute();
 
-//            $this->getPush();
+            $this->getPush();
         }
 
 
@@ -75,16 +75,18 @@ class ResponseMonitoring
      */
     public function getPush()
     {
-        $client = new Client(['baseUrl' => 'http://dimas.com/api/1.0']);
+        $client = new Client(['baseUrl' => 'http://bot.postirayka.com:5001/api/monitoring/notifyUsers']);
         $response = $client->createRequest()
             ->setFormat(Client::FORMAT_JSON)
             ->setData([
-                'chat_id' => $items->chat_id,
-                'num_w' => $items->wm,
-                'status_w' => $this->getStatusW($wm_machine->current_status),
-                'time' => $this->getTime($wm_machine->display),
-                'key' => $items->key
+                'chat_id_and_key' => [1,2,3],
+                'num_w' => 1,
+                'status_w' => 1,
+                'time' => 10,
             ])
             ->send();
+        if ($response->isOk) {
+            Debugger::dd($response->data);
+        }
     }
 }

@@ -46,11 +46,11 @@ class Monitoring
 
                 $returnData = [
                     [
-                        'chat_id' => $items->chat_id,
-                        'num_w' => $items->wm,
-                        'status_w' => $this->getStatusW($wm_machine->current_status),
+//                        'chat_id' => $items->chat_id,
+//                        'num_w' => $items->wm,
+//                        'status_w' => $this->getStatusW($wm_machine->current_status),
                         'time' => $this->getTime($wm_machine->display),
-                        'key' => $items->key
+//                        'key' => $items->key
                     ]
                 ];
 
@@ -59,11 +59,11 @@ class Monitoring
 
             $returnData = [
                 [
-                    'chat_id' => $items->chat_id,
-                    'num_w' => $items->wm,
-                    'status_w' => $this->getStatusW($wm_machine->current_status),
+//                    'chat_id' => $items->chat_id,
+//                    'num_w' => $items->wm,
+//                    'status_w' => $this->getStatusW($wm_machine->current_status),
                     'time' => $this->getTime($wm_machine->display),
-                    'key' => $items->key
+//                    'key' => $items->key
                 ]
             ];
 
