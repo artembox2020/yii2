@@ -16,6 +16,7 @@ class ResponseMonitoring
 
     public function __construct($wash_machine, $imei)
     {
+        $array = [];
         $this->wash_machine = $wash_machine;
         $this->imei = $imei;
 
@@ -35,7 +36,7 @@ class ResponseMonitoring
             ->andWhere(['wm_mashine.status' => WmMashine::STATUS_ACTIVE])
             ->one();
 
-//        Debugger::dd($wm_machine->display);
+//        Debugger::dd($this->getIsActive($address->name)['time']);
         if ($this->getIsActive($address->name)
             and $this->getIsActive($address->name)['time'] > 10) {
             Yii::$app->db->createCommand('UPDATE t_bot_monitor SET time=:time WHERE address=:address')
@@ -45,14 +46,45 @@ class ResponseMonitoring
         }
 
         if ($this->getIsActive($address->name)
-            and $this->getIsActive($address->name)['time'] <= 10) {
+            and $this->getIsActive($address->name)['time'] <= 10
+            and $this->getIsActive($address->name)['time'] > 0) {
             Yii::$app->db->createCommand(
                 'UPDATE t_bot_monitor SET time=:time WHERE address=:address')
                 ->bindValue(':time', $wm_machine->display)
                 ->bindValue(':address', $address->name)
                 ->execute();
 
-            $this->getPush();
+            $status = new Monitoring();
+            foreach ($this->getIsActiveAll($address->name) as $value) {
+                $array['chat_id_and_key'][$value['chat_id']] = $value['key'];
+                $array['num_w'] = $value['num_w'];
+                $array['status_w'] = $status->getStatusW($wm_machine->current_status);
+                $array['time'] = $value['time'];
+            }
+
+            $this->getPush($array);
+        }
+
+        if ($this->getIsActive($address->name)
+            and $status->getStatusW($wm_machine->current_status) == 2) {
+
+            $status = new Monitoring();
+            foreach ($this->getIsActiveAll($address->name) as $value) {
+                $array['chat_id_and_key'][$value['chat_id']] = $value['key'];
+                $array['num_w'] = $value['num_w'];
+                $array['status_w'] = $status->getStatusW($wm_machine->current_status);
+                $array['time'] = $value['time'];
+            }
+
+            Yii::$app->db->createCommand(
+                'UPDATE t_bot_monitor SET time=:time, is_active=:is_active WHERE address=:address')
+                ->bindValue(':time', $wm_machine->display)
+                ->bindValue(':address', $address->name)
+                ->bindValue(':is_active', false)
+                ->execute();
+
+//            Debugger::dd($array);
+            $this->getPush($array);
         }
 
 
@@ -61,7 +93,7 @@ class ResponseMonitoring
     public function getIsActive($address)
     {
         $rows = (new \yii\db\Query())
-            ->select(['is_active', 'time', 'num_w'])
+            ->select(['*'])
             ->from('t_bot_monitor')
             ->where(['address' => $address])
             ->andWhere(['is_active' => true])
@@ -70,23 +102,30 @@ class ResponseMonitoring
         return $rows;
     }
 
+    public function getIsActiveAll($address)
+    {
+        $rows = (new \yii\db\Query())
+            ->select(['*'])
+            ->from('t_bot_monitor')
+            ->where(['address' => $address])
+            ->andWhere(['is_active' => true])
+            ->all();
+
+        return $rows;
+    }
+
     /**
      * @throws \yii\base\InvalidConfigException
      */
-    public function getPush()
+    public function getPush($array)
     {
         $client = new Client(['baseUrl' => 'http://bot.postirayka.com:5001/api/monitoring/notifyUsers']);
         $response = $client->createRequest()
             ->setFormat(Client::FORMAT_JSON)
-            ->setData([
-                'chat_id_and_key' => [1,2,3],
-                'num_w' => 1,
-                'status_w' => 1,
-                'time' => 10,
-            ])
+            ->setData($array)
             ->send();
-        if ($response->isOk) {
-            Debugger::dd($response->data);
-        }
+//        if ($response->isOk) {
+//            Debugger::dd($response->data);
+//        }
     }
 }
