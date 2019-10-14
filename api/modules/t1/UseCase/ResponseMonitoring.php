@@ -7,7 +7,7 @@ use frontend\models\Imei;
 use frontend\models\WmMashine;
 use frontend\services\custom\Debugger;
 use Yii;
-use Yii\httpclient\Client;
+use yii\httpclient\Client;
 
 class ResponseMonitoring
 {
@@ -61,7 +61,7 @@ class ResponseMonitoring
                 $array['status_w'] = $status->getStatusW($wm_machine->current_status);
                 $array['time'] = $value['time'];
             }
-
+//            Debugger::dd($array);
             $this->getPush($array);
         }
 
