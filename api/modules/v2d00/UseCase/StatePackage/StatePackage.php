@@ -60,7 +60,7 @@ class StatePackage
         $imeiData->imei_id = $imei->id;
         $imeiData->created_at = time() + Jlog::TYPE_TIME_OFFSET;
         $imeiData->imei = $items->imei;
-        $imeiData->fireproof_residue = $items->pac->totalСash;
+        $imeiData->fireproof_residue = $items->pac->totalCash;
         $imeiData->in_banknotes = $items->pac->numberNotes;
         $imeiData->on_modem_account = $items->pac->collection;
         $imeiData->cb_version = $imei->firmware_version;
@@ -151,10 +151,10 @@ class StatePackage
     public function updateWashMachine($washMachine, Imei $imei, $wm_mashine_data)
     {
         $wash_machine = WmMashine::find()
-            ->where(['number_device' => $washMachine->number])
+            ->andWhere(['number_device' => $washMachine->number])
             ->andWhere(['imei_id' => $imei->id])->one();
 
-        $wash_machine->setLastPing($wm_mashine_data);
+        $wash_machine->ping = $imei->ping;
         $wash_machine->level_signal = $washMachine->rssi;
         $wash_machine->bill_cash = $washMachine->money;
         $wash_machine->door_position = $washMachine->door;
@@ -176,10 +176,8 @@ class StatePackage
      */
     public function ifNeedAutoCreateWm(array $wm_machine_array, Imei $imei): void
     {
-        if (count($wm_machine_array) > $this->countWm($imei)) {
-            foreach ($wm_machine_array as $wm) {
-                $this->checkIsWashMachine($wm, $imei);
-            }
+        foreach ($wm_machine_array as $wm) {
+            $this->checkIsWashMachine($wm, $imei);
         }
     }
 
@@ -193,7 +191,7 @@ class StatePackage
     public function checkIsWashMachine($washMachine, Imei $imei): void
     {
         if (!WmMashine::find()
-            ->where(['number_device' => $washMachine->number])
+            ->andWhere(['number_device' => $washMachine->number])
             ->andWhere(['imei_id' => $imei->id])->one()) {
             $this->autoCreateWm($washMachine, $imei);
         }
@@ -209,6 +207,7 @@ class StatePackage
     public function autoCreateWm($washMachine, Imei $imei)
     {
         $wash_machine = new WmMashine();
+        $wash_machine->ping = $imei->ping;
         $wash_machine->type_mashine = $washMachine->type;
         $wash_machine->number_device = $washMachine->number;
         $wash_machine->level_signal = $washMachine->rssi;
@@ -236,7 +235,7 @@ class StatePackage
     public function countWm(Imei $imei): int
     {
         $wash_machine_count = WmMashine::find()
-            ->where(['imei_id' => $imei->id])
+            ->andWhere(['imei_id' => $imei->id])
             ->andWhere(['is_deleted' => false])
             ->count();
 

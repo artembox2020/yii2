@@ -575,6 +575,31 @@ form .form-control, form .uploader {
     left: 92%;
     width: 200px;
 }
+.address-average-loading {
+    width: 100%;
+    text-align: center;
+    display: grid;
+}
+.address-average-loading .address-average-loading-cell {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.address-average-loading table {
+    margin: auto;
+}
+.address-average-loading table .filters {
+    display: none;
+}
+.address-average-loading-cell {
+    /*background: #77e54a!important;*/
+}
+.address-average-loading .yellow {
+    background-color: #fbd000!important;
+}
+.address-average-loading .red {
+    background-color: #ff0000!important;
+}
 @media all and (max-width: 468px) {
     .net-manager-new .coworkers__create-user {
         overflow: hidden;

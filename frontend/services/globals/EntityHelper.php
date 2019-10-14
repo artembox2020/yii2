@@ -651,11 +651,48 @@ class EntityHelper implements EntityHelperInterface
 
         $query = $query->where(['company_id' => $entity->getCompanyId()]);
 
-        if ($compareCondition) {
+        if (!empty($compareCondition)) {
             $query = $query->andWhere($compareCondition);
         }
 
-        $query = $query->andWhere(['<=', 'created_at', $end]);
+        $query = $query->andWhere(['<', 'created_at', $end]);
+        $query = $query->andWhere(new \yii\db\conditions\OrCondition([
+                            new \yii\db\conditions\AndCondition([
+                                ['=', 'is_deleted', false],
+                            ]),
+                            new \yii\db\conditions\AndCondition([
+                                ['=', 'is_deleted', true],
+                                ['>', 'deleted_at', $start]
+                            ])
+                        ]));
+
+        return $query;
+    }
+
+    /**
+     * Gets unit query by timestamps but without meaning company restriction by default
+     *
+     * @param instance $instance
+     * @param int $start
+     * @param int $end
+     * @param array|bool $select
+     * @param array|bool $compareCondition
+     *
+     * @return ActiveDbQuery
+     */
+    public function getUnitQueryWithoutCompanyByTimestamps($instance, $start, $end, $select = false, $compareCondition = false)
+    {
+        $query = $instance::find();
+
+        if ($select) {
+            $query = $query->select($select);
+        }
+
+        if (!empty($compareCondition)) {
+            $query = $query->andWhere($compareCondition);
+        }
+
+        $query = $query->andWhere(['<', 'created_at', $end]);
         $query = $query->andWhere(new \yii\db\conditions\OrCondition([
                             new \yii\db\conditions\AndCondition([
                                 ['=', 'is_deleted', false],

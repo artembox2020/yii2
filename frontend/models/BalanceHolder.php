@@ -404,25 +404,37 @@ class BalanceHolder extends \yii\db\ActiveRecord
      * Gets addresses by timestamps
      * Maybe put in filters by balanceholders and addresses
      *
-     * @return int
+     * @param int $start
+     * @param int|bool $end
+     * @param int|bool $balanceHolderId
+     * @param int|bool $other
+     * @param int|bool $companyId
+     * 
+     * @return array
      */
-    public function getAddressesByTimestamps($start, $end = false, $balanceHolderId = false, $other = false)
+    public function getAddressesByTimestamps($start, $end = false, $balanceHolderId = false, $other = false, $companyId = false)
     {
         $entityHelper = new EntityHelper();
-        $selectAddress = ['id', 'address', 'created_at', 'is_deleted', 'deleted_at'];
+        $selectAddress = ['id', 'address', 'floor', 'created_at', 'is_deleted', 'deleted_at'];
 
         if (empty($end)) {
             $end = $start;
         }
 
-        $compareCondition = false;
+        $compareCondition = [];
 
         if (!empty($balanceHolderId)) {
-            $compareCondition = ['balance_holder_id' => $balanceHolderId];
+            $condition = ['balance_holder_id' => $balanceHolderId];
+            $compareCondition = array_merge($compareCondition, $condition);
+        }
+
+        if (!empty($companyId)) {
+            $condition = ['company_id' => $companyId];
+            $compareCondition = array_merge($compareCondition, $condition);
         }
 
         $addresses = [];
-        $addrQuery = $entityHelper->getUnitQueryByTimestamps(
+        $addrQuery = $entityHelper->getUnitQueryWithoutCompanyByTimestamps(
             new AddressBalanceHolder(), $start, $end, $selectAddress, $compareCondition
         );
 
@@ -445,6 +457,7 @@ class BalanceHolder extends \yii\db\ActiveRecord
             $addresses[$address->id] = [
                 'id' => $address->id,
                 'address' => $address->address,
+                'floor' => $address->floor,
                 'name' => $address->name,
                 'created_at' => $address->created_at,
                 'is_deleted' => $address->is_deleted,

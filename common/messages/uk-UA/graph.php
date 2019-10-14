@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'Address' => 'Адреса',
+    'Address average loading by last 30 days' => 'Завантаженість за останні 30 днів',
     'Address Loading' => 'Завантаження пункту',
     'All WM' => 'Усі підключені ПМ',
     'Any date' => 'Будь-яка дата',
@@ -17,6 +19,7 @@ return [
     'Filter By Address' => 'Фільтр за адресою',
     'Filter By Date' => 'Фільтр по даті',
     'Level Signal' => 'Рівень сигналу',
+    'Loading' => 'Завантаженість, %',
     'Modem Level Signal' => 'Рівень сигналу по пунктам',
     'Show by the certain period' => 'Показувати за конкретний період',
     'Show by the last days' => 'Показувати за останні дні',
