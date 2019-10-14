@@ -45,26 +45,26 @@ class Monitoring
                 ])->execute();
 
                 $returnData = [
-                    [
+//                    [
 //                        'chat_id' => $items->chat_id,
 //                        'num_w' => $items->wm,
 //                        'status_w' => $this->getStatusW($wm_machine->current_status),
                         'time' => $this->getTime($wm_machine->display),
 //                        'key' => $items->key
-                    ]
+//                    ]
                 ];
 
             return $returnData;
             }
 
             $returnData = [
-                [
+//                [
 //                    'chat_id' => $items->chat_id,
 //                    'num_w' => $items->wm,
 //                    'status_w' => $this->getStatusW($wm_machine->current_status),
                     'time' => $this->getTime($wm_machine->display),
 //                    'key' => $items->key
-                ]
+//                ]
             ];
 
             return $returnData;
