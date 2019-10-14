@@ -71,7 +71,8 @@ class ResponseMonitoring
 //        Debugger::dd($status->getStatusW($wm_machine->current_status));
 
         if ($this->getIsActive($address->name)
-            and $status->getStatusW($wm_machine->current_status) == 2) {
+            and $status->getStatusW($wm_machine->current_status) == 2
+            or $this->getIsActive($address->name)['time'] == 'En') {
 
             $status = new Monitoring();
             foreach ($this->getIsActiveAll($address->name) as $value) {
