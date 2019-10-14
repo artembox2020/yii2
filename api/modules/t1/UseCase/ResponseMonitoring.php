@@ -39,9 +39,10 @@ class ResponseMonitoring
 //        Debugger::dd($this->getIsActive($address->name)['time']);
         if ($this->getIsActive($address->name)
             and $this->getIsActive($address->name)['time'] > 10) {
-            Yii::$app->db->createCommand('UPDATE t_bot_monitor SET time=:time WHERE address=:address')
+            Yii::$app->db->createCommand('UPDATE t_bot_monitor SET time=:time WHERE is_active=:is_active AND address=:address')
                 ->bindValue(':time', $wm_machine->display)
                 ->bindValue(':address', $address->name)
+                ->bindValue(':is_active', true)
                 ->execute();
         }
 
@@ -49,9 +50,10 @@ class ResponseMonitoring
             and $this->getIsActive($address->name)['time'] <= 10
             and $this->getIsActive($address->name)['time'] > 0) {
             Yii::$app->db->createCommand(
-                'UPDATE t_bot_monitor SET time=:time WHERE address=:address')
+                'UPDATE t_bot_monitor SET time=:time WHERE is_active=:is_active AND address=:address')
                 ->bindValue(':time', $wm_machine->display)
                 ->bindValue(':address', $address->name)
+                ->bindValue(':is_active', true)
                 ->execute();
 
             $status = new Monitoring();
@@ -65,6 +67,9 @@ class ResponseMonitoring
             $this->getPush($array);
         }
 
+        $status = new Monitoring();
+//        Debugger::dd($status->getStatusW($wm_machine->current_status));
+
         if ($this->getIsActive($address->name)
             and $status->getStatusW($wm_machine->current_status) == 2) {
 
@@ -76,11 +81,16 @@ class ResponseMonitoring
                 $array['time'] = $value['time'];
             }
 
-            Yii::$app->db->createCommand(
-                'UPDATE t_bot_monitor SET time=:time, is_active=:is_active WHERE address=:address')
-                ->bindValue(':time', $wm_machine->display)
-                ->bindValue(':address', $address->name)
-                ->bindValue(':is_active', false)
+            Yii::$app->db->createCommand()
+                ->update('t_bot_monitor',
+                    [ 'time' => $wm_machine->display, 'is_active' => false], //columns and values
+                    [ 'is_active'=>true, 'address'=>$address->name ]) //condition, similar to where()
+                ->execute();
+            
+            Yii::$app->db->createCommand()
+                ->update('t_bot_monitor',
+                    [ 'is_active' => false], //columns and values
+                    [ 'is_active'=>true, 'address'=>$address->name ]) //condition, similar to where()
                 ->execute();
 
 //            Debugger::dd($array);
@@ -124,6 +134,8 @@ class ResponseMonitoring
             ->setFormat(Client::FORMAT_JSON)
             ->setData($array)
             ->send();
+
+//        Debugger::dd($response);
 //        if ($response->isOk) {
 //            Debugger::dd($response->data);
 //        }
