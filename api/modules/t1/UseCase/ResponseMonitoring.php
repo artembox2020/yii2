@@ -130,11 +130,20 @@ class ResponseMonitoring
      */
     public function getPush($array)
     {
-        $client = new Client(['baseUrl' => 'http://bot.postirayka.com:5001/api/monitoring/notifyUsers']);
+
+        $client = new Client();
         $response = $client->createRequest()
             ->setFormat(Client::FORMAT_JSON)
+            ->setMethod('POST')
+            ->setUrl('http://bot.postirayka.com:5001/api/monitoring/notifyUsers')
             ->setData($array)
             ->send();
+
+//        $client = new Client(['baseUrl' => 'http://bot.postirayka.com:5001/api/monitoring/notifyUsers']);
+//        $response = $client->createRequest()
+//            ->setFormat(Client::FORMAT_JSON)
+//            ->setData($array)
+//            ->send();
 
 //        Debugger::dd($response);
 //        if ($response->isOk) {
