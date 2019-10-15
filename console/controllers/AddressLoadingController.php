@@ -20,14 +20,7 @@ class AddressLoadingController extends Controller
     public function actionMakeAverageAddressesLoadingByLastDays($lastDays)
     {
         $ass = new AddressStatStorage();
-        $result = $this->prompt('Generate average addresses loadings by the last '.$lastDays.' days Y\N?');
-
-        if (in_array($result, ['y', 'Y'])) {
-            echo "Please wait...".PHP_EOL;
-            $ass->getAverageAddressesLoadingByLastDays($lastDays, 1);
-            echo "Done!".PHP_EOL;
-        } else {
-            echo 'Operation cancelled'.PHP_EOL;
-        }
+        Yii::$app->db->createCommand("DELETE FROM address_load_data")->execute();
+        $ass->getAverageAddressesLoadingByLastDays($lastDays, 1);
     }
 }
