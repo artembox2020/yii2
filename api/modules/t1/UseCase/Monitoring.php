@@ -30,9 +30,10 @@ class Monitoring
             ->one();
 
         //////////////////////////
-
+//Debugger::dd($this->canCreateInsert($items));
+        if ($this->canCreateInsert($items) == false) {
             if (!$this->getFreeWash($wm_machine->current_status)
-            or !$this->getErrorWash($wm_machine->current_status)) {
+                or !$this->getErrorWash($wm_machine->current_status)) {
                 Yii::$app->db->createCommand()->insert('t_bot_monitor', [
                     'address' => $items->address,
                     'num_w' => $items->wm,
@@ -45,29 +46,51 @@ class Monitoring
                 ])->execute();
 
                 $returnData = [
-                    [
-                        'chat_id' => $items->chat_id,
-                        'num_w' => $items->wm,
-                        'status_w' => $this->getStatusW($wm_machine->current_status),
-                        'time' => $this->getTime($wm_machine->display),
-                        'key' => $items->key
-                    ]
+//                    [
+//                        'chat_id' => $items->chat_id,
+//                        'num_w' => $items->wm,
+//                        'status_w' => $this->getStatusW($wm_machine->current_status),
+                    'time' => $this->getTime($wm_machine->display),
+//                        'key' => $items->key
+//                    ]
                 ];
 
-            return $returnData;
+                return $returnData;
+        }
             }
 
             $returnData = [
-                [
-                    'chat_id' => $items->chat_id,
-                    'num_w' => $items->wm,
-                    'status_w' => $this->getStatusW($wm_machine->current_status),
+//                [
+//                    'chat_id' => $items->chat_id,
+//                    'num_w' => $items->wm,
+//                    'status_w' => $this->getStatusW($wm_machine->current_status),
                     'time' => $this->getTime($wm_machine->display),
-                    'key' => $items->key
-                ]
+//                    'key' => $items->key
+//                ]
             ];
 
             return $returnData;
+    }
+
+    public function canCreateInsert($items)
+    {
+//        Debugger::dd($items);
+        $post = Yii::$app->db->createCommand('SELECT * FROM t_bot_monitor 
+              WHERE address=:address 
+                AND is_active=:is_active
+                AND num_w=:num_w
+                AND `key`=:key
+                AND chat_id=:chat_id')
+            ->bindValue(':address', $items->address)
+            ->bindValue(':is_active', true)
+            ->bindValue(':chat_id', $items->chat_id)
+            ->bindValue(':num_w', $items->wm)
+            ->bindValue(':key', $items->key)
+            ->queryOne();
+
+        $res = $post ? true : false;
+
+        return $res;
     }
 
     public function getTime($time)
