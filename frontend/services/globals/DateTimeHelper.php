@@ -212,4 +212,20 @@ class DateTimeHelper
 
         return $timestamp - $offset;
     }
+
+    /**
+     * Gets right utc timestamp by local timestamp
+     *
+     * @param int $timestamp
+     * @param string $localTimezone
+     *
+     * @return int
+     */
+    public function getRightUtcTimestampByLocalTimestamp($timestamp, $localTimezone)
+    {
+        $localTz = new \DateTimeZone($localTimezone);
+        $local = new \DateTime('now', $localTz);
+
+        return $timestamp - $local->getOffset();
+    }
 }

@@ -42,7 +42,9 @@ class LwController extends Controller
                 $wml->imei = $LwmDto->imei;
                 $wml->device = $this->type_packet;
                 $wml->signal = $imei->level_signal;
-                $wml->unix_time_offset = $dateTimeHelper->getRealUnixTimeOffset($LwmDto->unix_time_offset);
+                $wml->unix_time_offset = $dateTimeHelper->getRightUtcTimestampByLocalTimestamp(
+                    $LwmDto->unix_time_offset, env('TIMEZONE')
+                );
                 $wml->number = $LwmDto->number;
                 $wml->signal = $LwmDto->signal;
                 $wml->status = $LwmDto->status;

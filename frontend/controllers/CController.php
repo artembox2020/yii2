@@ -25,6 +25,7 @@ use frontend\models\Jlog;
 use frontend\models\CbEncashment;
 use frontend\services\custom\Debugger;
 use frontend\services\globals\Entity;
+use frontend\services\globals\DateTimeHelper;
 
 /**
  * data processing IMEI, Wash - Machine, Gel - Dispenser
@@ -616,6 +617,7 @@ class CController extends Controller
             $imei = $this->getImeiByImei($centralBoardDto->imei);
             if (Imei::getStatus($imei) == self::ONE_CONST) {
                 $cbl = new CbEncashment();
+                $dateTimeHelper = new DateTimeHelper();
                 if ($cbl->checkImeiIdUnixTimeOffsetUnique($imei->id, $centralBoardDto->unix_time_offset)) {
                     $cbl->company_id = $imei->company_id;
                     $cbl->address_id = $imei->address_id;
@@ -623,7 +625,9 @@ class CController extends Controller
                     $cbl->imei = $centralBoardDto->imei;
                     $cbl->device = 'cb';
                     $cbl->status = CbLogSearch::TYPE_ENCASHMENT_STATUS;
-                    $cbl->unix_time_offset = $centralBoardDto->unix_time_offset;
+                    $cbl->unix_time_offset = $dateTimeHelper->getRightUtcTimestampByLocalTimestamp(
+                        $centralBoardDto->unix_time_offset, env('TIMEZONE')
+                    );
                     $cbl->fireproof_counter_hrn = $centralBoardDto->fireproof_counter_hrn;
                     $cbl->collection_counter = $centralBoardDto->collection_counter;
                     $cbl->notes_billiards_pcs = $centralBoardDto->notes_billiards_pcs;
