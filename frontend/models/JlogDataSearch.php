@@ -189,7 +189,7 @@ class JlogDataSearch extends JlogSearch
      */
     public function getWmMashineStatus($model)
     {
-        $statusCode = $model['current_status'];
+        $statusCode = (int)$model['current_status'];
         $wmMashine = new WmMashine();
         $wmMashineStatuses = $wmMashine->current_state;
         if (!in_array($statusCode, array_keys($wmMashineStatuses))) {

@@ -116,13 +116,13 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        'allowedIPs' => ['127.0.0.1', '::1', '95.47.114.243', '134.249.146.11'],
+        'allowedIPs' => ['127.0.0.1', '::1', '95.47.114.243', '134.249.146.11', '77.75.145.67'],
     ];
     $config['bootstrap'][] = 'gii';
     $config['bootstrap'][] = 'cookieLanguageSelector';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        'allowedIPs' => ['127.0.0.1', '::1', '95.47.114.243', '134.249.146.11'],
+        'allowedIPs' => ['127.0.0.1', '::1', '95.47.114.243', '134.249.146.11', '77.75.145.67'],
     ];
 }
 

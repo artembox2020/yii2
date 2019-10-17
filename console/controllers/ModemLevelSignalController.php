@@ -80,7 +80,7 @@ class ModemLevelSignalController extends Controller
     public function actionMakeNotInTouchLog($addressId, $start, $end, $lastStatus)
     {
         $address = AddressBalanceHolder::find()->where(['id' => $addressId])->limit(1)->one();
-        $addressString = $address->address.", ".$address->floor;
+        $addressString = $address->static_address.", ".$address->static_floor;
         $jlogSearch = new JlogSearch();
         $jlog = new Jlog();
         $rate = 300;
@@ -165,7 +165,7 @@ class ModemLevelSignalController extends Controller
 
         foreach ($items as $item) {
             $address = AddressBalanceHolder::find()->where(['id' => $item['id']])->limit(1)->one();
-            $addressString = $address->address.", ".$address->floor;
+            $addressString = $address->static_address.", ".$address->static_floor;
             $addressTimestamps = $entityHelper->makeUnitTimestamps($start, $end, $address, ($step/3600));
             list($baseStart, $baseEnd) = [$addressTimestamps['start'], $addressTimestamps['end']];
             $initialPoints = $jlogSearch->getFirstLastPacketItemsByAddress($addressString);
