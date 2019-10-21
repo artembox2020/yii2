@@ -9,7 +9,9 @@
     google.charts.setOnLoadCallback(drawLine);
 
     var dataArray =  makeDataForLine(min - 6);
-    var min = getMinValue(-128) - 8;
+    var maxMin = getMaxMinValue(-128, 0);
+    var min = maxMin.min - 1;
+    var max = maxMin.max + 20;
 
     var options = {
         curveType: 'function',
@@ -19,9 +21,10 @@
                 fontSize: 8
             }
         },
-        vAxis: { 
+        vAxis: {
             minValue: min,
-            viewWindow: { min: min},
+            maxValue: max,
+            viewWindow: { min: min, max: max},
             viewWindowMode: 'pretty',
             baseline: -128,
             baselineColor: "black"
