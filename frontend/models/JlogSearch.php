@@ -143,13 +143,12 @@ class JlogSearch extends Jlog
      * Creates data provider instance by mashine id
      *
      * @param array $params
-     * @param int $id
+     * @param WmMashine $mashine
      * @return ActiveDataProvider
      */
-    public function searchByMashine($params, $id)
+    public function searchByMashine($params, $mashine)
     {
-        $wm_mashine = WmMashine::findOne($id);
-        $imei = Imei::findOne($wm_mashine->imei_id);
+        $imei = Imei::findOne($mashine->imei_id);
         $params['filterCondition']['imei'] = self::FILTER_TEXT_EQUAL;
         $params['val1']['imei'] = $imei->imei;
         if (empty(Yii::$app->request->queryParams['sort'])) {
@@ -841,6 +840,10 @@ class JlogSearch extends Jlog
         if (!empty($mashineId) && !empty($mashine = WmMashine::findOne($mashineId))) {
             $searchModel->mashineNumber = '_'.$mashine->type_mashine.'*'.$mashine->number_device;
             $params['wm_mashine_number'] = $mashine->number_device;
+        }
+
+        if (!empty($mashine->address_id)) {
+            $params['address_id'] = $mashine->address_id;
         }
 
         return $params;

@@ -130,7 +130,7 @@ class JournalController extends \frontend\controllers\Controller
         $removeRedundantGrids = $entityHelper->removeRedundantGrids('.journal-grid-view');
         $columnFilterScript = $this->getColumnFilterScript($params);
 
-        $dataProvider = $searchModel->searchByMashine($params, $id);
+        $dataProvider = $searchModel->searchByMashine($params, $mashine);
 
         return $this->renderPartial('index-by-mashine', [
             'searchModel' => $searchModel,
@@ -403,6 +403,7 @@ class JournalController extends \frontend\controllers\Controller
         $requiredParams = [
             'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
             'wm_mashine_number',
+            'address_id',
             'filterCondition' => [
                 'date', 'type_packet', 'address', 'imei', 'id',
                 'number', 'number_device', 'created_at', 'unix_time_offset'

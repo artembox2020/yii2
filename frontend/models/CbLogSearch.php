@@ -263,6 +263,7 @@ class CbLogSearch extends CbLog
         $query = $searchFilter->applyFilterByValueMethod($query, 'address', ['inputValue' => $params]);
 
         $query = $query->andFilterWhere(['number' => $params['wm_mashine_number']]);
+        $query = $query->andFilterWhere(['address_id' => $params['address_id']]);
 
         return $query;
     }
