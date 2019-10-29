@@ -549,18 +549,25 @@ class Jlog extends ActiveRecord
         $item->packet = $parser->replaceCpStatus($item->packet, $cpStatus);
         $previousEnd = $item->date_end ? $item->date_end : $item->date;
         $previousEndStamp = strtotime($previousEnd);
-        if ($oldCpStatus == $cpStatus && $start - $previousEndStamp <= self::PACKET_DATA_TIME_INTERVAL) {
+
+        $condition = ($oldCpStatus == $cpStatus) && ($start - $previousEndStamp <= self::PACKET_DATA_TIME_INTERVAL);
+
+        if (
+            $condition &&
+            ($cpStatus != ImeiData::CP_STATUS_TERMINAL_NOT_IN_TOUCH || $start - $previousEndStamp <= self::PACKET_DATA_DURATION)
+        ) {
             $item->date_end = $date;
 
             return $item->update();
+        } else {
+
+            $item->date = $date;
+            $item->date_end = $dateEnd;
+            $item->unix_time_offset = $start;
+            $item->isNewRecord = true;
+            unset($item->id);
+
+            return $item->save();
         }
-
-        $item->date = $date;
-        $item->date_end = $dateEnd;
-        $item->unix_time_offset = $start;
-        $item->isNewRecord = true;
-        unset($item->id);
-
-        return $item->save();
     }
 }

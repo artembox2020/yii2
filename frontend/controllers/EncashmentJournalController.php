@@ -79,6 +79,7 @@ class EncashmentJournalController extends Controller
             [
                 'type_packet', 'imei', 'address', 'id', 'selectionName', 'selectionCaretPos',
                 'wm_mashine_number',
+                'address_id',
                 'filterCondition' => [
                     'date', 'type_packet', 'address', 'imei', 'id',
                     'number', 'unix_time_offset'
