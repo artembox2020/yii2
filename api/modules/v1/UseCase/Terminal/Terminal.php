@@ -104,8 +104,8 @@ class Terminal
             $this->array[$value->number_device] = [
                 'device_number' => $value->number_device,
                 'display' => $value->display,
-//                'date' => date(self::DATE_FORMAT, $value->ping),
-                'date' => $d->format('Y-m-d\TH:i:s.u+03:00'),
+                'date' => date(self::DATE_FORMAT, $value->ping + 60*60), // добавили один час(зимее время)
+//                'date' => $d->format('Y-m-d\TH:i:s.u+03:00'),
                 'status' => Yii::t('frontend', $value->current_state[$value->current_status]),
                 'status code' => $value->current_status
             ];
