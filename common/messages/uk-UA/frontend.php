@@ -298,7 +298,7 @@ return [
     'Login' => 'Вхід',
     'Logout' => 'Вихід',
     'Lost password' => 'Відновити пароль',
-    'Mashine Logs' => 'Логи пристрою',
+    'Mashine Logs' => 'Події пристрою',
     'Modem' => 'Модем',
     'Modem Card' => 'Карта модема',
     'Modem History' => 'Історія модема',

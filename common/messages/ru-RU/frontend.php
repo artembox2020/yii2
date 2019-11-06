@@ -251,7 +251,7 @@ return [
     'Logout' => 'Выход',
     'Lost password' => 'Восстановить пароль',
     'le water leak' => 'Ошибка утечка воды',
-    'Mashine Logs' => 'Логи устройства',
+    'Mashine Logs' => 'События устройства',
     'Modem Card' => 'Карта модема',
     'Modem History' => 'Істория модема',
     'Money Amount' => 'Количество денег, грн',
