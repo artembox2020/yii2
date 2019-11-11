@@ -231,7 +231,7 @@ class MonitoringBuilder extends Component {
             'last_ping_value' => date(self::DATE_TIME_FORMAT, $imei->getLastPingValue()),
             'level_signal' => $imeiData->getLevelSignal(),
             'phone_number' => $imei->phone_module_number,
-            'money_in_banknotes' => Yii::$app->formatter->asDecimal($imeiData->getOnModemAccount(), 0),
+            'money_in_banknotes' => Yii::$app->formatter->asDecimal($imei->getOnModemAccount(), 0),
             'fullness' => $fullness,
             'fullnessIndicator' => $fullnessIndicator,
             'in_banknotes' => $imeiData->in_banknotes,

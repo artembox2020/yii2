@@ -679,4 +679,13 @@ class Imei extends \yii\db\ActiveRecord
 
         return $query->count();    
     }
+
+    /**
+     * @return float
+     */
+    public function getOnModemAccount()
+    {
+
+        return $this->on_modem_account;
+    }
 }
