@@ -17,6 +17,9 @@ class Encashment
 {
     const CB = 'cb';
 
+    // set maximum package delay period as 4 months
+    const MAX_PACKAGE_DELAY_TIMESTAMP = 3600*24*30*4;
+
     /**
      * @param $items
      * @return \Exception|string
@@ -33,8 +36,8 @@ class Encashment
             $cbl->imei = $items->imei;
             $cbl->device = self::CB;
             $cbl->status = CbLogSearch::TYPE_ENCASHMENT_STATUS;
-            $cbl->unix_time_offset = $items->pac->time;
-            $cbl->fireproof_counter_hrn = (float)$items->pac->totalСash;
+            $cbl->unix_time_offset = $this->getRealUnixTimeOffset($items->pac->time);
+            $cbl->fireproof_counter_hrn = (float)$items->pac->totalCash;
             $cbl->collection_counter = (float)$items->pac->collection;
             $cbl->last_collection_counter = (float)$items->pac->collection_last;
             $cbl->notes_billiards_pcs = $items->pac->notes->number;
@@ -86,5 +89,21 @@ class Encashment
             '5-' . $objectCoins->five .
             '+' .
             '10-' . $objectCoins->ten;
+    }
+
+    /**
+     * Gets package unix timestamp by given creation timestamp regarding possible package coming delay 
+     * @param int $unixTimeOffset
+     *
+     * @return int
+     */
+    public function getRealUnixTimeOffset(int $unixTimeOffset): int
+    {
+        if (!empty($unixTimeOffset) && ($unixTimeOffset > (time() - self::MAX_PACKAGE_DELAY_TIMESTAMP))) {
+
+            return $unixTimeOffset;
+        }
+
+        return time();
     }
 }
