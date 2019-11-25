@@ -179,7 +179,7 @@ class WmMashineDataSearch extends WmMashineData
         $query = WmMashineData::find();
         $query = $query->select($select)
                         ->distinct()
-                        ->andWhere(['>=', 'created_at', $start])
+                        ->where(['>=', 'created_at', $start])
                         ->andWhere(['<', 'created_at', $end]);
 
         return $query;

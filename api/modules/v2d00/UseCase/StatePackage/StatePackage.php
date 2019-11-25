@@ -134,6 +134,7 @@ class StatePackage
         $wm_mashine_data->current_status = $washMachine->state;
         $wm_mashine_data->display = $washMachine->display;
         $wm_mashine_data->status = WmMashine::STATUS_ACTIVE;
+        $wm_mashine_data->is_deleted = false;
         $wm_mashine_data->ping = $imei->ping;
         $wm_mashine_data->insert(false);
 
