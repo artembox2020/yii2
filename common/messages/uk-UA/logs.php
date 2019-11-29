@@ -50,7 +50,7 @@ return [
     'ZERO_WORK' => 'Безкоштовне прання',
     'EXTRACTION_DRESS' => 'Віджим',
     'FREEZE_WITH_WATER' => 'ПМ з водою',
-    'MAX_WASHER_EVENT' => 'Помилка',
+    'MAX_WASHER_EVENT' => 'Помилка визначення статусу',
     'NO_CONNECT_MCD' => 'Помилка МКД',
     'NO_POWER' => 'Помилка живлення',
     'NULLING_WASHER' => 'Онулення',

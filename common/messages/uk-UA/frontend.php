@@ -233,7 +233,7 @@ return [
     'Financier' => 'Фінанси',
     'Fixed Assets' => 'Основні засоби',
     'floor' => 'поверх',
-    'freeze mode' => 'Помилка',
+    'freeze mode' => 'Вода в барабані',
     'From' => 'із',
     'fe ventilation' => 'Помилка вентиляції',
     'Junk' => 'Утиль',

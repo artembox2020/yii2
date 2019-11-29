@@ -198,7 +198,7 @@ return [
     'Financier' => 'Финансы',
     'Fixed Assets' => 'Основные средства',
     'floor' => 'этаж',
-    'freeze mode' => 'Ошибка',
+    'freeze mode' => 'Вода в барабане',
     'From' => 'с',
     'fe ventilation' => 'Ошибка вентиляции',
     'Number of Floors' => 'Кількість поверхів',
