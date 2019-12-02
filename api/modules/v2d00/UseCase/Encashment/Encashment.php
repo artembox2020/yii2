@@ -45,7 +45,11 @@ class Encashment
             $cbl->amount_of_coins = $items->pac->coins->number;
             $cbl->coin_face_values = $this->getFormatCoins($items->pac->coins);
             $cbl->is_deleted = false;
-            $cbl->insert();
+
+            if ($this->checkImeiAndTimestampUniquity($cbl)) {
+                $cbl->insert();
+            }
+
             $imei->ping = time();
             $imei->save();
         } catch (\Exception $exception) {
@@ -105,5 +109,24 @@ class Encashment
         }
 
         return time();
+    }
+
+    /**
+     * Check whether data  index {imei_id, unix_time_offset} is unique by record item
+     *
+     * @param CbEncashment $cbl
+     *
+     * @return bool
+     */
+    public function checkImeiAndTimestampUniquity($cbl)
+    {
+        $count = $cbl::find()
+        ->andWhere([
+            'imei_id' => $cbl->imei_id,
+            'unix_time_offset' => $cbl->unix_time_offset
+        ])
+        ->count();
+
+        return !$count;
     }
 }
