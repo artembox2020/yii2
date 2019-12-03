@@ -636,7 +636,10 @@ class CController extends Controller
                     $cbl->amount_of_coins = $centralBoardDto->amount_of_coins;
                     $cbl->coin_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($centralBoardDto->coin_face_values);
                     $cbl->is_deleted = false;
-                    $cbl->save();
+
+                    if ($this->checkImeiAndTimestampUniquity($cbl)) {
+                        $cbl->save();
+                    }
 
                     $imei->ping = time();
                     $imei->save();
@@ -652,6 +655,25 @@ class CController extends Controller
         } else {
             echo 'Imei not exists';exit;
         }
+    }
+
+    /**
+     * Check whether data  index {imei_id, unix_time_offset} is unique by record item
+     *
+     * @param CbEncashment $cbl
+     *
+     * @return bool
+     */
+    public function checkImeiAndTimestampUniquity(CbEncashment $cbl): bool
+    {
+        $count = $cbl::find()
+            ->andWhere([
+                'imei_id' => $cbl->imei_id,
+                'unix_time_offset' => $cbl->unix_time_offset
+            ])
+            ->count();
+
+        return !$count;
     }
 
     /**
