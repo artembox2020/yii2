@@ -26,6 +26,8 @@ class CbLogSearch extends CbLog
     const INFINITY = 9999999999999999;
     const ZERO = 0;
 
+    const TWO_HOURS_CORRECTION = 7200;
+
     public $from_date;
     public $to_date;
     public $mashineNumber;
@@ -1224,9 +1226,10 @@ class CbLogSearch extends CbLog
      */
     public function getDateByTimestamp($model, $dateFormat, $params)
     {
-        $timestamp = empty($params['date_setting']) ? $model['unix_time_offset'] : $model['created_at'];
+        $unixTimeOffset = $this->getTimestampCorrection($model['unix_time_offset']);
+        $timestamp = empty($params['date_setting']) ? $unixTimeOffset : $model['created_at'];
         $logTitle = empty($params['date_setting']) ? Yii::t('logs', 'Log Arrival Time') : Yii::t('logs', 'Log Event Time');
-        $logTitleTimestamp = empty($params['date_setting']) ? $model['created_at'] : $model['unix_time_offset'];
+        $logTitleTimestamp = empty($params['date_setting']) ? $model['created_at'] : $unixTimeOffset;
         $date = date($dateFormat, $timestamp);
         $logTitleDate = date($dateFormat, $logTitleTimestamp);
 
@@ -1238,5 +1241,18 @@ class CbLogSearch extends CbLog
                 'logTitleDate' => $logTitleDate
             ]
         );
+    }
+
+    /**
+     * Gets timestamp correction for `unix_time_offset`
+     *
+     * @param int $timestamp
+     *
+     * @return int
+     */
+    public function getTimestampCorrection(int $timestamp): int
+    {
+
+        return $timestamp - self::TWO_HOURS_CORRECTION;
     }
 }
