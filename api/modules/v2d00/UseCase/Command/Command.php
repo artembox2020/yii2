@@ -2,6 +2,7 @@
 
 namespace api\modules\v2d00\UseCase\Command;
 
+use frontend\services\custom\Debugger;
 use Yii;
 
 class Command
@@ -24,7 +25,7 @@ class Command
             ->limit(self::CONST_TRUE)
             ->one()) {
 
-            $returnData = ['time' => $rows['unix_time_offset'], 'cmd' => $rows['action']];
+            $returnData = [ 'type' => 'c', 'time' => $rows['unix_time_offset'], 'cmd' => $rows['action']];
             $response = Yii::$app->response;
             $response->format = \yii\web\Response::FORMAT_JSON;
             $response->data = $returnData;
