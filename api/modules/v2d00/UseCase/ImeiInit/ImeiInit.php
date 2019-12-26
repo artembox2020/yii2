@@ -35,7 +35,9 @@ class ImeiInit
 
         $this->addJlog($imei);
 
-        Yii::$app->response->statusCode = 201;
+        if (!Command::getCommand($imei->imei)) {
+            Yii::$app->response->statusCode = 201;
+        }
 
         return Command::getCommand($imei->imei);
     }

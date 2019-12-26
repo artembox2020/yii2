@@ -17,8 +17,13 @@ class Log
             try {
                 $create = new CentralBoardLog();
                 $create->add($items);
-                Yii::$app->response->statusCode = 201;
+
+                if (!Command::getCommand($items->imei)) {
+                    Yii::$app->response->statusCode = 201;
+                }
+
                 return Command::getCommand($items->imei);
+
             } catch (\Exception $exception) {
                 return $exception;
             }
