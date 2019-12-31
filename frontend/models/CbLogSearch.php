@@ -372,6 +372,20 @@ class CbLogSearch extends CbLog
                     $params['val2'][$dateFieldName] = $params['val2']['date'];
                 }
             }
+
+            if (!empty($params['address'])) {
+                $jlogSearch = new JlogSearch();
+                $params['address'] = $jlogSearch->findStaticAddressByString(
+                     $params['address']
+                );
+
+                if (empty($params['val1'])) {
+                    $params['val1']['address'] = $params['address'];
+                    $params['val1']['unix_time_offset'] = null;
+                    $params['val1']['created_at'] = null;
+                    $params['val1']['number'] = null;
+                }
+            }
         }
 
         return $params;

@@ -1135,4 +1135,22 @@ class JlogSearch extends Jlog
 
         return $item->address;
     }
+
+    /**
+     * Finds static address string by `address` field of `address_balance_holder` table
+     *
+     * @param string $addressString
+     * @return string
+     */
+    public function findStaticAddressByString(string $addressString): string
+    {
+        $item = AddressBalanceHolder::find()->where(['address' => $addressString])->limit(1)->one();
+
+        if (empty($item)) {
+
+            return $addressString;
+        }
+
+        return $item->static_address.', '.$item->static_floor;
+    }
 }

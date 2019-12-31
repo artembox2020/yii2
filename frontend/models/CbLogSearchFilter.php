@@ -99,16 +99,18 @@ class CbLogSearchFilter extends JlogSearch
     public function getIdsByColumnName($columnName, $value, $filterCondition)
     {
         $entity = new Entity();
-        $expression = $columnName;
         $operator = 'like';
 
         if ($columnName == 'address') {
             $value = trim(explode(JlogSearch::ADDRESS_DELIMITER, $value)[0]);
+            $columnName = 'static_address';
         }
+
+        $expression = $columnName;
 
         switch ($filterCondition) {
             case self::FILTER_NOT_SET:
-                
+
                 break;
             case self::FILTER_CELL_EMPTY:
                 $operator = 'is';
@@ -133,10 +135,10 @@ class CbLogSearchFilter extends JlogSearch
                 break;
             case self::FILTER_TEXT_NOT_CONTAIN:
                 $operator = 'not like';
-                
+
                 break;    
             case self::FILTER_TEXT_START_FROM:
-                
+
                 $value = $value.'%';
                 break;
             case self::FILTER_TEXT_END_WITH:
@@ -151,19 +153,21 @@ class CbLogSearchFilter extends JlogSearch
             $operator == 'like' &&
             in_array($filterCondition, [self::FILTER_TEXT_START_FROM, self::FILTER_TEXT_END_WITH])
         ) {
-            $whereCondition = [$operator, $expression, explode(",", $value)[0], false];
-        }
-        else {
-            $whereCondition = [$operator, $expression, explode(",", $value)[0]];
+            $whereCondition = [$operator, $expression, $this->removeLastPiece(',', $value), false];
+        } elseif ($operator == '=') {
+
+            $whereCondition = [$operator, $expression, $this->removeLastPiece(',', $value)];
+        } else {
+
+            $whereCondition = [$operator, $expression, $this->removeLastPiece(',', $value)];
         }
 
-        $unitModels = ['address' => new AddressBalanceHolder(), 'imei' => new Imei()];
+        $unitModels = ['static' => new AddressBalanceHolder(), 'imei' => new Imei()];
         $unitsQuery =  $unitModels[explode('_', $columnName)[0]]::find()->where($whereCondition)
                                                   ->andWhere(['company_id' => $entity->getCompanyId()]);
 
-        if ($columnName == 'address' && count(explode(",", $value)) > 1) {
-            $floor = trim(explode(",", $value)[1]);
-            $unitsQuery = $unitsQuery->andWhere(['like', 'floor', $floor]);
+        if ($columnName == 'static_address' && !empty($floor = $this->getLastPiece(',', $value))) {
+                $unitsQuery = $unitsQuery->andFilterWhere(['like', 'floor', $floor]);
         }
 
         $units = $unitsQuery->all();
@@ -294,5 +298,48 @@ class CbLogSearchFilter extends JlogSearch
         }
 
         return $sortType;
+    }
+
+    /**
+     * Removes the last piece from the string, separated by delimiter,
+     * and returns modified string
+     *
+     * @param string $delimiter
+     * @param string $value
+     *
+     * @return string
+     */
+    private function removeLastPiece(string $delimiter, string $value): string
+    {
+        $value .= ' ';
+        $valueParts = explode($delimiter, $value);
+        $targetValue = '';
+
+        for ($i = 0; $i < count($valueParts) - 1; ++$i) {
+
+            if ($targetValue != '') {
+                $targetValue .= $delimiter;
+            }
+
+            $targetValue .= $valueParts[$i];
+        }
+
+        return $targetValue;
+    }
+
+    /**
+     * Gets the last piece from the string, separated by delimiter
+     *
+     * @param string $delimiter
+     * @param string $value
+     *
+     * @return string
+     */
+    private function getLastPiece(string $delimiter, string $value): string
+    {
+        $value .= ' ';
+        $valueParts = explode($delimiter, $value);
+
+        return trim(end($valueParts));
     }
 }
