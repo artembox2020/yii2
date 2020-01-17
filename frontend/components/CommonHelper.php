@@ -71,10 +71,11 @@ class CommonHelper extends Component {
      * 
      * @param string $type
      * @param string $name
+     * @param bool $strictMode
      *
      * @return string
      */
-    public function linkByType($type, $name) {
+    public function linkByType($type, $name, $strictMode = false) {
 
         if (!in_array($type, self::OBJECT_TYPES) || empty($name)) {
 
@@ -86,7 +87,7 @@ class CommonHelper extends Component {
         $object = self::MODEL_NAMESPACE.$type;
 
         $object = $object::find()
-            ->andWhere(['like', $this->getObjectTitleField(null, $type), $name])
+            ->andWhere([($strictMode ? '=' : 'like'), $this->getObjectTitleField(null, $type), $name])
             ->andWhere(['company_id' => $entity->getCompanyId()])
             ->limit(1)
             ->one();
