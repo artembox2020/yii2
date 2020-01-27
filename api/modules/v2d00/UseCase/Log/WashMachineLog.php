@@ -17,7 +17,7 @@ class WashMachineLog
     {
         $dateTimeHelper = new DateTimeHelper();
 
-        if (Imei::findOne(['imei' => $items->imei])) {
+        if (Imei::findOne(['imei' => (int)$items->imei])) {
             $imei = $this->getImei($items->imei);
 
             if (Imei::getStatus($imei) == self::ONE_CONST) {
@@ -25,7 +25,11 @@ class WashMachineLog
                 $wml->company_id = $imei->company_id;
                 $wml->address_id = $imei->address_id;
                 $wml->imei_id = $imei->id;
-                $wml->date = $items->time;
+
+                if (!empty($items->time)) {
+                    $wml->date = $items->time;
+                }
+
                 $wml->imei = $items->imei;
                 $wml->device = self::WM_CONST;
                 $wml->signal = $items->pac->rssi;
@@ -55,6 +59,6 @@ class WashMachineLog
      */
     public function getImei($imei)
     {
-        return Imei::findOne(['imei' => $imei]);
+        return Imei::findOne(['imei' => (int)$imei]);
     }
 }

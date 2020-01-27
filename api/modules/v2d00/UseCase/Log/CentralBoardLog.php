@@ -17,7 +17,7 @@ class CentralBoardLog
 
     public function add($items)
     {
-        if (Imei::findOne(['imei' => $items->imei])) {
+        if (Imei::findOne(['imei' => (int)$items->imei])) {
             $imei = $this->getImei($items->imei);
             if (Imei::getStatus($imei) == self::ONE_CONST) {
                 $cbl = new CbLog();
@@ -27,7 +27,11 @@ class CentralBoardLog
                 $cbl->company_id = $imei->company_id;
                 $cbl->address_id = $imei->address_id;
                 $cbl->imei_id = $imei->id;
-                $cbl->date = $items->time;
+
+                if (!empty($items->time)) {
+                    $cbl->date = $items->time;
+                }
+
                 $cbl->imei = $items->imei;
                 $cbl->device = self::CB_CONST;
                 $cbl->signal = $items->pac->rssi;
@@ -59,6 +63,6 @@ class CentralBoardLog
      */
     public function getImei($imei)
     {
-        return Imei::findOne(['imei' => $imei]);
+        return Imei::findOne(['imei' => (int)$imei]);
     }
 }
