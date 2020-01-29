@@ -164,7 +164,8 @@ class JournalController extends \frontend\controllers\Controller
         $searchModel->inputValue[$dateFieldName] = $params['inputValue'][$dateFieldName];
         $searchModel->val2[$dateFieldName] = $params['val2'][$dateFieldName];
         $itemsCount = CbLogSearch::TYPE_ITEMS_LIMIT;
-        $columnFilterScript = $this->getColumnFilterScript($params);
+        $itemsCount = $itemsCount < ($dataCount = $dataProvider->query->count()) ? $itemsCount : $dataCount;
+        $columnFilterScript = $this->getColumnFilterScript($params, $itemsCount);
 
         return $this->renderPartial('logs/index', [
             'searchModel' => $searchModel,
@@ -288,9 +289,10 @@ class JournalController extends \frontend\controllers\Controller
      * Gets the main journal js 
      * 
      * @param array $params
+     * @param int|bool $itemsCount
      * @return string
      */
-    private function getColumnFilterScript($params)
+    private function getColumnFilterScript($params, $itemsCount = false)
     {
         $searchFilter = new CbLogSearchFilter();
         $dateFieldName = $searchFilter->getDateFieldNameByParams($params);
@@ -307,7 +309,8 @@ class JournalController extends \frontend\controllers\Controller
                 'certain' => Yii::t('frontend', 'Certain'),
                 'params' => $params,
                 'pageSize' => $params['page_size'] ? $params['page_size'] : JlogDataSearch::TYPE_PAGE_SIZE,
-                'dateFieldName' => $dateFieldName
+                'dateFieldName' => $dateFieldName,
+                'itemsCount' => $itemsCount
             ]
         );
     }

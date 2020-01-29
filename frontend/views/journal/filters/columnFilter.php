@@ -168,6 +168,34 @@
         }
     }
 
+    /**
+     * Adjusts pagination when necessary
+     *
+     * @param int totalCount
+     * @param int pageSize
+     */
+    function adjustPagination(totalCount, pageSize)
+    {
+        var pageNumber = Math.ceil(totalCount / (pageSize+0.0));
+        var ul = document.querySelector(".jlog-index ul.pagination");
+
+        if (ul) {
+            var lis = ul.querySelectorAll("li");
+            for (var i = 0; i < lis.length; ++i) {
+                var li = lis[i];
+
+                if (li.classList.contains('prev,next')) {
+                    continue;
+                }
+
+                var a = li.querySelector('a');
+                if (a && parseInt(a.dataset.page) + 1 > pageNumber) {
+                    li.style.display = 'none';
+                }
+            }
+        }
+    }
+
     var formElements = document.querySelectorAll(".grid-view-filter-form input, .grid-view-filter-form select");
 
     disableDefaultBehaviorFormElements(formElements);
@@ -283,5 +311,9 @@
             }
         }
     }
+
+    <?php if (!empty($itemsCount)): ?>
+        adjustPagination(<?= $itemsCount ?>, <?= $pageSize ?>);
+    <?php endif; ?>
 })();
 </script>
