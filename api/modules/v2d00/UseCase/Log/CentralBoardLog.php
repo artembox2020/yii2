@@ -15,7 +15,7 @@ class CentralBoardLog
     const ONE_CONST = 1;
     const CB_CONST = 'cb';
 
-    public function add($items)
+    public function add($items): bool
     {
         if (Imei::findOne(['imei' => (int)$items->imei])) {
             $imei = $this->getImei($items->imei);
@@ -46,15 +46,16 @@ class CentralBoardLog
 //                $cbl->banknote_face_values = $cbLogSearch->normalizeBanknoteFaceValuesString($items->numberNotes);
                 $cbl->is_deleted = false;
 
-                $cbl->save();
                 $imei->ping = time();
                 $imei->save();
-                Yii::$app->response->statusCode = 201;
-                return 'CB';
+
+                return $cbl->save();
             }
         }
+
         Yii::$app->response->statusCode = 400;
-        return 'status code 400';
+
+        return false;
     }
 
     /**

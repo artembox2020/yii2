@@ -16,13 +16,18 @@ class Log
         if ($items->pac->devType == self::CENTRAL_BOARD) {
             try {
                 $create = new CentralBoardLog();
-                $create->add($items);
 
-                if (!Command::getCommand($items->imei)) {
+                if (!$create->add($items)) {
+                    Yii::$app->response->statusCode = 500;
+
+                    return 'CB';
+                }
+
+                if (!Command::getCommand((int)$items->imei)) {
                     Yii::$app->response->statusCode = 201;
                 }
 
-                return Command::getCommand($items->imei);
+                return Command::getCommand((int)$items->imei);
 
             } catch (\Exception $exception) {
                 return $exception;
@@ -31,8 +36,13 @@ class Log
 
         if ($items->pac->devType == self::WASH_MACHINE) {
             $create = new WashMachineLog();
-            $create->add($items);
-            Yii::$app->response->statusCode = 201;
+
+            if ($create->add($items)) {
+                Yii::$app->response->statusCode = 201;
+            } else {
+                Yii::$app->response->statusCode = 500;
+            }
+
             return 'WM';
         }
     }

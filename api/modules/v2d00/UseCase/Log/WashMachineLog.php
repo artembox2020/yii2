@@ -13,7 +13,7 @@ class WashMachineLog
     const ONE_CONST = 1;
     const WM_CONST = 'wm';
 
-    public function add($items)
+    public function add($items): bool
     {
         $dateTimeHelper = new DateTimeHelper();
 
@@ -45,10 +45,11 @@ class WashMachineLog
                 $wml->rinsing = $items->pac->washAddition->rising_plus;
                 $wml->intensive_wash = $items->pac->washAddition->intensive_washing;
                 $wml->is_deleted = false;
-                $wml->save();
 
                 $imei->ping = time();
                 $imei->save();
+
+                return $wml->save();
             }
         }
     }
