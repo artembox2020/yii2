@@ -105,7 +105,7 @@ class WmLog extends ActiveRecord
      */
     public static function find()
     {
-        return parent::find()->where(['cb_log.is_deleted' => false]);
+        return parent::find()->where(['wm_log.is_deleted' => false]);
     }
 
 //    /**

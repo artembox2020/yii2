@@ -5,6 +5,8 @@ namespace frontend\services\parser;
 use frontend\controllers\CController;
 use frontend\models\ImeiData;
 use Yii;
+use api\modules\v2d00\controllers\JsonController;
+use api\modules\v2d00\UseCase\Log\Log;
 
 /**
  * parsing initialization and data packet types
@@ -421,5 +423,76 @@ class CParser implements CParserInterface
         }
 
         return $pCp.$pWms;
+    }
+
+    /**
+     * Converts init package string representation into json
+     *
+     * @param string $p
+     *
+     * @return string
+     */
+    public function convertInitPacketFromStringToJson($p)
+    {
+        $data = $this->iParse($p);
+        $pac = [
+            'bootloader' => $data['firmware_version'],
+            'firmware' => empty($data['firmware_version_cpu']) ? "" : $data['firmware_version_cpu'],
+            'radio' => $data['firmware_6lowpan'],
+            'PCB' => $data['pcb_version'],
+            'channel' => $data['number_channel'],
+            'telephone' => $data['phone_module_number'] ?? "",
+            'rssi' => $data['level_signal'],
+            'modemCash' => $data['on_modem_account'],
+            'traffic' => empty($data['traffic']) ? "0" : $data['traffic']
+        ];
+
+        $packetData = ['imei' => $data['imei'], 'type' => JsonController::INI, 'pac' => $pac];
+
+        return json_encode($packetData);
+    }
+
+    /**
+     * Converts state package string representation into json
+     *
+     * @param string $p
+     *
+     * @return string
+     */
+    public function convertDataPacketFromStringToJson($p)
+    {
+        $imeiData = $this->getImeiData($p);
+        $mashineData = $this->getMashineData($p)['WM'];
+        $data = array_merge($imeiData, $mashineData);
+
+        $device = [];
+
+        foreach ($mashineData as $item) {
+            $array_keys = ['type', 'number', 'rssi', 'money', 'door', 'checkLEDDoor', 'state', 'display'];
+            $wmData = array_merge(array_combine($array_keys, $item), ['total_cash' => 0]);
+
+            foreach (array_keys($wmData) as $key) {
+                $wmData[$key] = trim($wmData[$key]);
+            }
+
+            $device[] = $wmData;
+        }
+
+        $pac = [
+            'numberNotes' => $imeiData['imeiData']['in_banknotes'],
+            'collection' => $imeiData['imeiData']['money_in_banknotes'],
+            'totalCash' => $imeiData['imeiData']['fireproof_residue'],
+            'workStatus' => [
+                'CenBoard' => $imeiData['packet'],
+                'validState' => $imeiData['imeiData']['evt_bill_validator']
+            ],
+            'device' => $device
+        ];
+
+        return json_encode([
+            'imei' => $imeiData['imeiData']['imei'],
+            'type' => JsonController::STATUS,
+            'pac' => $pac
+        ]);
     }
 }
