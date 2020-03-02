@@ -58,7 +58,8 @@ class JsonController extends Controller
     public function actionIndex()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $items = json_decode(file_get_contents("php://input"));
+        $input = file_get_contents("php://input");
+        $items = json_decode($input);
 
         // сотояние
 //        Debugger::dd($items->type);
@@ -87,5 +88,16 @@ class JsonController extends Controller
             return $encashment->add($items);
         }
         return Yii::$app->response->statusCode = 400;
+    }
+
+    /**
+     * Puts down log into the file '/log/packets.dump'
+     * @param string $packet
+     */
+    public function putLog(string $packet): void
+    {
+        $fp = fopen($_SERVER['DOCUMENT_ROOT'].'/log/packets.dump', 'a+');
+        fwrite($fp, time().":".$packet."\n");
+        fclose($fp);
     }
 }
