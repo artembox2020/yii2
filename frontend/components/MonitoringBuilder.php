@@ -175,7 +175,7 @@ class MonitoringBuilder extends Component {
         return [
             'in_banknotes' => $imeiData->in_banknotes,
             'fireproof_residue' => $imeiData->fireproof_residue,
-            'money_in_banknotes' => $imeiData->money_in_banknotes,
+            'money_in_banknotes' => $imeiData->money_in_banknotes ?? $imeiData->on_modem_account,
             'last_encashment' => $searchModel->getScalarDateAndSumLastEncashmentByImeiId($imei->id),
             'pre_last_encashment' => $searchModel->getScalarDateAndSumPreLastEncashmentByImeiId($imei->id),
         ];
