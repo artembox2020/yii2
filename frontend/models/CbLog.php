@@ -94,7 +94,20 @@ class CbLog extends \yii\db\ActiveRecord
         'http_404_response',
         'http_500_response',
         'http_601_response',
-        'http_unknown_response'
+        'http_unknown_response',
+        'coordinator_reboot',
+        'service_entry',
+        'cmd_reserved0',
+        'cmd_reset_cpu',
+        'cmd_reset_vend',
+        'cmd_reset_coord',
+        'cmd_reset_modem',
+        'cmd_format_disk',
+        'cmd_time_set',
+        'cmd_validator_off',
+        'cmd_reserved1',
+        'cmd_reserved2',
+        'cmd_reserved3'
         ];
 
     /** @var $model */
