@@ -59,6 +59,8 @@ class JsonController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $input = file_get_contents("php://input");
+        $this->retranslatePackage($input);
+
         $items = json_decode($input);
 
         // сотояние
@@ -99,5 +101,21 @@ class JsonController extends Controller
         $fp = fopen($_SERVER['DOCUMENT_ROOT'].'/log/packets.dump', 'a+');
         fwrite($fp, time().":".$packet."\n");
         fclose($fp);
+    }
+
+    /** retranslates packets to another server **/
+    public function retranslatePackage($input): void
+    {
+        $url = 'http://mypostirayka.pp.ua'.\yii\helpers\Url::to(['/v2d00/json/index']);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json'
+        ));
+        curl_exec($ch);
+
+        curl_close($ch);
     }
 }
