@@ -1,4 +1,0 @@
-tests/unit/models/SignupFormTest.php:testCorrectSignup
-tests/unit/models/SignupFormTest.php:testCorrectSignup
-tests/unit/models/SignupFormTest.php:testNotCorrectSignup
-tests/unit/models/SignupFormTest.php:testNotCorrectSignup

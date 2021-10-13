@@ -1,171 +1,53 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use frontend\components\responsive\DetailView;
-use frontend\services\custom\Debugger;
-use frontend\storages\GoogleGraphStorage;
-use frontend\storages\AddressStatStorage;
-use frontend\storages\MashineStatStorage;
-use frontend\models\WmMashineDataSearch;
-use frontend\services\globals\DateTimeHelper;
-use frontend\models\Jsummary;
-use frontend\models\BalanceHolder;
-use frontend\models\BalanceHolderSummarySearch;
-use frontend\models\AddressBalanceHolder;
-use frontend\services\globals\EntityHelper;
-use console\controllers\ModemLevelSignalController;
-use yii\widgets\Pjax;
-
 /* @var $this yii\web\View */
-/* @var $model frontend\models\Company */
-/* @var $users common\models\User */
-/* @var $balanceHolders  */
-/* @var $balanceHoldersData  */
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = $this->title;
-
+$this->title = 'My Yii Application';
 ?>
-<div class="company-view">
+<div class="site-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="jumbotron text-center bg-transparent">
+        <h1 class="display-4">Congratulations!</h1>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'name',
-            /*[
-                'attribute' => 'img',
-                'format' => 'html',
-                'value' => function ($data) {
-                    return Html::img(Yii::getAlias('@storageUrl/logos/'. $data['img'],['max-width' => '80px']));
-                },
-            ],*/
-            'phone',
-            'website',
-        ],
-    ]) ?>
-    <br>
-    <b><?= Yii::t('graph', 'WM Mashine Statistics'); ?></b>
+        <p class="lead">You have successfully created your Yii-powered application.</p>
 
-    <div class="chart-container graph-block">
-        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
     </div>
 
-    <?php echo Yii::$app->runAction(
-        '/dashboard/render-engine',
-        [
-            'selector' => '.chart-container',
-            'action' => '/dashboard/all-green-grey-work-error', 
-            'active' => 'current day'
-        ]);
-    ?>
+    <div class="body-content">
 
-    <?php if (yii::$app->user->can('viewFinData')) { ?>
-    <b><?= Yii::t('graph', 'Balance Holders Incomes'); ?></b>
-    <br>
+        <div class="row">
+            <div class="col-lg-4">
+                <h2>Heading</h2>
 
-    <div class="chart-container-bh graph-block">
-        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                    fugiat nulla pariatur.</p>
+
+                <p><a class="btn btn-outline-secondary" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
+            </div>
+            <div class="col-lg-4">
+                <h2>Heading</h2>
+
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                    fugiat nulla pariatur.</p>
+
+                <p><a class="btn btn-outline-secondary" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
+            </div>
+            <div class="col-lg-4">
+                <h2>Heading</h2>
+
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                    fugiat nulla pariatur.</p>
+
+                <p><a class="btn btn-outline-secondary" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
+            </div>
+        </div>
+
     </div>
-
-    <?php echo Yii::$app->runAction(
-        '/dashboard/render-engine',
-        [
-            'selector' => '.chart-container-bh',
-            'action' => '/dashboard/balance-holder-incomes', 
-            'active' => 'current day'
-        ]);
-    ?>
-
-    <?php } ?>
-
-    <br>
-    <b><?= Yii::t('graph', 'Address average loading by last 30 days'); ?></b>
-
-    <?= Yii::$app->runAction(
-            '/dashboard/address-average-loading'
-        )
-    ?>
-
-    <b><?= Yii::t('graph', 'Address Loading'); ?></b>
-
-    <div class="chart-container-al graph-block">
-        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
-    </div>
-
-    <?php echo Yii::$app->runAction(
-        '/dashboard/render-engine',
-        [
-            'selector' => '.chart-container-al',
-            'action' => '/dashboard/address-loading',
-            'active' => 'current day',
-            'actionBuilder' => 'builds/action-mls-builder'
-        ]);
-    ?>
-
-    <b><?= Yii::t('graph', 'Modem Level Signal'); ?></b>
-    <br>
-
-    <div class="chart-container-mls graph-block">
-        <img src="<?= Yii::$app->homeUrl . '/static/gif/loader.gif'?>" class="img-processor" alt>
-    </div>
-
-    <?php echo Yii::$app->runAction(
-        '/dashboard/render-engine',
-        [
-            'selector' => '.chart-container-mls',
-            'action' => '/dashboard/modem-level-signal', 
-            'active' => 'current day',
-            'actionBuilder' => 'builds/action-mls-builder'
-        ]);
-    ?>
-
-    <?php if (yii::$app->user->can('viewCompanyData')) { ?>
-
-    <b><?= Yii::t('frontend', 'Employees company') ?></b>
-
-    <div class="employees-list">
-        <?= \frontend\components\responsive\GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'columns' => [
-                [
-                    'attribute' => 'name',
-                    'label' => Yii::t('frontend', 'Employee'),
-                    'value' => function($data) {
-                        return $data->userProfile->firstname." ".$data->userProfile->lastname;
-                    },
-                ],
-
-                [
-                    'attribute' => 'position',
-                    'label' => Yii::t('common', 'Position'),
-                    'value' => function($data) {
-                        return $data->userProfile->position;
-                    },
-                ],
-
-                [
-                    'label' => Yii::t('frontend', 'Access Level'),
-                    'value' => function($data) {
-                        return  $data->getUserRoleName($data->id);
-                    },
-                ],
-            ],
-        ]); ?>
-    </div>
-
-    <?php } ?>
-
-    <b><?= Yii::t('frontend', 'Balance Holders'); ?></b>
-    <br>
-
-    <div class="balance-holders-list">
-        <?= Yii::$app->view->render('balance_holders', ['balanceHolders' => $balanceHolders, 'balanceHoldersData' => $balanceHoldersData]) ?>
-    </div>
-
 </div>
-<div class="margin-bottom-274"></div>

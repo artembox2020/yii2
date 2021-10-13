@@ -9,19 +9,12 @@ use yii\helpers\Console;
 class AppController extends Controller
 {
     public $writablePaths = [
-        // backend
-        '@backend/runtime',
-        '@backend/web/assets',
-
         // console
         '@console/runtime',
 
         // frontend
         '@frontend/runtime',
         '@frontend/web/assets',
-
-        // storage
-        '@storage',
     ];
 
     public $executablePaths = [
@@ -42,7 +35,6 @@ class AppController extends Controller
         $this->runAction('set-executable', ['interactive' => $this->interactive]);
         $this->runAction('set-keys', ['interactive' => $this->interactive]);
         Yii::$app->runAction('migrate/up', ['interactive' => $this->interactive]);
-        Yii::$app->runAction('rbac/init', ['interactive' => $this->interactive]);
     }
 
     public function actionSetWritable()
@@ -96,7 +88,6 @@ class AppController extends Controller
 
     public function actionReset()
     {
-//        Yii::$app->runAction('migrate/down 17', ['interactive' => $this->interactive]);
         Yii::$app->runAction('migrate/up', ['interactive' => $this->interactive]);
         Yii::$app->runAction('rbac/init', ['interactive' => $this->interactive]);
 

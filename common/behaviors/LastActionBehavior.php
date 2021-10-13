@@ -33,7 +33,7 @@ class LastActionBehavior extends Behavior
     {
         if (!Yii::$app->user->isGuest) {
             $model = Yii::$app->user->identity;
-            $model->touch($this->attribute);
+            //$model->touch($this->attribute);
         }
 
         return true;

@@ -28,34 +28,10 @@ class m160101_000001_user extends Migration
             'is_deleted' => $this->boolean(),
             'other' => $this->string(255)
         ], $tableOptions);
-
-        $this->createTable('{{%user_profile}}', [
-            'user_id' => $this->primaryKey(),
-            'firstname' => $this->string(),
-            'lastname' => $this->string(),
-            'birthday' => $this->integer(),
-            'avatar_path' => $this->string(255),
-            'gender' => $this->smallInteger(1),
-            'other' => $this->string(),
-        ], $tableOptions);
-
-        $this->addForeignKey(
-            'fk_user',
-            '{{%user_profile}}',
-            'user_id',
-            '{{%user}}',
-            'id',
-            'cascade',
-            'cascade');
     }
 
     public function down()
     {
-        $this->dropForeignKey(
-            'fk_user',
-            '{{%user_profile}}');
-
-        $this->dropTable('{{%user_profile}}');
         $this->dropTable('{{%user}}');
     }
 }
