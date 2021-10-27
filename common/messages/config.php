@@ -15,7 +15,7 @@ return [
     'interactive' => true,
     'sourcePath' => '@root',
     'messagePath' => '@common/messages',
-    'languages' => ['uk-UA'],
+    'languages' => ['en'],
     'translator' => 'Yii::t',
     'sort' => true,
     'overwrite' => true,

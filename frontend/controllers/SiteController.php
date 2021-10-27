@@ -9,7 +9,6 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use common\models\User;
 use common\models\LoginForm;
-use common\models\SignupForm;
 use frontend\models\ContactForm;
 
 class SiteController extends Controller
@@ -66,26 +65,6 @@ class SiteController extends Controller
         return $this->render('index');
     }
 
-    public function actionSignup()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-        $model = new SignupForm();
-
-        if($model->load(\Yii::$app->request->post()) && $model->validate()){
-        $user = new User();
-        $user->username = $model->username;
-        $user->password_hash = Yii::$app->security->generatePasswordHash($model->password);
-        if($user->save()){
-            Yii::$app->user->login($user);
-
-            return $this->goHome();
-        }
-    }
-        return $this->render('signup', compact('model'));
-    }
-
     /**
      * Login action.
      *
@@ -133,6 +112,7 @@ class SiteController extends Controller
 
             return $this->refresh();
         }
+
         return $this->render('contact', [
             'model' => $model,
         ]);

@@ -6,9 +6,11 @@ require __DIR__ . '/../../common/env.php';
 Yii::setAlias('root', realpath(__DIR__ . '/../../'));
 Yii::setAlias('common', realpath(__DIR__ . '/../../common'));
 Yii::setAlias('frontend', realpath(__DIR__ . '/../../frontend'));
+Yii::setAlias('backend', realpath(__DIR__ . '/../../backend'));
 Yii::setAlias('console', realpath(__DIR__ . '/../../console'));
 
 /**
  * Setting url aliases
  */
 Yii::setAlias('frontendUrl', env('FRONTEND_URL'));
+Yii::setAlias('backendUrl', env('BACKEND_URL'));

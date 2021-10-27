@@ -37,7 +37,8 @@
         "yii2tech/ar-softdelete": "*",
         "gugglegum/yii2-cookie-language-selector": "*",
         "codemix/yii2-localeurls": "^1.7",
-        "cetver/yii2-language-selector": "^1.0"
+        "cetver/yii2-language-selector": "^1.0",
+        "dmstr/yii2-adminlte-asset": "2.*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

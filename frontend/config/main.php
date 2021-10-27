@@ -42,8 +42,8 @@ $config = [
         ],
         'cookieLanguageSelector' => [
             'class' => 'gugglegum\Yii2\Extension\CookieLanguageSelector\Component',
-            'defaultLanguage' => 'uk-UA',
-            'validLanguages' => ['uk-UA', 'ru-RU', 'en-US'],
+            'defaultLanguage' => 'en',
+            'validLanguages' => ['en', 'uk'],
         ],
     ],
     'as beforeAction' => [
