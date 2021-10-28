@@ -9,6 +9,10 @@ use yii\helpers\Console;
 class AppController extends Controller
 {
     public $writablePaths = [
+        // backend
+        '@backend/runtime',
+        '@backend/web/assets',
+
         // console
         '@console/runtime',
 
@@ -35,6 +39,8 @@ class AppController extends Controller
         $this->runAction('set-executable', ['interactive' => $this->interactive]);
         $this->runAction('set-keys', ['interactive' => $this->interactive]);
         Yii::$app->runAction('migrate/up', ['interactive' => $this->interactive]);
+        Yii::$app->runAction('migrate/up', ['migrationPath' => '@yii/rbac/migrations/', 'interactive' => false]);
+        shell_exec("touch PHP_errors.log");
     }
 
     public function actionSetWritable()
