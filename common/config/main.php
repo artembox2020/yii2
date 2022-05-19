@@ -1,5 +1,6 @@
 <?php
 
+$params = require_once __DIR__ . '/params.php';
 $config = [
     'name'=> 'Yii2',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
@@ -23,13 +24,25 @@ $config = [
         ],
     ],
     'components' => [
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget', //в файл
+                    'categories' => ['yt_channel'], //категория логов
+                    'logFile' => '@runtime/logs/pay.log', //куда сохранять
+                    'logVars' => [] //не добавлять в лог глобальные переменные ($_SERVER, $_SESSION...)
+                ],
+            ],
+        ],
+        'smsGate' => 'common\components\smsGate\SmsGate',
         'db' => [
             'class' => 'yii\db\Connection',
             'dsn' => env('DB_DSN'),
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'tablePrefix' => env('DB_TABLE_PREFIX'),
-            'charset' => 'utf8',
+            'charset' => 'utf8mb4',
             'enableSchemaCache' => YII_ENV_PROD,
         ],
         'formatter' => [
@@ -77,6 +90,7 @@ $config = [
             'class' => YII_ENV_DEV ? 'yii\caching\DummyCache' : 'yii\caching\FileCache',
         ],
     ],
+    'params' => $params,
 ];
 
 return $config;

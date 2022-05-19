@@ -21,6 +21,7 @@ $config = ArrayHelper::merge(
     require __DIR__ . '/../config/main.php'
 );
 
+
 if (YII_ENV_DEV) {
     // показываем ошибки
     error_reporting(-1);

@@ -20,6 +20,22 @@
                     ['label' => 'Log in', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
                     ['label' => 'Sign up', 'url' => ['site/signup'], 'visible' => Yii::$app->user->isGuest],
                     ['label' => 'Logout', 'url' => ['site/logout'], 'visible' => !Yii::$app->user->isGuest],
+                    ['label' => 'Phrase', 'url' => ['phrase/index']],
+                    ['label' => 'Notify', 'url' => ['notify/index']],
+                    [
+                        'label' => 'Posts',
+                        'url' => ['post/index'],
+                        'items' => [
+                            [
+                                'label' => 'Posts',
+                                'url'   => ['post/index']
+                            ],
+                            [
+                                'label' => 'Create Post',
+                                'url'   => ['post/create']
+                            ]
+                        ]
+                    ],
                     [
                         'label' => 'Tools',
                         'icon' => 'share',
