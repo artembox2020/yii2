@@ -1,6 +1,6 @@
 <?php
 
-namespace SmsGate\Native;
+namespace common\components\SmsGate\Native;
 
 class Turbosms implements SmsGateInterface
 {
@@ -39,7 +39,7 @@ class Turbosms implements SmsGateInterface
         $response = json_decode(curl_exec($curl));
         curl_close($curl);
 
-        $responseObj = (object)[
+        $responseObj = [
             'response_code' => $response->response_code,
             'message_id' => $response->response_result[0]->message_id
         ];

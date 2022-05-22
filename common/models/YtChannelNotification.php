@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use common\services\YouTubeChannel;
+use common\components\SmsGate\SmsGate;
 
 /**
  * This is the model class for table "yt_channel_notification".
@@ -69,5 +71,31 @@ class YtChannelNotification extends \yii\db\ActiveRecord
     public function getChannel()
     {
         return $this->hasOne(YtChannel::className(), ['id' => 'channel_id']);
+    }
+
+    public function notify()
+    {
+        $channelData = Yii::$app->cache->getOrSet("channel_" . $this->channel_id . '_table_data', function () {
+
+            return (new YouTubeChannel())->getChannelTableData($this->channel_id);
+        }, 300);
+
+        if (empty($channelData)) {
+
+            return null;
+        }
+
+        $channel = Yii::$app->cache->getOrSet("channel_" . $this->channel_id . '_db_table_data', function () {
+
+            return $this->getChannel()->one();
+        }, 300);
+
+        if ($channelData['post_count']  > $channel->post_count) {
+            $channel->attributes = $channelData;
+            $channel->save();
+            $smsGate = new SmsGate();
+
+            return $smsGate->send($this->phone, "Channel " . $channel->title . ' published new video');
+        }
     }
 }

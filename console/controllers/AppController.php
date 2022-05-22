@@ -5,6 +5,7 @@ namespace console\controllers;
 use Yii;
 use yii\console\Controller;
 use yii\helpers\Console;
+use common\models\YtChannelNotification;
 
 class AppController extends Controller
 {
@@ -97,5 +98,24 @@ class AppController extends Controller
         Yii::$app->runAction('migrate/up', ['interactive' => $this->interactive]);
         Yii::$app->runAction('rbac/init', ['interactive' => $this->interactive]);
 
+    }
+
+    public function actionSmsTest($text)
+    {
+        //$gate = new \common\components\SmsGate\SmsGate();
+        //echo $gate->send('+380961422909', $text);
+        //echo "\n";
+        $cont = new \console\controllers\CronController('cron', 'console');
+        var_dump($cont);
+    }
+
+    public function actionYoutubeNotify()
+    {
+        $notifications = YtChannelNotification::find()
+            ->all();
+
+        foreach ($notifications as $notification) {
+            $notification->notify();
+        }
     }
 }

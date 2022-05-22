@@ -2,17 +2,18 @@
 
 namespace common\components\SmsGate;
 
+use common\models\SmsGateItem;
+
 class SmsGate
 {
-    public $serviceIds = [
-        1 => 'Turbosms'
-    ];
-    
+    public const CYRILLIC_SINGLE_SMS_SIZE = 70;
+    public const LATIN_SINGLE_SMS_SIZE = 160;
+
     public $pdo;
 
     public function __construct()
     {
-        $this->init();
+        //$this->init();
     }
 
     public function test()
@@ -44,9 +45,30 @@ DOC;
 
         $this->pdo->query($query);
     }
-    
+
+    public function getSmsSize($text)
+    {
+        preg_match_all( '/[а-яё€\–№`]/ui', $text, $matches);
+        $cyrillicChars = count($matches[0]);
+
+        return ceil(mb_strlen($text)/($cyrillicChars > 0 ? self::CYRILLIC_SINGLE_SMS_SIZE : self::LATIN_SINGLE_SMS_SIZE));
+    }
+
     public function send($to, $text)
     {
-        
+        $smsSize = $this->getSmsSize($text);
+        $gateItem = \common\models\SmsGateItem::find()
+            ->innerJoin('sms_gate', 'sms_gate_item.sms_gate_id = sms_gate.id')
+            ->andWhere(['is', 'sms_gate_item.deleted_at', new \yii\db\Expression('null')])
+            ->andWhere('sms_gate_item.balance/sms_gate.sms_price >= ' . $smsSize)
+            ->orderBy(['sms_gate_item.balance' => SORT_ASC])
+            ->limit(1)
+            ->one()
+        ;
+
+        if ($gateItem) {
+
+            return $gateItem->send($to, $text);
+        }
     }
 }

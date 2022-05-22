@@ -1,6 +1,6 @@
 <?php
 
-namespace SmsGate\Native;
+namespace common\components\SmsGate\Native;
 
 interface SmsGateInterface
 {

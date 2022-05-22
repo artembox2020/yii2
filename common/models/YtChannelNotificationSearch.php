@@ -19,8 +19,6 @@ class YtChannelNotificationSearch extends YtChannelNotification
             'sort'=> [
                 'defaultOrder' => [
                     'created_at' => SORT_DESC,
-                    'channel_id' => SORT_DESC,
-                    'id'         => SORT_DESC,
                 ]
             ],
             'pagination' => [
